@@ -7,10 +7,15 @@ Technische Informationen zur dieser Anwendung finden sich [hier](./docs/Setup.md
 ## Team
 
 [Beschreiben Sie hier die einzelnen Teammitglieder mit Namen, E-Mail-Adresse, Github-Nutzer und Foto.]
-Sabine Roth, sabine.roth@stud.uni-regensburg.de, SabiRoth
+
+Sabine Roth, sabine.roth@stud.uni-regensburg.de, SabiRoth 
+
 Lisa Sanladerer, lisa.sanladerer@stud.uni-regensburg.de, sanlalala
+
 Jonas Puchinger, jonas.puchinger@stud.uni-regensburg.de, JonasPuchinger
+
 Theresa Strohmeier, theresa.strohmeier@stud.uni-regensburg.de, TheresaStrohmeier
+
 
 ## Beschreibung
 
