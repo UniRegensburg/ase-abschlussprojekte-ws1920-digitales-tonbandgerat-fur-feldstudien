@@ -4,7 +4,7 @@
 
 ## NutzerInnen
 
-[Beschreiben Sie kurz die relevanten Zielgruppen Ihrer Anwendung.]
+Diese App richtet sich an StudentInnen, ForscherInnen und InterviewerInnen, die Interviews oder eigene Aufnahmen mit Anmerkungen anreichern wollen. Dies ermöglicht effizienteres Durchsuchen von Tondateien, und somit eine bessere Nachbearbeitung und Auswertung.
 
 ## Funktionen/Szenarien
 
