@@ -2,11 +2,11 @@
 
 [Fassen Sie kurz Problemkontext, Funktionsumfang und Ziele der Anwendung zusammen.]
 
-## NutzerInnen
-
 Diese App richtet sich an StudentInnen, ForscherInnen und InterviewerInnen, die Interviews oder eigene Aufnahmen mit Anmerkungen anreichern wollen. Dies ermöglicht effizienteres Durchsuchen von Tondateien, und somit eine bessere Nachbearbeitung und Auswertung.
 
----
+...
+
+## NutzerInnen
 
 Einerseits kann die „…“-App von Privatpersonen für den persönlichen Gebrauch verwendet werden, um im persönlichen Umfeld Tondokumente zu erstellen und besonders erinnerungswürdige oder lustige Momente im Privatleben zu sichern und möglicherweise zu exportieren und teilen. Zusätzlich wäre eine Art akustisches Tonbandtagebuch mit einer Sammlung von Sprachaufnahmen denkbar. Die einfache Verwaltung der Daten ermöglicht auch unerfahrenen Nutzern die Verwendung der App.
 
