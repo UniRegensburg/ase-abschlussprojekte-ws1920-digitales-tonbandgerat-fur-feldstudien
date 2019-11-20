@@ -20,4 +20,4 @@ Mithilfe der „…“-App kann der Nutzer schnell und einfach Tondokumente aufz
 
 ## Datengrundlage
 
-[Beschreiben Sie hier, falls notwendig, externe Datenquellen, die zur Realisierung der Anwendung benötigt werden.]
+Für die App ist keine externe Datenquelle nötig, da die Dateien lokal auf dem jeweiligen Gerät gespeichert und verarbeitet werden.
