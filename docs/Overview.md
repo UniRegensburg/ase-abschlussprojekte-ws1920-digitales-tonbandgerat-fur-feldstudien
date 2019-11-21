@@ -1,7 +1,10 @@
 # Audidroid
 
-[Fassen Sie kurz Problemkontext, Funktionsumfang und Ziele der Anwendung zusammen.]
+Das Aufzeichnen von Audio ist ein etabliertes und wichtiges Werkzeug der wissenschaftlichen Forschung. Jedoch bring ein solches Vorgehen auch eine relativ intensive Nachbearbeitung mit sich. Zum Beispiel können verschiedene Stellen einen unterschiedlichen Informationsgehalt oder verschiedenste Themenfelder beinhalten. Zudem sind zusätzliche Annotationen zumeist von der eigentlichen Datei getrennt oder ganze Sammlungen müssen verwaltet werden. 
 
+Um diese Aufgaben etwas zu erleichtern, soll in der vorgestellten Anwendung Audidroid das unmittelbare Verknüpfen von Toninformation mit Metadaten ermöglicht werden. Ihr Kern ist das eigentliche Erfassen und Speichern von Audio. Jedoch soll ein Nutzer die Möglichkeit haben, ausgesuchte Stellen hervorzuheben, allgemeinere Informationen den Dateien anzuheften und die entstehende Sammlung verwalten zu können. Der Nutzer soll diese Annotation bis zu einem gewissen Grad auf seine Bedürfnisse anpassen können, z. B. durch eigene Kategorien. 
+
+So soll die Verwaltung von Audiodateien erleichtert und deren Nutzung effizienter gestaltet werden.
 
 ## NutzerInnen
 
