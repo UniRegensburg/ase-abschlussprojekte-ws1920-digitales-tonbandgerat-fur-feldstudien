@@ -8,8 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.navigation.ui.*
+import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.app_bar_main.*
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.utils.ThemeHelper
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        // Passing each menu ID to be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.record,
@@ -36,6 +38,18 @@ class MainActivity : AppCompatActivity() {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
+
+        initTheme()
+    }
+
+    /** Applies the app theme selected by the user.
+     *
+     * @author: Jonas Puchinger
+     * Adapted from: https://www.raywenderlich.com/6488033-android-10-dark-theme-getting-started#toc-anchor-006
+     */
+    private fun initTheme() {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        ThemeHelper.applyTheme(preferences.getString(getString(R.string.theme_preference_key), "default")!!)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
