@@ -1,0 +1,25 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="keyline_0">2dp</dimen>
+    <dimen name="keyline_1">4dp</dimen>
+    <dimen name="keyline_2">8dp</dimen>
+    <dimen name="keyline_4">16dp</dimen>
+    <dimen name="keyline_5">24dp</dimen>
+    <dimen name="keyline_12">176dp</dimen>
+
+    <dimen name="component_label_horizontal_margin">@dimen/keyline_4</dimen>
+
+    <dimen name="elevation_default_top_app_bar">@dimen/keyline_1</dimen>
+
+    <dimen name="alpha_emphasis_high">@dimen/material_emphasis_high_type</dimen>
+    <dimen name="alpha_emphasis_medium">@dimen/material_emphasis_medium</dimen>
+    <dimen name="alpha_emphasis_disabled">@dimen/material_emphasis_disabled</dimen>
+
+    <dimen name="activity_horizontal_margin">@dimen/keyline_4</dimen>
+    <dimen name="activity_vertical_margin">@dimen/keyline_4</dimen>
+    <dimen name="nav_header_vertical_spacing">@dimen/keyline_2</dimen>
+    <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="fab_margin_big">@dimen/keyline_12</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+</resources>
