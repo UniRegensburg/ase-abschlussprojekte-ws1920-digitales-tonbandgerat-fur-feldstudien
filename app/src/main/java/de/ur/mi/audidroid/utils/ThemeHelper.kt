@@ -4,7 +4,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 
 /**
- * Helper object to apply and change the app theme based on a us er-set preference.
+ * Helper object to apply and change the app theme based on a user-set preference.
  * Supported themes: [LIGHT_MODE] and [DARK_MODE].
  *
  * @author: Jonas Puchinger

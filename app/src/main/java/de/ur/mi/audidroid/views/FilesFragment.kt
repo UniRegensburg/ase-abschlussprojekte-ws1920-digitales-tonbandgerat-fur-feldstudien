@@ -32,4 +32,3 @@ class FilesFragment : Fragment() {
     }
 
 }
-
