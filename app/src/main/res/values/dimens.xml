@@ -22,4 +22,8 @@
     <dimen name="fab_margin_big">@dimen/keyline_12</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <!-- Textsizes -->
+
+    <dimen name="text_size_big">50sp</dimen>
+
 </resources>
