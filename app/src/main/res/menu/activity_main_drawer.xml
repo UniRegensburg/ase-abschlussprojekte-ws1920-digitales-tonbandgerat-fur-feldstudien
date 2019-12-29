@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/record"
+            android:icon="@drawable/ic_menu_hearing"
+            android:title="@string/menu_record" />
+        <item
+            android:id="@+id/files"
+            android:icon="@drawable/ic_menu_audiofiles"
+            android:title="@string/menu_files" />
+
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_menu_settings"
+            android:title="@string/menu_settings" />
+    </group>
+
+
+</menu>
