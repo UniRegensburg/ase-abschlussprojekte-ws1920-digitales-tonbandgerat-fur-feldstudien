@@ -9,6 +9,7 @@ import android.view.ViewGroup
 
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import de.ur.mi.audidroid.R
+import kotlinx.android.synthetic.main.record_fragment.*
 
 class RecordFragment : Fragment() {
 
@@ -28,7 +29,9 @@ class RecordFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(RecordViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
+        viewModel.initializeRecorder(context!!)
 
+        record_pause_button.setOnClickListener{ viewModel.recordButtonClicked(record_pause_button)}
+        confirm_button.setOnClickListener{viewModel.stopRecording()}
+    }
 }
