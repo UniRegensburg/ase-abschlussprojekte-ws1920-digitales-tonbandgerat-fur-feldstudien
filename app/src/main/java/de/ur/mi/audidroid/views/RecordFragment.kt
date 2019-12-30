@@ -13,7 +13,7 @@ import de.ur.mi.audidroid.models.RecorderDatabase
 import de.ur.mi.audidroid.models.RecorderEntity
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-
+import kotlinx.android.synthetic.main.record_fragment.*
 
 class RecordFragment : Fragment() {
 
@@ -68,5 +68,9 @@ class RecordFragment : Fragment() {
             }
         }
 
+        viewModel.initializeRecorder(context!!)
+
+        record_pause_button.setOnClickListener{ viewModel.recordButtonClicked(record_pause_button)}
+        confirm_button.setOnClickListener{viewModel.stopRecording()}
     }
 }
