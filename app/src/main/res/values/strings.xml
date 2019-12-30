@@ -24,5 +24,7 @@
     <string name="record_pause_button">Record and Pause Button</string>
     <string name="mark_button">Markierung</string>
 
-
+    <!-- User Feedback Toasts -->
+    <string name="record_saved">Aufnahme gespeichert</string>
+    <string name="record_removed">Aufnahme verworfen</string>
 </resources>

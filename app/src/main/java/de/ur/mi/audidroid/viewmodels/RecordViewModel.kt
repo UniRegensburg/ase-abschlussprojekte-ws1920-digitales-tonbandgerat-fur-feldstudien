@@ -6,17 +6,27 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.models.RecorderDatabase
+import de.ur.mi.audidroid.models.RecorderEntity
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class RecordViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
 
     private var isRecording = false
+    private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
+    private var outputFile = ""
+    private lateinit var db : RecorderDatabase
 
 
     fun initializeRecorder(context: Context){
@@ -27,25 +37,33 @@ class RecordViewModel : ViewModel() {
             ActivityCompat.requestPermissions(context as Activity, permissions,0)
         }
 
-        val output = context.getFilesDir().getAbsolutePath() + "/" + "recording" + ".aac" //TODO ändern
+        outputFile = context.getFilesDir().getAbsolutePath() + "/" + "recording" + ".aac" //TODO: Change path to users preferred save location
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        mediaRecorder.setOutputFile(output)
+        mediaRecorder.setOutputFile(outputFile)
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        mediaRecorder.prepare()
+        try {
+            mediaRecorder.prepare()
+        } catch (e: IllegalStateException) {
+        } catch (e: IOException) {
+        }
     }
 
-    fun recordButtonClicked(button: ImageButton) =
+    fun recordPauseButtonClicked(button: ImageButton) =
         when(!isRecording) {
             true -> {
                 button.setImageResource(R.mipmap.pause_button_foreground)
                 isRecording = true
-                startRecording()
+                if(!resumeRecord){
+                    startRecording()
+                }
+                else{resumeRecording()}
             }
 
             false ->{
                 button.setImageResource(R.mipmap.record_button_foreground)
                 isRecording = false
+                resumeRecord = true
                 pauseRecording()
             }
     }
@@ -55,10 +73,57 @@ class RecordViewModel : ViewModel() {
     }
 
     private fun pauseRecording(){
-        mediaRecorder.stop()
+        mediaRecorder.pause()
     }
 
-    fun stopRecording(){
-        mediaRecorder.release()
+    private fun resumeRecording(){
+        mediaRecorder.resume()
+    }
+
+    fun cancelRecord(context: Context){
+        isRecording = false
+        resumeRecord = false
+        mediaRecorder.reset()
+        sendCancelToast(context)
+    }
+
+    fun confirmRecord(context: Context){
+        isRecording = false
+        resumeRecord = false
+        mediaRecorder.stop()
+        mediaRecorder.reset()
+        sendConfirmToast(context)
+        getLastUID(context)
+    }
+
+    private fun getLastUID(context: Context){
+        db = RecorderDatabase.getInstance(context)
+        doAsync {
+            val count =  db.entryDao().getRowCount()
+            uiThread{
+                saveRecordInDB2(count)
+            }
+        }
+    }
+
+    private fun saveRecordInDB2(count: Int) {
+        val audio =
+            RecorderEntity(count, outputFile, getDate())
+        doAsync{
+            db.entryDao().insert(audio)
+        }
+    }
+
+    private fun getDate() : String{
+        return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
+
+    }
+
+    private fun sendConfirmToast(context: Context){
+        Toast.makeText(context, R.string.record_saved, Toast.LENGTH_LONG).show()
+    }
+
+    private fun sendCancelToast(context: Context){
+        Toast.makeText(context, R.string.record_removed, Toast.LENGTH_LONG).show()
     }
 }

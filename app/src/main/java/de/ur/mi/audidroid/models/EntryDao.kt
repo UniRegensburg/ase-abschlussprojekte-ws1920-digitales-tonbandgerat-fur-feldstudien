@@ -1,10 +1,12 @@
 package de.ur.mi.audidroid.models
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
+
 
 @Dao
 interface EntryDao {
@@ -23,4 +25,8 @@ interface EntryDao {
     //deletes all entries
     @Query("DELETE FROM recordingsTable")
     fun clearTable()
+
+    @Query("SELECT COUNT(recordingPath) FROM recordingsTable")
+    fun getRowCount(): Int
+
 }
