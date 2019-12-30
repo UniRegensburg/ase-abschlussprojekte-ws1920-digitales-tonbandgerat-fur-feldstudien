@@ -9,6 +9,11 @@ import android.view.ViewGroup
 
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.models.RecorderDatabase
+import de.ur.mi.audidroid.models.RecorderEntity
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+
 
 class RecordFragment : Fragment() {
 
@@ -28,7 +33,40 @@ class RecordFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(RecordViewModel::class.java)
-        // TODO: Use the ViewModel
+
+        insertRecordingForTesting()
     }
 
+    fun insertRecordingForTesting(){
+
+        val audio1 =
+            RecorderEntity(2, "path2", "date2")
+
+        val db = RecorderDatabase.getInstance(context)
+
+        doAsync{
+            val result =   db.entryDao().clearTable()
+            uiThread{
+                result.toString()
+            }
+        }
+
+
+        doAsync{
+            val result =   db.entryDao().insert(audio1)
+            uiThread{
+                result.toString()
+            }
+        }
+
+        doAsync{
+            val result = db.entryDao().getAllRecordings()
+            uiThread{
+                result.forEach {
+                    println(it)
+                }
+            }
+        }
+
+    }
 }
