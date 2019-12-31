@@ -23,5 +23,4 @@ abstract class RecorderDatabase : RoomDatabase() {
             return INSTANCE as RecorderDatabase
         }
     }
-
 }

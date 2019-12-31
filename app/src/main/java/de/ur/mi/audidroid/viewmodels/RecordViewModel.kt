@@ -112,12 +112,12 @@ class RecordViewModel : ViewModel() {
         doAsync {
             val count =  db.entryDao().getRowCount()
             uiThread{
-                saveRecordInDB2(count)
+                saveRecordInDB(count)
             }
         }
     }
 
-    private fun saveRecordInDB2(count: Int) {
+    private fun saveRecordInDB(count: Int) {
         val audio =
             RecorderEntity(count, outputFile, getDate())
         doAsync{
