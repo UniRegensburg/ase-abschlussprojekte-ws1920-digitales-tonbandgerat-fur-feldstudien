@@ -6,11 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import de.ur.mi.audidroid.R
-import kotlinx.android.synthetic.main.nav_header_main.view.*
 import kotlinx.android.synthetic.main.record_fragment.*
 
 class RecordFragment : Fragment() {

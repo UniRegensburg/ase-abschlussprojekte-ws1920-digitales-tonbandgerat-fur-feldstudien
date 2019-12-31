@@ -26,18 +26,28 @@ class RecordViewModel : ViewModel() {
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
     private var outputFile = ""
-    private lateinit var db : RecorderDatabase
+    private lateinit var db: RecorderDatabase
 
 
-    fun initializeRecorder(context: Context){
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            val permissions = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
-            ActivityCompat.requestPermissions(context as Activity, permissions,0)
+    fun initializeRecorder(context: Context) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO
+            ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            val permissions = arrayOf(
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+            ActivityCompat.requestPermissions(context as Activity, permissions, 0)
         }
 
-        outputFile = context.getFilesDir().getAbsolutePath() + "/" + "recording" + ".aac" //TODO: Change path to users preferred save location
+        outputFile =
+            context.getFilesDir().getAbsolutePath() + "/" + "recording" + ".aac" //TODO: Change path to users preferred save location
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mediaRecorder.setOutputFile(outputFile)
@@ -50,23 +60,24 @@ class RecordViewModel : ViewModel() {
     }
 
     fun recordPauseButtonClicked(button: ImageButton) =
-        when(!isRecording) {
+        when (!isRecording) {
             true -> {
                 button.setImageResource(R.mipmap.pause_button_foreground)
                 isRecording = true
-                if(!resumeRecord){
+                if (!resumeRecord) {
                     startRecording()
+                } else {
+                    resumeRecording()
                 }
-                else{resumeRecording()}
             }
 
-            false ->{
+            false -> {
                 button.setImageResource(R.mipmap.record_button_foreground)
                 isRecording = false
                 resumeRecord = true
                 pauseRecording()
             }
-    }
+        }
 
     private fun startRecording(){
         mediaRecorder.start()
@@ -116,7 +127,6 @@ class RecordViewModel : ViewModel() {
 
     private fun getDate() : String{
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
-
     }
 
     private fun sendConfirmToast(context: Context){
