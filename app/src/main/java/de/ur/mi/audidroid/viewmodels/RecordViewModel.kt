@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.RecorderDatabase
-import de.ur.mi.audidroid.models.RecorderEntity
+import de.ur.mi.audidroid.models.EntryEntitiy
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.IOException
@@ -44,6 +44,7 @@ class RecordViewModel : ViewModel() {
                 Manifest.permission.READ_EXTERNAL_STORAGE
             )
             ActivityCompat.requestPermissions(context as Activity, permissions, 0)
+            //TODO: check what happens if the permission is denied -> maybe a popup and closing the app?
         }
 
         outputFile =
@@ -95,7 +96,7 @@ class RecordViewModel : ViewModel() {
         isRecording = false
         resumeRecord = false
         mediaRecorder.reset()
-        sendCancelToast(context)
+        sendToast(context, R.string.record_removed)
     }
 
     fun confirmRecord(context: Context){
@@ -103,7 +104,7 @@ class RecordViewModel : ViewModel() {
         resumeRecord = false
         mediaRecorder.stop()
         mediaRecorder.reset()
-        sendConfirmToast(context)
+        sendToast(context, R.string.record_saved)
         getLastUID(context)
     }
 
@@ -119,7 +120,7 @@ class RecordViewModel : ViewModel() {
 
     private fun saveRecordInDB(count: Int) {
         val audio =
-            RecorderEntity(count, outputFile, getDate())
+            EntryEntitiy(count, outputFile, getDate())
         doAsync{
             db.entryDao().insert(audio)
         }
@@ -129,11 +130,7 @@ class RecordViewModel : ViewModel() {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     }
 
-    private fun sendConfirmToast(context: Context){
-        Toast.makeText(context, R.string.record_saved, Toast.LENGTH_LONG).show()
-    }
-
-    private fun sendCancelToast(context: Context){
-        Toast.makeText(context, R.string.record_removed, Toast.LENGTH_LONG).show()
+    private fun sendToast(context: Context, text: Int){
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
     }
 }

@@ -10,22 +10,21 @@ import androidx.room.Query
 @Dao
 interface EntryDao {
     @Query("SELECT * FROM recordingsTable")
-    fun getAllRecordings(): List<RecorderEntity>
+    fun getAllRecordings(): List<EntryEntitiy>
 
     @Query("SELECT * FROM recordingsTable WHERE uid IN (:userIds)")
-    fun loadAllByIds(userIds: IntArray): List<RecorderEntity>
+    fun loadAllByIds(userIds: IntArray): List<EntryEntitiy>
 
     @Insert(onConflict = REPLACE)
-    fun insert(recorderEntity: RecorderEntity)
+    fun insert(entryEntitiy: EntryEntitiy)
 
     @Delete
-    fun delete(recorderEntity: RecorderEntity)
+    fun delete(entryEntitiy: EntryEntitiy)
 
-    //deletes all entries
+    /** deletes all entries TODO: Delete comment after Issue #33 is done because clearTable is self-explaining*/
     @Query("DELETE FROM recordingsTable")
     fun clearTable()
 
     @Query("SELECT COUNT(recordingPath) FROM recordingsTable")
     fun getRowCount(): Int
-
 }

@@ -6,7 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "recordingsTable")
-data class RecorderEntity (
+data class EntryEntitiy (
     @PrimaryKey val uid: Int,
     @ColumnInfo (name= "recordingPath") val recordingPath: String,
     @ColumnInfo (name= "date") val date:  String,
