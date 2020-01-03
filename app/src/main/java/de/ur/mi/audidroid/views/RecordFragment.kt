@@ -38,11 +38,13 @@ class RecordFragment : Fragment() {
         initializeRecorder()
     }
 
-    private fun initializeRecorder(){
+    private fun initializeRecorder() {
         viewModel.initializeRecorder(context!!)
-        record_pause_button.setOnClickListener{
+        record_pause_button.setOnClickListener {
             viewModel.recordPauseButtonClicked(record_pause_button)
-            if(!isRecording){toggleVisibility()}
+            if (!isRecording) {
+                toggleVisibility()
+            }
             isRecording = true
         }
         confirm_button.setOnClickListener {
@@ -63,8 +65,10 @@ class RecordFragment : Fragment() {
     }
 
     /** Depending on the current state of the recording various buttons are visible or not */
-    private fun toggleVisibility(){
-        confirm_button.visibility = if (confirm_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
-        cancel_button.visibility = if (cancel_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
+    private fun toggleVisibility() {
+        confirm_button.visibility =
+            if (confirm_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
+        cancel_button.visibility =
+            if (cancel_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
     }
 }

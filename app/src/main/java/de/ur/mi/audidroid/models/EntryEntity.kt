@@ -11,10 +11,10 @@ import androidx.room.PrimaryKey
  */
 
 @Entity(tableName = "recordingsTable")
-data class EntryEntity (
+data class EntryEntity(
     @PrimaryKey val uid: Int,
-    @ColumnInfo (name= "recordingPath") val recordingPath: String,
-    @ColumnInfo (name= "date") val date:  String,
-    @ColumnInfo (name= "markName") val markName: String? = null,
-    @ColumnInfo (name= "markTime") val markTime: String? = null //TODO: @lisa: change to list (with @embedded and @parcelize for list option because MutableList and ArrayList are not allowed data types)
+    @ColumnInfo(name = "recordingPath") val recordingPath: String,
+    @ColumnInfo(name = "date") val date: String,
+    @ColumnInfo(name = "markName") val markName: String? = null,
+    @ColumnInfo(name = "markTime") val markTime: String? = null //TODO: @lisa: change to list (with @embedded and @parcelize for list option because MutableList and ArrayList are not allowed data types)
 )
