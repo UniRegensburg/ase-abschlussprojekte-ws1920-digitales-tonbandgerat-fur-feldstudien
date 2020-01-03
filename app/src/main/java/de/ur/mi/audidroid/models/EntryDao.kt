@@ -6,20 +6,27 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 
+/**
+ * The EntryDao is the data access object  to access the app's data using the room persistence library
+ * The DAO provide methods that offer abstract access to the app's database
+ *
+ * @author: Sabine Roth
+ * Adapted from: https://developer.android.com/training/data-storage/room/accessing-data
+ */
 
 @Dao
 interface EntryDao {
     @Query("SELECT * FROM recordingsTable")
-    fun getAllRecordings(): List<EntryEntitiy>
+    fun getAllRecordings(): List<EntryEntity>
 
     @Query("SELECT * FROM recordingsTable WHERE uid IN (:userIds)")
-    fun loadAllByIds(userIds: IntArray): List<EntryEntitiy>
+    fun loadAllByIds(userIds: IntArray): List<EntryEntity>
 
     @Insert(onConflict = REPLACE)
-    fun insert(entryEntitiy: EntryEntitiy)
+    fun insert(entryEntity: EntryEntity)
 
     @Delete
-    fun delete(entryEntitiy: EntryEntitiy)
+    fun delete(entryEntity: EntryEntity)
 
     /** deletes all entries TODO: Delete comment after Issue #33 is done because clearTable is self-explaining*/
     @Query("DELETE FROM recordingsTable")

@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.RecorderDatabase
-import de.ur.mi.audidroid.models.EntryEntitiy
+import de.ur.mi.audidroid.models.EntryEntity
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.IOException
@@ -122,7 +122,7 @@ class RecordViewModel : ViewModel() {
 
     private fun saveRecordInDB(count: Int) {
         val audio =
-            EntryEntitiy(count, outputFile, getDate())
+            EntryEntity(count, outputFile, getDate())
         doAsync{
             db.entryDao().insert(audio)
         }
