@@ -20,6 +20,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+/**
+ * The ViewModel handles the changes to the view's data and the event logic for the user interaction referring to the RecordFragment
+ * @author: Sabine Roth
+ */
+
 class RecordViewModel : ViewModel() {
 
     private var isRecording = false
@@ -110,6 +115,7 @@ class RecordViewModel : ViewModel() {
         getLastUID(context)
     }
 
+    /** Furnishes the current number of entries in the table to set the unique id for the new entry */
     private fun getLastUID(context: Context){
         db = RecorderDatabase.getInstance(context)
         doAsync {
@@ -128,10 +134,15 @@ class RecordViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Returns the current date
+     * Adapted from: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+     */
     private fun getDate() : String{
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     }
 
+    /** Creates a toast with the given [text] */
     private fun sendToast(context: Context, text: Int){
         Toast.makeText(context, text, Toast.LENGTH_LONG).show()
     }

@@ -10,6 +10,11 @@ import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import de.ur.mi.audidroid.R
 import kotlinx.android.synthetic.main.record_fragment.*
 
+/**
+ * The fragment allows the user to do a voice recording. The changes of the view are handled within.
+ * @author: Sabine Roth
+ */
+
 class RecordFragment : Fragment() {
 
     var isRecording = false
@@ -57,6 +62,7 @@ class RecordFragment : Fragment() {
         toggleVisibility()
     }
 
+    /** Depending on the current state of the recording various buttons are visible or not */
     private fun toggleVisibility(){
         confirm_button.visibility = if (confirm_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
         cancel_button.visibility = if (cancel_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
