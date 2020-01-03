@@ -49,10 +49,12 @@ class RecordViewModel : ViewModel() {
 
         outputFile =
             context.getFilesDir().getAbsolutePath() + "/" + "recording" + ".aac" //TODO: Change path to users preferred save location
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        mediaRecorder.setOutputFile(outputFile)
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        with (mediaRecorder) {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setOutputFile(outputFile)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)}
+
         try {
             mediaRecorder.prepare()
         } catch (e: IllegalStateException) {
