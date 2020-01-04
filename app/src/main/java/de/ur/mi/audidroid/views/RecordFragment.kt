@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.record_fragment.*
 
 class RecordFragment : Fragment() {
 
-    var isRecording = false
+    private var isRecording = false
 
     companion object {
         fun newInstance() = RecordFragment()
