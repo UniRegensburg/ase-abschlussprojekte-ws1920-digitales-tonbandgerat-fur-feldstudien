@@ -1,6 +1,5 @@
 package de.ur.mi.audidroid.utils
 
-import android.annotation.SuppressLint
 import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
 
@@ -36,6 +35,5 @@ object ThemeHelper {
     }
 
     private fun isAtLeastAndroidVersionP() = Build.VERSION.SDK_INT >= 28
-    @SuppressLint("ObsoleteSdkInt")
     private fun isAtLeastAndroidVersionL() = Build.VERSION.SDK_INT >= 23
 }

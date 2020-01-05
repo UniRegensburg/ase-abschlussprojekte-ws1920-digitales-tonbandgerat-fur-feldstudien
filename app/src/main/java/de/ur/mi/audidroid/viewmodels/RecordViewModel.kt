@@ -11,8 +11,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.RecorderDatabase
+import de.ur.mi.audidroid.models.EntryEntity
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.IOException
@@ -53,13 +53,12 @@ class RecordViewModel : ViewModel() {
         }
 
         outputFile =
-            context.filesDir.absolutePath + "/" + "recording" + ".aac" //TODO: Change path to users preferred save location
-        with(mediaRecorder) {
+            context.getFilesDir().getAbsolutePath() + "/" + "recording" + ".aac" //TODO: Change path to users preferred save location
+        with (mediaRecorder) {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setOutputFile(outputFile)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        }
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)}
 
         try {
             mediaRecorder.prepare()
@@ -88,26 +87,26 @@ class RecordViewModel : ViewModel() {
             }
         }
 
-    private fun startRecording() {
+    private fun startRecording(){
         mediaRecorder.start()
     }
 
-    private fun pauseRecording() {
+    private fun pauseRecording(){
         mediaRecorder.pause()
     }
 
-    private fun resumeRecording() {
+    private fun resumeRecording(){
         mediaRecorder.resume()
     }
 
-    fun cancelRecord(context: Context) {
+    fun cancelRecord(context: Context){
         isRecording = false
         resumeRecord = false
         mediaRecorder.reset()
         sendToast(context, R.string.record_removed)
     }
 
-    fun confirmRecord(context: Context) {
+    fun confirmRecord(context: Context){
         isRecording = false
         resumeRecord = false
         mediaRecorder.stop()
@@ -117,11 +116,11 @@ class RecordViewModel : ViewModel() {
     }
 
     /** Furnishes the current number of entries in the table to set the unique id for the new entry */
-    private fun getLastUID(context: Context) {
+    private fun getLastUID(context: Context){
         db = RecorderDatabase.getInstance(context)
         doAsync {
-            val count = db.entryDao().getRowCount()
-            uiThread {
+            val count =  db.entryDao().getRowCount()
+            uiThread{
                 saveRecordInDB(count)
             }
         }
@@ -130,7 +129,7 @@ class RecordViewModel : ViewModel() {
     private fun saveRecordInDB(count: Int) {
         val audio =
             EntryEntity(count, outputFile, getDate())
-        doAsync {
+        doAsync{
             db.entryDao().insert(audio)
         }
     }
@@ -139,12 +138,12 @@ class RecordViewModel : ViewModel() {
      * Returns the current date
      * Adapted from: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
      */
-    private fun getDate(): String {
+    private fun getDate() : String{
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     }
 
     /** Creates a toast with the given [text] */
-    private fun sendToast(context: Context, text: Int) {
+    private fun sendToast(context: Context, text: Int){
         Toast.makeText(context, text, Toast.LENGTH_LONG).show()
     }
 }
