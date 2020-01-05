@@ -1,13 +1,13 @@
 package de.ur.mi.audidroid.views
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import de.ur.mi.audidroid.viewmodels.RecordViewModel
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import kotlinx.android.synthetic.main.record_fragment.*
 
 /**
@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.record_fragment.*
 
 class RecordFragment : Fragment() {
 
-    var isRecording = false
+    private var isRecording = false
 
     companion object {
         fun newInstance() = RecordFragment()
