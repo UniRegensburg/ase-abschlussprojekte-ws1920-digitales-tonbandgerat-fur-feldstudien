@@ -35,6 +35,7 @@ class RecordFragment : Fragment() {
 
     private fun initializeRecorder(){
         viewModel.initializeRecorder(context!!)
+        viewModel.initializeTimer(chronometer)
         record_pause_button.setOnClickListener{
             viewModel.recordPauseButtonClicked(record_pause_button)
             if(!isRecording){toggleVisibility()}
