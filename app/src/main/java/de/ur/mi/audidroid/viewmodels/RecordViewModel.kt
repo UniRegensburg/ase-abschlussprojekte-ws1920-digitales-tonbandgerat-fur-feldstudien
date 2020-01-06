@@ -81,7 +81,7 @@ class RecordViewModel : ViewModel() {
             }
 
             false -> {
-                button.setImageResource(R.mipmap.record_button_foreground)
+                button.setImageResource(R.mipmap.recording_button_foreground)
                 isRecording = false
                 resumeRecord = true
                 pauseRecording()

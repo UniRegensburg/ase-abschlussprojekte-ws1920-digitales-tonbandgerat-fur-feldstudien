@@ -50,14 +50,14 @@ class RecordFragment : Fragment() {
         confirm_button.setOnClickListener {
             viewModel.confirmRecord(context!!)
             viewModel.initializeRecorder(context!!)
-            record_pause_button.setImageResource(R.mipmap.record_button_foreground)
+            record_pause_button.setImageResource(R.mipmap.recording_button_foreground)
             toggleVisibility()
             isRecording = false
         }
         cancel_button.setOnClickListener {
             viewModel.cancelRecord(context!!)
             viewModel.initializeRecorder(context!!)
-            record_pause_button.setImageResource(R.mipmap.record_button_foreground)
+            record_pause_button.setImageResource(R.mipmap.recording_button_foreground)
             toggleVisibility()
             isRecording = false
         }
