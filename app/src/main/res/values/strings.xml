@@ -18,6 +18,12 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
 
+    <!--Done-->
+    <!-- FilesFragment Strings -->
+    <string name="recording_date">DD.MM.YYYY</string>
+    <string name="recording_file_name">Recording</string>
+    <string name="recording_time">MM:SS</string>
+
     <!-- Recorder strings -->
     <string name="confirm_button">Confirm Button</string>
     <string name="cancel_button">Cancel Button</string>
