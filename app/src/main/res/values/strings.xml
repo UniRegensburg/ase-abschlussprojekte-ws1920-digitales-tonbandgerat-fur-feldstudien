@@ -18,7 +18,6 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
 
-    <!--Done-->
     <!-- FilesFragment Strings -->
     <string name="recording_date">DD.MM.YYYY</string>
     <string name="recording_file_name">Recording</string>

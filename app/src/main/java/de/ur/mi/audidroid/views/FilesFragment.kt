@@ -1,46 +1,61 @@
 package de.ur.mi.audidroid.views
 
+import android.app.Application
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import de.ur.mi.audidroid.adapter.EntryAdapter
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
-
+import de.ur.mi.audidroid.models.EntryRepository
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
-import kotlinx.android.synthetic.main.files_fragment.*
 
 class FilesFragment : Fragment() {
-
-    companion object {
-        fun newInstance() = FilesFragment()
-    }
-
-    private lateinit var viewModel: FilesViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.files_fragment, container, false)
+
+        val binding: FilesFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
+
+        val application = requireNotNull(this.activity).application
+
+        val dataSource = EntryRepository(application)
+        val viewModelFactory = FilesViewModelFactory(dataSource, application)
+
+        val filesViewModel = ViewModelProviders.of(this, viewModelFactory).get(FilesViewModel::class.java)
+
+        binding.filesViewModel = filesViewModel
+
+        val adapter = EntryAdapter()
+        binding.recordingList.adapter = adapter
+
+        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                adapter.submitList(it)
+            }
+        })
+
+        binding.setLifecycleOwner(this)
+
+        return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(FilesViewModel::class.java)
-
-        recycler_view.layoutManager = LinearLayoutManager(context)
-        var adapter = EntryAdapter()
-        recycler_view.adapter = adapter
-
-        viewModel = ViewModelProviders.of(this).get(FilesViewModel::class.java)
-        viewModel.getAllRecordings().observe(this, Observer<List<EntryEntity>> {
-            adapter.setEntries(it)
-        })
+    class FilesViewModelFactory(private val dataSource: EntryRepository, private val application: Application) : ViewModelProvider.Factory {
+        @Suppress("unchecked_cast")
+        override fun <T: ViewModel?> create(modelClass: Class<T>): T {
+            if(modelClass.isAssignableFrom(FilesViewModel::class.java)) {
+                return FilesViewModel(dataSource, application) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
     }
 }
