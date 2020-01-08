@@ -1,5 +1,5 @@
 <resources>
-
+<!--TODO: english or german-->
     <string name="app_name">Audidroid</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -28,4 +28,12 @@
     <!-- User Feedback Toasts -->
     <string name="record_saved">Aufnahme gespeichert</string>
     <string name="record_removed">Aufnahme verworfen</string>
+
+    <!-- Permission dialog -->
+    <string name="permission_record">Permission to access the microphone is required to record audio.</string>
+    <string name="permission_write">Permission to write in the storage is required to save the record messages.</string>
+    <string name="permission_read">Permission to read the storage is required to list the record messages.</string>
+    <string name="permission_title">Permission required</string>
+    <string name="permission_button">OK</string>
+
 </resources>

@@ -1,18 +1,13 @@
 package de.ur.mi.audidroid.viewmodels
 
-import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.RecorderDatabase
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.RecorderDatabase
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.IOException
@@ -28,38 +23,25 @@ class RecordViewModel : ViewModel() {
     private var outputFile = ""
     private lateinit var db: RecorderDatabase
 
-
     fun initializeRecorder(context: Context) {
-        if (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            val permissions = arrayOf(
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-            ActivityCompat.requestPermissions(context as Activity, permissions, 0)
-            //TODO: check what happens if the permission is denied -> maybe a popup and closing the app?
+        /*if(!PermissionsChecker(context).checkNeededPermissions()){
+            PermissionsChecker(context).checkNeededPermissions()
         }
+        else {*/
+            outputFile =
+                context.filesDir.absolutePath + "/recording.aac" //TODO: Change path to users preferred save location
+            with(mediaRecorder) {
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                setOutputFile(outputFile)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            }
+            try {
+                mediaRecorder.prepare()
+            } catch (e: IllegalStateException) {
+            } catch (e: IOException) {
+            }
 
-        outputFile =
-            context.getFilesDir().getAbsolutePath() + "/" + "recording" + ".aac" //TODO: Change path to users preferred save location
-        with (mediaRecorder) {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setOutputFile(outputFile)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)}
-
-        try {
-            mediaRecorder.prepare()
-        } catch (e: IllegalStateException) {
-        } catch (e: IOException) {
-        }
     }
 
     fun recordPauseButtonClicked(button: ImageButton) =

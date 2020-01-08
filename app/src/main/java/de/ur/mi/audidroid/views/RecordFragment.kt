@@ -6,8 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.viewmodels.RecordViewModel
+import de.ur.mi.audidroid.models.PermissionsChecker
 import kotlinx.android.synthetic.main.record_fragment.*
 
 class RecordFragment : Fragment() {
@@ -33,9 +34,12 @@ class RecordFragment : Fragment() {
         initializeRecorder()
     }
 
-    private fun initializeRecorder(){
-        viewModel.initializeRecorder(context!!)
-        record_pause_button.setOnClickListener{
+    private fun initializeRecorder() {
+        /*val permissionChecker = PermissionsChecker(context!!)
+        permissionChecker.checkNeededPermissions()
+        viewModel.initializeRecorder(context!!)*/
+        record_pause_button.setOnClickListener {
+
             viewModel.recordPauseButtonClicked(record_pause_button)
             if(!isRecording){toggleVisibility()}
             isRecording = true
