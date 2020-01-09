@@ -16,35 +16,59 @@
         android:layout_marginEnd="8dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp">
 
-            <TextView
-                android:id="@+id/text_recording_date"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/recording_date"
-                app:layout_constraintStart_toStartOf="parent"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:recordingDate="@{recording}"/>
+                app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:id="@+id/text_file_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/recording_file_name"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_recording_date" />
+                <TextView
+                    android:id="@+id/text_recording_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/recording_date"
+                    android:fontFamily="@font/rubik_medium"
+                    app:recordingDate="@{recording}"/>
 
-            <TextView
-                android:id="@+id/text_recording_time"
-                android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/text_file_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/recording_file_name"
+                    android:fontFamily="@font/rubik"/>
+
+                <TextView
+                    android:id="@+id/text_recording_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/recording_time"
+                    android:fontFamily="@font/rubik_light" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/button_popup_menu"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/recording_time"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_file_name" />
+                android:src="@drawable/ic_popup_menu"
+                android:contentDescription="@string/popup_menu_button"
+                android:background="@null"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintVertical_bias="0.016" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.cardview.widget.CardView>
+
 </layout>
