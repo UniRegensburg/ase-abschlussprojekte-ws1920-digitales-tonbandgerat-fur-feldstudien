@@ -23,33 +23,29 @@ class RecordViewModel : ViewModel() {
     private var outputFile = ""
     private lateinit var db: RecorderDatabase
 
-    fun initializeRecorder(context: Context) {
-        /*if(!PermissionsChecker(context).checkNeededPermissions()){
-            PermissionsChecker(context).checkNeededPermissions()
+    private fun initializeRecorder(context: Context) {
+        outputFile =
+            context.filesDir.absolutePath + "/recording.aac" //TODO: Change path to users preferred save location
+        with(mediaRecorder) {
+            setAudioSource(MediaRecorder.AudioSource.MIC)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+            setOutputFile(outputFile)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
         }
-        else {*/
-            outputFile =
-                context.filesDir.absolutePath + "/recording.aac" //TODO: Change path to users preferred save location
-            with(mediaRecorder) {
-                setAudioSource(MediaRecorder.AudioSource.MIC)
-                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-                setOutputFile(outputFile)
-                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            }
-            try {
-                mediaRecorder.prepare()
-            } catch (e: IllegalStateException) {
-            } catch (e: IOException) {
-            }
-
+        try {
+            mediaRecorder.prepare()
+        } catch (e: IllegalStateException) {
+        } catch (e: IOException) {
+        }
     }
 
-    fun recordPauseButtonClicked(button: ImageButton) =
+    fun recordPauseButtonClicked(button: ImageButton, context: Context) =
         when (!isRecording) {
             true -> {
                 button.setImageResource(R.mipmap.pause_button_foreground)
                 isRecording = true
                 if (!resumeRecord) {
+                    initializeRecorder(context)
                     startRecording()
                 } else {
                     resumeRecording()
@@ -64,39 +60,41 @@ class RecordViewModel : ViewModel() {
             }
         }
 
-    private fun startRecording(){
+    private fun startRecording() {
         mediaRecorder.start()
     }
 
-    private fun pauseRecording(){
+    private fun pauseRecording() {
         mediaRecorder.pause()
     }
 
-    private fun resumeRecording(){
+    private fun resumeRecording() {
         mediaRecorder.resume()
     }
 
-    fun cancelRecord(context: Context){
+    fun cancelRecord(context: Context) {
         isRecording = false
         resumeRecord = false
         mediaRecorder.reset()
         sendToast(context, R.string.record_removed)
+        initializeRecorder(context)
     }
 
-    fun confirmRecord(context: Context){
+    fun confirmRecord(context: Context) {
         isRecording = false
         resumeRecord = false
         mediaRecorder.stop()
         mediaRecorder.reset()
         sendToast(context, R.string.record_saved)
         getLastUID(context)
+        initializeRecorder(context)
     }
 
-    private fun getLastUID(context: Context){
+    private fun getLastUID(context: Context) {
         db = RecorderDatabase.getInstance(context)
         doAsync {
-            val count =  db.entryDao().getRowCount()
-            uiThread{
+            val count = db.entryDao().getRowCount()
+            uiThread {
                 saveRecordInDB(count)
             }
         }
@@ -105,16 +103,16 @@ class RecordViewModel : ViewModel() {
     private fun saveRecordInDB(count: Int) {
         val audio =
             EntryEntity(count, outputFile, getDate())
-        doAsync{
+        doAsync {
             db.entryDao().insert(audio)
         }
     }
 
-    private fun getDate() : String{
+    private fun getDate(): String {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     }
 
-    private fun sendToast(context: Context, text: Int){
+    private fun sendToast(context: Context, text: Int) {
         Toast.makeText(context, text, Toast.LENGTH_LONG).show()
     }
 }
