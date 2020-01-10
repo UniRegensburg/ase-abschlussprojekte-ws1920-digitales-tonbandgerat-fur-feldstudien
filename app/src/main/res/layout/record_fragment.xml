@@ -1,77 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".views.RecordFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="isVisible"
+            type="java.lang.Boolean" />
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".views.RecordFragment">
 
-        <!--TODO: Change textview to counter-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/start_timer"
-            android:textSize="@dimen/text_size_big"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.321" />
-
-
-        <LinearLayout
-            android:id="@+id/linearLayout"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.7">
+            android:layout_height="match_parent">
 
-            <ImageButton
-                android:id="@+id/cancel_button"
+            <!--TODO: Change textview to counter-->
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@null"
-                android:contentDescription="@string/cancel_button"
-                android:src="@mipmap/cancel_button_foreground" />
-
-            <ImageButton
-                android:id="@+id/record_pause_button"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="9"
-                android:adjustViewBounds="true"
-                android:background="@null"
-                android:contentDescription="@string/record_pause_button"
-                android:scaleType="fitXY"
-                android:src="@mipmap/recording_button_foreground" />
+                android:text="@string/start_timer"
+                android:textSize="@dimen/text_size_big"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.321" />
 
-            <ImageButton
-                android:id="@+id/confirm_button"
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.7">
+
+                <ImageButton
+                    android:id="@+id/cancel_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:background="@null"
+                    android:contentDescription="@string/cancel_button"
+                    android:src="@mipmap/cancel_button_foreground"
+                    android:visibility="@{isVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}" />
+
+                <ImageButton
+                    android:id="@+id/record_pause_button"
+                    android:layout_width="133dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:adjustViewBounds="true"
+                    android:background="@null"
+                    android:contentDescription="@string/record_pause_button"
+                    android:scaleType="fitXY"
+                    android:src="@mipmap/recording_button_foreground" />
+
+                <ImageButton
+                    android:id="@+id/confirm_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:background="@null"
+                    android:contentDescription="@string/confirm_button"
+                    android:src="@mipmap/confirm_button_foreground"
+                    android:visibility="@{isVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/mark_button"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@null"
-                android:contentDescription="@string/confirm_button"
-                android:src="@mipmap/confirm_button_foreground" />
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:text="@string/mark_button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.95" />
 
-        <Button
-            android:id="@+id/mark_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/mark_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.95" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</layout>
