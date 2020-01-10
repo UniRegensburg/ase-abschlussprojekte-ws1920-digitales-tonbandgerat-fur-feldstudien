@@ -5,6 +5,8 @@ import androidx.databinding.BindingAdapter
 import de.ur.mi.audidroid.models.EntryEntity
 
 @BindingAdapter("recordingDate")
-fun TextView.setRecordingDate(item: EntryEntity) {
-    text = item.date
+fun TextView.setRecordingDate(item: EntryEntity?) {
+    item?.let {
+        text = item.date
+    }
 }

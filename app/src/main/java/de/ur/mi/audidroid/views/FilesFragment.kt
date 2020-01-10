@@ -12,8 +12,10 @@ import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import de.ur.mi.audidroid.adapter.EntryAdapter
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.adapter.RecordingListener
 import de.ur.mi.audidroid.models.EntryRepository
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
@@ -35,7 +37,10 @@ class FilesFragment : Fragment() {
 
         binding.filesViewModel = filesViewModel
 
-        val adapter = EntryAdapter()
+        val adapter = EntryAdapter(RecordingListener {  uId ->
+            //Toast.makeText(context, "${uId}", Toast.LENGTH_SHORT).show()
+            filesViewModel.onRecordingClicked(uId)
+        })
         binding.recordingList.adapter = adapter
 
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
@@ -45,6 +50,15 @@ class FilesFragment : Fragment() {
         })
 
         binding.setLifecycleOwner(this)
+
+        filesViewModel.navigateToReplayFragment.observe(this, Observer { recording ->
+            recording?.let {
+                this.findNavController().navigate(
+                    FilesFragmentDirections
+                        .actionFilesToReplay())
+                filesViewModel.onReplayFragmentNavigated()
+            }
+        })
 
         return binding.root
     }

@@ -6,6 +6,10 @@
         <variable
             name="recording"
             type="de.ur.mi.audidroid.models.EntryEntity"/>
+
+        <variable
+            name="clickListener"
+            type="de.ur.mi.audidroid.adapter.RecordingListener" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -18,7 +22,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp">
+            android:padding="12dp"
+            android:onClick="@{() -> clickListener.onClick(recording)}">
 
             <LinearLayout
                 android:id="@+id/linearLayout"

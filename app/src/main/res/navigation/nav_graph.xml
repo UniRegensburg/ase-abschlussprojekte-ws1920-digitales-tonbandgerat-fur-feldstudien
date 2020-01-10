@@ -14,10 +14,20 @@
         android:id="@+id/files"
         android:name="de.ur.mi.audidroid.views.FilesFragment"
         android:label="files_fragment"
-        tools:layout="@layout/files_fragment" />
+        tools:layout="@layout/files_fragment" >
+        <action
+            android:id="@+id/action_files_to_replay"
+            app:destination="@id/replay" />
+    </fragment>
     <fragment
         android:id="@+id/settings"
         android:name="de.ur.mi.audidroid.views.PreferenceFragment"
         android:label="fragment_settings" />
+    <fragment
+        android:id="@+id/replay"
+        android:name="de.ur.mi.audidroid.views.ReplayFragment"
+        android:label="replay_fragment"
+        tools:layout="@layout/replay_fragment" >
+    </fragment>
 
 </navigation>
