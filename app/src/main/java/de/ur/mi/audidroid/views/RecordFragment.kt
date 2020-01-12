@@ -4,25 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.BindingAdapter
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import kotlinx.android.synthetic.main.record_fragment.*
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 
 
 /**
  * The fragment allows the user to do a voice recording. The changes of the view are handled within.
+ * The view changes automatically with data binding depending on the current state
  * @author: Sabine Roth
  */
 
 class RecordFragment : Fragment() {
 
     private var isRecording = false
+    private lateinit var binding: RecordFragmentBinding
 
     companion object {
         fun newInstance() = RecordFragment()
@@ -34,8 +34,7 @@ class RecordFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding: RecordFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
-        binding.isVisible = false
+        binding = DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
         return binding.root
     }
 
@@ -48,39 +47,32 @@ class RecordFragment : Fragment() {
     private fun initializeRecorder() {
         viewModel.initializeRecorder(context!!)
         record_pause_button.setOnClickListener {
-            viewModel.recordPauseButtonClicked(record_pause_button)
-            if (!isRecording) {
-                //binding show Buttons
+            when(!isRecording){
+                true -> {
+                    viewModel.recordButtonClicked()
+                    binding.isVisible = true
+                    isRecording = true
+                }
+                false -> {
+                    viewModel.pauseButtonClicked()
+                    isRecording = false
+                }
             }
-            isRecording = true
+            binding.isRecording = isRecording
         }
         confirm_button.setOnClickListener {
             viewModel.confirmRecord(context!!)
-            viewModel.initializeRecorder(context!!)
-            record_pause_button.setImageResource(R.mipmap.recording_button_foreground)
-            //binding hide buttons
-            isRecording = false
+            resetRecorder()
         }
         cancel_button.setOnClickListener {
             viewModel.cancelRecord(context!!)
-            viewModel.initializeRecorder(context!!)
-            record_pause_button.setImageResource(R.mipmap.recording_button_foreground)
-            //binding hide buttons
-            isRecording = false
+            resetRecorder()
         }
     }
-
-
-    /** Depending on the current state of the recording various buttons are visible or not */
-    // @BindingAdapter("android:visibility")
-    /*  private fun toggleVisibility(view: View, visible:Boolean) {
-
-          view.visibility = if(visible) View.VISIBLE else View.GONE
-
-
-          confirm_button.visibility =
-              if (confirm_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
-          cancel_button.visibility =
-              if (cancel_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
-      }*/
+    private fun resetRecorder(){
+        viewModel.initializeRecorder(context!!)
+        binding.isVisible = false
+        isRecording = false
+        binding.isRecording = isRecording
+    }
 }

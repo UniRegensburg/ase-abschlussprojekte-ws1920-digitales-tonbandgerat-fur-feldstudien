@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
-import android.widget.ImageButton
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -27,7 +26,7 @@ import java.util.*
 
 class RecordViewModel : ViewModel() {
 
-    private var isRecording = false
+
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
     private var outputFile = ""
@@ -68,25 +67,17 @@ class RecordViewModel : ViewModel() {
         }
     }
 
-    fun recordPauseButtonClicked(button: ImageButton) =
-        when (!isRecording) {
-            true -> {
-                button.setImageResource(R.mipmap.pause_button_foreground)
-                isRecording = true
-                if (!resumeRecord) {
-                    startRecording()
-                } else {
-                    resumeRecording()
-                }
-            }
-
-            false -> {
-                button.setImageResource(R.mipmap.recording_button_foreground)
-                isRecording = false
-                resumeRecord = true
-                pauseRecording()
-            }
+    fun recordButtonClicked() {
+        when (resumeRecord) {
+            true -> resumeRecording()
+            false -> startRecording()
         }
+    }
+
+    fun pauseButtonClicked() {
+        resumeRecord = true
+        pauseRecording()
+    }
 
     private fun startRecording() {
         mediaRecorder.start()
@@ -101,14 +92,12 @@ class RecordViewModel : ViewModel() {
     }
 
     fun cancelRecord(context: Context) {
-        isRecording = false
         resumeRecord = false
         mediaRecorder.reset()
         sendToast(context, R.string.record_removed)
     }
 
     fun confirmRecord(context: Context) {
-        isRecording = false
         resumeRecord = false
         mediaRecorder.stop()
         mediaRecorder.reset()

@@ -9,6 +9,9 @@
         <variable
             name="isVisible"
             type="java.lang.Boolean" />
+        <variable
+            name="isRecording"
+            type="java.lang.Boolean" />
     </data>
 
     <FrameLayout
@@ -40,13 +43,14 @@
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.7">
+                app:layout_constraintVertical_bias="0.7"
+                android:weightSum="1">
 
                 <ImageButton
                     android:id="@+id/cancel_button"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.2"
+                    android:layout_weight="0.3"
                     android:background="@null"
                     android:contentDescription="@string/cancel_button"
                     android:src="@mipmap/cancel_button_foreground"
@@ -56,18 +60,18 @@
                     android:id="@+id/record_pause_button"
                     android:layout_width="133dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.4"
                     android:adjustViewBounds="true"
                     android:background="@null"
                     android:contentDescription="@string/record_pause_button"
                     android:scaleType="fitXY"
-                    android:src="@mipmap/recording_button_foreground" />
+                    android:src="@{isRecording ? @drawable/pause_button : @drawable/record_button, default = @drawable/record_button}" />
 
                 <ImageButton
                     android:id="@+id/confirm_button"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.2"
+                    android:layout_weight="0.3"
                     android:background="@null"
                     android:contentDescription="@string/confirm_button"
                     android:src="@mipmap/confirm_button_foreground"
