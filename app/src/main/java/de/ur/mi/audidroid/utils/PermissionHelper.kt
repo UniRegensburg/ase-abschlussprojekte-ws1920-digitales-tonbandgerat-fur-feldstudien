@@ -63,6 +63,7 @@ class PermissionHelper(val context: Context) {
     }
 
     fun showDialog(missingPermission: String) {
+        //TODO: Using dialog util as soon as it is implemented
         val builder = AlertDialog.Builder(context)
         when (missingPermission) {
             recordPermission -> builder.setMessage(R.string.permission_record)
