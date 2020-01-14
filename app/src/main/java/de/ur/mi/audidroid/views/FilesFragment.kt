@@ -37,9 +37,9 @@ class FilesFragment : Fragment() {
 
         binding.filesViewModel = filesViewModel
 
-        val adapter = EntryAdapter(RecordingListener {  uId ->
+        val adapter = EntryAdapter(RecordingListener {  recordingPath ->
             //Toast.makeText(context, "${uId}", Toast.LENGTH_SHORT).show()
-            filesViewModel.onRecordingClicked(uId)
+            filesViewModel.onRecordingClicked(recordingPath)
         })
         binding.recordingList.adapter = adapter
 
@@ -51,11 +51,11 @@ class FilesFragment : Fragment() {
 
         binding.setLifecycleOwner(this)
 
-        filesViewModel.navigateToReplayFragment.observe(this, Observer { recording ->
-            recording?.let {
+        filesViewModel.navigateToReplayFragment.observe(this, Observer { recordingPath ->
+            recordingPath?.let {
                 this.findNavController().navigate(
                     FilesFragmentDirections
-                        .actionFilesToReplay())
+                        .actionFilesToReplay(recordingPath))
                 filesViewModel.onReplayFragmentNavigated()
             }
         })

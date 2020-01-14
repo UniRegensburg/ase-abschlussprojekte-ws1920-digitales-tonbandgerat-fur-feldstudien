@@ -18,12 +18,12 @@ class FilesViewModel (dataSource: EntryRepository, application: Application) : A
     }
 
     // Navigation to ReplayFragment
-    private val _navigateToReplayFragment = MutableLiveData<Int>()
+    private val _navigateToReplayFragment = MutableLiveData<String>()
     val navigateToReplayFragment
         get() = _navigateToReplayFragment
 
-    fun onRecordingClicked(id: Int){
-        _navigateToReplayFragment.value = id
+    fun onRecordingClicked(recordingPath: String){
+        _navigateToReplayFragment.value = recordingPath
     }
 
     fun onReplayFragmentNavigated() {

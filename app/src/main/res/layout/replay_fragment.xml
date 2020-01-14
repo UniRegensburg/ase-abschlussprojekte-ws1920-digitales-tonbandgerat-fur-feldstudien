@@ -1,18 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".views.FilesFragment">
+    <data>
+        <variable
+            name="replayViewModel"
+            type="de.ur.mi.audidroid.viewmodels.ReplayViewModel" />
+    </data>
 
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="ReplayFragment"
-        android:fontFamily="@font/rubik" />
+        tools:context=".views.ReplayFragment">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/text_file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="124dp"
+                android:text="@string/recording_file_name"
+                android:textSize="35sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/button_replay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="359dp"
+                android:background="@null"
+                android:contentDescription=""
+                android:onClick="@{() -> replayViewModel.onStartReplay()}"
+                android:src="@mipmap/play_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/button_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="460dp"
+                android:background="@null"
+                android:contentDescription=""
+                android:onClick="@{() -> replayViewModel.onPauseReplay()}"
+                android:src="@mipmap/pause_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
 
 </layout>

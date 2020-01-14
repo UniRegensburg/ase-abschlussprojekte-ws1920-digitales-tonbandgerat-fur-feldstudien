@@ -50,6 +50,6 @@ class RecordingDiffCallback : DiffUtil.ItemCallback<EntryEntity>() {
     }
 }
 
-class RecordingListener(val clickListener: (recordingId: Int) -> Unit) {
-    fun onClick(entry: EntryEntity) = clickListener(entry.uid)
+class RecordingListener(val clickListener: (recordingPath: String) -> Unit) {
+    fun onClick(entry: EntryEntity) = clickListener(entry.recordingPath)
 }

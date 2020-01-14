@@ -28,6 +28,9 @@
         android:name="de.ur.mi.audidroid.views.ReplayFragment"
         android:label="replay_fragment"
         tools:layout="@layout/replay_fragment" >
+        <argument
+            android:name="recordingPath"
+            app:argType="string" />
     </fragment>
 
 </navigation>

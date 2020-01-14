@@ -25,6 +25,10 @@ class EntryRepository(application: Application) {
         return allRecordings
     }
 
+    fun getRecordingWithId(recordingKey: Int): LiveData<EntryEntity> {
+        return entryDao.getRecordingWithId(recordingKey)
+    }
+
     companion object {
         private class DeleteEntryAsyncTask(val entryDao: EntryDao): AsyncTask<EntryEntity, Unit, Unit>(){
 

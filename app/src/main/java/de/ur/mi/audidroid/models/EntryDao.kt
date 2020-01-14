@@ -23,6 +23,9 @@ interface EntryDao {
     @Query("SELECT * FROM recordingsTable WHERE uid IN (:userIds)")
     fun loadAllByIds(userIds: IntArray): List<EntryEntity>
 
+    @Query("SELECT * FROM recordingsTable WHERE uid = :key")
+    fun getRecordingWithId(key: Int): LiveData<EntryEntity>
+
     @Insert(onConflict = REPLACE)
     fun insert(entryEntity: EntryEntity)
 
