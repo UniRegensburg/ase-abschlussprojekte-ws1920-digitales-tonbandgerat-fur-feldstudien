@@ -3,14 +3,14 @@ package de.ur.mi.audidroid.viewmodels
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.SystemClock
+import android.view.View
 import android.widget.Chronometer
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.RecorderDatabase
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -50,7 +50,7 @@ class RecordViewModel : ViewModel() {
     fun recordButtonClicked(context: Context) {
         when (resumeRecord) {
             true -> {
-                timer.base = SystemClock.elapsedRealtime() - getStoppedTime()
+                timer.base = SystemClock.elapsedRealtime() - getStoppedTime(context)
                 timer.start()
                 resumeRecording()
             }
@@ -81,36 +81,28 @@ class RecordViewModel : ViewModel() {
         mediaRecorder.resume()
     }
 
-    fun cancelRecord(context: Context) {
-        resumeRecord = false
-        mediaRecorder.reset()
-        resetTimer()
-        sendToast(context, R.string.record_removed)
+    fun cancelRecord(view: View) {
+        showSnackBar(view, R.string.record_removed)
+        endRecordSession()
     }
 
-    fun confirmRecord(context: Context) {
+    fun confirmRecord(view: View, context: Context) {
+        showSnackBar(view, R.string.record_saved)
+        saveRecordInDB(context)
+        endRecordSession()
+    }
+
+    private fun endRecordSession() {
         resumeRecord = false
         mediaRecorder.stop()
         mediaRecorder.reset()
         resetTimer()
-        sendToast(context, R.string.record_saved)
-        getLastUID(context)
     }
 
-    /** Furnishes the current number of entries in the table to set the unique id for the new entry */
-    private fun getLastUID(context: Context) {
+    private fun saveRecordInDB(context: Context) {
         db = RecorderDatabase.getInstance(context)
-        doAsync {
-            val count = db.entryDao().getRowCount()
-            uiThread {
-                saveRecordInDB(count)
-            }
-        }
-    }
-
-    private fun saveRecordInDB(count: Int) {
         val audio =
-            EntryEntity(count, outputFile, getDate())
+            EntryEntity(0, outputFile, getDate(), timer.text.toString())
         doAsync {
             db.entryDao().insert(audio)
         }
@@ -124,9 +116,9 @@ class RecordViewModel : ViewModel() {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     }
 
-    /** Creates a toast with the given [text] */
-    private fun sendToast(context: Context, text: Int) {
-        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+    /** Sends a snackbar for user information with the given [text] */
+    private fun showSnackBar(view: View, text: Int) {
+        Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
     }
 
     fun initializeTimer(chronometer: Chronometer) {
@@ -134,14 +126,21 @@ class RecordViewModel : ViewModel() {
     }
 
     /** Returns the last stopped time as an Integer value */
-    private fun getStoppedTime(): Int {
+    private fun getStoppedTime(context: Context): Int {
         val timeArray = currentRecordTime.split(":")
+        val res = context.resources
         return if (timeArray.size == 2) {
-            (Integer.parseInt(timeArray[0]) * 60 * 1000) + (Integer.parseInt(timeArray[1]) * 1000)
+            (Integer.parseInt(timeArray[0]) * res.getInteger(R.integer.counter_divider_minutes_hours) * res.getInteger(
+                R.integer.counter_multiplier
+            )) + (Integer.parseInt(timeArray[1]) * res.getInteger(R.integer.counter_multiplier))
         } else {
-            (Integer.parseInt(timeArray[0]) * 60 * 60 * 1000) + (Integer.parseInt(timeArray[1]) * 60 * 1000) + (Integer.parseInt(
+            (Integer.parseInt(timeArray[0]) * res.getInteger(R.integer.counter_divider_minutes_hours) * res.getInteger(
+                R.integer.counter_divider_minutes_hours
+            ) * res.getInteger(R.integer.counter_multiplier)) + (Integer.parseInt(timeArray[1]) * res.getInteger(
+                R.integer.counter_divider_minutes_hours
+            ) * res.getInteger(R.integer.counter_multiplier)) + (Integer.parseInt(
                 timeArray[2]
-            ) * 1000)
+            ) * res.getInteger(R.integer.counter_multiplier))
         }
     }
 

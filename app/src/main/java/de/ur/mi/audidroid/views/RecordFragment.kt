@@ -61,11 +61,11 @@ class RecordFragment : Fragment() {
             binding.isRecording = isRecording
         }
         confirm_button.setOnClickListener {
-            viewModel.confirmRecord(context!!)
+            viewModel.confirmRecord(it, context!!)
             resetRecorder()
         }
         cancel_button.setOnClickListener {
-            viewModel.cancelRecord(context!!)
+            viewModel.cancelRecord(it)
             resetRecorder()
         }
     }
