@@ -34,6 +34,7 @@ class RecordFragment : Fragment() {
     }
 
     private fun initializeRecorderFunctionality() {
+        viewModel.initializeTimer(chronometer)
         record_pause_button.setOnClickListener {
             viewModel.recordPauseButtonClicked(record_pause_button, context!!)
             if (!isRecording) {

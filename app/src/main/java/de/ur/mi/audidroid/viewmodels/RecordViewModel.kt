@@ -27,7 +27,7 @@ class RecordViewModel : ViewModel() {
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
 
-    fun initializeRecorder(context: Context) {
+    private fun initializeRecorder(context: Context) {
         outputFile =
             context.filesDir.absolutePath + "/recording.aac" //TODO: Change path to users preferred save location
         with(mediaRecorder) {
