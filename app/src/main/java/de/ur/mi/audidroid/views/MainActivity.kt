@@ -1,26 +1,31 @@
 package de.ur.mi.audidroid.views
 
+import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.navigation.findNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.material.navigation.NavigationView
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import androidx.preference.PreferenceManager
-import kotlinx.android.synthetic.main.app_bar_main.*
+import com.google.android.material.navigation.NavigationView
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.utils.PermissionHelper
 import de.ur.mi.audidroid.utils.ThemeHelper
+import kotlinx.android.synthetic.main.app_bar_main.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private val drawerLayout: DrawerLayout by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
     private val navController by lazy { findNavController(R.id.nav_host_fragment) }
-    private val navigationView: NavigationView by lazy { findViewById<NavigationView>(
-        R.id.nav_view
-    ) }
+    private val navigationView: NavigationView by lazy {
+        findViewById<NavigationView>(
+            R.id.nav_view
+        )
+    }
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         navigationView.setupWithNavController(navController)
 
         initTheme()
+        checkPermissions()
     }
 
     /** Applies the app theme selected by the user.
@@ -49,7 +55,33 @@ class MainActivity : AppCompatActivity() {
      */
     private fun initTheme() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        ThemeHelper.applyTheme(preferences.getString(getString(R.string.theme_preference_key), "default")!!)
+        ThemeHelper.applyTheme(
+            preferences.getString(
+                getString(R.string.theme_preference_key),
+                "default"
+            )!!
+        )
+    }
+
+    private fun checkPermissions() {
+        val permissionsChecker =
+            PermissionHelper(this@MainActivity)
+        val result = permissionsChecker.permissionsGranted()
+        if (result != null) permissionsChecker.showDialog(result)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+    ) {
+        when (requestCode) {
+            requestCode -> {
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED ||
+                    grantResults[1] != PackageManager.PERMISSION_GRANTED || grantResults[2] != PackageManager.PERMISSION_GRANTED
+                ) {
+                    checkPermissions()
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

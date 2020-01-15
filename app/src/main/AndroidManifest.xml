@@ -26,6 +26,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.MainActivity" />
+        <activity android:name=".utils.PermissionHelper" />
 
         <meta-data
             android:name="preloaded_fonts"

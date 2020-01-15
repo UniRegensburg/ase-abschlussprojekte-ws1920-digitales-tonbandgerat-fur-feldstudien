@@ -1,13 +1,13 @@
 package de.ur.mi.audidroid.views
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import de.ur.mi.audidroid.viewmodels.RecordViewModel
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import kotlinx.android.synthetic.main.record_fragment.*
 
 class RecordFragment : Fragment() {
@@ -30,26 +30,25 @@ class RecordFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(RecordViewModel::class.java)
-        initializeRecorder()
+        initializeRecorderFunctionality()
     }
 
-    private fun initializeRecorder(){
-        viewModel.initializeRecorder(context!!)
-        record_pause_button.setOnClickListener{
-            viewModel.recordPauseButtonClicked(record_pause_button)
-            if(!isRecording){toggleVisibility()}
+    private fun initializeRecorderFunctionality() {
+        record_pause_button.setOnClickListener {
+            viewModel.recordPauseButtonClicked(record_pause_button, context!!)
+            if (!isRecording) {
+                toggleVisibility()
+            }
             isRecording = true
         }
         confirm_button.setOnClickListener {
             viewModel.confirmRecord(context!!)
-            viewModel.initializeRecorder(context!!)
             record_pause_button.setImageResource(R.mipmap.record_button_foreground)
             toggleVisibility()
             isRecording = false
         }
         cancel_button.setOnClickListener {
             viewModel.cancelRecord(context!!)
-            viewModel.initializeRecorder(context!!)
             record_pause_button.setImageResource(R.mipmap.record_button_foreground)
             toggleVisibility()
             isRecording = false
@@ -57,8 +56,10 @@ class RecordFragment : Fragment() {
         toggleVisibility()
     }
 
-    private fun toggleVisibility(){
-        confirm_button.visibility = if (confirm_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
-        cancel_button.visibility = if (cancel_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
+    private fun toggleVisibility() {
+        confirm_button.visibility =
+            if (confirm_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
+        cancel_button.visibility =
+            if (cancel_button.visibility == View.VISIBLE) View.INVISIBLE else View.VISIBLE
     }
 }
