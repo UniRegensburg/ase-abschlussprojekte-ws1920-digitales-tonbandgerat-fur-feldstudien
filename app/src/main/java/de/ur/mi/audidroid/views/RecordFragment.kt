@@ -43,13 +43,13 @@ class RecordFragment : Fragment() {
             isRecording = true
         }
         confirm_button.setOnClickListener {
-            viewModel.confirmRecord(context!!)
+            viewModel.confirmRecord(it, context!!)
             record_pause_button.setImageResource(R.mipmap.record_button_foreground)
             toggleVisibility()
             isRecording = false
         }
         cancel_button.setOnClickListener {
-            viewModel.cancelRecord(context!!)
+            viewModel.cancelRecord(it)
             record_pause_button.setImageResource(R.mipmap.record_button_foreground)
             toggleVisibility()
             isRecording = false

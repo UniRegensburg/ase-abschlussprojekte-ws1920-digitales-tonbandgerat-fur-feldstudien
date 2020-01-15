@@ -31,7 +31,4 @@ interface EntryDao {
     /** deletes all entries TODO: Delete comment after Issue #33 is done because clearTable is self-explaining*/
     @Query("DELETE FROM recordingsTable")
     fun clearTable()
-
-    @Query("SELECT COUNT(recordingPath) FROM recordingsTable")
-    fun getRowCount(): Int
 }
