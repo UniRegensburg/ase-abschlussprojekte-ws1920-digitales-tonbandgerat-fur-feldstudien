@@ -41,15 +41,15 @@ class RecordFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(RecordViewModel::class.java)
-        initializeRecorder()
+        initializeRecorderFunctionality()
     }
 
-    private fun initializeRecorder() {
-        viewModel.initializeRecorder(context!!)
+    private fun initializeRecorderFunctionality() {
+        viewModel.initializeTimer(chronometer)
         record_pause_button.setOnClickListener {
-            when(!isRecording){
+            when (!isRecording) {
                 true -> {
-                    viewModel.recordButtonClicked()
+                    viewModel.recordButtonClicked(context!!)
                     binding.isVisible = true
                     isRecording = true
                 }
@@ -69,8 +69,8 @@ class RecordFragment : Fragment() {
             resetRecorder()
         }
     }
-    private fun resetRecorder(){
-        viewModel.initializeRecorder(context!!)
+
+    private fun resetRecorder() {
         binding.isVisible = false
         isRecording = false
         binding.isRecording = isRecording

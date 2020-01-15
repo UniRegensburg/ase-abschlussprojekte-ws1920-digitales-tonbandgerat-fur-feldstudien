@@ -1,13 +1,10 @@
 package de.ur.mi.audidroid.viewmodels
 
-import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.media.MediaRecorder
+import android.os.SystemClock
+import android.widget.Chronometer
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
@@ -31,26 +28,10 @@ class RecordViewModel : ViewModel() {
     private val mediaRecorder: MediaRecorder = MediaRecorder()
     private var outputFile = ""
     private lateinit var db: RecorderDatabase
+    private lateinit var timer: Chronometer
+    private var currentRecordTime: String = ""
 
-
-    fun initializeRecorder(context: Context) {
-        if (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            val permissions = arrayOf(
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-            ActivityCompat.requestPermissions(context as Activity, permissions, 0)
-            //TODO: check what happens if the permission is denied -> maybe a popup and closing the app?
-        }
-
+    private fun initializeRecorder(context: Context) {
         outputFile =
             context.filesDir.absolutePath + "/recording.aac" //TODO: Change path to users preferred save location
         with(mediaRecorder) {
@@ -59,7 +40,6 @@ class RecordViewModel : ViewModel() {
             setOutputFile(outputFile)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
         }
-
         try {
             mediaRecorder.prepare()
         } catch (e: IllegalStateException) {
@@ -67,16 +47,26 @@ class RecordViewModel : ViewModel() {
         }
     }
 
-    fun recordButtonClicked() {
+    fun recordButtonClicked(context: Context) {
         when (resumeRecord) {
-            true -> resumeRecording()
-            false -> startRecording()
+            true -> {
+                timer.base = SystemClock.elapsedRealtime() - getStoppedTime()
+                timer.start()
+                resumeRecording()
+            }
+            false -> {
+                timer.start()
+                initializeRecorder(context)
+                startRecording()
+            }
         }
     }
 
     fun pauseButtonClicked() {
         resumeRecord = true
         pauseRecording()
+        timer.stop()
+        currentRecordTime = timer.text.toString()
     }
 
     private fun startRecording() {
@@ -94,6 +84,7 @@ class RecordViewModel : ViewModel() {
     fun cancelRecord(context: Context) {
         resumeRecord = false
         mediaRecorder.reset()
+        resetTimer()
         sendToast(context, R.string.record_removed)
     }
 
@@ -101,6 +92,7 @@ class RecordViewModel : ViewModel() {
         resumeRecord = false
         mediaRecorder.stop()
         mediaRecorder.reset()
+        resetTimer()
         sendToast(context, R.string.record_saved)
         getLastUID(context)
     }
@@ -135,5 +127,27 @@ class RecordViewModel : ViewModel() {
     /** Creates a toast with the given [text] */
     private fun sendToast(context: Context, text: Int) {
         Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+    }
+
+    fun initializeTimer(chronometer: Chronometer) {
+        timer = chronometer
+    }
+
+    /** Returns the last stopped time as an Integer value */
+    private fun getStoppedTime(): Int {
+        val timeArray = currentRecordTime.split(":")
+        return if (timeArray.size == 2) {
+            (Integer.parseInt(timeArray[0]) * 60 * 1000) + (Integer.parseInt(timeArray[1]) * 1000)
+        } else {
+            (Integer.parseInt(timeArray[0]) * 60 * 60 * 1000) + (Integer.parseInt(timeArray[1]) * 60 * 1000) + (Integer.parseInt(
+                timeArray[2]
+            ) * 1000)
+        }
+    }
+
+    /** Resets timer to 00:00 */
+    private fun resetTimer() {
+        timer.stop()
+        timer.base = SystemClock.elapsedRealtime()
     }
 }
