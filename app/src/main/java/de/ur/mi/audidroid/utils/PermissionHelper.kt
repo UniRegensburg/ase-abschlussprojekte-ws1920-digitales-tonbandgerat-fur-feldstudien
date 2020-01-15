@@ -15,7 +15,7 @@ class PermissionHelper(val context: Context) {
     private val recordPermission = Manifest.permission.RECORD_AUDIO
     private val writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
     private val readPermission = Manifest.permission.READ_EXTERNAL_STORAGE
-    private val requestCode = 101
+    private val requestCode =  context.resources.getInteger(R.integer.database_request_code)
     private var permissionsResult: String? = null
     private val firstRequest = Resources.getSystem().getString(android.R.string.ok)
 
