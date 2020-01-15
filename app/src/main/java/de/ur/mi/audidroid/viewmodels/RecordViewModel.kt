@@ -1,20 +1,15 @@
 package de.ur.mi.audidroid.viewmodels
 
-import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.widget.Chronometer
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.RecorderDatabase
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.RecorderDatabase
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.IOException
@@ -32,33 +27,15 @@ class RecordViewModel : ViewModel() {
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
 
-
     fun initializeRecorder(context: Context) {
-        if (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.RECORD_AUDIO
-            ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            val permissions = arrayOf(
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
-            ActivityCompat.requestPermissions(context as Activity, permissions, 0)
-            //TODO: check what happens if the permission is denied -> maybe a popup and closing the app?
-        }
-
         outputFile =
-            context.getFilesDir().getAbsolutePath() + "/" + "recording" + ".aac" //TODO: Change path to users preferred save location
-        with (mediaRecorder) {
+            context.filesDir.absolutePath + "/recording.aac" //TODO: Change path to users preferred save location
+        with(mediaRecorder) {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setOutputFile(outputFile)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)}
-
+            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+        }
         try {
             mediaRecorder.prepare()
         } catch (e: IllegalStateException) {
@@ -66,7 +43,7 @@ class RecordViewModel : ViewModel() {
         }
     }
 
-    fun recordPauseButtonClicked(button: ImageButton) =
+    fun recordPauseButtonClicked(button: ImageButton, context: Context) =
         when (!isRecording) {
             true -> {
                 button.setImageResource(R.mipmap.pause_button_foreground)
@@ -74,6 +51,7 @@ class RecordViewModel : ViewModel() {
                 if (!resumeRecord) {
                     resetTimer()
                     timer.start()
+                    initializeRecorder(context)
                     startRecording()
                 } else {
                     timer.base = SystemClock.elapsedRealtime() - getStoppedTime()
@@ -92,27 +70,28 @@ class RecordViewModel : ViewModel() {
             }
         }
 
-    private fun startRecording(){
+    private fun startRecording() {
         mediaRecorder.start()
     }
 
-    private fun pauseRecording(){
+    private fun pauseRecording() {
         mediaRecorder.pause()
     }
 
-    private fun resumeRecording(){
+    private fun resumeRecording() {
         mediaRecorder.resume()
     }
 
-    fun cancelRecord(context: Context){
+    fun cancelRecord(context: Context) {
         isRecording = false
         resumeRecord = false
         mediaRecorder.reset()
         resetTimer()
         sendToast(context, R.string.record_removed)
+        initializeRecorder(context)
     }
 
-    fun confirmRecord(context: Context){
+    fun confirmRecord(context: Context) {
         isRecording = false
         resumeRecord = false
         mediaRecorder.stop()
@@ -120,13 +99,14 @@ class RecordViewModel : ViewModel() {
         resetTimer()
         sendToast(context, R.string.record_saved)
         getLastUID(context)
+        initializeRecorder(context)
     }
 
-    private fun getLastUID(context: Context){
+    private fun getLastUID(context: Context) {
         db = RecorderDatabase.getInstance(context)
         doAsync {
-            val count =  db.entryDao().getRowCount()
-            uiThread{
+            val count = db.entryDao().getRowCount()
+            uiThread {
                 saveRecordInDB(count)
             }
         }
@@ -135,16 +115,16 @@ class RecordViewModel : ViewModel() {
     private fun saveRecordInDB(count: Int) {
         val audio =
             EntryEntity(count, outputFile, getDate())
-        doAsync{
+        doAsync {
             db.entryDao().insert(audio)
         }
     }
 
-    private fun getDate() : String{
+    private fun getDate(): String {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     }
 
-    private fun sendToast(context: Context, text: Int){
+    private fun sendToast(context: Context, text: Int) {
         Toast.makeText(context, text, Toast.LENGTH_LONG).show()
     }
 
