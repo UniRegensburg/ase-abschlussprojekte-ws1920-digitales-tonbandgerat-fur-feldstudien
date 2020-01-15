@@ -10,17 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--TODO: Change textview to counter-->
-        <TextView
-            android:layout_width="wrap_content"
+        <Chronometer
+            android:id="@+id/chronometer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/start_timer"
+            android:textAlignment="center"
             android:textSize="@dimen/text_size_big"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.321" />
+            app:layout_constraintVertical_bias="0.263" />
 
 
         <LinearLayout
