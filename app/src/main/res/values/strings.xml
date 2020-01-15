@@ -18,12 +18,17 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
 
+    <!-- ReplayFragment Strings -->
+    <string name="replay_button">Replay recording</string>
+    <string name="pause_button">Pause recording</string>
+
     <!-- FilesFragment Strings -->
     <string name="recording_date">DD.MM.YYYY</string>
     <string name="recording_file_name">Recording</string>
     <string name="recording_time">MM:SS</string>
     <string name="popup_menu_button">Popup Menu</string>
     <string name="popup_menu_option_delete">Delete</string>
+    <string name="popup_menu_option_edit">Edit</string>
 
     <!-- Recorder strings -->
     <string name="confirm_button">Confirm Button</string>

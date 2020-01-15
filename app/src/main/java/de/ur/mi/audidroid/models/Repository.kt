@@ -4,7 +4,11 @@ import android.app.Application
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 
-class EntryRepository(application: Application) {
+/**
+ *
+ * @author
+ */
+class Repository(application: Application) {
 
     private var entryDao: EntryDao
     private var allRecordings : LiveData<List<EntryEntity>>

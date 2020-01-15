@@ -8,7 +8,11 @@ import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.databinding.EntryItemBinding
 
-class EntryAdapter(val clickListener: RecordingListener): ListAdapter<EntryEntity, EntryAdapter.ViewHolder>(RecordingDiffCallback()){
+/**
+ * ViewModel for ReplayFragment.
+ * @author
+ */
+class EntryAdapter(private val clickListener: RecordingListener): ListAdapter<EntryEntity, EntryAdapter.ViewHolder>(RecordingDiffCallback()){
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position)!!, clickListener)
@@ -18,7 +22,7 @@ class EntryAdapter(val clickListener: RecordingListener): ListAdapter<EntryEntit
         return ViewHolder.from(parent) as ViewHolder
     }
 
-    class ViewHolder private constructor(val binding: EntryItemBinding) : RecyclerView.ViewHolder(binding.root){
+    class ViewHolder private constructor(private val binding: EntryItemBinding) : RecyclerView.ViewHolder(binding.root){
 
         fun bind(
             item: EntryEntity,

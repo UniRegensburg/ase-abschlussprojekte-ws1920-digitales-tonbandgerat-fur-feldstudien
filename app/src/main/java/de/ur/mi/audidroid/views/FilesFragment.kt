@@ -16,9 +16,13 @@ import androidx.navigation.fragment.findNavController
 import de.ur.mi.audidroid.adapter.EntryAdapter
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.RecordingListener
-import de.ur.mi.audidroid.models.EntryRepository
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
+/**
+ * ViewModel for ReplayFragment.
+ * @author
+ */
 class FilesFragment : Fragment() {
 
     override fun onCreateView(
@@ -30,7 +34,7 @@ class FilesFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
 
-        val dataSource = EntryRepository(application)
+        val dataSource = Repository(application)
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
 
         val filesViewModel = ViewModelProviders.of(this, viewModelFactory).get(FilesViewModel::class.java)
@@ -51,6 +55,7 @@ class FilesFragment : Fragment() {
 
         binding.setLifecycleOwner(this)
 
+        // Observer on the state variable for Navigating when an item is clicked.
         filesViewModel.navigateToReplayFragment.observe(this, Observer { recordingPath ->
             recordingPath?.let {
                 this.findNavController().navigate(
@@ -63,7 +68,10 @@ class FilesFragment : Fragment() {
         return binding.root
     }
 
-    class FilesViewModelFactory(private val dataSource: EntryRepository, private val application: Application) : ViewModelProvider.Factory {
+    /**
+     * Provides the Repository and context to the ViewModel.
+     */
+    class FilesViewModelFactory(private val dataSource: Repository, private val application: Application) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T: ViewModel?> create(modelClass: Class<T>): T {
             if(modelClass.isAssignableFrom(FilesViewModel::class.java)) {

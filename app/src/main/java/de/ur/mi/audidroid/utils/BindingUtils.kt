@@ -4,6 +4,10 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import de.ur.mi.audidroid.models.EntryEntity
 
+/**
+ *
+ * @author
+ */
 @BindingAdapter("recordingDate")
 fun TextView.setRecordingDate(item: EntryEntity?) {
     item?.let {

@@ -13,10 +13,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryRepository
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.ReplayViewModel
 import java.lang.IllegalArgumentException
 
+/**
+ * ViewModel for ReplayFragment.
+ * @author
+ */
 class ReplayFragment : Fragment() {
 
     override fun onCreateView(
@@ -31,7 +35,7 @@ class ReplayFragment : Fragment() {
         val args = ReplayFragmentArgs.fromBundle(arguments!!)
         Toast.makeText(context, "RecordingId: ${args.recordingPath}", Toast.LENGTH_SHORT).show()
 
-        val dataSource = EntryRepository(application)
+        val dataSource = Repository(application)
         val viewModelFactory = ReplayViewModelFactory(args.recordingPath, dataSource)
 
         val replayViewModel = ViewModelProviders.of(this, viewModelFactory).get(ReplayViewModel::class.java)
@@ -43,7 +47,10 @@ class ReplayFragment : Fragment() {
         return binding.root
     }
 
-    class ReplayViewModelFactory(private val recordingPath: String, private val dataSource: EntryRepository) : ViewModelProvider.Factory {
+    /**
+     * Provides variable and context to the ViewModel.
+     */
+    class ReplayViewModelFactory(private val recordingPath: String, private val dataSource: Repository) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T: ViewModel?> create(modelClass: Class<T>): T {
             if(modelClass.isAssignableFrom(ReplayViewModel::class.java)) {

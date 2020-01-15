@@ -3,10 +3,14 @@ package de.ur.mi.audidroid.viewmodels
 import android.media.MediaPlayer
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import de.ur.mi.audidroid.models.EntryRepository
+import de.ur.mi.audidroid.models.Repository
 import java.io.IOException
 
-class ReplayViewModel (private val recordingPath: String, dataSource: EntryRepository) : ViewModel(){
+/**
+ * ViewModel for ReplayFragment.
+ * @author
+ */
+class ReplayViewModel (private val recordingPath: String, dataSource: Repository) : ViewModel(){
 
     private lateinit var mediaPlayer: MediaPlayer
     private val repository = dataSource

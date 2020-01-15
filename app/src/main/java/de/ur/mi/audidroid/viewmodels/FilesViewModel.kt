@@ -5,9 +5,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.EntryRepository
+import de.ur.mi.audidroid.models.Repository
 
-class FilesViewModel (dataSource: EntryRepository, application: Application) : AndroidViewModel(application) {
+/**
+ * ViewModel for FilesFragment.
+ * @author
+ */
+class FilesViewModel (dataSource: Repository, application: Application) : AndroidViewModel(application) {
 
     private val repository = dataSource
 
