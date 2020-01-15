@@ -3,14 +3,10 @@ package de.ur.mi.audidroid.viewmodels
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.SystemClock
-import android.util.Log
-import android.view.View
 import android.widget.Chronometer
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.annotation.UiThread
 import androidx.lifecycle.ViewModel
-import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.RecorderDatabase
@@ -58,7 +54,7 @@ class RecordViewModel : ViewModel() {
                     initializeRecorder(context)
                     startRecording()
                 } else {
-                    timer.base = SystemClock.elapsedRealtime() - getStoppedTime(context)
+                    timer.base = SystemClock.elapsedRealtime() - getStoppedTime()
                     timer.start()
                     resumeRecording()
                 }
@@ -86,29 +82,39 @@ class RecordViewModel : ViewModel() {
         mediaRecorder.resume()
     }
 
-    fun cancelRecord(view: View) {
-        showSnackBar(view, R.string.record_removed)
-        endRecordSession()
+    fun cancelRecord(context: Context) {
+        isRecording = false
+        resumeRecord = false
+        mediaRecorder.reset()
+        resetTimer()
+        sendToast(context, R.string.record_removed)
+        initializeRecorder(context)
     }
 
-    fun confirmRecord(view: View, context: Context) {
-        showSnackBar(view, R.string.record_saved)
-        saveRecordInDB(context)
-        endRecordSession()
-    }
-
-    private fun endRecordSession() {
+    fun confirmRecord(context: Context) {
         isRecording = false
         resumeRecord = false
         mediaRecorder.stop()
         mediaRecorder.reset()
         resetTimer()
+        sendToast(context, R.string.record_saved)
+        getLastUID(context)
+        initializeRecorder(context)
     }
 
-    private fun saveRecordInDB(context: Context) {
+    private fun getLastUID(context: Context) {
         db = RecorderDatabase.getInstance(context)
+        doAsync {
+            val count = db.entryDao().getRowCount()
+            uiThread {
+                saveRecordInDB(count)
+            }
+        }
+    }
+
+    private fun saveRecordInDB(count: Int) {
         val audio =
-            EntryEntity(0, outputFile, getDate(), timer.text.toString())
+            EntryEntity(count, outputFile, getDate())
         doAsync {
             db.entryDao().insert(audio)
         }
@@ -118,8 +124,8 @@ class RecordViewModel : ViewModel() {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     }
 
-    private fun showSnackBar(view: View, text: Int) {
-        Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
+    private fun sendToast(context: Context, text: Int) {
+        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
     }
 
     fun initializeTimer(chronometer: Chronometer) {
@@ -127,26 +133,19 @@ class RecordViewModel : ViewModel() {
     }
 
     /** Returns the last stopped time as an Integer value */
-    private fun getStoppedTime(context: Context): Int {
+    private fun getStoppedTime(): Int {
         val timeArray = currentRecordTime.split(":")
-        val res = context.resources
         return if (timeArray.size == 2) {
-            (Integer.parseInt(timeArray[0]) * res.getInteger(R.integer.counter_divider_minutes_hours) * res.getInteger(
-                R.integer.counter_multiplier
-            )) + (Integer.parseInt(timeArray[1]) * res.getInteger(R.integer.counter_multiplier))
+            (Integer.parseInt(timeArray[0]) * 60 * 1000) + (Integer.parseInt(timeArray[1]) * 1000)
         } else {
-            (Integer.parseInt(timeArray[0]) * res.getInteger(R.integer.counter_divider_minutes_hours) * res.getInteger(
-                R.integer.counter_divider_minutes_hours
-            ) * res.getInteger(R.integer.counter_multiplier)) + (Integer.parseInt(timeArray[1]) * res.getInteger(
-                R.integer.counter_divider_minutes_hours
-            ) * res.getInteger(R.integer.counter_multiplier)) + (Integer.parseInt(
+            (Integer.parseInt(timeArray[0]) * 60 * 60 * 1000) + (Integer.parseInt(timeArray[1]) * 60 * 1000) + (Integer.parseInt(
                 timeArray[2]
-            ) * res.getInteger(R.integer.counter_multiplier))
+            ) * 1000)
         }
     }
 
     /** Resets timer to 00:00 */
-    private fun resetTimer() {
+    private fun resetTimer(){
         timer.stop()
         timer.base = SystemClock.elapsedRealtime()
     }
