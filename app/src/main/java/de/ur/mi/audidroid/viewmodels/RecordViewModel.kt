@@ -3,11 +3,13 @@ package de.ur.mi.audidroid.viewmodels
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.SystemClock
-import android.view.View
 import android.widget.Chronometer
+import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.RecorderDatabase
 import org.jetbrains.anko.doAsync
@@ -15,13 +17,13 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 /**
  * The ViewModel handles the changes to the view's data and the event logic for the user interaction referring to the RecordFragment
  * @author: Sabine Roth
  */
 
-class RecordViewModel : ViewModel() {
+class RecordViewModel(val context: Context, private val binding: RecordFragmentBinding) :
+    ViewModel() {
 
 
     private var resumeRecord = false
@@ -30,6 +32,20 @@ class RecordViewModel : ViewModel() {
     private lateinit var db: RecorderDatabase
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
+    private lateinit var frameLayout: FrameLayout
+
+    init {
+        binding.buttonsVisible = false
+        binding.isRecording = false
+    }
+
+    fun initializeTimer(chronometer: Chronometer) {
+        timer = chronometer
+    }
+
+    fun initializeLayout(frameLayout: FrameLayout) {
+        this.frameLayout = frameLayout
+    }
 
     private fun initializeRecorder(context: Context) {
         outputFile =
@@ -47,7 +63,21 @@ class RecordViewModel : ViewModel() {
         }
     }
 
-    fun recordButtonClicked(context: Context) {
+    fun recordPauseButtonClicked() {
+        when (binding.isRecording) {
+            false -> {
+                recordButtonClicked()
+                binding.buttonsVisible = true
+                binding.isRecording = true
+            }
+            true -> {
+                pauseButtonClicked()
+                binding.isRecording = false
+            }
+        }
+    }
+
+    private fun recordButtonClicked() {
         when (resumeRecord) {
             true -> {
                 timer.base = SystemClock.elapsedRealtime() - getStoppedTime(context)
@@ -55,6 +85,7 @@ class RecordViewModel : ViewModel() {
                 resumeRecording()
             }
             false -> {
+                resetTimer()
                 timer.start()
                 initializeRecorder(context)
                 startRecording()
@@ -62,11 +93,31 @@ class RecordViewModel : ViewModel() {
         }
     }
 
-    fun pauseButtonClicked() {
+    private fun pauseButtonClicked() {
         resumeRecord = true
         pauseRecording()
         timer.stop()
         currentRecordTime = timer.text.toString()
+    }
+
+    fun cancelRecord() {
+        showSnackBar(R.string.record_removed)
+        endRecordSession()
+    }
+
+    fun confirmRecord() {
+        showSnackBar(R.string.record_saved)
+        saveRecordInDB()
+        endRecordSession()
+    }
+
+    private fun endRecordSession() {
+        binding.buttonsVisible = false
+        binding.isRecording = false
+        resumeRecord = false
+        mediaRecorder.stop()
+        mediaRecorder.reset()
+        resetTimer()
     }
 
     private fun startRecording() {
@@ -81,25 +132,7 @@ class RecordViewModel : ViewModel() {
         mediaRecorder.resume()
     }
 
-    fun cancelRecord(view: View) {
-        showSnackBar(view, R.string.record_removed)
-        endRecordSession()
-    }
-
-    fun confirmRecord(view: View, context: Context) {
-        showSnackBar(view, R.string.record_saved)
-        saveRecordInDB(context)
-        endRecordSession()
-    }
-
-    private fun endRecordSession() {
-        resumeRecord = false
-        mediaRecorder.stop()
-        mediaRecorder.reset()
-        resetTimer()
-    }
-
-    private fun saveRecordInDB(context: Context) {
+    private fun saveRecordInDB() {
         db = RecorderDatabase.getInstance(context)
         val audio =
             EntryEntity(0, outputFile, getDate(), timer.text.toString())
@@ -117,12 +150,8 @@ class RecordViewModel : ViewModel() {
     }
 
     /** Sends a snackbar for user information with the given [text] */
-    private fun showSnackBar(view: View, text: Int) {
-        Snackbar.make(view, text, Snackbar.LENGTH_LONG).show()
-    }
-
-    fun initializeTimer(chronometer: Chronometer) {
-        timer = chronometer
+    private fun showSnackBar(text: Int) {
+        Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 
     /** Returns the last stopped time as an Integer value */

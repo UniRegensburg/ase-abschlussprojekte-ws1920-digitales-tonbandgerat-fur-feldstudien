@@ -4,10 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
 
         <variable
-            name="isVisible"
+            name="recordViewModel"
+            type="de.ur.mi.audidroid.viewmodels.RecordViewModel" />
+
+        <variable
+            name="buttonsVisible"
             type="java.lang.Boolean" />
 
         <variable
@@ -18,7 +23,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".views.RecordFragment">
+        tools:context=".views.RecordFragment"
+        android:id="@+id/frameLayout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -54,7 +60,8 @@
                     android:background="@null"
                     android:contentDescription="@string/cancel_button"
                     android:src="@mipmap/cancel_button_foreground"
-                    android:visibility="@{isVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}" />
+                    android:visibility="@{buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+                    android:onClick="@{() -> recordViewModel.cancelRecord()}"/>
 
                 <ImageButton
                     android:id="@+id/record_pause_button"
@@ -65,7 +72,8 @@
                     android:background="@null"
                     android:contentDescription="@string/record_pause_button"
                     android:scaleType="fitXY"
-                    android:src="@{isRecording ? @drawable/pause_button : @drawable/record_button, default = @drawable/record_button}" />
+                    android:src="@{isRecording ? @drawable/pause_button : @drawable/record_button, default = @drawable/record_button}"
+                    android:onClick="@{() -> recordViewModel.recordPauseButtonClicked()}"/>
 
                 <ImageButton
                     android:id="@+id/confirm_button"
@@ -75,7 +83,8 @@
                     android:background="@null"
                     android:contentDescription="@string/confirm_button"
                     android:src="@mipmap/confirm_button_foreground"
-                    android:visibility="@{isVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}" />
+                    android:visibility="@{buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+                    android:onClick="@{() -> recordViewModel.confirmRecord()}"/>
             </LinearLayout>
 
             <Button
