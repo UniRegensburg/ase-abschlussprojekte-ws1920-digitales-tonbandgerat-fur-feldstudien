@@ -21,16 +21,16 @@ class FilesViewModel (dataSource: Repository, application: Application) : Androi
         repository.delete(entryEntity)
     }
 
-    // Navigation to ReplayFragment
-    private val _navigateToReplayFragment = MutableLiveData<String>()
-    val navigateToReplayFragment
-        get() = _navigateToReplayFragment
+    // Navigation to PlayerFragment
+    private val _navigateToPlayerFragment = MutableLiveData<String>()
+    val navigateToPlayerFragment
+        get() = _navigateToPlayerFragment
 
     fun onRecordingClicked(recordingPath: String){
-        _navigateToReplayFragment.value = recordingPath
+        _navigateToPlayerFragment.value = recordingPath
     }
 
-    fun onReplayFragmentNavigated() {
-        _navigateToReplayFragment.value = null
+    fun onPlayerFragmentNavigated() {
+        _navigateToPlayerFragment.value = null
     }
 }

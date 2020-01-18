@@ -9,7 +9,7 @@ import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.databinding.EntryItemBinding
 
 /**
- * ViewModel for ReplayFragment.
+ * ViewModel for PlayerFragment.
  * @author
  */
 class EntryAdapter(private val clickListener: RecordingListener): ListAdapter<EntryEntity, EntryAdapter.ViewHolder>(RecordingDiffCallback()){

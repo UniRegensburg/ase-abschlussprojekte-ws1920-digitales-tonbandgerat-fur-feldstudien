@@ -5,14 +5,14 @@
 
     <data>
         <variable
-            name="replayViewModel"
-            type="de.ur.mi.audidroid.viewmodels.ReplayViewModel" />
+            name="playerViewModel"
+            type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".views.ReplayFragment">
+        tools:context=".views.PlayerFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -30,13 +30,13 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
-                android:id="@+id/button_replay"
+                android:id="@+id/button_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="359dp"
                 android:background="@null"
-                android:contentDescription="@string/replay_button"
-                android:onClick="@{() -> replayViewModel.onStartReplay()}"
+                android:contentDescription="@string/play_button"
+                android:onClick="@{() -> playerViewModel.onStartPlayer()}"
                 android:src="@mipmap/play_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
@@ -50,7 +50,7 @@
                 android:layout_marginTop="460dp"
                 android:background="@null"
                 android:contentDescription="@string/pause_button"
-                android:onClick="@{() -> replayViewModel.onPauseReplay()}"
+                android:onClick="@{() -> playerViewModel.onPausePlayer()}"
                 android:src="@mipmap/pause_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"

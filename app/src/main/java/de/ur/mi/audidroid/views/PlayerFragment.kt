@@ -7,40 +7,40 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import de.ur.mi.audidroid.databinding.ReplayFragmentBinding
+import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.viewmodels.ReplayViewModel
+import de.ur.mi.audidroid.viewmodels.PlayerViewModel
 import java.lang.IllegalArgumentException
 
 /**
- * ViewModel for ReplayFragment.
+ * ViewModel for PlayerFragment.
  * @author
  */
-class ReplayFragment : Fragment() {
+class PlayerFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        val binding: ReplayFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.replay_fragment, container, false)
+        val binding: PlayerFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
 
         val application = requireNotNull(this.activity).application
 
-        val args = ReplayFragmentArgs.fromBundle(arguments!!)
+        val args = PlayerFragmentArgs.fromBundle(arguments!!)
         Toast.makeText(context, "RecordingId: ${args.recordingPath}", Toast.LENGTH_SHORT).show()
 
         val dataSource = Repository(application)
-        val viewModelFactory = ReplayViewModelFactory(args.recordingPath, dataSource)
+        val viewModelFactory = PlayerViewModelFactory(args.recordingPath, dataSource)
 
-        val replayViewModel = ViewModelProviders.of(this, viewModelFactory).get(ReplayViewModel::class.java)
+        val playerViewModel = ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
 
-        binding.replayViewModel = replayViewModel
+        binding.playerViewModel = playerViewModel
 
         binding.setLifecycleOwner(this)
 
@@ -50,11 +50,11 @@ class ReplayFragment : Fragment() {
     /**
      * Provides variable and context to the ViewModel.
      */
-    class ReplayViewModelFactory(private val recordingPath: String, private val dataSource: Repository) : ViewModelProvider.Factory {
+    class PlayerViewModelFactory(private val recordingPath: String, private val dataSource: Repository) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T: ViewModel?> create(modelClass: Class<T>): T {
-            if(modelClass.isAssignableFrom(ReplayViewModel::class.java)) {
-                return ReplayViewModel(recordingPath, dataSource) as T
+            if(modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
+                return PlayerViewModel(recordingPath, dataSource) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

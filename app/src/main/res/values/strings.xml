@@ -18,8 +18,8 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
 
-    <!-- ReplayFragment Strings -->
-    <string name="replay_button">Replay recording</string>
+    <!-- PlayerFragment Strings -->
+    <string name="play_button">Play recording</string>
     <string name="pause_button">Pause recording</string>
 
     <!-- FilesFragment Strings -->

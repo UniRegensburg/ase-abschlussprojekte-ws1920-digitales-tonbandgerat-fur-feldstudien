@@ -16,18 +16,18 @@
         android:label="files_fragment"
         tools:layout="@layout/files_fragment" >
         <action
-            android:id="@+id/action_files_to_replay"
-            app:destination="@id/replay" />
+            android:id="@+id/action_files_to_player"
+            app:destination="@id/player" />
     </fragment>
     <fragment
         android:id="@+id/settings"
         android:name="de.ur.mi.audidroid.views.PreferenceFragment"
         android:label="fragment_settings" />
     <fragment
-        android:id="@+id/replay"
-        android:name="de.ur.mi.audidroid.views.ReplayFragment"
-        android:label="replay_fragment"
-        tools:layout="@layout/replay_fragment" >
+        android:id="@+id/player"
+        android:name="de.ur.mi.audidroid.views.PlayerFragment"
+        android:label="player_fragment"
+        tools:layout="@layout/player_fragment" >
         <argument
             android:name="recordingPath"
             app:argType="string" />

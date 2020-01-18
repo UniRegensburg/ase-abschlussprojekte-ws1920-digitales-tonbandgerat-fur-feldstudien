@@ -20,7 +20,7 @@ import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
 /**
- * ViewModel for ReplayFragment.
+ * ViewModel for PlayerFragment.
  * @author
  */
 class FilesFragment : Fragment() {
@@ -56,12 +56,12 @@ class FilesFragment : Fragment() {
         binding.setLifecycleOwner(this)
 
         // Observer on the state variable for Navigating when an item is clicked.
-        filesViewModel.navigateToReplayFragment.observe(this, Observer { recordingPath ->
+        filesViewModel.navigateToPlayerFragment.observe(this, Observer { recordingPath ->
             recordingPath?.let {
                 this.findNavController().navigate(
                     FilesFragmentDirections
-                        .actionFilesToReplay(recordingPath))
-                filesViewModel.onReplayFragmentNavigated()
+                        .actionFilesToPlayer(recordingPath))
+                filesViewModel.onPlayerFragmentNavigated()
             }
         })
 

@@ -7,30 +7,20 @@ import de.ur.mi.audidroid.models.Repository
 import java.io.IOException
 
 /**
- * ViewModel for ReplayFragment.
+ * ViewModel for PlayerFragment.
  * @author
  */
-class ReplayViewModel (private val recordingPath: String, dataSource: Repository) : ViewModel(){
+class PlayerViewModel (private val recordingPath: String, dataSource: Repository) : ViewModel(){
 
-    private lateinit var mediaPlayer: MediaPlayer
     private val repository = dataSource
 
     //private var viewModelJob = Job()
     //private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    fun onStartReplay() {
-        mediaPlayer = MediaPlayer().apply {
-            try {
-                setDataSource(recordingPath)
-                prepare()
-                start()
-            } catch (e: IOException) {
-                Log.e("output", "prepare() failed")
-            }
-        }
+    fun onStartPlayer() {
     }
 
-    fun onPauseReplay(){
+    fun onPausePlayer(){
         Log.d("button","onPausePlay")
     }
 
