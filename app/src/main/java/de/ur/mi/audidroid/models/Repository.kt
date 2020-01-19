@@ -11,7 +11,7 @@ import androidx.lifecycle.LiveData
 class Repository(application: Application) {
 
     private var entryDao: EntryDao
-    private var allRecordings : LiveData<List<EntryEntity>>
+    private var allRecordings: LiveData<List<EntryEntity>>
 
     init {
         val database: RecorderDatabase = RecorderDatabase.getInstance(
@@ -21,11 +21,11 @@ class Repository(application: Application) {
         allRecordings = entryDao.getAllRecordings()
     }
 
-    fun delete(entryEntity: EntryEntity){
+    fun delete(entryEntity: EntryEntity) {
         val deleteEntryAsyncTask = DeleteEntryAsyncTask(entryDao).execute(entryEntity)
     }
 
-    fun getAllRecordings(): LiveData<List<EntryEntity>>{
+    fun getAllRecordings(): LiveData<List<EntryEntity>> {
         return allRecordings
     }
 
@@ -34,7 +34,8 @@ class Repository(application: Application) {
     }
 
     companion object {
-        private class DeleteEntryAsyncTask(val entryDao: EntryDao): AsyncTask<EntryEntity, Unit, Unit>(){
+        private class DeleteEntryAsyncTask(val entryDao: EntryDao) :
+            AsyncTask<EntryEntity, Unit, Unit>() {
 
             override fun doInBackground(vararg p0: EntryEntity?) {
                 entryDao.delete(p0[0]!!)

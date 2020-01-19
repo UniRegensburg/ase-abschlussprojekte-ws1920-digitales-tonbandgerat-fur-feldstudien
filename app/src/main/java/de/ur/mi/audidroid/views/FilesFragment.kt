@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import de.ur.mi.audidroid.adapter.EntryAdapter
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.adapter.RecordingListener
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
@@ -25,33 +24,27 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
  */
 class FilesFragment : Fragment() {
 
+    private lateinit var adapter: EntryAdapter
+    private lateinit var binding: FilesFragmentBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        val binding: FilesFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
 
         val application = requireNotNull(this.activity).application
 
         val dataSource = Repository(application)
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
 
-        val filesViewModel = ViewModelProviders.of(this, viewModelFactory).get(FilesViewModel::class.java)
+        val filesViewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(FilesViewModel::class.java)
 
         binding.filesViewModel = filesViewModel
 
-        val adapter = EntryAdapter(RecordingListener {  recordingPath ->
-            //Toast.makeText(context, "${uId}", Toast.LENGTH_SHORT).show()
-            filesViewModel.onRecordingClicked(recordingPath)
-        })
-        binding.recordingList.adapter = adapter
 
-        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                adapter.submitList(it)
-            }
-        })
 
         binding.setLifecycleOwner(this)
 
@@ -60,7 +53,8 @@ class FilesFragment : Fragment() {
             recordingPath?.let {
                 this.findNavController().navigate(
                     FilesFragmentDirections
-                        .actionFilesToPlayer(recordingPath))
+                        .actionFilesToPlayer(recordingPath)
+                )
                 filesViewModel.onPlayerFragmentNavigated()
             }
         })
@@ -68,13 +62,37 @@ class FilesFragment : Fragment() {
         return binding.root
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setupAdapter()
+    }
+
+    private fun setupAdapter() {
+        val filesViewModel = binding.filesViewModel
+        if (filesViewModel != null) {
+            adapter = EntryAdapter(filesViewModel)
+            binding.recordingList.adapter = adapter
+
+            filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
+                it?.let {
+                    adapter.submitList(it)
+                }
+            })
+        }
+
+
+    }
+
     /**
      * Provides the Repository and context to the ViewModel.
      */
-    class FilesViewModelFactory(private val dataSource: Repository, private val application: Application) : ViewModelProvider.Factory {
+    class FilesViewModelFactory(
+        private val dataSource: Repository,
+        private val application: Application
+    ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
-        override fun <T: ViewModel?> create(modelClass: Class<T>): T {
-            if(modelClass.isAssignableFrom(FilesViewModel::class.java)) {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(FilesViewModel::class.java)) {
                 return FilesViewModel(dataSource, application) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")

@@ -28,7 +28,8 @@ class PlayerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val binding: PlayerFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
+        val binding: PlayerFragmentBinding =
+            DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
 
         val application = requireNotNull(this.activity).application
 
@@ -38,7 +39,8 @@ class PlayerFragment : Fragment() {
         val dataSource = Repository(application)
         val viewModelFactory = PlayerViewModelFactory(args.recordingPath, dataSource)
 
-        val playerViewModel = ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
+        val playerViewModel =
+            ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
 
         binding.playerViewModel = playerViewModel
 
@@ -50,10 +52,13 @@ class PlayerFragment : Fragment() {
     /**
      * Provides variable and context to the ViewModel.
      */
-    class PlayerViewModelFactory(private val recordingPath: String, private val dataSource: Repository) : ViewModelProvider.Factory {
+    class PlayerViewModelFactory(
+        private val recordingPath: String,
+        private val dataSource: Repository
+    ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
-        override fun <T: ViewModel?> create(modelClass: Class<T>): T {
-            if(modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
                 return PlayerViewModel(recordingPath, dataSource) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")

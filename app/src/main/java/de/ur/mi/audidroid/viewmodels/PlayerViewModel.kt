@@ -10,7 +10,7 @@ import java.io.IOException
  * ViewModel for PlayerFragment.
  * @author
  */
-class PlayerViewModel (private val recordingPath: String, dataSource: Repository) : ViewModel(){
+class PlayerViewModel(private val recordingPath: String, dataSource: Repository) : ViewModel() {
 
     private val repository = dataSource
 
@@ -20,8 +20,8 @@ class PlayerViewModel (private val recordingPath: String, dataSource: Repository
     fun onStartPlayer() {
     }
 
-    fun onPausePlayer(){
-        Log.d("button","onPausePlay")
+    fun onPausePlayer() {
+        Log.d("button", "onPausePlay")
     }
 
     /*override fun onCleared() {
