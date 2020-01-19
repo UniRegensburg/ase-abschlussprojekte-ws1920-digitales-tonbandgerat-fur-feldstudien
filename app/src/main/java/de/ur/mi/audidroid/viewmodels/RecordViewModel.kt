@@ -6,10 +6,12 @@ import android.os.SystemClock
 import android.widget.Chronometer
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.annotation.UiThread
 import androidx.lifecycle.ViewModel
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.RecorderDatabase
+import de.ur.mi.audidroid.utils.Dialog
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.IOException
@@ -130,6 +132,15 @@ class RecordViewModel : ViewModel() {
 
     fun initializeTimer(chronometer: Chronometer) {
         timer = chronometer
+    }
+
+    fun showDialog(){
+        /*doAsync {
+            Dialog.createDialog(context = context, layoutId = R.layout.dialog_save_recording)
+            uiThread{
+                //saveRecording
+            }
+        }*/
     }
 
     /** Returns the last stopped time as an Integer value */

@@ -63,28 +63,18 @@ class PermissionHelper(val context: Context) {
     }
 
     fun showDialog(missingPermission: String) {
-        //TODO: Using dialog util as soon as it is implemented
-        val builder = AlertDialog.Builder(context)
         when (missingPermission) {
-            recordPermission -> builder.setMessage(R.string.permission_record)
-            writePermission -> builder.setMessage(R.string.permission_write)
-            readPermission -> builder.setMessage(R.string.permission_read)
+            recordPermission -> Dialog.createDialog(context = context, textId = R.string.permission_record)
+            writePermission -> Dialog.createDialog(context = context, textId = R.string.permission_write)
+            readPermission -> Dialog.createDialog(context = context, textId = R.string.permission_read)
             firstRequest -> {
                 makeRequest()
                 return
             }
         }
-        builder.setTitle(R.string.permission_title)
-        builder.setPositiveButton(
-            R.string.permission_button
-        ) { _, _ ->
-            makeRequest()
-        }
-        val dialog = builder.create()
-        dialog.show()
     }
 
-    private fun makeRequest() {
+    fun makeRequest() {
         val permissions = arrayOf(
             recordPermission,
             writePermission,
