@@ -122,6 +122,13 @@ class RecordViewModel : ViewModel() {
         }
     }
 
+    fun callDialog(context: Context){
+        Dialog.createDialog(context = context, layoutId = R.layout.dialog_save_recording)
+    }
+    fun fromDialog(context: Context){
+        Toast.makeText(context, "DIALOG READY", Toast.LENGTH_SHORT).show()
+    }
+
     private fun getDate(): String {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     }

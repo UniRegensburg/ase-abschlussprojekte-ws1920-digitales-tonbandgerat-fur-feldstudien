@@ -2,7 +2,6 @@ package de.ur.mi.audidroid.utils
 
 import android.Manifest
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Resources
@@ -15,7 +14,7 @@ class PermissionHelper(val context: Context) {
     private val recordPermission = Manifest.permission.RECORD_AUDIO
     private val writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
     private val readPermission = Manifest.permission.READ_EXTERNAL_STORAGE
-    private val requestCode =  context.resources.getInteger(R.integer.database_request_code)
+    private val requestCode = context.resources.getInteger(R.integer.database_request_code)
     private var permissionsResult: String? = null
     private val firstRequest = Resources.getSystem().getString(android.R.string.ok)
 
@@ -64,9 +63,18 @@ class PermissionHelper(val context: Context) {
 
     fun showDialog(missingPermission: String) {
         when (missingPermission) {
-            recordPermission -> Dialog.createDialog(context = context, textId = R.string.permission_record)
-            writePermission -> Dialog.createDialog(context = context, textId = R.string.permission_write)
-            readPermission -> Dialog.createDialog(context = context, textId = R.string.permission_read)
+            recordPermission -> Dialog.createDialog(
+                context = context,
+                textId = R.string.permission_record
+            )
+            writePermission -> Dialog.createDialog(
+                context = context,
+                textId = R.string.permission_write
+            )
+            readPermission -> Dialog.createDialog(
+                context = context,
+                textId = R.string.permission_read
+            )
             firstRequest -> {
                 makeRequest()
                 return

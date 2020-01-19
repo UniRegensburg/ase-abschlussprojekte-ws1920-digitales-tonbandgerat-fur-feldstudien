@@ -2,15 +2,14 @@ package de.ur.mi.audidroid.utils
 
 import android.app.AlertDialog
 import android.content.Context
-import android.text.Layout
-import android.view.LayoutInflater
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.viewmodels.RecordViewModel
 
-object Dialog{
+object Dialog {
 
-    fun createDialog(context: Context, layoutId: Int? = null, textId: Int? = null){
+    fun createDialog(context: Context, layoutId: Int? = null, textId: Int? = null) {
         val builder = AlertDialog.Builder(context)
-        if(textId!=null){
+        if (textId != null) {
             val permissionHelper = PermissionHelper(context)
             builder.setTitle(R.string.permission_title)
             builder.setMessage(textId)
@@ -20,10 +19,12 @@ object Dialog{
                 permissionHelper.makeRequest()
             }
         }
-        if(layoutId!=null){
-           /* val layoutInflater = LayoutInflater.from(context)
-            val dialogView = layoutInflater.inflate(layoutId, null)*/
+        if (layoutId != null) {
+            val recordViewModel = RecordViewModel()
             builder.setView(layoutId)
+            builder.setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
+                recordViewModel.fromDialog(context)
+            }
         }
         val dialog = builder.create()
         dialog.show()

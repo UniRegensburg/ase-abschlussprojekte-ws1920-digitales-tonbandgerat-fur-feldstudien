@@ -2,9 +2,11 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:orientation="vertical"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:padding="@dimen/dialog_padding"
+    android:layout_margin="@dimen/dialog_margin">
 
     <TextView
         android:id="@+id/dialog_save_recording_textview_name"
@@ -16,7 +18,7 @@
     <EditText
         android:id="@+id/dialog_save_recording_edittext_name"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:hint="@string/dialog_save_recording_name_hint"
         android:importantForAutofill="no"
         android:inputType="text"/>
@@ -32,7 +34,7 @@
 
     <EditText
         android:id="@+id/dialog_save_recording_edittext_path"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/dialog_save_recording_path_hint"
         android:importantForAutofill="no"
