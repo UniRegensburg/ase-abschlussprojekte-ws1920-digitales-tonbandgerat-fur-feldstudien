@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center">
+
+    <TextView
+        android:id="@+id/dialog_save_recording_textview_name"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/dialog_save_recording_name"
+        android:textSize="@dimen/text_size_normal" />
+
+    <EditText
+        android:id="@+id/dialog_save_recording_edittext_name"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:hint="@string/dialog_save_recording_name_hint"
+        android:importantForAutofill="no"
+        android:inputType="text"/>
+
+
+    <TextView
+        android:id="@+id/dialog_save_recording_textview_path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_save_recording_path"
+        android:textSize="@dimen/text_size_normal"
+        android:layout_marginTop="@dimen/dialog_margin"/>
+
+    <EditText
+        android:id="@+id/dialog_save_recording_edittext_path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/dialog_save_recording_path_hint"
+        android:importantForAutofill="no"
+        android:inputType="text"/>
+</LinearLayout>

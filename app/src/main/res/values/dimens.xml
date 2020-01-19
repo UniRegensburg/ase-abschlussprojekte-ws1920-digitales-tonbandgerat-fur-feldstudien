@@ -22,8 +22,11 @@
     <dimen name="fab_margin_big">@dimen/keyline_12</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <!-- Textsizes -->
+    <!-- Dialog -->
+    <dimen name="dialog_margin">50dp</dimen>
 
-    <dimen name="text_size_big">50sp</dimen>
+    <!-- Textsizes -->
+    <dimen name="text_size_big">40sp</dimen>
+    <dimen name="text_size_normal">20sp</dimen>
 
 </resources>
