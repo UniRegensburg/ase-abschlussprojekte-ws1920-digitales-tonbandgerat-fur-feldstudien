@@ -4,30 +4,50 @@ import android.content.Context
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.widget.Chronometer
-import android.widget.ImageButton
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.annotation.UiThread
 import androidx.lifecycle.ViewModel
+import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.RecorderDatabase
 import de.ur.mi.audidroid.utils.Dialog
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * The ViewModel handles the changes to the view's data and the event logic for the user interaction referring to the RecordFragment
+ * @author: Sabine Roth
+ */
 
-class RecordViewModel : ViewModel() {
+class RecordViewModel(val context: Context, private val binding: RecordFragmentBinding) :
+    ViewModel() {
 
-    private var isRecording = false
+
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
     private var outputFile = ""
     private lateinit var db: RecorderDatabase
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
+    private lateinit var frameLayout: FrameLayout
+
+    init {
+        binding.buttonsVisible = false
+        binding.isRecording = false
+    }
+
+    fun initializeTimer(chronometer: Chronometer) {
+        timer = chronometer
+    }
+
+    fun initializeLayout(frameLayout: FrameLayout) {
+        this.frameLayout = frameLayout
+    }
 
     private fun initializeRecorder(context: Context) {
         outputFile =
@@ -45,32 +65,62 @@ class RecordViewModel : ViewModel() {
         }
     }
 
-    fun recordPauseButtonClicked(button: ImageButton, context: Context) =
-        when (!isRecording) {
-            true -> {
-                button.setImageResource(R.mipmap.pause_button_foreground)
-                isRecording = true
-                if (!resumeRecord) {
-                    resetTimer()
-                    timer.start()
-                    initializeRecorder(context)
-                    startRecording()
-                } else {
-                    timer.base = SystemClock.elapsedRealtime() - getStoppedTime()
-                    timer.start()
-                    resumeRecording()
-                }
-            }
-
+    fun recordPauseButtonClicked() {
+        when (binding.isRecording) {
             false -> {
-                button.setImageResource(R.mipmap.record_button_foreground)
-                isRecording = false
-                resumeRecord = true
-                pauseRecording()
-                timer.stop()
-                currentRecordTime = timer.text.toString()
+                recordButtonClicked()
+                binding.buttonsVisible = true
+                binding.isRecording = true
+            }
+            true -> {
+                pauseButtonClicked()
+                binding.isRecording = false
             }
         }
+    }
+
+    private fun recordButtonClicked() {
+        when (resumeRecord) {
+            true -> {
+                timer.base = SystemClock.elapsedRealtime() - getStoppedTime(context)
+                timer.start()
+                resumeRecording()
+            }
+            false -> {
+                resetTimer()
+                timer.start()
+                initializeRecorder(context)
+                startRecording()
+            }
+        }
+    }
+
+    private fun pauseButtonClicked() {
+        resumeRecord = true
+        pauseRecording()
+        timer.stop()
+        currentRecordTime = timer.text.toString()
+    }
+
+    fun cancelRecord() {
+        showSnackBar(R.string.record_removed)
+        endRecordSession()
+    }
+
+    fun confirmRecord() {
+        showSnackBar(R.string.record_saved)
+        saveRecordInDB()
+        endRecordSession()
+    }
+
+    private fun endRecordSession() {
+        binding.buttonsVisible = false
+        binding.isRecording = false
+        resumeRecord = false
+        mediaRecorder.stop()
+        mediaRecorder.reset()
+        resetTimer()
+    }
 
     private fun startRecording() {
         mediaRecorder.start()
@@ -84,39 +134,10 @@ class RecordViewModel : ViewModel() {
         mediaRecorder.resume()
     }
 
-    fun cancelRecord(context: Context) {
-        isRecording = false
-        resumeRecord = false
-        mediaRecorder.reset()
-        resetTimer()
-        sendToast(context, R.string.record_removed)
-        initializeRecorder(context)
-    }
-
-    fun confirmRecord(context: Context) {
-        isRecording = false
-        resumeRecord = false
-        mediaRecorder.stop()
-        mediaRecorder.reset()
-        resetTimer()
-        sendToast(context, R.string.record_saved)
-        getLastUID(context)
-        initializeRecorder(context)
-    }
-
-    private fun getLastUID(context: Context) {
+    private fun saveRecordInDB() {
         db = RecorderDatabase.getInstance(context)
-        doAsync {
-            val count = db.entryDao().getRowCount()
-            uiThread {
-                saveRecordInDB(count)
-            }
-        }
-    }
-
-    private fun saveRecordInDB(count: Int) {
         val audio =
-            EntryEntity(count, outputFile, getDate())
+            EntryEntity(0, outputFile, getDate(), timer.text.toString())
         doAsync {
             db.entryDao().insert(audio)
         }
@@ -129,16 +150,18 @@ class RecordViewModel : ViewModel() {
         Toast.makeText(context, "DIALOG READY", Toast.LENGTH_SHORT).show()
     }
 
+    /**
+     * Returns the current date
+     * Adapted from: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
+     */
+
     private fun getDate(): String {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     }
 
-    private fun sendToast(context: Context, text: Int) {
-        Toast.makeText(context, text, Toast.LENGTH_LONG).show()
-    }
-
-    fun initializeTimer(chronometer: Chronometer) {
-        timer = chronometer
+    /** Sends a snackbar for user information with the given [text] */
+    private fun showSnackBar(text: Int) {
+        Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 
     fun showDialog(){
@@ -151,19 +174,26 @@ class RecordViewModel : ViewModel() {
     }
 
     /** Returns the last stopped time as an Integer value */
-    private fun getStoppedTime(): Int {
+    private fun getStoppedTime(context: Context): Int {
         val timeArray = currentRecordTime.split(":")
+        val res = context.resources
         return if (timeArray.size == 2) {
-            (Integer.parseInt(timeArray[0]) * 60 * 1000) + (Integer.parseInt(timeArray[1]) * 1000)
+            (Integer.parseInt(timeArray[0]) * res.getInteger(R.integer.counter_divider_minutes_hours) * res.getInteger(
+                R.integer.counter_multiplier
+            )) + (Integer.parseInt(timeArray[1]) * res.getInteger(R.integer.counter_multiplier))
         } else {
-            (Integer.parseInt(timeArray[0]) * 60 * 60 * 1000) + (Integer.parseInt(timeArray[1]) * 60 * 1000) + (Integer.parseInt(
+            (Integer.parseInt(timeArray[0]) * res.getInteger(R.integer.counter_divider_minutes_hours) * res.getInteger(
+                R.integer.counter_divider_minutes_hours
+            ) * res.getInteger(R.integer.counter_multiplier)) + (Integer.parseInt(timeArray[1]) * res.getInteger(
+                R.integer.counter_divider_minutes_hours
+            ) * res.getInteger(R.integer.counter_multiplier)) + (Integer.parseInt(
                 timeArray[2]
-            ) * 1000)
+            ) * res.getInteger(R.integer.counter_multiplier))
         }
     }
 
     /** Resets timer to 00:00 */
-    private fun resetTimer(){
+    private fun resetTimer() {
         timer.stop()
         timer.base = SystemClock.elapsedRealtime()
     }
