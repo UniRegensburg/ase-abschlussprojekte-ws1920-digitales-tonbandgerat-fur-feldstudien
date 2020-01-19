@@ -1,76 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".views.RecordFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="recordViewModel"
+            type="de.ur.mi.audidroid.viewmodels.RecordViewModel" />
+
+        <variable
+            name="buttonsVisible"
+            type="java.lang.Boolean" />
+
+        <variable
+            name="isRecording"
+            type="java.lang.Boolean" />
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".views.RecordFragment"
+        android:id="@+id/frameLayout">
 
-        <Chronometer
-            android:id="@+id/chronometer"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="@dimen/text_size_big"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.263" />
+            android:layout_height="match_parent">
 
+            <Chronometer
+                android:id="@+id/chronometer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="@dimen/text_size_big"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.263" />
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.667"
-            tools:layout_editor_absoluteX="16dp">
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.7">
 
-            <ImageButton
-                android:id="@+id/cancel_button"
+                <ImageButton
+                    android:id="@+id/cancel_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.3"
+                    android:background="@null"
+                    android:contentDescription="@string/cancel_button"
+                    android:src="@mipmap/cancel_button_foreground"
+                    android:visibility="@{buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+                    android:onClick="@{() -> recordViewModel.cancelRecord()}"/>
+
+                <ImageButton
+                    android:id="@+id/record_pause_button"
+                    android:layout_width="133dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:adjustViewBounds="true"
+                    android:background="@null"
+                    android:contentDescription="@string/record_pause_button"
+                    android:scaleType="fitXY"
+                    android:src="@{isRecording ? @drawable/pause_button : @drawable/record_button, default = @drawable/record_button}"
+                    android:onClick="@{() -> recordViewModel.recordPauseButtonClicked()}"/>
+
+                <ImageButton
+                    android:id="@+id/confirm_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.3"
+                    android:background="@null"
+                    android:contentDescription="@string/confirm_button"
+                    android:src="@mipmap/confirm_button_foreground"
+                    android:visibility="@{buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+                    android:onClick="@{() -> recordViewModel.confirmRecord()}"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/mark_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:background="@null"
-                android:contentDescription="@string/cancel_button"
-                android:src="@mipmap/cancel_button_foreground" />
+                android:text="@string/mark_button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.95" />
 
-            <ImageButton
-                android:id="@+id/record_pause_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/record_button_foreground"
-                android:background="@null"
-                android:layout_weight="0.4"
-                android:contentDescription="@string/record_pause_button"/>
-
-            <ImageButton
-                android:id="@+id/confirm_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:background="@null"
-                android:contentDescription="@string/confirm_button"
-                android:src="@mipmap/confirm_button_foreground" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/mark_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/mark_button"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.887" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</layout>
