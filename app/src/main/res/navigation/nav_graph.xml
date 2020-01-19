@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/record"
         android:name="de.ur.mi.audidroid.views.RecordFragment"
-        android:label="record_fragment"
+        android:label="Record"
         tools:layout="@layout/record_fragment" />
     <fragment
         android:id="@+id/files"

@@ -1,5 +1,4 @@
 <resources>
-<!--TODO: english or german-->
     <string name="app_name">Audidroid</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -10,9 +9,6 @@
     <string name="menu_record">Record</string>
     <string name="menu_files">Files</string>
     <string name="menu_settings">Settings</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="theme_preference_key">theme_preference</string>
     <string name="title_activity_splash">SplashActivity</string>
@@ -34,11 +30,13 @@
     <string name="confirm_button">Confirm Button</string>
     <string name="cancel_button">Cancel Button</string>
     <string name="record_pause_button">Record and Pause Button</string>
-    <string name="mark_button">Markierung</string>
+
+    <string name="mark_button">Mark</string>
+    <string name="start_timer">00:00</string>
 
     <!-- User Feedback Toasts -->
-    <string name="record_saved">Aufnahme gespeichert</string>
-    <string name="record_removed">Aufnahme verworfen</string>
+    <string name="record_saved">Recording saved</string>
+    <string name="record_removed">Recording removed</string>
 
     <!-- Permission dialog -->
     <string name="permission_record">Permission to access the microphone is required to record audio.</string>
