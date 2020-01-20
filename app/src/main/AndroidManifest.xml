@@ -5,7 +5,7 @@
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 
     <application
@@ -25,8 +25,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.MainActivity" />
-        <activity android:name=".utils.PermissionHelper" />
+        <activity
+            android:name=".views.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".utils.PermissionHelper"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="preloaded_fonts"
