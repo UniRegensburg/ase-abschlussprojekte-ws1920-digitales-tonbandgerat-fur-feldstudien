@@ -43,7 +43,7 @@ class DatabaseTest {
     @Throws(Exception::class)
     fun testLoadEntryById() {
         val byIdEntity = testDao.loadEntryById(testUid)
-        assertEquals(byIdEntity.uid, testUid)
+        assertEquals(byIdEntity, testEntity)
     }
 
     @Test
@@ -56,15 +56,15 @@ class DatabaseTest {
         assertEquals(currentNumberEntries + 1, testDao.getAllRecordings().size)
         /** checks if testEntry is in the database */
         val byId = testDao.loadEntryById(testUidForInsertTest)
-        assertThat(byId, equalTo(testInsertEntity))
+        assertEquals(byId, testInsertEntity)
     }
 
     @Test
     @Throws(Exception::class)
     fun testDelete() {
         testDao.delete(testEntity)
-        val deletedEntity = testDao.loadEntryById(testUid)
-        assertEquals(deletedEntity, null)
+        val result = testDao.loadEntryById(testUid)
+        assertEquals(result, null)
     }
 
     @Test
