@@ -28,9 +28,7 @@
         <activity
             android:name=".views.MainActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".utils.PermissionHelper"
-            android:screenOrientation="portrait" />
+        <activity android:name=".utils.PermissionHelper" />
 
         <meta-data
             android:name="preloaded_fonts"
