@@ -109,7 +109,8 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
 
     fun confirmRecord() {
         showSnackBar(R.string.record_saved)
-        saveRecordInDB()
+        currentRecordTime = timer.text.toString()
+        callSaveDialog()
         endRecordSession()
     }
 
@@ -134,20 +135,17 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
         mediaRecorder.resume()
     }
 
-    private fun saveRecordInDB() {
+    fun saveRecordInDB(name: String) {
         db = RecorderDatabase.getInstance(context)
         val audio =
-            EntryEntity(0, outputFile, getDate(), timer.text.toString())
+            EntryEntity(0, name, outputFile, getDate(), currentRecordTime)
         doAsync {
             db.entryDao().insert(audio)
         }
     }
 
-    fun callDialog(context: Context){
+    private fun callSaveDialog(){
         Dialog.createDialog(context = context, layoutId = R.layout.dialog_save_recording)
-    }
-    fun fromDialog(context: Context){
-        Toast.makeText(context, "DIALOG READY", Toast.LENGTH_SHORT).show()
     }
 
     /**

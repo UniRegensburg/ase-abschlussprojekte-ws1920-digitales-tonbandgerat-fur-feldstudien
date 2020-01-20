@@ -22,6 +22,9 @@ interface EntryDao {
     @Query("SELECT * FROM recordingsTable WHERE uid IN (:uniqueId)")
     fun loadEntryById(uniqueId: Int): EntryEntity
 
+    @Query("SELECT * FROM recordingsTable WHERE recordingName IN (:name)")
+    fun loadEntryByName(name: String): EntryEntity
+
     @Insert(onConflict = REPLACE)
     fun insert(entryEntity: EntryEntity)
 

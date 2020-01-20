@@ -20,10 +20,11 @@ object Dialog {
             }
         }
         if (layoutId != null) {
-            val recordViewModel = RecordViewModel()
+
             builder.setView(layoutId)
             builder.setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
-                recordViewModel.fromDialog(context)
+                //call with  listener recordViewModel.saveRecordInDB()
+                //attach input from edittext
             }
         }
         val dialog = builder.create()
