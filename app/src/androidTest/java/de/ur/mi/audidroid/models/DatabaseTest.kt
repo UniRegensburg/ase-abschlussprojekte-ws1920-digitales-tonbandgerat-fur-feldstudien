@@ -48,9 +48,9 @@ class DatabaseTest {
     @Test
     @Throws(Exception::class)
     fun testImport() {
-        val currentNumberEntries = testDao.getAllRecordings()
+        val currentNumberEntries = testDao.getAllRecordings().size
         testDao.insert(testEntity)
-        assertEquals(currentNumberEntries.size + 1, testDao.getAllRecordings())
+        assertEquals(currentNumberEntries + 1, testDao.getAllRecordings().size)
         val byId = testDao.loadEntryById(testUid)
         assertThat(byId, equalTo(testEntity))
     }
