@@ -5,7 +5,6 @@ import android.media.MediaRecorder
 import android.os.SystemClock
 import android.widget.Chronometer
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
