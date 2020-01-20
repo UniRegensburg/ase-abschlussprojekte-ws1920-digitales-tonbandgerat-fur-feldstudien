@@ -10,13 +10,12 @@ object Dialog {
     fun createDialog(context: Context, layoutId: Int? = null, textId: Int? = null) {
         val builder = AlertDialog.Builder(context)
         if (textId != null) {
-            val permissionHelper = PermissionHelper(context)
             builder.setTitle(R.string.permission_title)
             builder.setMessage(textId)
             builder.setPositiveButton(
                 R.string.permission_button
             ) { _, _ ->
-                permissionHelper.makeRequest()
+                PermissionHelper.makeRequest(context)
             }
         }
         if (layoutId != null) {

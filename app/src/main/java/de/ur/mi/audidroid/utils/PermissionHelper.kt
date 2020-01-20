@@ -9,17 +9,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import de.ur.mi.audidroid.R
 
-class PermissionHelper(val context: Context) {
+object PermissionHelper {
 
-    private val recordPermission = Manifest.permission.RECORD_AUDIO
-    private val writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
-    private val readPermission = Manifest.permission.READ_EXTERNAL_STORAGE
-    private val requestCode = context.resources.getInteger(R.integer.database_request_code)
+    private const val recordPermission = Manifest.permission.RECORD_AUDIO
+    private const val writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
+    private const val readPermission = Manifest.permission.READ_EXTERNAL_STORAGE
     private var permissionsResult: String? = null
     private val firstRequest = Resources.getSystem().getString(android.R.string.ok)
 
 
-    fun permissionsGranted(): String? {
+    fun permissionsGranted(context: Context): String? {
         if (ContextCompat.checkSelfPermission(
                 context,
                 recordPermission
@@ -61,7 +60,7 @@ class PermissionHelper(val context: Context) {
         return permissionsResult
     }
 
-    fun showDialog(missingPermission: String) {
+    fun showDialog(missingPermission: String, context: Context) {
         when (missingPermission) {
             recordPermission -> Dialog.createDialog(
                 context = context,
@@ -76,18 +75,18 @@ class PermissionHelper(val context: Context) {
                 textId = R.string.permission_read
             )
             firstRequest -> {
-                makeRequest()
+                makeRequest(context)
                 return
             }
         }
     }
 
-    fun makeRequest() {
+    fun makeRequest(context: Context) {
         val permissions = arrayOf(
             recordPermission,
             writePermission,
             readPermission
         )
-        ActivityCompat.requestPermissions(context as Activity, permissions, requestCode)
+        ActivityCompat.requestPermissions(context as Activity, permissions, context.resources.getInteger(R.integer.database_request_code))
     }
 }

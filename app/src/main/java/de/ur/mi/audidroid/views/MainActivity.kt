@@ -64,10 +64,8 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     private fun checkPermissions() {
-        val permissionsChecker =
-            PermissionHelper(this@MainActivity)
-        val result = permissionsChecker.permissionsGranted()
-        if (result != null) permissionsChecker.showDialog(result)
+        val result = PermissionHelper.permissionsGranted(this@MainActivity)
+        if (result != null) PermissionHelper.showDialog(result, this@MainActivity)
     }
 
     override fun onRequestPermissionsResult(
