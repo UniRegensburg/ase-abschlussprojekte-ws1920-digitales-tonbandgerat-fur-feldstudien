@@ -44,6 +44,9 @@ class PlayerViewModel(
                         .build()
                 )
                 setDataSource(context, uri)
+                setOnCompletionListener {
+                    onStopPlayer()
+                }
                 prepare()
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -63,8 +66,15 @@ class PlayerViewModel(
         isPlaying.value = mediaPlayer.isPlaying
     }
 
+    fun onStopPlayer() {
+        mediaPlayer.stop()
+        isPlaying.value = mediaPlayer.isPlaying
+        initializeMediaPlayer()
+    }
+
     override fun onCleared() {
         super.onCleared()
+        mediaPlayer.reset()
         mediaPlayer.release()
     }
 }
