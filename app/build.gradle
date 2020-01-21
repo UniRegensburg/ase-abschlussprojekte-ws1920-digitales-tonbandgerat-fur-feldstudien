@@ -6,6 +6,8 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'checkstyle'
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -27,6 +29,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
     kotlinOptions {
         jvmTarget = 1.8
@@ -52,9 +58,25 @@ dependencies {
     implementation "androidx.room:room-rxjava2:2.2.3"
     implementation 'org.jetbrains.anko:anko-common:0.9'
     kapt "androidx.room:room-compiler:2.2.3"
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     testImplementation "androidx.room:room-testing:2.2.3"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
+
+check.dependsOn('checkstyle')
+
+task checkstyle(type: Checkstyle) {
+    configFile file("${project.rootDir}/gradle/checkstyle-ruleset.xml")
+    source 'src/main'
+    include '**/*.kt'
+    exclude '**/gen/**'
+    classpath = files()
+
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
 }
