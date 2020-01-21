@@ -13,7 +13,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import de.ur.mi.audidroid.adapter.EntryAdapter
+import com.google.android.material.snackbar.Snackbar
+import de.ur.mi.audidroid.adapter.Adapter
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
@@ -24,7 +25,7 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
  */
 class FilesFragment : Fragment() {
 
-    private lateinit var adapter: EntryAdapter
+    private lateinit var adapter: Adapter
     private lateinit var binding: FilesFragmentBinding
 
     override fun onCreateView(
@@ -48,6 +49,13 @@ class FilesFragment : Fragment() {
 
         binding.setLifecycleOwner(this)
 
+        filesViewModel.showSnackbarEvent.observe(this, Observer {
+            if (it == true) {
+                Snackbar.make(view!!, R.string.recording_deleted, Snackbar.LENGTH_SHORT).show()
+                filesViewModel.doneShowingSnackbar()
+            }
+        })
+
         // Observer on the state variable for Navigating when an item is clicked.
         filesViewModel.navigateToPlayerFragment.observe(this, Observer { recordingPath ->
             recordingPath?.let {
@@ -70,7 +78,7 @@ class FilesFragment : Fragment() {
     private fun setupAdapter() {
         val filesViewModel = binding.filesViewModel
         if (filesViewModel != null) {
-            adapter = EntryAdapter(filesViewModel)
+            adapter = Adapter(filesViewModel)
             binding.recordingList.adapter = adapter
 
             filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {

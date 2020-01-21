@@ -22,23 +22,31 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val context = getApplication<Application>().applicationContext
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
 
-    /*fun delete(entryEntity: EntryEntity) {
-        repository.delete(entryEntity)
-    }*/
+    private var _showSnackbarEvent = MutableLiveData<Boolean?>()
+
+    val showSnackbarEvent: LiveData<Boolean?>
+        get() = _showSnackbarEvent
+
+    fun doneShowingSnackbar() {
+        _showSnackbarEvent.value = null
+    }
 
     fun onButtonClicked(entryEntity: EntryEntity, view: View) {
-        val popupMenu: PopupMenu = PopupMenu(context, view)
+        val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_delete_recording ->
-                    repository.delete(entryEntity)
-                R.id.action_edit_recording ->
-                    Log.d("clicked", "edit")
+                    delete(entryEntity)
             }
             true
         }
         popupMenu.show()
+    }
+
+    fun delete(entryEntity: EntryEntity) {
+        repository.delete(entryEntity)
+        _showSnackbarEvent.value = true
     }
 
     // Navigation to PlayerFragment

@@ -34,15 +34,18 @@
                 android:id="@+id/button_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="359dp"
+                android:layout_marginTop="434dp"
+                android:layout_marginBottom="148dp"
                 android:background="@null"
                 android:contentDescription="@string/play_button"
                 android:onClick="@{() -> playerViewModel.onStartPlayer()}"
                 android:src="@mipmap/play_button"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.032" />
 
             <ImageButton
                 android:id="@+id/button_pause"
@@ -53,6 +56,7 @@
                 android:contentDescription="@string/pause_button"
                 android:onClick="@{() -> playerViewModel.onPausePlayer()}"
                 android:src="@mipmap/pause_button"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"

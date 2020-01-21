@@ -25,6 +25,7 @@
     <string name="popup_menu_button">Popup Menu</string>
     <string name="popup_menu_option_delete">Delete</string>
     <string name="popup_menu_option_edit">Edit</string>
+    <string name="recording_deleted">Recording deleted</string>
 
     <!-- Recorder strings -->
     <string name="confirm_button">Confirm Button</string>

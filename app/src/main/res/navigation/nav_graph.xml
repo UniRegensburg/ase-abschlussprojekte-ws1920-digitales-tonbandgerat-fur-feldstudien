@@ -13,7 +13,7 @@
     <fragment
         android:id="@+id/files"
         android:name="de.ur.mi.audidroid.views.FilesFragment"
-        android:label="files_fragment"
+        android:label="Files"
         tools:layout="@layout/files_fragment" >
         <action
             android:id="@+id/action_files_to_player"
@@ -26,7 +26,7 @@
     <fragment
         android:id="@+id/player"
         android:name="de.ur.mi.audidroid.views.PlayerFragment"
-        android:label="player_fragment"
+        android:label="Player"
         tools:layout="@layout/player_fragment" >
         <argument
             android:name="recordingPath"

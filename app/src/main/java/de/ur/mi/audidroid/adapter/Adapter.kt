@@ -14,8 +14,8 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
  * ViewModel for PlayerFragment.
  * @author
  */
-class EntryAdapter(private val filesViewModel: FilesViewModel) :
-    ListAdapter<EntryEntity, EntryAdapter.ViewHolder>(RecordingDiffCallback()) {
+class Adapter(private val filesViewModel: FilesViewModel) :
+    ListAdapter<EntryEntity, Adapter.ViewHolder>(RecordingDiffCallback()) {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position)!!, userActionsListener)

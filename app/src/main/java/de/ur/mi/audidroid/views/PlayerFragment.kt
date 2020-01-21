@@ -34,7 +34,6 @@ class PlayerFragment : Fragment() {
         val application = requireNotNull(this.activity).application
 
         val args = PlayerFragmentArgs.fromBundle(arguments!!)
-        Toast.makeText(context, "RecordingId: ${args.recordingPath}", Toast.LENGTH_SHORT).show()
 
         val dataSource = Repository(application)
         val viewModelFactory = PlayerViewModelFactory(args.recordingPath, dataSource)
