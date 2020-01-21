@@ -31,16 +31,15 @@ class RecordViewModel : ViewModel() {
     /** The Pathways to the directories are set according to the  preferences.
      *   @author: Lisa Sanladerer
      */
-    private fun getStorageLocation(preferedStorage: String, context: Context): String{
+    private fun getStorageLocation(preferedStorage: String, context: Context): String {
         var path = ""
-        val tempName = "/recording.aac"
-
-        if (preferedStorage == "internal"){
-            path = context.filesDir.absolutePath + tempName
-        }else{
+        val fileName = "/recording.aac"
+        if (preferedStorage == "internal") {
+            path = context.filesDir.absolutePath + fileName
+        } else {
             var externalPath = context.getExternalFilesDir(null)?.absolutePath
-            if (externalPath != null){
-                path = externalPath + tempName
+            if (externalPath != null) {
+                path = externalPath + fileName
             }
         }
         return path
@@ -49,21 +48,18 @@ class RecordViewModel : ViewModel() {
     /** Gets the preferred storage solution from settings.
      *   @author: Lisa Sanladerer
      */
-    private fun getStoragePreference(context: Context): String{
+    private fun getStoragePreference(context: Context): String {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-
-        val storagePreference =    preferences.getString(
-                context.getString(R.string.storage_preference_key),
-                "default"
-                )!!
+        val storagePreference = preferences.getString(
+            context.getString(R.string.storage_preference_key),
+            "default"
+        )!!
         return storagePreference
     }
 
     private fun initializeRecorder(context: Context) {
-
         val preference = getStoragePreference(context)
         outputFile = getStorageLocation(preference, context)
-
         with(mediaRecorder) {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -179,7 +175,7 @@ class RecordViewModel : ViewModel() {
     }
 
     /** Resets timer to 00:00 */
-    private fun resetTimer(){
+    private fun resetTimer() {
         timer.stop()
         timer.base = SystemClock.elapsedRealtime()
     }
