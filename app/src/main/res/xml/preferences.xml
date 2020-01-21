@@ -15,5 +15,17 @@
             app:useSimpleSummaryProvider="true"/>
 
     </PreferenceCategory>
+    <PreferenceCategory
+        app:key="storage_category"
+        app:title="Storage">
+        <ListPreference
+            app:key="@string/storage_preference_key"
+            app:title="Choose storage location"
+            app:defaultValue="internal"
+            app:dialogTitle="Choose storage location"
+            app:entries="@array/storage_list_array"
+            app:entryValues="@array/storage_entry_array"
+            app:useSimpleSummaryProvider="true"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>

@@ -20,6 +20,7 @@ object ThemeHelper {
      * Applies the color theme given in [theme] to the app.
      */
     fun applyTheme(theme: String) {
+
         val mode = when (theme) {
             LIGHT_MODE -> AppCompatDelegate.MODE_NIGHT_NO
             DARK_MODE -> AppCompatDelegate.MODE_NIGHT_YES

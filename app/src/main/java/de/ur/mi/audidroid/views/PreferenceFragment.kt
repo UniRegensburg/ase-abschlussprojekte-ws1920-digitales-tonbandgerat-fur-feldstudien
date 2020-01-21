@@ -7,6 +7,7 @@ import androidx.preference.PreferenceFragmentCompat
 
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.utils.ThemeHelper
+import de.ur.mi.audidroid.utils.StorageHelper
 
 class PreferenceFragment : PreferenceFragmentCompat() {
 
@@ -19,6 +20,14 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyTheme(newValue as String)
                 true
             }
+        val storagePreference = findPreference<ListPreference>(getString(R.string.storage_preference_key))!!
+        storagePreference.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                StorageHelper.applyStorage(newValue as String)
+                true
+            }
+
+
     }
 
 }

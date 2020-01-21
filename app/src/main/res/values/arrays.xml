@@ -8,9 +8,19 @@
     </string-array>
 
     <string-array name="theme_entry_array" tools:ignore="InconsistentArrays">
-        <item>light</item>
-        <item>dark</item>
-        <item>default</item>
+    <item>light</item>
+    <item>dark</item>
+    <item>default</item>
+    </string-array>
+
+    <string-array name="storage_list_array" tools:ignore="InconsistentArrays">
+        <item>Internal</item>
+        <item>External</item>
+    </string-array>
+
+    <string-array name="storage_entry_array" tools:ignore="InconsistentArrays">
+        <item>internal</item>
+        <item>external</item>
     </string-array>
 
 </resources>
