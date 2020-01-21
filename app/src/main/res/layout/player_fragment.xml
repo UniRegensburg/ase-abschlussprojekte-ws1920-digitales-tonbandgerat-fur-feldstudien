@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="playerViewModel"
             type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
@@ -40,6 +42,7 @@
                 android:contentDescription="@string/play_button"
                 android:onClick="@{() -> playerViewModel.onStartPlayer()}"
                 android:src="@mipmap/play_button"
+                android:visibility="@{playerViewModel.isPlaying ? View.GONE : View.VISIBLE, default=visible}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
@@ -51,15 +54,19 @@
                 android:id="@+id/button_pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="460dp"
+                android:layout_marginTop="434dp"
+                android:layout_marginBottom="148dp"
                 android:background="@null"
                 android:contentDescription="@string/pause_button"
                 android:onClick="@{() -> playerViewModel.onPausePlayer()}"
                 android:src="@mipmap/pause_button"
+                android:visibility="@{playerViewModel.isPlaying ? View.VISIBLE : View.GONE, default=visible}"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.032" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

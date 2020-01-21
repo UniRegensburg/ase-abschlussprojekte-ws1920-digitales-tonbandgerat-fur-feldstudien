@@ -11,6 +11,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import de.ur.mi.audidroid.models.Repository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.Job
 import java.io.File
 import java.io.IOException
 import java.lang.IllegalArgumentException
@@ -28,6 +32,7 @@ class PlayerViewModel(
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private val context = getApplication<Application>().applicationContext
     private val uri: Uri = Uri.fromFile(File(recordingPath))
+    var isPlaying = MutableLiveData<Boolean>()
 
     fun initializeMediaPlayer() {
         mediaPlayer = MediaPlayer().apply {
@@ -50,11 +55,16 @@ class PlayerViewModel(
 
     fun onStartPlayer() {
         mediaPlayer.start()
-        Log.d("mediaplayer", "play")
+        isPlaying.value = mediaPlayer.isPlaying
     }
 
     fun onPausePlayer() {
         mediaPlayer.pause()
-        Log.d("mediaplayer", "pause")
+        isPlaying.value = mediaPlayer.isPlaying
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        mediaPlayer.release()
     }
 }
