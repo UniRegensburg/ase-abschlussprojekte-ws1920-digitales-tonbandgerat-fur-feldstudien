@@ -12,18 +12,10 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
 /**
  * ViewModel for PlayerFragment.
- * @author
+ * @author: Theresa Strohmeier
  */
 class Adapter(private val filesViewModel: FilesViewModel) :
     ListAdapter<EntryEntity, Adapter.ViewHolder>(RecordingDiffCallback()) {
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position)!!, userActionsListener)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder.from(parent) as ViewHolder
-    }
 
     val userActionsListener = object : RecordingUserActionsListener {
         override fun onRecordingClicked(entryEntity: EntryEntity) {
@@ -33,6 +25,14 @@ class Adapter(private val filesViewModel: FilesViewModel) :
         override fun onButtonClicked(entryEntity: EntryEntity, view: View) {
             filesViewModel.onButtonClicked(entryEntity, view)
         }
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position)!!, userActionsListener)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder.from(parent) as ViewHolder
     }
 
     class ViewHolder private constructor(private val binding: EntryItemBinding) :

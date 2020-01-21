@@ -56,7 +56,6 @@
                 android:contentDescription="@string/pause_button"
                 android:onClick="@{() -> playerViewModel.onPausePlayer()}"
                 android:src="@mipmap/pause_button"
-                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"

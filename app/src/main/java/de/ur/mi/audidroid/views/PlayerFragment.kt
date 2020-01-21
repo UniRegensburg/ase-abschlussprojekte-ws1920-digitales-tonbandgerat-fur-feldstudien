@@ -1,6 +1,7 @@
 package de.ur.mi.audidroid.views
 
 
+import android.app.Application
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -36,10 +37,12 @@ class PlayerFragment : Fragment() {
         val args = PlayerFragmentArgs.fromBundle(arguments!!)
 
         val dataSource = Repository(application)
-        val viewModelFactory = PlayerViewModelFactory(args.recordingPath, dataSource)
+        val viewModelFactory = PlayerViewModelFactory(args.recordingPath, dataSource, application)
 
         val playerViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
+
+        playerViewModel.initializeMediaPlayer()
 
         binding.playerViewModel = playerViewModel
 
@@ -53,12 +56,13 @@ class PlayerFragment : Fragment() {
      */
     class PlayerViewModelFactory(
         private val recordingPath: String,
-        private val dataSource: Repository
+        private val dataSource: Repository,
+        private val application: Application
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
-                return PlayerViewModel(recordingPath, dataSource) as T
+                return PlayerViewModel(recordingPath, dataSource, application) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

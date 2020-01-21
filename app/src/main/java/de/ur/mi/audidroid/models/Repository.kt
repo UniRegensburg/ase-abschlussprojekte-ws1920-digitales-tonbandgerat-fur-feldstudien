@@ -22,24 +22,18 @@ class Repository(application: Application) {
     }
 
     fun delete(entryEntity: EntryEntity) {
-        val deleteEntryAsyncTask = DeleteEntryAsyncTask(entryDao).execute(entryEntity)
+        DeleteAsyncTask(entryDao).execute(entryEntity)
     }
 
     fun getAllRecordings(): LiveData<List<EntryEntity>> {
         return allRecordings
     }
 
-    fun getRecordingWithId(recordingKey: Int): LiveData<EntryEntity> {
-        return entryDao.getRecordingWithId(recordingKey)
-    }
+    private class DeleteAsyncTask(val entryDao: EntryDao) :
+        AsyncTask<EntryEntity, Unit, Unit>() {
 
-    companion object {
-        private class DeleteEntryAsyncTask(val entryDao: EntryDao) :
-            AsyncTask<EntryEntity, Unit, Unit>() {
-
-            override fun doInBackground(vararg p0: EntryEntity?) {
-                entryDao.delete(p0[0]!!)
-            }
+        override fun doInBackground(vararg p0: EntryEntity?) {
+            entryDao.delete(p0[0]!!)
         }
     }
 }
