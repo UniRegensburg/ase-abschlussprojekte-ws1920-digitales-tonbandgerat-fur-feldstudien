@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.hamcrest.core.IsEqual.equalTo
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,7 +16,7 @@ import java.io.IOException
 class DatabaseTest {
 
     private lateinit var testEntity: EntryEntity
-    private lateinit var db: RecorderDatabase
+    private lateinit var testDatabase: RecorderDatabase
     private lateinit var testDao: EntryDao
     private val testUid = 1
     private val testUidForInsertTest = 2
@@ -25,10 +25,10 @@ class DatabaseTest {
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = Room.inMemoryDatabaseBuilder(
+        testDatabase = Room.inMemoryDatabaseBuilder(
             context, RecorderDatabase::class.java
         ).build()
-        testDao = db.entryDao()
+        testDao = testDatabase.entryDao()
         testEntity = EntryEntity(testUid, "test", "test", "test")
         testDao.insert(testEntity)
     }
@@ -36,7 +36,7 @@ class DatabaseTest {
     @After
     @Throws(IOException::class)
     fun closeDb() {
-        db.close()
+        testDatabase.close()
     }
 
     @Test
