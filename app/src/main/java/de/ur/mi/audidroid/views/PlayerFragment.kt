@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModel
@@ -19,8 +18,8 @@ import de.ur.mi.audidroid.viewmodels.PlayerViewModel
 import java.lang.IllegalArgumentException
 
 /**
- * ViewModel for PlayerFragment.
- * @author
+ * The fragment allows the user to play a voice recording.
+ * @author: Theresa Strohmeier
  */
 class PlayerFragment : Fragment() {
 
@@ -51,8 +50,9 @@ class PlayerFragment : Fragment() {
         return binding.root
     }
 
+
     /**
-     * Provides variable and context to the ViewModel.
+     * Provides the recordingPath, Repository and context to the PlayerViewModel.
      */
     class PlayerViewModelFactory(
         private val recordingPath: String,

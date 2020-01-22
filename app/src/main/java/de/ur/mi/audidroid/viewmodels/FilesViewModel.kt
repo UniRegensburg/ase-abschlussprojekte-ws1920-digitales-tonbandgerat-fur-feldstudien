@@ -1,7 +1,6 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
-import android.util.Log
 import android.view.View
 import android.widget.PopupMenu
 import androidx.lifecycle.AndroidViewModel
@@ -13,7 +12,7 @@ import de.ur.mi.audidroid.models.Repository
 
 /**
  * ViewModel for FilesFragment.
- * @author
+ * @author: Theresa Strohmeier
  */
 class FilesViewModel(dataSource: Repository, application: Application) :
     AndroidViewModel(application) {
@@ -31,6 +30,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _showSnackbarEvent.value = null
     }
 
+    // When the ImageButton is clicked, a PopupMenu opens.
     fun onButtonClicked(entryEntity: EntryEntity, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
@@ -49,7 +49,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _showSnackbarEvent.value = true
     }
 
-    // Navigation to PlayerFragment
+    // Navigation to the PlayerFragment
     private val _navigateToPlayerFragment = MutableLiveData<String>()
     val navigateToPlayerFragment
         get() = _navigateToPlayerFragment

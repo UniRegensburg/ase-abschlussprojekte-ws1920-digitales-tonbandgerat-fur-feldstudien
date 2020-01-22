@@ -11,7 +11,8 @@ import de.ur.mi.audidroid.databinding.EntryItemBinding
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
 /**
- * ViewModel for PlayerFragment.
+ * The adapter connects the data to the RecyclerView. It adapts the data so that it
+ * can be displayed in a ViewHolder.
  * @author: Theresa Strohmeier
  */
 class Adapter(private val filesViewModel: FilesViewModel) :
@@ -57,6 +58,7 @@ class Adapter(private val filesViewModel: FilesViewModel) :
     }
 }
 
+// DiffUtil uses these two methods to figure out how the list and items have changed
 class RecordingDiffCallback : DiffUtil.ItemCallback<EntryEntity>() {
 
     override fun areItemsTheSame(oldItem: EntryEntity, newItem: EntryEntity): Boolean {

@@ -5,23 +5,16 @@ import android.media.AudioAttributes
 import android.media.AudioAttributes.CONTENT_TYPE_SPEECH
 import android.media.MediaPlayer
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import de.ur.mi.audidroid.models.Repository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.DisposableHandle
-import kotlinx.coroutines.Job
 import java.io.File
 import java.io.IOException
 import java.lang.IllegalArgumentException
 
 /**
  * ViewModel for PlayerFragment.
- * @author
+ * @author: Theresa Strohmeier
  */
 class PlayerViewModel(
     recordingPath: String,

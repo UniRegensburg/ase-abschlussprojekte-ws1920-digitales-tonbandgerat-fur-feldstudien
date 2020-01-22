@@ -20,8 +20,8 @@ import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
 /**
- * ViewModel for PlayerFragment.
- * @author
+ * The fragment displays all recordings.
+ * @author: Theresa Strohmeier
  */
 class FilesFragment : Fragment() {
 
@@ -45,10 +45,9 @@ class FilesFragment : Fragment() {
 
         binding.filesViewModel = filesViewModel
 
-
-
         binding.setLifecycleOwner(this)
 
+        //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(this, Observer {
             if (it == true) {
                 Snackbar.make(view!!, R.string.recording_deleted, Snackbar.LENGTH_SHORT).show()
@@ -56,7 +55,7 @@ class FilesFragment : Fragment() {
             }
         })
 
-        // Observer on the state variable for Navigating when an item is clicked.
+        // Observer on the state variable for navigating when a list-item is clicked.
         filesViewModel.navigateToPlayerFragment.observe(this, Observer { recordingPath ->
             recordingPath?.let {
                 this.findNavController().navigate(
@@ -87,12 +86,10 @@ class FilesFragment : Fragment() {
                 }
             })
         }
-
-
     }
 
     /**
-     * Provides the Repository and context to the ViewModel.
+     * Provides the Repository and context to the FilesViewModel.
      */
     class FilesViewModelFactory(
         private val dataSource: Repository,

@@ -5,8 +5,8 @@ import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 
 /**
- *
- * @author
+ * The Repository isolates the data layer from the rest of the app.
+ * @author: Theresa Strohmeier
  */
 class Repository(application: Application) {
 
