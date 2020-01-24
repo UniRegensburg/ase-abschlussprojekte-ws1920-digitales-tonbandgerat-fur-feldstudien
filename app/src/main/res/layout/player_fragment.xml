@@ -26,6 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="124dp"
+                android:fontFamily="@font/rubik"
                 android:text="@string/recording_file_name"
                 android:textSize="35sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -48,8 +49,9 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
+                    android:fontFamily="@font/rubik_light"
                     android:gravity="center"
-                    android:text="@string/duration" />
+                    android:text="@{playerViewModel.currentDurationString}" />
 
                 <SeekBar
                     android:id="@+id/seekBar"
@@ -61,8 +63,9 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
+                    android:fontFamily="@font/rubik_light"
                     android:gravity="center"
-                    android:text="@string/duration" />
+                    android:text="@{playerViewModel.totalDurationString}" />
 
             </LinearLayout>
 
@@ -94,7 +97,7 @@
                 android:contentDescription="@string/pause_button"
                 android:onClick="@{() -> playerViewModel.onPausePlayer()}"
                 android:src="@mipmap/pause_button"
-                android:visibility="@{playerViewModel.isPlaying ? View.VISIBLE : View.GONE, default=visible}"
+                android:visibility="@{playerViewModel.isPlaying ? View.VISIBLE : View.GONE, default=gone}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"

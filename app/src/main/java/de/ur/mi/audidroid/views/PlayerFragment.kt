@@ -42,7 +42,7 @@ class PlayerFragment : Fragment() {
             ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
 
         playerViewModel.initializeMediaPlayer()
-
+        playerViewModel.initializeSeekBar(binding.seekBar)
         binding.playerViewModel = playerViewModel
 
         binding.setLifecycleOwner(this)

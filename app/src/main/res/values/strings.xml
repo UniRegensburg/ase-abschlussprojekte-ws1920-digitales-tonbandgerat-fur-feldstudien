@@ -23,11 +23,9 @@
     <!-- PlayerFragment -->
     <string name="play_button">Play recording</string>
     <string name="pause_button">Pause recording</string>
-    <string name="duration">00:00</string>
 
     <!-- FilesFragment -->
     <string name="recording_file_name">Recording</string>
-    <string name="recording_time">MM:SS</string>
     <string name="popup_menu_button">Popup Menu</string>
     <string name="popup_menu_option_delete">Delete</string>
     <string name="popup_menu_option_edit">Edit</string>
