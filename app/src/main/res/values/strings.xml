@@ -30,6 +30,7 @@
     <string name="popup_menu_option_delete">Delete</string>
     <string name="popup_menu_option_edit">Edit</string>
     <string name="recording_deleted">Recording deleted</string>
+    <string name="no_recordings">No recordings saved</string>
 
     <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>

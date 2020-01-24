@@ -6,6 +6,7 @@ import android.widget.PopupMenu
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
@@ -28,6 +29,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun doneShowingSnackbar() {
         _showSnackbarEvent.value = null
+    }
+
+    // If there are no recordings in the database, a TextView is displayed.
+    val empty: LiveData<Boolean> = Transformations.map(allRecordings) {
+        it.isEmpty()
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.

@@ -47,6 +47,7 @@ class PlayerViewModel(
     private val currentDuration: LiveData<Long>
         get() = _currentDuration
 
+    // The String version of the current duration
     val currentDurationString = Transformations.map(currentDuration) { duration ->
         DateUtils.formatElapsedTime(duration)
     }
