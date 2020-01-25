@@ -35,7 +35,7 @@ class FilesFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
 
-        val application = requireNotNull(this.activity).application
+        val application = this.activity!!.application
 
         val dataSource = Repository(application)
         val viewModelFactory = FilesViewModelFactory(dataSource, application)

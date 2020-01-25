@@ -31,7 +31,7 @@ class PlayerFragment : Fragment() {
         val binding: PlayerFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
 
-        val application = requireNotNull(this.activity).application
+        val application = this.activity!!.application
 
         val args = PlayerFragmentArgs.fromBundle(arguments!!)
 
