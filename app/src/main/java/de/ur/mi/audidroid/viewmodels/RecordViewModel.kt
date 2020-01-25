@@ -58,6 +58,7 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
         }
         try {
             mediaRecorder.prepare()
+            recorderInitialized = true
         } catch (e: IllegalStateException) {
             //TODO: Show user message
         } catch (e: IOException) {
