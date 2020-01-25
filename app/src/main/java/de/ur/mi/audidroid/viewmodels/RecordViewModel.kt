@@ -32,6 +32,7 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
     private lateinit var frameLayout: FrameLayout
+    private var recorderInitialized = false
 
     init {
         binding.buttonsVisible = false
@@ -58,7 +59,9 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
         try {
             mediaRecorder.prepare()
         } catch (e: IllegalStateException) {
+            //TODO: Show user message
         } catch (e: IOException) {
+            //TODO: Show user message
         }
     }
 
@@ -100,8 +103,11 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
     }
 
     fun cancelRecord() {
-        showSnackBar(R.string.record_removed)
-        endRecordSession()
+        if (recorderInitialized) {
+            showSnackBar(R.string.record_removed)
+            endRecordSession()
+            recorderInitialized = false
+        }
     }
 
     fun confirmRecord() {
