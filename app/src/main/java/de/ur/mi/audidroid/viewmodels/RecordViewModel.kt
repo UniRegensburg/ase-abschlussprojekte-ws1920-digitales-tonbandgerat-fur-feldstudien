@@ -107,7 +107,6 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
         if (recorderInitialized) {
             showSnackBar(R.string.record_removed)
             endRecordSession()
-            recorderInitialized = false
         }
     }
 
@@ -118,6 +117,7 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
     }
 
     private fun endRecordSession() {
+        recorderInitialized = false
         binding.buttonsVisible = false
         binding.isRecording = false
         resumeRecord = false
