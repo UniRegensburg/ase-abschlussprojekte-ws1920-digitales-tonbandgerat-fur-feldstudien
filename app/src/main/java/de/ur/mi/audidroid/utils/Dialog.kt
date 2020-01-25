@@ -5,6 +5,11 @@ import android.content.Context
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 
+/**
+ * The Dialog object creates a dialog depending on the parameters.
+ * @author: Sabine Roth
+ */
+
 object Dialog {
 
     fun createDialog(context: Context, layoutId: Int? = null, textId: Int? = null) {

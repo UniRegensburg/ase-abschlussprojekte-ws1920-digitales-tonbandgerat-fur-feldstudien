@@ -9,6 +9,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import de.ur.mi.audidroid.R
 
+/**
+ * The PermissionHelper checks if required permissions were given and creates an dialog using the Dialog object if they weren't.
+ * @author: Sabine Roth
+ */
+
 object PermissionHelper {
 
     private const val recordPermission = Manifest.permission.RECORD_AUDIO
