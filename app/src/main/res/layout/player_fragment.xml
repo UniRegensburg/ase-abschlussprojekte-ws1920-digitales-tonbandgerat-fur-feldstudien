@@ -25,28 +25,27 @@
                 android:id="@+id/text_file_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="124dp"
-                android:fontFamily="@font/rubik"
+                android:layout_marginTop="@dimen/text_view_margin_top"
                 android:text="@string/recording_file_name"
-                android:textSize="35sp"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
-                android:id="@+id/linearLayout"
+                android:id="@+id/seekBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="441dp"
-                android:layout_marginBottom="200dp"
+                android:layout_marginTop="@dimen/seek_bar_layout_margin_top"
+                android:layout_marginBottom="@dimen/seek_bar_layout_margin_bottom"
                 android:orientation="horizontal"
                 android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="0dp">
+                tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
                     android:fontFamily="@font/rubik_light"
@@ -55,12 +54,12 @@
 
                 <SeekBar
                     android:id="@+id/seekBar"
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.6" />
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
                     android:fontFamily="@font/rubik_light"
@@ -73,8 +72,8 @@
                 android:id="@+id/button_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="464dp"
-                android:layout_marginBottom="118dp"
+                android:layout_marginTop="@dimen/image_button_layout_margin_top"
+                android:layout_marginBottom="@dimen/image_button_layout_margin_bottom"
                 android:background="@null"
                 android:contentDescription="@string/play_button"
                 android:onClick="@{() -> playerViewModel.onStartPlayer()}"
@@ -91,8 +90,8 @@
                 android:id="@+id/button_pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="464dp"
-                android:layout_marginBottom="118dp"
+                android:layout_marginTop="@dimen/image_button_layout_margin_top"
+                android:layout_marginBottom="@dimen/image_button_layout_margin_bottom"
                 android:background="@null"
                 android:contentDescription="@string/pause_button"
                 android:onClick="@{() -> playerViewModel.onPausePlayer()}"

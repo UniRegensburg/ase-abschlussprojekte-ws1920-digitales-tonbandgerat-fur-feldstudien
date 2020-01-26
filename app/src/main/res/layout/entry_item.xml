@@ -18,15 +18,15 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp">
+        android:layout_marginStart="@dimen/card_view_margin"
+        android:layout_marginTop="@dimen/card_view_margin"
+        android:layout_marginEnd="@dimen/card_view_margin">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="@{() -> listener.onRecordingClicked(recording)}"
-            android:padding="12dp">
+            android:padding="@dimen/constraint_layout_padding">
 
             <LinearLayout
                 android:id="@+id/linearLayout"

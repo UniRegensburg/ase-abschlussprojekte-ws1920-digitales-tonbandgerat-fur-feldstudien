@@ -1,17 +1,13 @@
 package de.ur.mi.audidroid.viewmodels
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.media.AudioAttributes
 import android.media.AudioAttributes.CONTENT_TYPE_SPEECH
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
-import android.os.Message
 import android.text.format.DateUtils
-import android.util.Log
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -28,13 +24,13 @@ import java.lang.IllegalArgumentException
  */
 class PlayerViewModel(
     recordingPath: String,
-    dataSource: Repository,
     application: Application
 ) : AndroidViewModel(application) {
 
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
+    private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     private val uri: Uri = Uri.fromFile(File(recordingPath))
     var isPlaying = MutableLiveData<Boolean>()
 
@@ -67,9 +63,9 @@ class PlayerViewModel(
                 }
                 prepare()
             } catch (e: IOException) {
-                e.printStackTrace()
+                //TODO: Show user message
             } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
+                //TODO: Show user message
             }
         }
     }
@@ -77,9 +73,9 @@ class PlayerViewModel(
     fun initializeSeekBar(seekBar: SeekBar) {
         seekBar.max = mediaPlayer.duration
         _currentDuration.value =
-            mediaPlayer.currentPosition / res.getInteger(R.integer.one_second).toLong()
+            mediaPlayer.currentPosition / oneSecond
         totalDurationString =
-            DateUtils.formatElapsedTime(mediaPlayer.duration / res.getInteger(R.integer.one_second).toLong())
+            DateUtils.formatElapsedTime(mediaPlayer.duration / oneSecond)
 
         seekBar.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
@@ -104,7 +100,7 @@ class PlayerViewModel(
         runnable = Runnable {
             seekBar.progress = mediaPlayer.currentPosition
             _currentDuration.value =
-                mediaPlayer.currentPosition / res.getInteger(R.integer.one_second).toLong()
+                mediaPlayer.currentPosition / oneSecond
             handler.postDelayed(runnable, 50)
         }
 
@@ -120,7 +116,7 @@ class PlayerViewModel(
     fun onPausePlayer() {
         mediaPlayer.pause()
         _currentDuration.value =
-            mediaPlayer.currentPosition / res.getInteger(R.integer.one_second).toLong()
+            mediaPlayer.currentPosition / oneSecond
         isPlaying.value = mediaPlayer.isPlaying
     }
 
