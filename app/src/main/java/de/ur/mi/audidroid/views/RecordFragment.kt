@@ -1,14 +1,22 @@
 package de.ur.mi.audidroid.views
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import kotlinx.android.synthetic.main.record_fragment.*
+import java.io.File
+import java.net.URI
 
 class RecordFragment : Fragment() {
 
@@ -56,6 +64,7 @@ class RecordFragment : Fragment() {
         }
         toggleVisibility()
     }
+
 
     private fun toggleVisibility() {
         confirm_button.visibility =

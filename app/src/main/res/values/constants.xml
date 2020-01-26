@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="database_request_code">101</integer>
-
-    <!-- This should probably put in an other location. The User can change its value -->
-    <!--<preference name="file_storage_location">internal</preference>-->
-
+    <integer name="request_code_set_storage">3</integer>
 </resources>

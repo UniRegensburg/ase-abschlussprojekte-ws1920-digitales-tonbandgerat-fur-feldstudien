@@ -3,8 +3,7 @@ package de.ur.mi.audidroid.utils
 import android.os.Environment
 
 /**
- * Helper object to apply and change the storage location of files based on a user-set preference.
- * Supported locations: [internal] and [external].
+ * This is not used in current solution.
  *
  * @author: Lisa Sanladerer
  * Adapted from: ThemeHelper
@@ -38,7 +37,6 @@ object StorageHelper {
     /**
      * Applies the location change to the storage preference.
      */
-
     fun applyStorage(storage_location: String){
         if (storage_location != preference){
             if (storage_location == "external") {

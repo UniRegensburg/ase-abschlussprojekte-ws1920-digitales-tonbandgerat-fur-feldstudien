@@ -17,6 +17,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class RecordViewModel : ViewModel() {
 
     private var isRecording = false
@@ -27,39 +28,20 @@ class RecordViewModel : ViewModel() {
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
 
-
-    /** The Pathways to the directories are set according to the  preferences.
-     *   @author: Lisa Sanladerer
+    /** Gets the URI of the prefered Folder; Problem: turning the URI into an useable Path.
      */
-    private fun getStorageLocation(preferedStorage: String, context: Context): String {
-        var path = ""
+    private fun getFolderLocation (context: Context): String{
         val fileName = "/recording.aac"
-        if (preferedStorage == "internal") {
-            path = context.filesDir.absolutePath + fileName
-        } else {
-            var externalPath = context.getExternalFilesDir(null)?.absolutePath
-            if (externalPath != null) {
-                path = externalPath + fileName
-            }
-        }
+        val pref = PreferenceManager.getDefaultSharedPreferences(context)
+        var path = pref.getString(context.getString(R.string.storage_preference_key),null)!!
+        path = path + fileName
         return path
     }
 
-    /** Gets the preferred storage solution from settings.
-     *   @author: Lisa Sanladerer
-     */
-    private fun getStoragePreference(context: Context): String {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val storagePreference = preferences.getString(
-            context.getString(R.string.storage_preference_key),
-            "default"
-        )!!
-        return storagePreference
-    }
-
     private fun initializeRecorder(context: Context) {
-        val preference = getStoragePreference(context)
-        outputFile = getStorageLocation(preference, context)
+
+        outputFile = getFolderLocation(context)
+
         with(mediaRecorder) {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
