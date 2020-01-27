@@ -33,6 +33,7 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
     private var currentRecordTime: String = ""
     private lateinit var frameLayout: FrameLayout
     private var recorderInitialized = false
+    private var markList = mutableListOf<Pair<String, String>>()
 
     init {
         binding.buttonsVisible = false
@@ -141,10 +142,18 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
     private fun saveRecordInDB() {
         db = RecorderDatabase.getInstance(context)
         val audio =
-            EntryEntity(0, outputFile, getDate(), timer.text.toString())
+            EntryEntity(0, outputFile, getDate(), timer.text.toString(), markList.toString())
         doAsync {
             db.entryDao().insert(audio)
         }
+    }
+
+    fun makeMark(){
+        val time = timer.text.toString()
+        val mark = context.resources.getString(R.string.mark_button)
+        val markEntry = Pair(mark,time)
+        markList.add(markEntry)
+        showSnackBar(R.string.mark_made)
     }
 
     /**

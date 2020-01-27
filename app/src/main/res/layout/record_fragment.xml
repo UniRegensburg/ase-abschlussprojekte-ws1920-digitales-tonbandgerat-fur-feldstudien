@@ -97,7 +97,9 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.95"
-                android:backgroundTint="@color/color_secondary"/>
+                android:backgroundTint="@color/color_secondary"
+                android:visibility="@{buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+                android:onClick="@{() -> recordViewModel.makeMark()}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
