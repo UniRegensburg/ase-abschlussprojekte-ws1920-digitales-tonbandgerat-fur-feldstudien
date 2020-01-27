@@ -75,14 +75,14 @@
                 android:background="@null"
                 android:contentDescription="@string/play_button"
                 android:onClick="@{() -> playerViewModel.onStartPlayer()}"
-                android:src="@mipmap/play_button"
+                android:src="@mipmap/play_button_foreground"
                 android:visibility="@{playerViewModel.isPlaying ? View.GONE : View.VISIBLE, default=visible}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.87" />
+                app:layout_constraintVertical_bias="0.93" />
 
             <ImageButton
                 android:id="@+id/button_pause"
@@ -91,14 +91,14 @@
                 android:background="@null"
                 android:contentDescription="@string/pause_button"
                 android:onClick="@{() -> playerViewModel.onPausePlayer()}"
-                android:src="@mipmap/pause_button"
+                android:src="@mipmap/pause_button_foreground"
                 android:visibility="@{playerViewModel.isPlaying ? View.VISIBLE : View.GONE, default=gone}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.87" />
+                app:layout_constraintVertical_bias="0.93" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
