@@ -8,16 +8,29 @@
     <fragment
         android:id="@+id/record"
         android:name="de.ur.mi.audidroid.views.RecordFragment"
-        android:label="Record"
+        android:label="@string/record_label"
         tools:layout="@layout/record_fragment" />
     <fragment
         android:id="@+id/files"
         android:name="de.ur.mi.audidroid.views.FilesFragment"
-        android:label="files_fragment"
-        tools:layout="@layout/files_fragment" />
+        android:label="@string/files_label"
+        tools:layout="@layout/files_fragment" >
+        <action
+            android:id="@+id/action_files_to_player"
+            app:destination="@id/player" />
+    </fragment>
     <fragment
         android:id="@+id/settings"
         android:name="de.ur.mi.audidroid.views.PreferenceFragment"
-        android:label="fragment_settings" />
+        android:label="@string/settings_label" />
+    <fragment
+        android:id="@+id/player"
+        android:name="de.ur.mi.audidroid.views.PlayerFragment"
+        android:label="@string/player_label"
+        tools:layout="@layout/player_fragment" >
+        <argument
+            android:name="recordingPath"
+            app:argType="string" />
+    </fragment>
 
 </navigation>

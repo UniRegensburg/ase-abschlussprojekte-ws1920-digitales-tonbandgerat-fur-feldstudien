@@ -1,5 +1,6 @@
 package de.ur.mi.audidroid.models
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -17,10 +18,13 @@ import androidx.room.Query
 @Dao
 interface EntryDao {
     @Query("SELECT * FROM recordingsTable")
-    fun getAllRecordings(): List<EntryEntity>
+    fun getAllRecordings(): LiveData<List<EntryEntity>>
 
     @Query("SELECT * FROM recordingsTable WHERE uid IN (:uniqueId)")
     fun loadEntryById(uniqueId: Int): EntryEntity
+
+    @Query("SELECT * FROM recordingsTable WHERE uid = :key")
+    fun getRecordingWithId(key: Int): LiveData<EntryEntity>
 
     @Insert(onConflict = REPLACE)
     fun insert(entryEntity: EntryEntity)
