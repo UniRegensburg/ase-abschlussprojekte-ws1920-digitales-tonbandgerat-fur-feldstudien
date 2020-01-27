@@ -1,14 +1,15 @@
 package de.ur.mi.audidroid.viewmodels
 
+import android.app.Application
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.widget.Chronometer
 import android.widget.FrameLayout
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.RecorderDatabase
 import org.jetbrains.anko.doAsync
@@ -21,9 +22,8 @@ import java.util.*
  * @author: Sabine Roth
  */
 
-class RecordViewModel(val context: Context, private val binding: RecordFragmentBinding) :
-    ViewModel() {
-
+class RecordViewModel(application: Application) :
+    AndroidViewModel(application) {
 
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
@@ -33,10 +33,13 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
     private var currentRecordTime: String = ""
     private lateinit var frameLayout: FrameLayout
     private var recorderInitialized = false
+    private val context = getApplication<Application>().applicationContext
+    var isRecording = MutableLiveData<Boolean>()
+    var buttonsVisible = MutableLiveData<Boolean>()
 
     init {
-        binding.buttonsVisible = false
-        binding.isRecording = false
+        isRecording.value = false
+        buttonsVisible.value = false
     }
 
     fun initializeTimer(chronometer: Chronometer) {
@@ -60,22 +63,22 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
             mediaRecorder.prepare()
             recorderInitialized = true
         } catch (e: IllegalStateException) {
-            //TODO: Show user message
+            showSnackBar(R.string.error_message_recorder_initialization)
         } catch (e: IOException) {
-            //TODO: Show user message
+            showSnackBar(R.string.error_message_recorder_file)
         }
     }
 
     fun recordPauseButtonClicked() {
-        when (binding.isRecording) {
+        when (isRecording.value) {
             false -> {
                 recordButtonClicked()
-                binding.buttonsVisible = true
-                binding.isRecording = true
+                buttonsVisible.value = true
+                isRecording.value = true
             }
             true -> {
                 pauseButtonClicked()
-                binding.isRecording = false
+                isRecording.value = false
             }
         }
     }
@@ -118,8 +121,8 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
 
     private fun endRecordSession() {
         recorderInitialized = false
-        binding.buttonsVisible = false
-        binding.isRecording = false
+        buttonsVisible.value = false
+        isRecording.value = false
         resumeRecord = false
         mediaRecorder.stop()
         mediaRecorder.reset()

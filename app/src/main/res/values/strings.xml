@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Audidroid</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Audidroid</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
@@ -20,7 +18,6 @@
     <string name="record_pause_button">Record and Pause Button</string>
 
     <string name="mark_button">Mark</string>
-    <string name="start_timer">00:00</string>
 
     <!-- User Feedback Toasts -->
     <string name="record_saved">Recording saved</string>
@@ -32,5 +29,9 @@
     <string name="permission_read">Permission to read the storage is required to list the record messages.</string>
     <string name="permission_title">Permission required</string>
     <string name="permission_button">OK</string>
+
+    <!-- Error messages recorder -->
+    <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
+    <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
 
 </resources>

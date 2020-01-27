@@ -11,13 +11,6 @@
             name="recordViewModel"
             type="de.ur.mi.audidroid.viewmodels.RecordViewModel" />
 
-        <variable
-            name="buttonsVisible"
-            type="java.lang.Boolean" />
-
-        <variable
-            name="isRecording"
-            type="java.lang.Boolean" />
     </data>
 
     <FrameLayout
@@ -60,7 +53,7 @@
                     android:background="@null"
                     android:contentDescription="@string/cancel_button"
                     android:src="@mipmap/cancel_button_foreground"
-                    android:visibility="@{buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+                    android:visibility="@{recordViewModel.buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
                     android:onClick="@{() -> recordViewModel.cancelRecord()}"/>
 
                 <ImageButton
@@ -72,7 +65,7 @@
                     android:background="@null"
                     android:contentDescription="@string/record_pause_button"
                     android:scaleType="fitXY"
-                    android:src="@{isRecording ? @drawable/pause_button : @drawable/record_button_orange, default = @drawable/record_button_orange}"
+                    android:src="@{recordViewModel.isRecording ? @drawable/pause_button : @drawable/record_button_orange, default = @drawable/record_button_orange}"
                     android:onClick="@{() -> recordViewModel.recordPauseButtonClicked()}"/>
 
                 <ImageButton
@@ -83,7 +76,7 @@
                     android:background="@null"
                     android:contentDescription="@string/confirm_button"
                     android:src="@mipmap/confirm_button_foreground"
-                    android:visibility="@{buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+                    android:visibility="@{recordViewModel.buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
                     android:onClick="@{() -> recordViewModel.confirmRecord()}"/>
             </LinearLayout>
 
