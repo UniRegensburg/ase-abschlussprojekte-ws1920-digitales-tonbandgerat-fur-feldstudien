@@ -23,6 +23,8 @@
     <!-- PlayerFragment -->
     <string name="play_button">Play recording</string>
     <string name="pause_button">Pause recording</string>
+    <string name="error_message_initialization_failed">Initialization of MediaPlayer failed</string>
+    <string name="error_message_path">file moved or deleted</string>
 
     <!-- FilesFragment -->
     <string name="recording_file_name">Recording</string>

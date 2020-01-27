@@ -22,9 +22,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val context = getApplication<Application>().applicationContext
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
 
-    private var _showSnackbarEvent = MutableLiveData<Boolean?>()
+    private var _showSnackbarEvent = MutableLiveData<Boolean>()
 
-    val showSnackbarEvent: LiveData<Boolean?>
+    val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
 
     fun doneShowingSnackbar() {

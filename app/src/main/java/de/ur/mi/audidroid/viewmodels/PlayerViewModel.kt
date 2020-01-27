@@ -7,13 +7,14 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
+import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
 import java.lang.IllegalArgumentException
@@ -28,6 +29,7 @@ class PlayerViewModel(
 ) : AndroidViewModel(application) {
 
     private var mediaPlayer: MediaPlayer = MediaPlayer()
+    private lateinit var frameLayout: FrameLayout
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
@@ -63,9 +65,9 @@ class PlayerViewModel(
                 }
                 prepare()
             } catch (e: IOException) {
-                //TODO: Show user message
+                showSnackBar(R.string.error_message_initialization_failed)
             } catch (e: IllegalArgumentException) {
-                //TODO: Show user message
+                showSnackBar(R.string.error_message_path)
             }
         }
     }
@@ -132,5 +134,9 @@ class PlayerViewModel(
         handler.removeCallbacks(runnable)
         mediaPlayer.reset()
         mediaPlayer.release()
+    }
+
+    private fun showSnackBar(text: Int) {
+        Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 }

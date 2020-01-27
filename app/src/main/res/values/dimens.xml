@@ -24,12 +24,7 @@
 
     <dimen name="card_view_margin">8dp</dimen>
     <dimen name="constraint_layout_padding">12dp</dimen>
-    <dimen name="text_view_margin_top">124dp</dimen>
-    <dimen name="seek_bar_layout_margin_top">441dp</dimen>
-    <dimen name="seek_bar_layout_margin_bottom">200dp</dimen>
     <dimen name="seek_bar_layout_absolute_x">0dp</dimen>
-    <dimen name="image_button_layout_margin_top">464dp</dimen>
-    <dimen name="image_button_layout_margin_bottom">118dp</dimen>
     <dimen name="layout_width_seek_bar_element">0dp</dimen>
 
     <!-- Textsizes -->
