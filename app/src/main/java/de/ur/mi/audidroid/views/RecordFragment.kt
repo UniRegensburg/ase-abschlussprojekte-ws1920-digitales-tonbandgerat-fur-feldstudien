@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.databinding.RecordFragmentBinding
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import kotlinx.android.synthetic.main.record_fragment.*
 
@@ -35,10 +36,11 @@ class RecordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val application = this.activity!!.application
+        val dataSource = Repository(application)
         val binding: RecordFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
 
-        val viewModelFactory = RecordViewModelFactory(application)
+        val viewModelFactory = RecordViewModelFactory(dataSource, application)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(RecordViewModel::class.java)
         binding.recordViewModel = viewModel
         binding.lifecycleOwner = this
@@ -46,12 +48,13 @@ class RecordFragment : Fragment() {
     }
 
     class RecordViewModelFactory(
+        private val dataSource: Repository,
         private val application: Application
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return if (modelClass.isAssignableFrom(RecordViewModel::class.java)) {
-                RecordViewModel(application) as T
+                RecordViewModel(dataSource, application) as T
             } else {
                 throw IllegalArgumentException("ViewModel Not Found")
             }

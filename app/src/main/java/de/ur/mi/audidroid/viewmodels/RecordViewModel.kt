@@ -2,6 +2,7 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.content.Context
+import android.media.MediaDataSource
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.widget.Chronometer
@@ -12,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.RecorderDatabase
+import de.ur.mi.audidroid.models.Repository
 import org.jetbrains.anko.doAsync
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -22,13 +24,12 @@ import java.util.*
  * @author: Sabine Roth
  */
 
-class RecordViewModel(application: Application) :
+class RecordViewModel(private val dataSource: Repository, application: Application) :
     AndroidViewModel(application) {
 
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
     private var outputFile = ""
-    private lateinit var db: RecorderDatabase
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
     private lateinit var frameLayout: FrameLayout
@@ -142,12 +143,9 @@ class RecordViewModel(application: Application) :
     }
 
     private fun saveRecordInDB() {
-        db = RecorderDatabase.getInstance(context)
         val audio =
             EntryEntity(0, outputFile, getDate(), timer.text.toString())
-        doAsync {
-            db.entryDao().insert(audio)
-        }
+        dataSource.insert(audio)
     }
 
     /**

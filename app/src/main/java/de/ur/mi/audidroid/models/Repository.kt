@@ -36,4 +36,31 @@ class Repository(application: Application) {
             entryDao.delete(p0[0]!!)
         }
     }
+
+
+    //TODO: TEST IF UPCOUNTING IS STILL WORKING
+    fun insert(entryEntity: EntryEntity){
+        InsertAsyncTask(entryDao).execute(entryEntity)
+    }
+
+    private class InsertAsyncTask(val entryDao: EntryDao) :
+        AsyncTask<EntryEntity, Unit, Unit>() {
+
+        override fun doInBackground(vararg p0: EntryEntity?) {
+            entryDao.insert(p0[0]!!)
+        }
+    }
+
+    fun getRecordingWithId(entryEntity: EntryEntity){
+        GetRecordingWithId(entryDao).execute(entryEntity)
+    }
+
+    private class GetRecordingWithId(val entryDao: EntryDao) :
+        AsyncTask<EntryEntity, Unit, Unit>() {
+
+        override fun doInBackground(vararg p0: EntryEntity?) {
+            entryDao.getRecordingWithId(p0[0]!!.uid)
+        }
+    }
+
 }
