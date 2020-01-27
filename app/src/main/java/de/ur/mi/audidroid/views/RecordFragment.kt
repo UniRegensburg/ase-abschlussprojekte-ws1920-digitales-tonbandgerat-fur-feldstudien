@@ -63,4 +63,9 @@ class RecordFragment : Fragment() {
         viewModel.initializeTimer(chronometer)
         viewModel.initializeLayout(frameLayout)
     }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.cancelRecord()
+    }
 }
