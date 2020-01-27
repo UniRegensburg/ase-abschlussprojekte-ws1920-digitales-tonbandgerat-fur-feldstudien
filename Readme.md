@@ -1,7 +1,5 @@
 # Audidroid
 
-[Beschreiben Sie hier in einer kurzen Zusammenfassung Hintergrund, Ziele und Funktionen Ihrer Anwendung. Fügen Sie einen sinnvollen Screenshot ein. Geben Sie eine Link zur aktuellsten Veröffentlichung an.]
-
 Audidroid dient ForscherInnen und WissenschaftlerInnen als digitales Tonbandgerät für Feldstudien. 
 Der Fokus liegt hierbei auf Interviews und Sprachnotizen. 
 Audidroid zeichnet sich durch Features aus, die speziell für diesen Anwendungsfall konzipiert sind. 
@@ -21,8 +19,6 @@ Theresa Strohmeier, theresa.strohmeier@stud.uni-regensburg.de, @TheresaStrohmeie
 
 
 ## Beschreibung
-
-[Dokumentieren Sie alle aktuell implementierten Funktionen der Anwendung. Verwenden Sie Screenshots und ggf. auch Gif-Dateien um zentrale Elemente und Abläufe zu beschreiben.]
 
 Aktuell sind folgende Features in Aud idroid implementiert.
 
