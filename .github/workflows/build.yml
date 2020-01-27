@@ -20,8 +20,8 @@ jobs:
           java-version: 1.8
       - name: Run Tests
         run: bash ./gradlew test --stacktrace
-  checkstyle:
-    name: Run Checkstyle static code analysis
+  ktlint:
+    name: Run ktlint static code analysis
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,8 +30,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Run Checkstyle
-        run: bash ./gradlew checkstyle --stacktrace
+      - name: Run Ktlint
+        run: bash ./gradlew ktlint --stacktrace
   apk:
     name: Generate APK
     needs: test

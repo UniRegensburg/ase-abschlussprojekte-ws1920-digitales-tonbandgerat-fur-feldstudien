@@ -16,7 +16,6 @@ import de.ur.mi.audidroid.utils.PermissionHelper
 import de.ur.mi.audidroid.utils.ThemeHelper
 import kotlinx.android.synthetic.main.app_bar_main.*
 
-
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
     private val drawerLayout: DrawerLayout by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
@@ -71,7 +70,9 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
     ) {
         when (requestCode) {
             requestCode -> {

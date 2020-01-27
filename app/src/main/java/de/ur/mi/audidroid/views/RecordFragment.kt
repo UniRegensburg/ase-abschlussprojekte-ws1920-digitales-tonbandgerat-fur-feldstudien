@@ -15,7 +15,6 @@ import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import kotlinx.android.synthetic.main.record_fragment.*
 
-
 /**
  * The fragment allows the user to do a voice recording. The changes of the view are handled within.
  * The view changes automatically with data binding depending on the current state
@@ -31,7 +30,8 @@ class RecordFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val binding: RecordFragmentBinding =

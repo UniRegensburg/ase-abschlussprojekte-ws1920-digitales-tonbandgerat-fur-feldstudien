@@ -15,10 +15,9 @@ class PermissionHelper(val context: Context) {
     private val recordPermission = Manifest.permission.RECORD_AUDIO
     private val writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
     private val readPermission = Manifest.permission.READ_EXTERNAL_STORAGE
-    private val requestCode =  context.resources.getInteger(R.integer.database_request_code)
+    private val requestCode = context.resources.getInteger(R.integer.database_request_code)
     private var permissionsResult: String? = null
     private val firstRequest = Resources.getSystem().getString(android.R.string.ok)
-
 
     fun permissionsGranted(): String? {
         if (ContextCompat.checkSelfPermission(
@@ -63,7 +62,7 @@ class PermissionHelper(val context: Context) {
     }
 
     fun showDialog(missingPermission: String) {
-        //TODO: Using dialog util as soon as it is implemented
+        // TODO: Using dialog util as soon as it is implemented
         val builder = AlertDialog.Builder(context)
         when (missingPermission) {
             recordPermission -> builder.setMessage(R.string.permission_record)

@@ -11,10 +11,10 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.RecorderDatabase
-import org.jetbrains.anko.doAsync
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import org.jetbrains.anko.doAsync
 
 /**
  * The ViewModel handles the changes to the view's data and the event logic for the user interaction referring to the RecordFragment
@@ -23,7 +23,6 @@ import java.util.*
 
 class RecordViewModel(val context: Context, private val binding: RecordFragmentBinding) :
     ViewModel() {
-
 
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
@@ -48,7 +47,7 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
 
     private fun initializeRecorder(context: Context) {
         outputFile =
-            context.filesDir.absolutePath + "/recording.aac" //TODO: Change path to users preferred save location
+            context.filesDir.absolutePath + "/recording.aac" // TODO: Change path to users preferred save location
         with(mediaRecorder) {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)

@@ -6,8 +6,6 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
-apply plugin: 'checkstyle'
-
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -47,20 +45,24 @@ android {
     }
 }
 
+configurations {
+    ktlint
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha03'
+    implementation 'com.google.android.material:material:1.2.0-alpha04'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.navigation:navigation-fragment:2.1.0'
-    implementation 'androidx.navigation:navigation-ui:2.1.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.1.0'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.1.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0'
+    implementation 'androidx.navigation:navigation-fragment:2.2.0'
+    implementation 'androidx.navigation:navigation-ui:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.2.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.room:room-runtime:2.2.3'
     implementation 'androidx.room:room-rxjava2:2.2.3'
@@ -75,20 +77,27 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation 'androidx.test:core:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
+    ktlint "com.pinterest:ktlint:0.35.0"
 }
 
-check.dependsOn('checkstyle')
+task ktlint(type: JavaExec, group: "verification") {
+    description = "Check Kotlin code style."
+    main = "com.pinterest.ktlint.Main"
+    classpath = configurations.ktlint
+    ignoreExitValue true
+    args "src/**/*.kt"
+    // to generate report in checkstyle format prepend following args:
+    args "--reporter=plain"
+    args "--reporter=checkstyle,output=${buildDir}/ktlint.xml"
+    // see https://github.com/pinterest/ktlint#usage for more
+}
 
-task checkstyle(type: Checkstyle) {
-    configFile file("${project.rootDir}/gradle/checkstyle-ruleset.xml")
-    source 'src/main'
-    include '**/*.kt'
-    exclude '**/gen/**'
-    classpath = files()
+check.dependsOn 'ktlint'
 
-
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
+task ktlintFormat(type: JavaExec, group: "formatting") {
+    description = "Fix Kotlin code style deviations."
+    main = "com.pinterest.ktlint.Main"
+    classpath = configurations.ktlint
+    ignoreExitValue true
+    args "-F", "src/**/*.kt"
 }
