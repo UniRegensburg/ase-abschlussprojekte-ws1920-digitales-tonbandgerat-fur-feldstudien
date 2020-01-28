@@ -26,4 +26,6 @@ Die App benötigt folgende Permissions:
 
 - JUnit für Unittests
 
+- jraska/livedata-testing für Tests zum DataBinding
+
 - Ktlint für statische Codeanalyse
