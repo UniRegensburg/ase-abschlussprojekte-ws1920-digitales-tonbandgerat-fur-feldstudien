@@ -37,9 +37,7 @@ class Repository(application: Application) {
         }
     }
 
-
-    //TODO: TEST IF UPCOUNTING IS STILL WORKING
-    fun insert(entryEntity: EntryEntity){
+    fun insert(entryEntity: EntryEntity) {
         InsertAsyncTask(entryDao).execute(entryEntity)
     }
 
@@ -51,7 +49,7 @@ class Repository(application: Application) {
         }
     }
 
-    fun getRecordingWithId(entryEntity: EntryEntity){
+    fun getRecordingWithId(entryEntity: EntryEntity) {
         GetRecordingWithId(entryDao).execute(entryEntity)
     }
 
@@ -62,5 +60,4 @@ class Repository(application: Application) {
             entryDao.getRecordingWithId(p0[0]!!.uid)
         }
     }
-
 }

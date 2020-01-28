@@ -10,6 +10,7 @@ import androidx.lifecycle.Transformations
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
+import java.io.File
 
 /**
  * ViewModel for FilesFragment.
@@ -50,9 +51,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         popupMenu.show()
     }
 
-    fun delete(entryEntity: EntryEntity) {
-        repository.delete(entryEntity)
-        _showSnackbarEvent.value = true
+    private fun delete(entryEntity: EntryEntity) {
+        val deletedSuccessful = File(entryEntity.recordingPath).delete()
+        if (deletedSuccessful) {
+            repository.delete(entryEntity)
+            _showSnackbarEvent.value = true
+        }
     }
 
     // Navigation to the PlayerFragment

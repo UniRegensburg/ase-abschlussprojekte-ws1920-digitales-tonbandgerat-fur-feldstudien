@@ -12,7 +12,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.MockitoAnnotations
 import java.io.IOException
 
 /**
@@ -36,8 +35,6 @@ class DatabaseTest {
 
     @Before
     fun createDb() {
-        MockitoAnnotations.initMocks(this)
-
         val context = ApplicationProvider.getApplicationContext<Context>()
         testDatabase = Room.inMemoryDatabaseBuilder(
             context, RecorderDatabase::class.java
@@ -45,12 +42,6 @@ class DatabaseTest {
         testDao = testDatabase.entryDao()
         testEntity = EntryEntity(testUid, "test", "test", "test")
         testDao.insert(testEntity)
-    }
-
-    @After
-    @Throws(IOException::class)
-    fun closeDb() {
-        testDatabase.close()
     }
 
     @Test
@@ -109,5 +100,11 @@ class DatabaseTest {
             .awaitValue()
             .map { currentList }
         assertTrue(currentList.isEmpty())
+    }
+
+    @After
+    @Throws(IOException::class)
+    fun closeDb() {
+        testDatabase.close()
     }
 }

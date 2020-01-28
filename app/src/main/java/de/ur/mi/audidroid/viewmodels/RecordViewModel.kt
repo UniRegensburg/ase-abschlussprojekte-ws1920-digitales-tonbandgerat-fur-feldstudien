@@ -2,7 +2,6 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.content.Context
-import android.media.MediaDataSource
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.widget.Chronometer
@@ -12,9 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.RecorderDatabase
 import de.ur.mi.audidroid.models.Repository
-import org.jetbrains.anko.doAsync
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
