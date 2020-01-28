@@ -1,7 +1,7 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
-import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.widget.Chronometer
@@ -12,6 +12,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.FormatTimeHelper
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -48,7 +49,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         this.frameLayout = frameLayout
     }
 
-    private fun initializeRecorder(context: Context) {
+    private fun initializeRecorder() {
         outputFile =
             context.filesDir.absolutePath + "/recording.aac" //TODO: Change path to users preferred save location
         with(mediaRecorder) {
@@ -84,14 +85,14 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private fun recordButtonClicked() {
         when (resumeRecord) {
             true -> {
-                timer.base = SystemClock.elapsedRealtime() - getStoppedTime(context)
+                timer.base = SystemClock.elapsedRealtime() - getStoppedTime()
                 timer.start()
                 resumeRecording()
             }
             false -> {
                 resetTimer()
                 timer.start()
-                initializeRecorder(context)
+                initializeRecorder()
                 startRecording()
             }
         }
@@ -113,8 +114,9 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     fun confirmRecord() {
         showSnackBar(R.string.record_saved)
-        saveRecordInDB()
+
         endRecordSession()
+        saveRecordInDB()
     }
 
     private fun endRecordSession() {
@@ -140,9 +142,20 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun saveRecordInDB() {
-        val audio =
-            EntryEntity(0, outputFile, getDate(), timer.text.toString())
-        dataSource.insert(audio)
+        val recordingDuration = getRecordingDuration()
+        if (recordingDuration != null) {
+            val audio =
+                EntryEntity(0, outputFile, getDate(), recordingDuration)
+            dataSource.insert(audio)
+        }
+    }
+
+    private fun getRecordingDuration(): String? {
+        val metaRetriever = MediaMetadataRetriever()
+        metaRetriever.setDataSource(outputFile)
+        return FormatTimeHelper.formatMilliseconds(
+            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+        )
     }
 
     /**
@@ -159,7 +172,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     /** Returns the last stopped time as an Integer value */
-    private fun getStoppedTime(context: Context): Int {
+    private fun getStoppedTime(): Int {
         val timeArray = currentRecordTime.split(":")
         val res = context.resources
         return if (timeArray.size == 2) {
