@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.utils.ThemeHelper
 
@@ -20,5 +19,4 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                 true
             }
     }
-
 }
