@@ -14,11 +14,30 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
 
-    <!-- Recorder strings -->
+    <!-- Navigation -->
+    <string name="record_label">Record</string>
+    <string name="files_label">Files</string>
+    <string name="settings_label">Settings</string>
+    <string name="player_label">Player</string>
+
+    <!-- PlayerFragment -->
+    <string name="play_button">Play recording</string>
+    <string name="pause_button">Pause recording</string>
+    <string name="error_message_initialization_failed">Initialization of MediaPlayer failed</string>
+    <string name="error_message_path">file moved or deleted</string>
+
+    <!-- FilesFragment -->
+    <string name="recording_file_name">Recording</string>
+    <string name="popup_menu_button">Popup Menu</string>
+    <string name="popup_menu_option_delete">Delete</string>
+    <string name="popup_menu_option_edit">Edit</string>
+    <string name="recording_deleted">Recording deleted</string>
+    <string name="no_recordings">No recordings saved</string>
+
+    <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>
     <string name="cancel_button">Cancel Button</string>
     <string name="record_pause_button">Record and Pause Button</string>
-
     <string name="mark_button">Mark</string>
     <string name="start_timer">00:00</string>
 

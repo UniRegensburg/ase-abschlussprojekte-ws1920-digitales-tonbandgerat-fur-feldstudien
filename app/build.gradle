@@ -6,6 +6,8 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'androidx.navigation.safeargs'
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -32,10 +34,16 @@ android {
     kotlinOptions {
         jvmTarget = 1.8
     }
+
+    kapt {
+        generateStubs = true
+    }
+
     testOptions {
         unitTests.includeAndroidResources = true
         unitTests.returnDefaultValues = true
     }
+
     dataBinding {
         enabled = true
     }
