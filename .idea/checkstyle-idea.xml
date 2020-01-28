@@ -9,6 +9,7 @@
         <entry key="location-1" value="BUNDLED:(bundled):Google Checks" />
         <entry key="scan-before-checkin" value="false" />
         <entry key="scanscope" value="JavaOnly" />
+        <entry key="scanscope" value="AllSources" />
         <entry key="suppress-errors" value="false" />
       </map>
     </option>

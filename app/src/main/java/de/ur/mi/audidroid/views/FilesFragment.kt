@@ -1,12 +1,13 @@
 package de.ur.mi.audidroid.views
 
 import android.app.Application
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
+import de.ur.mi.audidroid.R
 import androidx.databinding.DataBindingUtil
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import androidx.lifecycle.Observer
@@ -29,7 +30,8 @@ class FilesFragment : Fragment() {
     private lateinit var binding: FilesFragmentBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
