@@ -26,6 +26,6 @@ Die App benötigt folgende Permissions:
 
 - JUnit für Unittests
 
-- jraska/livedata-testing für Tests zum DataBinding
+- jraska/livedata-testing für Unittests der Datenbank mit LiveData Rückgabewerten
 
 - Ktlint für statische Codeanalyse
