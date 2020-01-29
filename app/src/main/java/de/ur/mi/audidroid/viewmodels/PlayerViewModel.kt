@@ -109,6 +109,10 @@ class PlayerViewModel(
         handler.postDelayed(runnable, 0)
     }
 
+    fun initializeFrameLayout(frameLayout: FrameLayout) {
+        this.frameLayout = frameLayout
+    }
+
     fun onStartPlayer() {
         mediaPlayer.start()
         handler.postDelayed(runnable, 0)
