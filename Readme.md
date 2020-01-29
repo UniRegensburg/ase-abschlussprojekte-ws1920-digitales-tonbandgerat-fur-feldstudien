@@ -6,6 +6,7 @@ Audidroid zeichnet sich durch Features aus, die speziell für diesen Anwendungsf
 Dazu gehören neben dem reinen Aufnehmen von Audiodateien auch das Markieren wichtiger Stellen in den Dateien direkt in der App.
 
 Technische Informationen zu Audidroid finden sich [hier](./docs/Setup.md), eine detaillierte Übersicht über den Anforderungskontext findet sich [hier](./docs/Overview.md).
+
 //TODO: Link zur aktuellsten Veröffentlichung 
 
 ## Team
@@ -31,7 +32,7 @@ Aktuell sind folgende Features in Audidroid implementiert.
 
 ![Recording](/requirements/Recording.png)
 
-- Markierung von Stellen im Audio während der Aufnahme //Löschen?
+- Markierung von Stellen im Audio während der Aufnahme
 
 - Auswählen der Aufnahme aus der Liste der eigenen Audiodateien
 
