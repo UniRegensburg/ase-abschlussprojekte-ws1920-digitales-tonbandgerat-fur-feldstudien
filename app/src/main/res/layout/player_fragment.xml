@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+        <variable
+            name="playerViewModel"
+            type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
+    </data>
+
+    <FrameLayout
+        android:id="@+id/player_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".views.PlayerFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/text_file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recording_file_name"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline4"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.263" />
+
+            <LinearLayout
+                android:id="@+id/seekBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.70"
+                tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
+
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:gravity="center"
+                    android:text="@{playerViewModel.currentDurationString}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6" />
+
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:gravity="center"
+                    android:text="@{playerViewModel.totalDurationString}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
+
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/button_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/play_button"
+                android:onClick="@{() -> playerViewModel.onStartPlayer()}"
+                android:src="@mipmap/play_button_foreground"
+                android:visibility="@{playerViewModel.isPlaying ? View.GONE : View.VISIBLE, default=visible}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.93" />
+
+            <ImageButton
+                android:id="@+id/button_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/pause_button"
+                android:onClick="@{() -> playerViewModel.onPausePlayer()}"
+                android:src="@mipmap/pause_button_foreground"
+                android:visibility="@{playerViewModel.isPlaying ? View.VISIBLE : View.GONE, default=gone}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.93" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
+</layout>

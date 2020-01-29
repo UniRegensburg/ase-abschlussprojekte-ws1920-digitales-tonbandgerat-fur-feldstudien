@@ -14,6 +14,7 @@ import de.ur.mi.audidroid.R
  * @author: Sabine Roth
  */
 
+
 object PermissionHelper {
 
     private const val recordPermission = Manifest.permission.RECORD_AUDIO
@@ -22,8 +23,8 @@ object PermissionHelper {
     private var permissionsResult: String? = null
     private val firstRequest = Resources.getSystem().getString(android.R.string.ok)
 
-
     fun permissionsGranted(context: Context): String? {
+
         if (ContextCompat.checkSelfPermission(
                 context,
                 recordPermission
@@ -65,6 +66,7 @@ object PermissionHelper {
         return permissionsResult
     }
 
+
     fun showDialog(missingPermission: String, context: Context) {
         when (missingPermission) {
             recordPermission -> Dialog.createDialog(
@@ -92,6 +94,10 @@ object PermissionHelper {
             writePermission,
             readPermission
         )
-        ActivityCompat.requestPermissions(context as Activity, permissions, context.resources.getInteger(R.integer.database_request_code))
+        ActivityCompat.requestPermissions(
+            context as Activity,
+            permissions,
+            context.resources.getInteger(R.integer.database_request_code)
+        )
     }
 }

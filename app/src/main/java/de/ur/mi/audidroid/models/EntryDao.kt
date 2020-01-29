@@ -1,5 +1,6 @@
 package de.ur.mi.audidroid.models
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -17,10 +18,10 @@ import androidx.room.Query
 @Dao
 interface EntryDao {
     @Query("SELECT * FROM recordingsTable")
-    fun getAllRecordings(): List<EntryEntity>
+    fun getAllRecordings(): LiveData<List<EntryEntity>>
 
-    @Query("SELECT * FROM recordingsTable WHERE uid IN (:uniqueId)")
-    fun loadEntryById(uniqueId: Int): EntryEntity
+    @Query("SELECT * FROM recordingsTable WHERE uid = :key")
+    fun getRecordingWithId(key: Int): LiveData<EntryEntity>
 
     @Query("SELECT * FROM recordingsTable WHERE recordingName IN (:name)")
     fun loadEntryByName(name: String): EntryEntity
@@ -31,7 +32,6 @@ interface EntryDao {
     @Delete
     fun delete(entryEntity: EntryEntity)
 
-    /** deletes all entries TODO: Delete comment after Issue #33 is done because clearTable is self-explaining*/
     @Query("DELETE FROM recordingsTable")
     fun clearTable()
 }

@@ -1,5 +1,6 @@
 package de.ur.mi.audidroid.views
 
+import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,9 +13,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.databinding.RecordFragmentBinding
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import kotlinx.android.synthetic.main.record_fragment.*
-
 
 /**
  * The fragment allows the user to do a voice recording. The changes of the view are handled within.
@@ -31,13 +32,16 @@ class RecordFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val application = this.activity!!.application
+        val dataSource = Repository(application)
         val binding: RecordFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
 
-        val viewModelFactory = RecordViewModelFactory(context!!, binding)
+        val viewModelFactory = RecordViewModelFactory(dataSource, application, context!!)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(RecordViewModel::class.java)
         binding.recordViewModel = viewModel
         binding.lifecycleOwner = this
@@ -45,13 +49,14 @@ class RecordFragment : Fragment() {
     }
 
     class RecordViewModelFactory(
-        private val context: Context,
-        private val binding: RecordFragmentBinding
+        private val dataSource: Repository,
+        private val application: Application,
+        private val context: Context
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return if (modelClass.isAssignableFrom(RecordViewModel::class.java)) {
-                RecordViewModel(context, binding) as T
+                RecordViewModel(dataSource, application, context) as T
             } else {
                 throw IllegalArgumentException("ViewModel Not Found")
             }
@@ -62,5 +67,10 @@ class RecordFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel.initializeTimer(chronometer)
         viewModel.initializeLayout(frameLayout)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.cancelRecord()
     }
 }

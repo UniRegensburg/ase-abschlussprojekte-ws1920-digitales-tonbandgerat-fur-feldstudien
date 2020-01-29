@@ -1,20 +1,20 @@
 package de.ur.mi.audidroid.viewmodels
 
+import android.app.Application
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.SystemClock
+import android.text.format.DateUtils
 import android.widget.Chronometer
 import android.widget.FrameLayout
-import android.widget.Toast
-import androidx.annotation.UiThread
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.RecorderDatabase
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.Dialog
-import org.jetbrains.anko.doAsync
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,25 +24,26 @@ import java.util.*
  * @author: Sabine Roth
  */
 
-class RecordViewModel(val context: Context, fragmentBinding: RecordFragmentBinding?) :
-    ViewModel() {
+//TODO: Find better solution for context
 
+class RecordViewModel(private val dataSource: Repository, application: Application, private val temp: Context) :
+    AndroidViewModel(application) {
 
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
     private var outputFile = ""
-    private lateinit var db: RecorderDatabase
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
     private lateinit var frameLayout: FrameLayout
-    private lateinit var binding :RecordFragmentBinding
+    private var recorderInitialized = false
+    private val context = getApplication<Application>().applicationContext
+    var isRecording = MutableLiveData<Boolean>()
+    var buttonsVisible = MutableLiveData<Boolean>()
+    val res = context.resources
 
     init {
-        if(fragmentBinding!=null){
-            binding = fragmentBinding
-            binding.buttonsVisible = false
-            binding.isRecording = false
-        }
+        isRecording.value = false
+        buttonsVisible.value = false
     }
 
     fun initializeTimer(chronometer: Chronometer) {
@@ -53,9 +54,9 @@ class RecordViewModel(val context: Context, fragmentBinding: RecordFragmentBindi
         this.frameLayout = frameLayout
     }
 
-    private fun initializeRecorder(context: Context) {
+    private fun initializeRecorder() {
         outputFile =
-            context.filesDir.absolutePath + "/recording.aac" //TODO: Change path to users preferred save location
+            context.filesDir.absolutePath + "/recording.aac" // TODO: Change path to users preferred save location
         with(mediaRecorder) {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -64,21 +65,24 @@ class RecordViewModel(val context: Context, fragmentBinding: RecordFragmentBindi
         }
         try {
             mediaRecorder.prepare()
+            recorderInitialized = true
         } catch (e: IllegalStateException) {
+            showSnackBar(R.string.error_message_recorder_initialization)
         } catch (e: IOException) {
+            showSnackBar(R.string.error_message_recorder_file)
         }
     }
 
     fun recordPauseButtonClicked() {
-        when (binding.isRecording) {
+        when (isRecording.value) {
             false -> {
                 recordButtonClicked()
-                binding.buttonsVisible = true
-                binding.isRecording = true
+                buttonsVisible.value = true
+                isRecording.value = true
             }
             true -> {
                 pauseButtonClicked()
-                binding.isRecording = false
+                isRecording.value = false
             }
         }
     }
@@ -86,14 +90,14 @@ class RecordViewModel(val context: Context, fragmentBinding: RecordFragmentBindi
     private fun recordButtonClicked() {
         when (resumeRecord) {
             true -> {
-                timer.base = SystemClock.elapsedRealtime() - getStoppedTime(context)
+                timer.base = SystemClock.elapsedRealtime() - getStoppedTime()
                 timer.start()
                 resumeRecording()
             }
             false -> {
                 resetTimer()
                 timer.start()
-                initializeRecorder(context)
+                initializeRecorder()
                 startRecording()
             }
         }
@@ -107,20 +111,21 @@ class RecordViewModel(val context: Context, fragmentBinding: RecordFragmentBindi
     }
 
     fun cancelRecord() {
-        showSnackBar(R.string.record_removed)
-        endRecordSession()
+        if (recorderInitialized) {
+            showSnackBar(R.string.record_removed)
+            endRecordSession()
+        }
     }
 
     fun confirmRecord() {
-        showSnackBar(R.string.record_saved)
-        currentRecordTime = timer.text.toString()
-        callSaveDialog()
         endRecordSession()
+        callSaveDialog()
     }
 
     private fun endRecordSession() {
-        binding.buttonsVisible = false
-        binding.isRecording = false
+        recorderInitialized = false
+        buttonsVisible.value = false
+        isRecording.value = false
         resumeRecord = false
         mediaRecorder.stop()
         mediaRecorder.reset()
@@ -139,17 +144,28 @@ class RecordViewModel(val context: Context, fragmentBinding: RecordFragmentBindi
         mediaRecorder.resume()
     }
 
+    private fun callSaveDialog() {
+        Dialog.createDialog(context = temp, layoutId = R.layout.dialog_save_recording)
+    }
+
     fun saveRecordInDB(name: String, path: String) {
-        db = RecorderDatabase.getInstance(context)
-        val audio =
-            EntryEntity(0, name, outputFile, getDate(), currentRecordTime)
-        doAsync {
-            db.entryDao().insert(audio)
+        val recordingDuration = getRecordingDuration()
+        if (recordingDuration != null) {
+            val audio =
+                EntryEntity(0, name, outputFile, getDate(), recordingDuration)
+            dataSource.insert(audio)
+            showSnackBar(R.string.record_saved)
         }
     }
 
-    private fun callSaveDialog(){
-        Dialog.createDialog(context = context, layoutId = R.layout.dialog_save_recording)
+    private fun getRecordingDuration(): String? {
+        val metaRetriever = MediaMetadataRetriever()
+        metaRetriever.setDataSource(outputFile)
+        return DateUtils.formatElapsedTime(
+            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() / (res.getInteger(
+                R.integer.one_second
+            ).toLong())
+        )
     }
 
     /**
@@ -166,19 +182,9 @@ class RecordViewModel(val context: Context, fragmentBinding: RecordFragmentBindi
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 
-    fun showDialog(){
-        /*doAsync {
-            Dialog.createDialog(context = context, layoutId = R.layout.dialog_save_recording)
-            uiThread{
-                //saveRecording
-            }
-        }*/
-    }
-
     /** Returns the last stopped time as an Integer value */
-    private fun getStoppedTime(context: Context): Int {
+    private fun getStoppedTime(): Int {
         val timeArray = currentRecordTime.split(":")
-        val res = context.resources
         return if (timeArray.size == 2) {
             (Integer.parseInt(timeArray[0]) * res.getInteger(R.integer.counter_divider_minutes_hours) * res.getInteger(
                 R.integer.counter_multiplier

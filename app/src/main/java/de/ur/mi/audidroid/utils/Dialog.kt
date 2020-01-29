@@ -1,16 +1,20 @@
 package de.ur.mi.audidroid.utils
 
 import android.app.AlertDialog
+import android.app.Application
 import android.content.Context
 import android.widget.EditText
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
+
 
 /**
  * The Dialog object creates a dialog depending on the parameters.
  * @author: Sabine Roth
  */
 
+//TODO: use listener instead of RecorderViewModel
 object Dialog {
 
     private lateinit var dialog: AlertDialog
@@ -26,7 +30,8 @@ object Dialog {
                 val pathInput =
                     dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_path)
                         .text.toString()
-                val vm = RecordViewModel(context, null)
+                val application = Application()
+                val vm = RecordViewModel(Repository(context as Application), application, context)
                 vm.saveRecordInDB(nameInput, pathInput)
             }
         }
@@ -42,4 +47,5 @@ object Dialog {
         dialog = builder.create()
         dialog.show()
     }
+
 }
