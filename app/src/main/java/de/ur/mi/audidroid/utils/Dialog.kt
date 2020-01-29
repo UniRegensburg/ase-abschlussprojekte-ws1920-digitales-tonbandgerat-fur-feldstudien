@@ -2,6 +2,7 @@ package de.ur.mi.audidroid.utils
 
 import android.app.AlertDialog
 import android.content.Context
+import android.widget.EditText
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 
@@ -12,8 +13,23 @@ import de.ur.mi.audidroid.viewmodels.RecordViewModel
 
 object Dialog {
 
+    private lateinit var dialog: AlertDialog
+
     fun createDialog(context: Context, layoutId: Int? = null, textId: Int? = null) {
         val builder = AlertDialog.Builder(context)
+        if (layoutId != null) {
+            builder.setView(layoutId)
+            builder.setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
+                val nameInput =
+                    dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)
+                        .text.toString()
+                val pathInput =
+                    dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_path)
+                        .text.toString()
+                val vm = RecordViewModel(context, null)
+                vm.saveRecordInDB(nameInput, pathInput)
+            }
+        }
         if (textId != null) {
             builder.setTitle(R.string.permission_title)
             builder.setMessage(textId)
@@ -23,15 +39,7 @@ object Dialog {
                 PermissionHelper.makeRequest(context)
             }
         }
-        if (layoutId != null) {
-
-            builder.setView(layoutId)
-            builder.setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
-                //call with  listener recordViewModel.saveRecordInDB()
-                //attach input from edittext
-            }
-        }
-        val dialog = builder.create()
+        dialog = builder.create()
         dialog.show()
     }
 }

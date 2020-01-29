@@ -24,7 +24,7 @@ import java.util.*
  * @author: Sabine Roth
  */
 
-class RecordViewModel(val context: Context, private val binding: RecordFragmentBinding) :
+class RecordViewModel(val context: Context, fragmentBinding: RecordFragmentBinding?) :
     ViewModel() {
 
 
@@ -35,10 +35,14 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
     private lateinit var frameLayout: FrameLayout
+    private lateinit var binding :RecordFragmentBinding
 
     init {
-        binding.buttonsVisible = false
-        binding.isRecording = false
+        if(fragmentBinding!=null){
+            binding = fragmentBinding
+            binding.buttonsVisible = false
+            binding.isRecording = false
+        }
     }
 
     fun initializeTimer(chronometer: Chronometer) {
@@ -135,7 +139,7 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
         mediaRecorder.resume()
     }
 
-    fun saveRecordInDB(name: String) {
+    fun saveRecordInDB(name: String, path: String) {
         db = RecorderDatabase.getInstance(context)
         val audio =
             EntryEntity(0, name, outputFile, getDate(), currentRecordTime)
