@@ -13,6 +13,7 @@
     </data>
 
     <FrameLayout
+        android:id="@+id/player_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".views.PlayerFragment">
@@ -48,9 +49,9 @@
                     android:layout_width="@dimen/layout_width_seek_bar_element"
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button"
                     android:gravity="center"
-                    android:text="@{playerViewModel.currentDurationString}" />
+                    android:text="@{playerViewModel.currentDurationString}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
 
                 <SeekBar
                     android:id="@+id/seekBar"
@@ -62,9 +63,9 @@
                     android:layout_width="@dimen/layout_width_seek_bar_element"
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button"
                     android:gravity="center"
-                    android:text="@{playerViewModel.totalDurationString}" />
+                    android:text="@{playerViewModel.totalDurationString}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
 
             </LinearLayout>
 

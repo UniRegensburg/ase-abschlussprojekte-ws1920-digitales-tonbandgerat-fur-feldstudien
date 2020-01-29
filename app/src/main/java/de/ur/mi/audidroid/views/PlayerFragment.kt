@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModel
@@ -15,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.PlayerViewModel
+import kotlinx.android.synthetic.main.player_fragment.*
 import java.lang.IllegalArgumentException
 
 /**
@@ -23,12 +25,15 @@ import java.lang.IllegalArgumentException
  */
 class PlayerFragment : Fragment() {
 
+    private lateinit var playerViewModel: PlayerViewModel
+    private lateinit var binding: PlayerFragmentBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        val binding: PlayerFragmentBinding =
+        binding =
             DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
 
         val application = this.activity!!.application
@@ -38,11 +43,9 @@ class PlayerFragment : Fragment() {
         val dataSource = Repository(application)
         val viewModelFactory = PlayerViewModelFactory(args.recordingPath, application)
 
-        val playerViewModel =
+        playerViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
 
-        playerViewModel.initializeMediaPlayer()
-        playerViewModel.initializeSeekBar(binding.seekBar)
         binding.playerViewModel = playerViewModel
 
         binding.setLifecycleOwner(this)
@@ -50,6 +53,12 @@ class PlayerFragment : Fragment() {
         return binding.root
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        playerViewModel.initializeMediaPlayer()
+        playerViewModel.initializeSeekBar(binding.seekBar)
+        playerViewModel.initializeFrameLayout(player_layout)
+    }
 
     /**
      * Provides the recordingPath and context to the PlayerViewModel.
