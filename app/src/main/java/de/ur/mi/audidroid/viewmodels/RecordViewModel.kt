@@ -1,41 +1,45 @@
 package de.ur.mi.audidroid.viewmodels
 
-import android.content.Context
+import android.app.Application
+import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.SystemClock
+import android.text.format.DateUtils
 import android.widget.Chronometer
 import android.widget.FrameLayout
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.RecorderDatabase
+import de.ur.mi.audidroid.models.Repository
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import org.jetbrains.anko.doAsync
 
 /**
  * The ViewModel handles the changes to the view's data and the event logic for the user interaction referring to the RecordFragment
  * @author: Sabine Roth
  */
 
-class RecordViewModel(val context: Context, private val binding: RecordFragmentBinding) :
-    ViewModel() {
+class RecordViewModel(private val dataSource: Repository, application: Application) :
+    AndroidViewModel(application) {
 
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
     private var outputFile = ""
-    private lateinit var db: RecorderDatabase
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
     private lateinit var frameLayout: FrameLayout
     private var recorderInitialized = false
+    private val context = getApplication<Application>().applicationContext
+    var isRecording = MutableLiveData<Boolean>()
+    var buttonsVisible = MutableLiveData<Boolean>()
+    val res = context.resources
 
     init {
-        binding.buttonsVisible = false
-        binding.isRecording = false
+        isRecording.value = false
+        buttonsVisible.value = false
     }
 
     fun initializeTimer(chronometer: Chronometer) {
@@ -46,7 +50,7 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
         this.frameLayout = frameLayout
     }
 
-    private fun initializeRecorder(context: Context) {
+    private fun initializeRecorder() {
         outputFile =
             context.filesDir.absolutePath + "/recording.aac" // TODO: Change path to users preferred save location
         with(mediaRecorder) {
@@ -59,22 +63,22 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
             mediaRecorder.prepare()
             recorderInitialized = true
         } catch (e: IllegalStateException) {
-            //TODO: Show user message
+            showSnackBar(R.string.error_message_recorder_initialization)
         } catch (e: IOException) {
-            //TODO: Show user message
+            showSnackBar(R.string.error_message_recorder_file)
         }
     }
 
     fun recordPauseButtonClicked() {
-        when (binding.isRecording) {
+        when (isRecording.value) {
             false -> {
                 recordButtonClicked()
-                binding.buttonsVisible = true
-                binding.isRecording = true
+                buttonsVisible.value = true
+                isRecording.value = true
             }
             true -> {
                 pauseButtonClicked()
-                binding.isRecording = false
+                isRecording.value = false
             }
         }
     }
@@ -82,14 +86,14 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
     private fun recordButtonClicked() {
         when (resumeRecord) {
             true -> {
-                timer.base = SystemClock.elapsedRealtime() - getStoppedTime(context)
+                timer.base = SystemClock.elapsedRealtime() - getStoppedTime()
                 timer.start()
                 resumeRecording()
             }
             false -> {
                 resetTimer()
                 timer.start()
-                initializeRecorder(context)
+                initializeRecorder()
                 startRecording()
             }
         }
@@ -111,14 +115,14 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
 
     fun confirmRecord() {
         showSnackBar(R.string.record_saved)
-        saveRecordInDB()
         endRecordSession()
+        saveRecordInDB()
     }
 
     private fun endRecordSession() {
         recorderInitialized = false
-        binding.buttonsVisible = false
-        binding.isRecording = false
+        buttonsVisible.value = false
+        isRecording.value = false
         resumeRecord = false
         mediaRecorder.stop()
         mediaRecorder.reset()
@@ -138,12 +142,22 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
     }
 
     private fun saveRecordInDB() {
-        db = RecorderDatabase.getInstance(context)
-        val audio =
-            EntryEntity(0, outputFile, getDate(), timer.text.toString())
-        doAsync {
-            db.entryDao().insert(audio)
+        val recordingDuration = getRecordingDuration()
+        if (recordingDuration != null) {
+            val audio =
+                EntryEntity(0, outputFile, getDate(), recordingDuration)
+            dataSource.insert(audio)
         }
+    }
+
+    private fun getRecordingDuration(): String? {
+        val metaRetriever = MediaMetadataRetriever()
+        metaRetriever.setDataSource(outputFile)
+        return DateUtils.formatElapsedTime(
+            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() / (res.getInteger(
+                R.integer.one_second
+            ).toLong())
+        )
     }
 
     /**
@@ -160,9 +174,8 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
     }
 
     /** Returns the last stopped time as an Integer value */
-    private fun getStoppedTime(context: Context): Int {
+    private fun getStoppedTime(): Int {
         val timeArray = currentRecordTime.split(":")
-        val res = context.resources
         return if (timeArray.size == 2) {
             (Integer.parseInt(timeArray[0]) * res.getInteger(R.integer.counter_divider_minutes_hours) * res.getInteger(
                 R.integer.counter_multiplier
