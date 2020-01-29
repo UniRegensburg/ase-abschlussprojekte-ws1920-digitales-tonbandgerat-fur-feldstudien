@@ -6,7 +6,6 @@
     <data>
 
         <import type="android.view.View" />
-
         <variable
             name="playerViewModel"
             type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />

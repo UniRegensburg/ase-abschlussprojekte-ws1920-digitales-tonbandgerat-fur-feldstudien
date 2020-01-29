@@ -32,8 +32,32 @@ class Repository(application: Application) {
     private class DeleteAsyncTask(val entryDao: EntryDao) :
         AsyncTask<EntryEntity, Unit, Unit>() {
 
-        override fun doInBackground(vararg p0: EntryEntity?) {
-            entryDao.delete(p0[0]!!)
+        override fun doInBackground(vararg params: EntryEntity?) {
+            entryDao.delete(params[0]!!)
+        }
+    }
+
+    fun insert(entryEntity: EntryEntity) {
+        InsertAsyncTask(entryDao).execute(entryEntity)
+    }
+
+    private class InsertAsyncTask(val entryDao: EntryDao) :
+        AsyncTask<EntryEntity, Unit, Unit>() {
+
+        override fun doInBackground(vararg params: EntryEntity?) {
+            entryDao.insert(params[0]!!)
+        }
+    }
+
+    fun getRecordingWithId(entryEntity: EntryEntity) {
+        GetRecordingWithId(entryDao).execute(entryEntity)
+    }
+
+    private class GetRecordingWithId(val entryDao: EntryDao) :
+        AsyncTask<EntryEntity, Unit, Unit>() {
+
+        override fun doInBackground(vararg params: EntryEntity?) {
+            entryDao.getRecordingWithId(params[0]!!.uid)
         }
     }
 }
