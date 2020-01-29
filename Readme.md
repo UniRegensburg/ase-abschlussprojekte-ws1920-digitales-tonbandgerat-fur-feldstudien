@@ -31,8 +31,6 @@ Aktuell sind folgende Features in Audidroid implementiert:
 
 ![Recording](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Recording.png)
 
-- Markierung von Stellen im Audio während der Aufnahme
-
 - Auswählen der Aufnahme aus der Liste der eigenen Audiodateien
 
 ![Files](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Files.png)
