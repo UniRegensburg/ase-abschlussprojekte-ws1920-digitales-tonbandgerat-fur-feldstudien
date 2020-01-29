@@ -7,7 +7,6 @@ Dazu gehören neben dem reinen Aufnehmen von Audiodateien auch das Markieren wic
 
 Technische Informationen zu Audidroid finden sich [hier](./docs/Setup.md), eine detaillierte Übersicht über den Anforderungskontext findet sich [hier](./docs/Overview.md).
 
-//TODO: Link zur aktuellsten Veröffentlichung 
 
 ## Team
 
@@ -49,8 +48,6 @@ Aktuell sind folgende Features in Audidroid implementiert.
 
 
 **Einstellungen**
-
-- Auswahl des präferierten Speicherorts für die aufgenommenen Audiodateien //Löschen?
 
 - Auswahl des präferierten Farbschemas (verfügbar: hell und dunkel)
 
