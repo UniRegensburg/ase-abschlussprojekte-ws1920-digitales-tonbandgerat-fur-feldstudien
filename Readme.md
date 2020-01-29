@@ -28,23 +28,23 @@ Aktuell sind folgende Features in Audidroid implementiert.
 
 - Aufnahme von Audiodateien mit Optimierung von gesprochener Sprache
 
-![Startscreen](/requirements/Startscreen.png)
+![Startscreen](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Startscreen.png)
 
-![Recording](/requirements/Recording.png)
+![Recording](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Recording.png)
 
 - Markierung von Stellen im Audio während der Aufnahme
 
 - Auswählen der Aufnahme aus der Liste der eigenen Audiodateien
 
-![Files](/requirements/Files.png)
+![Files](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Files.png)
 
 - Abspielen der aufgenommenen Audiodateien
 
-![Playing](/requirements/Playing.png)
+![Playing](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Playing.png)
 
 - Wechsel zwischen den Screens mithilfe eines Navigation Drawers
 
-![NavigationDrawer](/requirements/NavigationDrawer.png)
+![NavigationDrawer](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/NavigationDrawer.png)
 
 
 
@@ -54,4 +54,4 @@ Aktuell sind folgende Features in Audidroid implementiert.
 
 - Auswahl des präferierten Farbschemas (verfügbar: hell und dunkel)
 
-![Settings](/requirements/Settings.png)
+![Settings](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Settings.png)
