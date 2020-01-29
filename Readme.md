@@ -21,7 +21,7 @@ Theresa Strohmeier, theresa.strohmeier@stud.uni-regensburg.de, @TheresaStrohmeie
 
 ## Beschreibung
 
-Aktuell sind folgende Features in Audidroid implementiert.
+Aktuell sind folgende Features in Audidroid implementiert:
 
 **Kernfeatures**
 
