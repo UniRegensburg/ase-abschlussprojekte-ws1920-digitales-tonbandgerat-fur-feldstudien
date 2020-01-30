@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.models.RecorderDatabase
 import org.jetbrains.anko.doAsync
 import java.io.IOException
@@ -139,12 +140,23 @@ class RecordViewModel(val context: Context, private val binding: RecordFragmentB
         mediaRecorder.resume()
     }
 
+    private fun saveMarksInDB(audio: EntryEntity){
+        markList.forEach {
+            println(it.toString())
+            val mark = MarkerEntity(0, audio.uid, it.first, it.second)
+            doAsync {
+                db.entryDao().insertMark(mark)}
+        }
+    }
     private fun saveRecordInDB() {
         db = RecorderDatabase.getInstance(context)
         val audio =
-            EntryEntity(0, outputFile, getDate(), timer.text.toString(), markList.toString())
+            EntryEntity(0, outputFile, getDate(), timer.text.toString())
         doAsync {
             db.entryDao().insert(audio)
+        }
+        if (markList.isNotEmpty()){
+           saveMarksInDB(audio)
         }
     }
 
