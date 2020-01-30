@@ -1,11 +1,9 @@
 package de.ur.mi.audidroid.utils
 
 import android.app.AlertDialog
-import android.app.Application
 import android.content.Context
 import android.widget.EditText
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 
 
@@ -14,12 +12,16 @@ import de.ur.mi.audidroid.viewmodels.RecordViewModel
  * @author: Sabine Roth
  */
 
-//TODO: use listener instead of RecorderViewModel
 object Dialog {
 
     private lateinit var dialog: AlertDialog
 
-    fun createDialog(context: Context, layoutId: Int? = null, textId: Int? = null) {
+    fun createDialog(
+        context: Context,
+        layoutId: Int? = null,
+        textId: Int? = null,
+        viewModel: RecordViewModel? = null
+    ) {
         val builder = AlertDialog.Builder(context)
         if (layoutId != null) {
             builder.setView(layoutId)
@@ -27,12 +29,10 @@ object Dialog {
                 val nameInput =
                     dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)
                         .text.toString()
-                val pathInput =
+                /*val pathInput =
                     dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_path)
-                        .text.toString()
-                val application = Application()
-                val vm = RecordViewModel(Repository(context as Application), application, context)
-                vm.saveRecordInDB(nameInput, pathInput)
+                        .text.toString()*/
+                viewModel?.saveRecordInDB(nameInput, null)
             }
         }
         if (textId != null) {
@@ -47,5 +47,4 @@ object Dialog {
         dialog = builder.create()
         dialog.show()
     }
-
 }

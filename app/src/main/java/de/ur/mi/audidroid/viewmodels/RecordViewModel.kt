@@ -1,7 +1,7 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
-import android.content.Context
+import android.content.res.Resources
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.SystemClock
@@ -14,7 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.utils.Dialog
+import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,9 +24,7 @@ import java.util.*
  * @author: Sabine Roth
  */
 
-//TODO: Find better solution for context
-
-class RecordViewModel(private val dataSource: Repository, application: Application, private val temp: Context) :
+class RecordViewModel(private val dataSource: Repository, application: Application) :
     AndroidViewModel(application) {
 
     private var resumeRecord = false
@@ -39,12 +37,16 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private val context = getApplication<Application>().applicationContext
     var isRecording = MutableLiveData<Boolean>()
     var buttonsVisible = MutableLiveData<Boolean>()
-    val res = context.resources
+    val res: Resources = context.resources
+    private val _createDialog = MutableLiveData<Boolean>()
 
     init {
         isRecording.value = false
         buttonsVisible.value = false
     }
+
+    val createDialog: MutableLiveData<Boolean>
+        get() = _createDialog
 
     fun initializeTimer(chronometer: Chronometer) {
         timer = chronometer
@@ -54,9 +56,10 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         this.frameLayout = frameLayout
     }
 
+    /**Initializing the recorder and cache the recording in the internal memory till the user decides the save location in the dialog afterwards */
     private fun initializeRecorder() {
         outputFile =
-            context.filesDir.absolutePath + "/recording.aac" // TODO: Change path to users preferred save location
+            context.filesDir.absolutePath + "/recording.aac"
         with(mediaRecorder) {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
@@ -114,21 +117,26 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         if (recorderInitialized) {
             showSnackBar(R.string.record_removed)
             endRecordSession()
+            resetView()
         }
     }
 
     fun confirmRecord() {
+        timer.stop()
         endRecordSession()
-        callSaveDialog()
+        _createDialog.value = true
     }
 
     private fun endRecordSession() {
         recorderInitialized = false
+        mediaRecorder.stop()
+        mediaRecorder.reset()
+    }
+
+    private fun resetView() {
         buttonsVisible.value = false
         isRecording.value = false
         resumeRecord = false
-        mediaRecorder.stop()
-        mediaRecorder.reset()
         resetTimer()
     }
 
@@ -144,17 +152,19 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         mediaRecorder.resume()
     }
 
-    private fun callSaveDialog() {
-        Dialog.createDialog(context = temp, layoutId = R.layout.dialog_save_recording)
-    }
+    fun saveRecordInDB(name: String, pathInput: String?) {
+        val suffix = "/$name.acc"
+        val path = (pathInput ?: context.filesDir.absolutePath) + suffix
+        val newFile = File(path)
+        File(outputFile).copyTo(newFile)
 
-    fun saveRecordInDB(name: String, path: String) {
         val recordingDuration = getRecordingDuration()
         if (recordingDuration != null) {
             val audio =
-                EntryEntity(0, name, outputFile, getDate(), recordingDuration)
+                EntryEntity(0, name, path, getDate(), recordingDuration)
             dataSource.insert(audio)
             showSnackBar(R.string.record_saved)
+            resetView()
         }
     }
 
