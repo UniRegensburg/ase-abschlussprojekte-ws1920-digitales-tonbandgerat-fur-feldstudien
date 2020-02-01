@@ -29,11 +29,7 @@
 
     <!-- Dialog -->
     <dimen name="dialog_margin">50dp</dimen>
-    <dimen name="dialog_padding">20dp</dimen>
-    <dimen name="dialog_small_image">50dp</dimen>
-
-    <!-- Textsizes -->
-    <dimen name="text_size_big">40sp</dimen>
-    <dimen name="text_size_normal">20sp</dimen>
+    <dimen name="dialog_padding">25dp</dimen>
+    <dimen name="dialog_margin_small">15dp</dimen>
 
 </resources>

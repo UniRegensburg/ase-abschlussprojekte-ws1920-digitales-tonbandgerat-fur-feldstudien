@@ -24,7 +24,7 @@ interface EntryDao {
     fun getRecordingWithId(key: Int): LiveData<EntryEntity>
 
     @Query("SELECT * FROM recordingsTable WHERE recordingName IN (:name)")
-    fun loadEntryByName(name: String): EntryEntity
+    fun getRecordingByName(name: String): EntryEntity
 
     @Insert(onConflict = REPLACE)
     fun insert(entryEntity: EntryEntity)
