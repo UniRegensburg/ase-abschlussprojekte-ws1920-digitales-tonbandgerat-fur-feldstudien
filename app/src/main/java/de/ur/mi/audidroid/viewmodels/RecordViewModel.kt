@@ -18,6 +18,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 
 /**
  * The ViewModel handles the changes to the view's data and the event logic for the user interaction referring to the RecordFragment
@@ -39,6 +40,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     var buttonsVisible = MutableLiveData<Boolean>()
     val res: Resources = context.resources
     private val _createDialog = MutableLiveData<Boolean>()
+    var errorMessage: String? = null
 
     init {
         isRecording.value = false
@@ -121,6 +123,12 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
     }
 
+    fun deleteRecordClicked() {
+        File(tempFile).delete()
+        showSnackBar(R.string.record_removed)
+        resetView()
+    }
+
     fun confirmRecord() {
         timer.stop()
         endRecordSession()
@@ -154,7 +162,14 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
         _createDialog.value = false
+
         val name = nameInput ?: res.getString(R.string.recording_file_name)
+        if (!validNameInput(name)) {
+            errorMessage = res.getString(R.string.dialog_invalid_name)
+            _createDialog.value = true
+            return
+        }
+
         val suffix = "/$name.acc"
         val path = (pathInput ?: context.filesDir.absolutePath) + suffix
         val newFile = File(path)
@@ -166,9 +181,9 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             saveRecordInDB(audio)
             File(tempFile).delete()
             resetView()
-        }
-        catch(e: IOException) {
-            showSnackBar(R.string.error_message_saving)
+            errorMessage = null
+        } catch (e: IOException) {
+            errorMessage = res.getString(R.string.dialog_already_exist)
             _createDialog.value = true
         }
     }
@@ -176,6 +191,10 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private fun saveRecordInDB(audio: EntryEntity) {
         dataSource.insert(audio)
         showSnackBar(R.string.record_saved)
+    }
+
+    private fun validNameInput(name: String): Boolean {
+        return Pattern.compile("^[a-zA-Z0-9]+$").matcher(name).matches()
     }
 
     private fun getRecordingDuration(): String? {

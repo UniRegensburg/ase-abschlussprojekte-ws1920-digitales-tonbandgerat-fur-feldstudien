@@ -20,30 +20,42 @@ object Dialog {
         context: Context,
         layoutId: Int? = null,
         textId: Int? = null,
-        viewModel: RecordViewModel? = null
+        viewModel: RecordViewModel? = null,
+        errorMessage: String? = null
     ) {
         val builder = AlertDialog.Builder(context)
         if (layoutId != null) {
             builder.setView(layoutId)
-            builder.setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
-                var nameInput: String? =
-                    dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)
-                        .text.toString()
-                if (nameInput == "") nameInput = null
-                //TODO: Change path parameter to user input in issue #12
-                viewModel?.getNewFileFromUserInput(nameInput, null)
+            if (errorMessage != null) {
+                builder.setMessage(errorMessage)
+            }
+            with(builder) {
+                setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
+                    var nameInput: String? =
+                        dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)
+                            .text.toString()
+                    if (nameInput == "") nameInput = null
+                    //TODO: Change path parameter to user input in issue #12
+                    viewModel?.getNewFileFromUserInput(nameInput, null)
+                }
+                setNeutralButton(context.getString(R.string.dialog_delete_button_text)) { _, _ ->
+                    viewModel?.deleteRecordClicked()
+                }
             }
         }
         if (textId != null) {
-            builder.setTitle(R.string.permission_title)
-            builder.setMessage(textId)
-            builder.setPositiveButton(
-                R.string.permission_button
-            ) { _, _ ->
-                PermissionHelper.makeRequest(context)
+            with(builder) {
+                setTitle(R.string.permission_title)
+                setMessage(textId)
+                setPositiveButton(
+                    R.string.permission_button
+                ) { _, _ ->
+                    PermissionHelper.makeRequest(context)
+                }
             }
         }
         dialog = builder.create()
+        dialog.setCanceledOnTouchOutside(false)
         dialog.show()
     }
 }

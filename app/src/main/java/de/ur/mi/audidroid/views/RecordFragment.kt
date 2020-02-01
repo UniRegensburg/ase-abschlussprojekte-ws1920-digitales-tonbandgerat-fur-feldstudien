@@ -70,7 +70,8 @@ class RecordFragment : Fragment() {
                 de.ur.mi.audidroid.utils.Dialog.createDialog(
                     context = context!!,
                     layoutId = R.layout.dialog_save_recording,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    errorMessage = viewModel.errorMessage
                 )
             }
         })
