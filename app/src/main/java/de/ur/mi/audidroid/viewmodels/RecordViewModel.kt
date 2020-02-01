@@ -118,6 +118,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     fun cancelRecord() {
         if (recorderInitialized) {
             showSnackBar(R.string.record_removed)
+            File(tempFile).delete()
             endRecordSession()
             resetView()
         }
@@ -127,6 +128,8 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         File(tempFile).delete()
         showSnackBar(R.string.record_removed)
         resetView()
+        errorMessage = null
+        _createDialog.value = false
     }
 
     fun confirmRecord() {
