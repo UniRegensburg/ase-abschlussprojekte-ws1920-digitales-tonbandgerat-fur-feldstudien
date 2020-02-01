@@ -124,18 +124,25 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
     }
 
-    fun deleteRecordClicked() {
-        File(tempFile).delete()
-        showSnackBar(R.string.record_removed)
-        resetView()
+    fun cancelSaving() {
         errorMessage = null
         _createDialog.value = false
+        buttonsVisible.value = true
+        isRecording.value = false
+        resumeRecord = true
     }
 
     fun confirmRecord() {
-        timer.stop()
-        endRecordSession()
+        prepareForPossResume()
         _createDialog.value = true
+    }
+
+    private fun prepareForPossResume(){
+        if (isRecording.value!!) {
+            mediaRecorder.pause()
+        }
+        timer.stop()
+        currentRecordTime = timer.text.toString()
     }
 
     private fun endRecordSession() {
@@ -173,22 +180,23 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             return
         }
 
-        val suffix = "/$name.acc"
-        val path = (pathInput ?: context.filesDir.absolutePath) + suffix
+        val path = (pathInput ?: context.filesDir.absolutePath) + "/$name.acc"
         val newFile = File(path)
-        try {
-            File(tempFile).copyTo(newFile)
-            val recordingDuration = getRecordingDuration() ?: timer.text.toString()
-            val audio =
-                EntryEntity(0, name, path, getDate(), recordingDuration)
-            saveRecordInDB(audio)
-            File(tempFile).delete()
-            resetView()
-            errorMessage = null
-        } catch (e: IOException) {
+        if (newFile.exists()) {
             errorMessage = res.getString(R.string.dialog_already_exist)
             _createDialog.value = true
+            return
         }
+        endRecordSession()
+        File(tempFile).copyTo(newFile)
+        val recordingDuration = getRecordingDuration() ?: currentRecordTime
+        val audio =
+            EntryEntity(0, name, path, getDate(), recordingDuration)
+        saveRecordInDB(audio)
+        File(tempFile).delete()
+        resetView()
+        errorMessage = null
+
     }
 
     private fun saveRecordInDB(audio: EntryEntity) {
@@ -197,7 +205,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun validNameInput(name: String): Boolean {
-        return Pattern.compile("^[a-zA-Z0-9]+$").matcher(name).matches()
+        return Pattern.compile("^[a-zA-Z0-9_-]+$").matcher(name).matches()
     }
 
     private fun getRecordingDuration(): String? {

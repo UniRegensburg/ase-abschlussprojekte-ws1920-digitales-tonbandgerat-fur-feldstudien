@@ -38,8 +38,8 @@ object Dialog {
                     //TODO: Change path parameter to user input in issue #12
                     viewModel?.getNewFileFromUserInput(nameInput, null)
                 }
-                setNeutralButton(context.getString(R.string.dialog_delete_button_text)) { _, _ ->
-                    viewModel?.deleteRecordClicked()
+                setNeutralButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
+                    viewModel?.cancelSaving()
                 }
             }
         }
@@ -55,7 +55,7 @@ object Dialog {
             }
         }
         dialog = builder.create()
-        dialog.setCanceledOnTouchOutside(false)
+        dialog.setCancelable(false)
         dialog.show()
     }
 }
