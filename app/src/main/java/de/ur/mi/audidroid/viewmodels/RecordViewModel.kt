@@ -29,7 +29,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
-    private var outputFile = ""
+    private var tempFile = ""
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
     private lateinit var frameLayout: FrameLayout
@@ -58,12 +58,12 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     /**Initializing the recorder and cache the recording in the internal memory till the user decides the save location in the dialog afterwards */
     private fun initializeRecorder() {
-        outputFile =
-            context.filesDir.absolutePath + "/recording.aac"
+        tempFile =
+            context.filesDir.absolutePath + res.getString(R.string.suffix_temp_file)
         with(mediaRecorder) {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setOutputFile(outputFile)
+            setOutputFile(tempFile)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
         }
         try {
@@ -152,25 +152,35 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         mediaRecorder.resume()
     }
 
-    fun saveRecordInDB(name: String, pathInput: String?) {
+    fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
+        _createDialog.value = false
+        val name = nameInput ?: res.getString(R.string.recording_file_name)
         val suffix = "/$name.acc"
         val path = (pathInput ?: context.filesDir.absolutePath) + suffix
         val newFile = File(path)
-        File(outputFile).copyTo(newFile)
-
-        val recordingDuration = getRecordingDuration()
-        if (recordingDuration != null) {
+        try {
+            File(tempFile).copyTo(newFile)
+            val recordingDuration = getRecordingDuration() ?: timer.text.toString()
             val audio =
                 EntryEntity(0, name, path, getDate(), recordingDuration)
-            dataSource.insert(audio)
-            showSnackBar(R.string.record_saved)
+            saveRecordInDB(audio)
+            File(tempFile).delete()
             resetView()
         }
+        catch(e: IOException) {
+            showSnackBar(R.string.error_message_saving)
+            _createDialog.value = true
+        }
+    }
+
+    private fun saveRecordInDB(audio: EntryEntity) {
+        dataSource.insert(audio)
+        showSnackBar(R.string.record_saved)
     }
 
     private fun getRecordingDuration(): String? {
         val metaRetriever = MediaMetadataRetriever()
-        metaRetriever.setDataSource(outputFile)
+        metaRetriever.setDataSource(tempFile)
         return DateUtils.formatElapsedTime(
             metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() / (res.getInteger(
                 R.integer.one_second

@@ -26,13 +26,12 @@ object Dialog {
         if (layoutId != null) {
             builder.setView(layoutId)
             builder.setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
-                val nameInput =
+                var nameInput: String? =
                     dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)
                         .text.toString()
-                /*val pathInput =
-                    dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_path)
-                        .text.toString()*/
-                viewModel?.saveRecordInDB(nameInput, null)
+                if (nameInput == "") nameInput = null
+                //TODO: Change path parameter to user input in issue #12
+                viewModel?.getNewFileFromUserInput(nameInput, null)
             }
         }
         if (textId != null) {

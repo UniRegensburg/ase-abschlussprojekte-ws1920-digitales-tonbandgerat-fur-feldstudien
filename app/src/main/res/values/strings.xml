@@ -37,6 +37,7 @@
     <string name="cancel_button">Cancel Button</string>
     <string name="record_pause_button">Record and Pause Button</string>
     <string name="mark_button">Mark</string>
+    <string name="suffix_temp_file">/temp.aac</string>
 
     <!-- User Feedback Recording -->
     <string name="record_saved">Recording saved</string>
@@ -59,5 +60,6 @@
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
+    <string name="error_message_saving">There is already a recording at this location with your entered name.</string>
 
 </resources>
