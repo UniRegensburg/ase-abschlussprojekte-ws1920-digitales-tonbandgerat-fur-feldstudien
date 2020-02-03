@@ -66,7 +66,7 @@ class RecordFragment : Fragment() {
         viewModel.initializeTimer(chronometer)
         viewModel.initializeLayout(frameLayout)
         viewModel.createDialog.observe(this, Observer {
-            if (it == true) {
+            if (it) {
                 de.ur.mi.audidroid.utils.Dialog.createDialog(
                     context = context!!,
                     layoutId = R.layout.dialog_save_recording,
