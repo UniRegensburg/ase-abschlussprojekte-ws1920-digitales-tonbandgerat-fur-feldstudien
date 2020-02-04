@@ -1,11 +1,8 @@
 package de.ur.mi.audidroid.models
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
+import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import androidx.room.Query
 
 /**
  * The EntryDao is the data access object  to access the app's data using the room persistence library
@@ -31,4 +28,14 @@ interface EntryDao {
 
     @Query("DELETE FROM recordingsTable")
     fun clearTable()
+
+    @Insert(onConflict = REPLACE)
+    fun insertMark(marker: MarkerEntity)
+
+    @Transaction
+    @Query("SELECT * FROM recordingsTable WHERE uid = :key")
+    fun getRecordingWithMarks(key: Int): List<RecordingAndMarker>
+
+    @Query("SELECT * FROM markerTable")
+    fun getAllMarkings(): List<MarkerEntity>
 }

@@ -49,6 +49,18 @@ class Repository(application: Application) {
         }
     }
 
+    fun insertMark(marker: MarkerEntity){
+        InsertAsyncMark(entryDao).execute(marker)
+    }
+
+    private class InsertAsyncMark(val entryDao: EntryDao) :
+        AsyncTask<MarkerEntity, Unit, Unit>() {
+
+        override fun doInBackground(vararg params: MarkerEntity?) {
+            entryDao.insertMark(params[0]!!)
+        }
+    }
+
     fun getRecordingWithId(entryEntity: EntryEntity) {
         GetRecordingWithId(entryDao).execute(entryEntity)
     }
@@ -58,6 +70,18 @@ class Repository(application: Application) {
 
         override fun doInBackground(vararg params: EntryEntity?) {
             entryDao.getRecordingWithId(params[0]!!.uid)
+        }
+    }
+
+    fun getMarksOfRecording(entryEntity: EntryEntity) {
+        GetMarksOfRecording(entryDao).execute(entryEntity)
+    }
+
+    private class GetMarksOfRecording(val entryDao: EntryDao) :
+        AsyncTask<EntryEntity, Unit, List<RecordingAndMarker>>() {
+
+        override fun doInBackground(vararg params: EntryEntity?): List<RecordingAndMarker> {
+            return entryDao.getRecordingWithMarks(params[0]!!.uid)
         }
     }
 }

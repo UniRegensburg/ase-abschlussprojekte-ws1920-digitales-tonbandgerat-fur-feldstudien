@@ -37,6 +37,7 @@
     <string name="cancel_button">Cancel Button</string>
     <string name="record_pause_button">Record and Pause Button</string>
     <string name="mark_button">Mark</string>
+    <string name="mark_made">Moment is marked</string>
 
     <!-- User Feedback Toasts -->
     <string name="record_saved">Recording saved</string>
