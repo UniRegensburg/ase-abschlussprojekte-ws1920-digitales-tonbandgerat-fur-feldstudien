@@ -137,7 +137,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         _createDialog.value = true
     }
 
-    private fun prepareForPossResume(){
+    private fun prepareForPossResume() {
         if (isRecording.value!!) {
             mediaRecorder.pause()
         }
@@ -172,15 +172,25 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
         _createDialog.value = false
-
-        val name = nameInput ?: res.getString(R.string.recording_file_name)
+        val name = nameInput ?: java.lang.String.format(
+            "%s_%s",
+            res.getString(R.string.standard_name_recording),
+            android.text.format.DateFormat.format(
+                "yyyy-MM-dd_hh-mm",
+                Calendar.getInstance(Locale.getDefault())
+            )
+        )
         if (!validNameInput(name)) {
             errorMessage = res.getString(R.string.dialog_invalid_name)
             _createDialog.value = true
             return
         }
 
-        val path = (pathInput ?: context.filesDir.absolutePath) + "/$name.acc"
+        val path = java.lang.String.format(
+            "%s/$name%s",
+            (pathInput ?: context.filesDir.absolutePath),
+            res.getString(R.string.suffix_audio_file)
+        )
         val newFile = File(path)
         if (newFile.exists()) {
             errorMessage = res.getString(R.string.dialog_already_exist)
@@ -196,7 +206,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         File(tempFile).delete()
         resetView()
         errorMessage = null
-
     }
 
     private fun saveRecordInDB(audio: EntryEntity) {
