@@ -21,7 +21,7 @@ interface EntryDao {
     fun getRecordingWithId(key: Int): LiveData<EntryEntity>
 
     @Insert(onConflict = REPLACE)
-    fun insert(entryEntity: EntryEntity)
+    fun insert(entryEntity: EntryEntity):Long
 
     @Delete
     fun delete(entryEntity: EntryEntity)
@@ -37,5 +37,5 @@ interface EntryDao {
     fun getRecordingWithMarks(key: Int): List<RecordingAndMarker>
 
     @Query("SELECT * FROM markerTable")
-    fun getAllMarkings(): List<MarkerEntity>
+    fun getAllMarks(): List<MarkerEntity>
 }

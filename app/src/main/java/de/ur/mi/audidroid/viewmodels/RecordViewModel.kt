@@ -150,9 +150,9 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         if (recordingDuration != null) {
             val audio =
                 EntryEntity(0, outputFile, getDate(), recordingDuration)
-            dataSource.insert(audio)
+            val uid = dataSource.insert(audio).toInt()
             if (markList.isNotEmpty()){
-                saveMarksInDB(audio.uid)
+                saveMarksInDB(uid)
             }
         }
     }
@@ -169,15 +169,13 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun saveMarksInDB(recordingId: Int){
         markList.forEach {
-            val mark = MarkerEntity(0, 1, it.first, it.second)
+            val mark = MarkerEntity(0, recordingId, it.first, it.second)
             dataSource.insertMark(mark)
         }
     }
 
     fun makeMark(){
-        val time = timer.text.toString()
-        val mark = context.resources.getString(R.string.mark_button)
-        val markEntry = Pair(mark,time)
+        val markEntry = Pair(context.resources.getString(R.string.mark_button),timer.text.toString())
         markList.add(markEntry)
         showSnackBar(R.string.mark_made)
     }

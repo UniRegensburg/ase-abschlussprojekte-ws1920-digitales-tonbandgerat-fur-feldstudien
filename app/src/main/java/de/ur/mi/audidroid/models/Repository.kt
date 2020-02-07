@@ -37,15 +37,16 @@ class Repository(application: Application) {
         }
     }
 
-    fun insert(entryEntity: EntryEntity) {
-        InsertAsyncTask(entryDao).execute(entryEntity)
+    fun insert(entryEntity: EntryEntity): Long{
+        val id = InsertAsyncTask(entryDao).execute(entryEntity).get()
+        return id
     }
 
     private class InsertAsyncTask(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Unit>() {
+        AsyncTask<EntryEntity, Unit, Long>() {
 
-        override fun doInBackground(vararg params: EntryEntity?) {
-            entryDao.insert(params[0]!!)
+        override fun doInBackground(vararg params: EntryEntity?):Long {
+            return entryDao.insert(params[0]!!)
         }
     }
 
@@ -73,15 +74,15 @@ class Repository(application: Application) {
         }
     }
 
-    fun getMarksOfRecording(entryEntity: EntryEntity) {
-        GetMarksOfRecording(entryDao).execute(entryEntity)
+    fun getMarksOfRecording(udi : Int): List<RecordingAndMarker> {
+        return GetMarksOfRecording(entryDao).execute(udi).get()
     }
 
     private class GetMarksOfRecording(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, List<RecordingAndMarker>>() {
+        AsyncTask<Int, Unit, List<RecordingAndMarker>>() {
 
-        override fun doInBackground(vararg params: EntryEntity?): List<RecordingAndMarker> {
-            return entryDao.getRecordingWithMarks(params[0]!!.uid)
+        override fun doInBackground(vararg params: Int?): List<RecordingAndMarker> {
+            return entryDao.getRecordingWithMarks(params[0]!!)
         }
     }
 }
