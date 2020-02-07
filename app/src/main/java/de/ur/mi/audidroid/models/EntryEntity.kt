@@ -16,25 +16,3 @@ data class EntryEntity(
     @ColumnInfo(name = "markName") val markName: String? = null,
     @ColumnInfo(name = "labels") val labels: String? = null // TODO: change to list
 )
-
-/** The MarkerEntity represents the table with the marks a user made.
- *  RecordingAndMarker maps the one-to-many relationship between a recording and its marks.
- *
- */
-
-@Entity(tableName = "markerTable")
-data class MarkerEntity(
-    @PrimaryKey(autoGenerate = true) val mid: Int,
-    val recordingId: Int,
-    val markName: String,
-    val markTime: String
-)
-
-data class RecordingAndMarker(
-    @Embedded val entryEntity: EntryEntity,
-    @Relation(
-        parentColumn = "uid",
-        entityColumn = "recordingId"
-    )
-    val markList: List<MarkerEntity>
-)

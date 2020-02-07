@@ -34,7 +34,7 @@ interface EntryDao {
 
     @Transaction
     @Query("SELECT * FROM recordingsTable WHERE uid = :key")
-    fun getRecordingWithMarks(key: Int): List<RecordingAndMarker>
+    fun getRecordingInclMarks(key: Int): List<RecordingAndMarker>
 
     @Query("SELECT * FROM markerTable")
     fun getAllMarks(): List<MarkerEntity>

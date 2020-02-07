@@ -74,15 +74,15 @@ class Repository(application: Application) {
         }
     }
 
-    fun getMarksOfRecording(udi : Int): List<RecordingAndMarker> {
-        return GetMarksOfRecording(entryDao).execute(udi).get()
+    fun getRecordingInclMarks(udi : Int): List<RecordingAndMarker> {
+        return GetRecordingInclMarks(entryDao).execute(udi).get()
     }
 
-    private class GetMarksOfRecording(val entryDao: EntryDao) :
+    private class GetRecordingInclMarks(val entryDao: EntryDao) :
         AsyncTask<Int, Unit, List<RecordingAndMarker>>() {
 
         override fun doInBackground(vararg params: Int?): List<RecordingAndMarker> {
-            return entryDao.getRecordingWithMarks(params[0]!!)
+            return entryDao.getRecordingInclMarks(params[0]!!)
         }
     }
 }
