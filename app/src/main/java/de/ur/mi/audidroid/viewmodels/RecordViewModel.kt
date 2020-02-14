@@ -1,6 +1,7 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.content.res.Resources
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.SystemClock
@@ -13,9 +14,11 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
+import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 
 /**
  * The ViewModel handles the changes to the view's data and the event logic for the user interaction referring to the RecordFragment
@@ -27,7 +30,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
-    private var outputFile = ""
+    private var tempFile = ""
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
     private lateinit var frameLayout: FrameLayout
@@ -35,12 +38,17 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private val context = getApplication<Application>().applicationContext
     var isRecording = MutableLiveData<Boolean>()
     var buttonsVisible = MutableLiveData<Boolean>()
-    val res = context.resources
+    val res: Resources = context.resources
+    private val _createDialog = MutableLiveData<Boolean>()
+    var errorMessage: String? = null
 
     init {
         isRecording.value = false
         buttonsVisible.value = false
     }
+
+    val createDialog: MutableLiveData<Boolean>
+        get() = _createDialog
 
     fun initializeTimer(chronometer: Chronometer) {
         timer = chronometer
@@ -50,13 +58,14 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         this.frameLayout = frameLayout
     }
 
+    /**Initializing the recorder and cache the recording in the internal memory till the user decides the save location in the dialog afterwards */
     private fun initializeRecorder() {
-        outputFile =
-            context.filesDir.absolutePath + "/recording.aac" // TODO: Change path to users preferred save location
+        tempFile =
+            context.filesDir.absolutePath + res.getString(R.string.suffix_temp_file)
         with(mediaRecorder) {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setOutputFile(outputFile)
+            setOutputFile(tempFile)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
         }
         try {
@@ -109,23 +118,43 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     fun cancelRecord() {
         if (recorderInitialized) {
             showSnackBar(R.string.record_removed)
+            File(tempFile).delete()
             endRecordSession()
+            resetView()
         }
     }
 
+    fun cancelSaving() {
+        errorMessage = null
+        _createDialog.value = false
+        buttonsVisible.value = true
+        isRecording.value = false
+        resumeRecord = true
+    }
+
     fun confirmRecord() {
-        showSnackBar(R.string.record_saved)
-        endRecordSession()
-        saveRecordInDB()
+        prepareForPossResume()
+        _createDialog.value = true
+    }
+
+    private fun prepareForPossResume() {
+        if (isRecording.value!!) {
+            mediaRecorder.pause()
+        }
+        timer.stop()
+        currentRecordTime = timer.text.toString()
     }
 
     private fun endRecordSession() {
         recorderInitialized = false
+        mediaRecorder.stop()
+        mediaRecorder.reset()
+    }
+
+    private fun resetView() {
         buttonsVisible.value = false
         isRecording.value = false
         resumeRecord = false
-        mediaRecorder.stop()
-        mediaRecorder.reset()
         resetTimer()
     }
 
@@ -141,18 +170,56 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         mediaRecorder.resume()
     }
 
-    private fun saveRecordInDB() {
-        val recordingDuration = getRecordingDuration()
-        if (recordingDuration != null) {
-            val audio =
-                EntryEntity(0, outputFile, getDate(), recordingDuration)
-            dataSource.insert(audio)
+    fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
+        _createDialog.value = false
+        val name = nameInput ?: java.lang.String.format(
+            "%s_%s",
+            res.getString(R.string.standard_name_recording),
+            android.text.format.DateFormat.format(
+                "yyyy-MM-dd_hh-mm",
+                Calendar.getInstance(Locale.getDefault())
+            )
+        )
+        if (!validNameInput(name)) {
+            errorMessage = res.getString(R.string.dialog_invalid_name)
+            _createDialog.value = true
+            return
         }
+
+        val path = java.lang.String.format(
+            "%s/$name%s",
+            (pathInput ?: context.filesDir.absolutePath),
+            res.getString(R.string.suffix_audio_file)
+        )
+        val newFile = File(path)
+        if (newFile.exists()) {
+            errorMessage = res.getString(R.string.dialog_already_exist)
+            _createDialog.value = true
+            return
+        }
+        endRecordSession()
+        File(tempFile).copyTo(newFile)
+        val recordingDuration = getRecordingDuration() ?: currentRecordTime
+        val audio =
+            EntryEntity(0, name, path, getDate(), recordingDuration)
+        saveRecordInDB(audio)
+        File(tempFile).delete()
+        resetView()
+        errorMessage = null
+    }
+
+    private fun saveRecordInDB(audio: EntryEntity) {
+        dataSource.insert(audio)
+        showSnackBar(R.string.record_saved)
+    }
+
+    private fun validNameInput(name: String): Boolean {
+        return Pattern.compile("^[a-zA-Z0-9_-]+$").matcher(name).matches()
     }
 
     private fun getRecordingDuration(): String? {
         val metaRetriever = MediaMetadataRetriever()
-        metaRetriever.setDataSource(outputFile)
+        metaRetriever.setDataSource(tempFile)
         return DateUtils.formatElapsedTime(
             metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() / (res.getInteger(
                 R.integer.one_second
@@ -164,6 +231,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
      * Returns the current date
      * Adapted from: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
      */
+
     private fun getDate(): String {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     }
