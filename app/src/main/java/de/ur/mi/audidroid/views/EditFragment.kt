@@ -13,9 +13,11 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.databinding.EditFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.EditViewModel
+import kotlinx.android.synthetic.main.player_fragment.*
 
 class EditFragment : Fragment() {
 
+    private lateinit var editViewModel: EditViewModel
     private lateinit var binding: EditFragmentBinding
 
     override fun onCreateView(
@@ -32,13 +34,20 @@ class EditFragment : Fragment() {
         val dataSource = Repository(application)
         val viewModelFactory = EditViewModelFactory(args.recordingPath, dataSource, application)
 
-        val editViewModel = ViewModelProvider(this, viewModelFactory).get(EditViewModel::class.java)
+        editViewModel = ViewModelProvider(this, viewModelFactory).get(EditViewModel::class.java)
 
         binding.editViewModel = editViewModel
 
         binding.setLifecycleOwner(this)
 
         return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        editViewModel.initializeMediaPlayer()
+        editViewModel.initializeSeekBar(binding.seekBar)
+        editViewModel.initializeFrameLayout(player_layout)
     }
 
     /**

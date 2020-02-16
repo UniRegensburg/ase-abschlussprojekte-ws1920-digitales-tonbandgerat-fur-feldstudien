@@ -33,6 +33,10 @@
     <string name="recording_deleted">Recording deleted</string>
     <string name="no_recordings">No recordings saved</string>
 
+    <!-- EditFragment -->
+    <string name="cut_inner_button">CUT INNER</string>
+    <string name="cut_outer_button">CUT OUTER</string>
+
     <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>
     <string name="cancel_button">Cancel Button</string>

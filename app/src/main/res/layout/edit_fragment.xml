@@ -22,17 +22,97 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/text_file_name"
+            <LinearLayout
+                android:id="@+id/seekBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.2"
+                tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
+
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:gravity="center"
+                    android:text="@{editViewModel.currentDurationString}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6" />
+
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:gravity="center"
+                    android:text="@{editViewModel.totalDurationString}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
+
+            </LinearLayout>
+
+
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edit"
-                android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline4"
+                android:backgroundTint="@color/color_secondary"
+                android:text="@string/cut_inner_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.15"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.263" />
+                app:layout_constraintVertical_bias="0.322" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/color_secondary"
+                android:text="@string/cut_outer_button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.857"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.322" />
+
+            <ImageButton
+                android:id="@+id/button_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/play_button"
+                android:onClick="@{() -> editViewModel.onStartPlayer()}"
+                android:src="@mipmap/play_button_foreground"
+                android:visibility="@{editViewModel.isPlaying ? View.GONE : View.VISIBLE, default=visible}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.93" />
+
+            <ImageButton
+                android:id="@+id/button_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:contentDescription="@string/pause_button"
+                android:onClick="@{() -> editViewModel.onPausePlayer()}"
+                android:src="@mipmap/pause_button_foreground"
+                android:visibility="@{editViewModel.isPlaying ? View.VISIBLE : View.GONE, default=gone}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.93" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
