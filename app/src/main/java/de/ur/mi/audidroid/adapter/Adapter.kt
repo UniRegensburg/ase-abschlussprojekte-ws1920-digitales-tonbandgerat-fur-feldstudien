@@ -9,13 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.databinding.EntryItemBinding
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
+import de.ur.mi.audidroid.views.FilesFragment
 
 /**
  * The adapter connects the data to the RecyclerView. It adapts the data so that it
  * can be displayed in a ViewHolder.
  * @author: Theresa Strohmeier
  */
-class Adapter(private val filesViewModel: FilesViewModel) :
+class Adapter(
+    private val filesFragment: FilesFragment,
+    private val filesViewModel: FilesViewModel
+) :
     ListAdapter<EntryEntity, Adapter.ViewHolder>(RecordingDiffCallback()) {
 
     val userActionsListener = object : RecordingUserActionsListener {
@@ -24,7 +28,7 @@ class Adapter(private val filesViewModel: FilesViewModel) :
         }
 
         override fun onButtonClicked(entryEntity: EntryEntity, view: View) {
-            filesViewModel.onButtonClicked(entryEntity, view)
+            filesFragment.openPopupMenu(entryEntity, view)
         }
     }
 

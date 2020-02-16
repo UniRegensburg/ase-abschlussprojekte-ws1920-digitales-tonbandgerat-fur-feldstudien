@@ -1,13 +1,7 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
-import android.view.View
-import android.widget.PopupMenu
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import de.ur.mi.audidroid.R
+import androidx.lifecycle.*
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
@@ -20,7 +14,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     AndroidViewModel(application) {
 
     private val repository = dataSource
-    private val context = getApplication<Application>().applicationContext
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
 
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
@@ -37,21 +30,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         it.isEmpty()
     }
 
-    // When the ImageButton is clicked, a PopupMenu opens.
-    fun onButtonClicked(entryEntity: EntryEntity, view: View) {
-        val popupMenu = PopupMenu(context, view)
-        popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_delete_recording ->
-                    delete(entryEntity)
-            }
-            true
-        }
-        popupMenu.show()
-    }
-
-    private fun delete(entryEntity: EntryEntity) {
+    fun delete(entryEntity: EntryEntity) {
         val deletedSuccessful = File(entryEntity.recordingPath).delete()
         if (deletedSuccessful) {
             repository.delete(entryEntity)

@@ -7,12 +7,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.PlayerViewModel
@@ -44,7 +42,7 @@ class PlayerFragment : Fragment() {
         val viewModelFactory = PlayerViewModelFactory(args.recordingPath, application)
 
         playerViewModel =
-            ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
+            ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
         binding.playerViewModel = playerViewModel
 
