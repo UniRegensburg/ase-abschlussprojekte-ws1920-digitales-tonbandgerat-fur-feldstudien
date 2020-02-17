@@ -8,9 +8,12 @@
     <string name="menu_files">Files</string>
     <string name="menu_settings">Settings</string>
 
-    <string name="theme_preference_key">theme_preference</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
+
+    <!-- Preferences -->
+    <string name="theme_preference_key">theme_preference</string>
+    <string name="labels_preference_key">labels_preference</string>
 
     <!-- Navigation -->
     <string name="record_label">Record</string>
@@ -65,5 +68,7 @@
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
+    <string name="add_label_button_text">Add</string>
+    <string name="add_label_text_hint">Enter label</string>
 
 </resources>

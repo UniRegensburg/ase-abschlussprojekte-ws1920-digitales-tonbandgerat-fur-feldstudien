@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="editLabelsViewModel"
+            type="de.ur.mi.audidroid.viewmodels.EditLabelsViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/edit_labels_fragment"
+        tools:context=".views.EditLabelsFragment">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/edit_labels_chip_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/add_label_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_save_recording_name"
+            android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline6"
+            android:textColor="@color/color_on_background" />
+
+        <EditText
+            android:id="@+id/add_label_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dialog_margin_small"
+            android:hint="@string/add_label_text_hint"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
+
+    </FrameLayout>
+
+</layout>
