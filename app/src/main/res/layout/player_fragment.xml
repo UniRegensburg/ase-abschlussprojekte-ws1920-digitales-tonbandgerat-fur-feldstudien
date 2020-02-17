@@ -6,6 +6,7 @@
     <data>
 
         <import type="android.view.View" />
+
         <variable
             name="playerViewModel"
             type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
@@ -25,7 +26,7 @@
                 android:id="@+id/text_file_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/recording_file_name"
+                android:text="@{playerViewModel.recording.recordingName}"
                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -63,7 +64,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
                     android:gravity="center"
-                    android:text="@{playerViewModel.totalDurationString}"
+                    android:text="@{playerViewModel.recording.duration}"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
 
             </LinearLayout>

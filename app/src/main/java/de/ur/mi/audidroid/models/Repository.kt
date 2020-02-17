@@ -49,15 +49,16 @@ class Repository(application: Application) {
         }
     }
 
-    fun getRecordingWithId(entryEntity: EntryEntity) {
-        GetRecordingWithId(entryDao).execute(entryEntity)
+    fun getRecordingWithId(recordingId: Int): EntryEntity {
+        val recording = GetRecordingWithId(entryDao).execute(recordingId).get()
+        return recording
     }
 
     private class GetRecordingWithId(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Unit>() {
+        AsyncTask<Int, Unit, EntryEntity>() {
 
-        override fun doInBackground(vararg params: EntryEntity?) {
-            entryDao.getRecordingWithId(params[0]!!.uid)
+        override fun doInBackground(vararg params: Int?): EntryEntity {
+            return entryDao.getRecordingWithId(params[0]!!)
         }
     }
 }

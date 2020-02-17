@@ -57,11 +57,11 @@ class FilesFragment : Fragment() {
         })
 
         // Observer on the state variable for navigating when a list-item is clicked.
-        filesViewModel.navigateToPlayerFragment.observe(this, Observer { recordingPath ->
-            recordingPath?.let {
+        filesViewModel.navigateToPlayerFragment.observe(this, Observer { recordingId ->
+            recordingId?.let {
                 this.findNavController().navigate(
                     FilesFragmentDirections
-                        .actionFilesToPlayer(recordingPath)
+                        .actionFilesToPlayer(recordingId)
                 )
                 filesViewModel.onPlayerFragmentNavigated()
             }

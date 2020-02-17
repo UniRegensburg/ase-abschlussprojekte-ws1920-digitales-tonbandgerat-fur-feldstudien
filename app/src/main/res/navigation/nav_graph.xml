@@ -14,7 +14,7 @@
         android:id="@+id/files"
         android:name="de.ur.mi.audidroid.views.FilesFragment"
         android:label="@string/files_label"
-        tools:layout="@layout/files_fragment" >
+        tools:layout="@layout/files_fragment">
         <action
             android:id="@+id/action_files_to_player"
             app:destination="@id/player" />
@@ -27,10 +27,10 @@
         android:id="@+id/player"
         android:name="de.ur.mi.audidroid.views.PlayerFragment"
         android:label="@string/player_label"
-        tools:layout="@layout/player_fragment" >
+        tools:layout="@layout/player_fragment">
         <argument
-            android:name="recordingPath"
-            app:argType="string" />
+            android:name="recordingId"
+            app:argType="integer" />
     </fragment>
 
 </navigation>

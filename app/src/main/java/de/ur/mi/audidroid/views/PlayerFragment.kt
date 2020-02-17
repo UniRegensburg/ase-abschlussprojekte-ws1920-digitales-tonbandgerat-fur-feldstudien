@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModel
@@ -41,7 +40,7 @@ class PlayerFragment : Fragment() {
         val args = PlayerFragmentArgs.fromBundle(arguments!!)
 
         val dataSource = Repository(application)
-        val viewModelFactory = PlayerViewModelFactory(args.recordingPath, application)
+        val viewModelFactory = PlayerViewModelFactory(dataSource, args.recordingId, application)
 
         playerViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
@@ -61,16 +60,17 @@ class PlayerFragment : Fragment() {
     }
 
     /**
-     * Provides the recordingPath and context to the PlayerViewModel.
+     * Provides the Repository, recordingId and context to the PlayerViewModel.
      */
     class PlayerViewModelFactory(
-        private val recordingPath: String,
+        private val dataSource: Repository,
+        private val recordingId: Int,
         private val application: Application
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
-                return PlayerViewModel(recordingPath, application) as T
+                return PlayerViewModel(dataSource, recordingId, application) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

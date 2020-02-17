@@ -20,7 +20,7 @@ class Adapter(private val filesViewModel: FilesViewModel) :
 
     val userActionsListener = object : RecordingUserActionsListener {
         override fun onRecordingClicked(entryEntity: EntryEntity) {
-            filesViewModel.onRecordingClicked(entryEntity.recordingPath)
+            filesViewModel.onRecordingClicked(entryEntity.uid)
         }
 
         override fun onButtonClicked(entryEntity: EntryEntity, view: View) {
