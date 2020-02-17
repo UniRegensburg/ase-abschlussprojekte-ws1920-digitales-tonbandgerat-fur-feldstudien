@@ -30,7 +30,7 @@ interface EntryDao {
     fun insert(entryEntity: EntryEntity)
 
     @Delete
-    fun delete(entryEntity: EntryEntity)
+    fun delete(entryEntity: EntryEntity): Int
 
     @Query("DELETE FROM recordingsTable")
     fun clearTable()

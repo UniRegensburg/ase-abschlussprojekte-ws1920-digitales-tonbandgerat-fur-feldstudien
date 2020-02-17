@@ -2,11 +2,13 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.PopupMenu
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
@@ -22,6 +24,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
+    private lateinit var frameLayout: FrameLayout
 
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
 
@@ -52,11 +55,28 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun delete(entryEntity: EntryEntity) {
-        val deletedSuccessful = File(entryEntity.recordingPath).delete()
-        if (deletedSuccessful) {
-            repository.delete(entryEntity)
-            _showSnackbarEvent.value = true
+        var file = File(entryEntity.recordingPath)
+        if (file.exists()) {
+            if (file.delete()) {
+                if (repository.delete(entryEntity) == 1) {
+                    _showSnackbarEvent.value = true
+                } else {
+                    showSnackBar(R.string.error_message_file_cannot_be_deleted)
+                }
+            } else {
+                showSnackBar(R.string.error_message_file_cannot_be_deleted)
+            }
+        } else {
+            showSnackBar(R.string.error_message_path_does_not_exist)
         }
+    }
+
+    fun initializeFrameLayout(frameLayout: FrameLayout) {
+        this.frameLayout = frameLayout
+    }
+
+    private fun showSnackBar(text: Int) {
+        Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 
     // Navigation to the PlayerFragment

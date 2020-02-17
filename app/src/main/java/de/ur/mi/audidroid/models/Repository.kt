@@ -21,8 +21,9 @@ class Repository(application: Application) {
         allRecordings = entryDao.getAllRecordings()
     }
 
-    fun delete(entryEntity: EntryEntity) {
-        DeleteAsyncTask(entryDao).execute(entryEntity)
+    fun delete(entryEntity: EntryEntity): Int {
+        val deletedRecordings = DeleteAsyncTask(entryDao).execute(entryEntity).get()
+        return deletedRecordings
     }
 
     fun getAllRecordings(): LiveData<List<EntryEntity>> {
@@ -30,10 +31,10 @@ class Repository(application: Application) {
     }
 
     private class DeleteAsyncTask(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Unit>() {
+        AsyncTask<EntryEntity, Unit, Int>() {
 
-        override fun doInBackground(vararg params: EntryEntity?) {
-            entryDao.delete(params[0]!!)
+        override fun doInBackground(vararg params: EntryEntity?): Int {
+            return entryDao.delete(params[0]!!)
         }
     }
 

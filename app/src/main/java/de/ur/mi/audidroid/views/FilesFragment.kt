@@ -18,6 +18,7 @@ import de.ur.mi.audidroid.adapter.Adapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
+import kotlinx.android.synthetic.main.files_fragment.*
 
 /**
  * The fragment displays all recordings.
@@ -27,6 +28,7 @@ class FilesFragment : Fragment() {
 
     private lateinit var adapter: Adapter
     private lateinit var binding: FilesFragmentBinding
+    private lateinit var filesViewModel: FilesViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,7 +43,7 @@ class FilesFragment : Fragment() {
         val dataSource = Repository(application)
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
 
-        val filesViewModel =
+        filesViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(FilesViewModel::class.java)
 
         binding.filesViewModel = filesViewModel
@@ -72,6 +74,7 @@ class FilesFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        filesViewModel.initializeFrameLayout(files_layout)
         setupAdapter()
     }
 
