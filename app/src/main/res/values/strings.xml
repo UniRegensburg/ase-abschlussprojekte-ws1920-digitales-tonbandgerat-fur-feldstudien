@@ -20,6 +20,7 @@
     <string name="files_label">Files</string>
     <string name="settings_label">Settings</string>
     <string name="player_label">Player</string>
+    <string name="labels_label">Labels</string>
 
     <!-- PlayerFragment -->
     <string name="play_button">Play recording</string>

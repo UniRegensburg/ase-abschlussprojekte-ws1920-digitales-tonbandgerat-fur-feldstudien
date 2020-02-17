@@ -35,7 +35,7 @@
     <fragment
         android:id="@+id/editLabelsFragment"
         android:name="de.ur.mi.audidroid.views.EditLabelsFragment"
-        android:label="EditLabelsFragment" />
+        android:label="@string/labels_label" />
     <action
         android:id="@+id/action_global_editLabelsFragment"
         app:destination="@id/editLabelsFragment" />

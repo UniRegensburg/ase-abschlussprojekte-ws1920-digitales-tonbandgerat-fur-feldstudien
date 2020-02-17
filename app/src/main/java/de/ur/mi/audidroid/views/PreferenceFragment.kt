@@ -22,7 +22,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         val labelsPreference = findPreference<Preference>(getString(R.string.labels_preference_key))!!
         labelsPreference.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
-                Log.d("labels_preference", "clicked!")
                 view!!.findNavController().navigate(R.id.action_global_editLabelsFragment)
                 true
             }
