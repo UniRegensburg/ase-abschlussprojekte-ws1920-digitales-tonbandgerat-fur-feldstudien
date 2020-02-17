@@ -29,8 +29,9 @@
     <dimen name="seek_bar_layout_absolute_x">0dp</dimen>
     <dimen name="layout_width_seek_bar_element">0dp</dimen>
 
-    <!-- Textsizes -->
-
-    <dimen name="text_size_big">50sp</dimen>
+    <!-- Dialog -->
+    <dimen name="dialog_margin">50dp</dimen>
+    <dimen name="dialog_padding">25dp</dimen>
+    <dimen name="dialog_margin_small">15dp</dimen>
 
 </resources>

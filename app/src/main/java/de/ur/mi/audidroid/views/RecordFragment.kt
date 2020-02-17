@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.models.Repository
@@ -41,7 +41,7 @@ class RecordFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
 
         val viewModelFactory = RecordViewModelFactory(dataSource, application)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(RecordViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(RecordViewModel::class.java)
         binding.recordViewModel = viewModel
         binding.lifecycleOwner = this
         return binding.root
@@ -65,6 +65,16 @@ class RecordFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel.initializeTimer(chronometer)
         viewModel.initializeLayout(frameLayout)
+        viewModel.createDialog.observe(this, Observer {
+            if (it) {
+                de.ur.mi.audidroid.utils.Dialog.createDialog(
+                    context = context!!,
+                    layoutId = R.layout.dialog_save_recording,
+                    viewModel = viewModel,
+                    errorMessage = viewModel.errorMessage
+                )
+            }
+        })
     }
 
     override fun onPause() {
