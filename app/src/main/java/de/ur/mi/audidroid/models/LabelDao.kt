@@ -24,6 +24,9 @@ interface LabelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(labelEntity: LabelEntity)
 
+    // TODO("update label name.")
+    // if we correctly connect this to the recordings table (relational db!), it should update across the whole app automatically
+
     @Delete
     fun delete(labelEntity: LabelEntity)
 

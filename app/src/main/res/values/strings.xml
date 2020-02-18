@@ -45,6 +45,12 @@
     <string name="suffix_audio_file">.acc</string>
     <string name="standard_name_recording">Rec</string>
 
+    <!-- LabelsFragment -->
+    <string name="no_labels">No labels defined</string>
+    <string name="add_label_button_text">Add</string>
+    <string name="add_label_text_hint">Enter label</string>
+    <string name="label_deleted">Label deleted</string>
+
     <!-- User Feedback Recording -->
     <string name="record_saved">Recording saved</string>
     <string name="record_removed">Recording removed</string>
@@ -69,7 +75,8 @@
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
-    <string name="add_label_button_text">Add</string>
-    <string name="add_label_text_hint">Enter label</string>
+    <string name="create_label_dialog_header">Create Label</string>
+    <string name="label_name_too_long">Use a name wit a maximum of 10 characters</string>
+    <string name="label_name_nonexistent">Enter a valid label name</string>
 
 </resources>

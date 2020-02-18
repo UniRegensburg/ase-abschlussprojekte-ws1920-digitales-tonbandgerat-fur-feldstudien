@@ -13,33 +13,43 @@
     </data>
 
     <FrameLayout
+        android:id="@+id/edit_labels_frame_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/edit_labels_fragment"
         tools:context=".views.EditLabelsFragment">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/edit_labels_chip_group"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/labels_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/label_item" />
 
-        <TextView
-            android:id="@+id/add_label_text_view"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/dialog_save_recording_name"
-            android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline6"
-            android:textColor="@color/color_on_background" />
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="@{editLabelsViewModel.empty ? View.VISIBLE : View.GONE}">
 
-        <EditText
-            android:id="@+id/add_label_edit_text"
-            android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_labels"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dialog_margin_small"
-            android:hint="@string/add_label_text_hint"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_add"
+            android:onClick="@{() -> editLabelsViewModel.requestLabelDialog()}"
+            android:contentDescription="@string/add_label_button_text"
+            app:tint="@color/color_on_secondary"
+            android:layout_margin="16dp"/>
+
 
     </FrameLayout>
 

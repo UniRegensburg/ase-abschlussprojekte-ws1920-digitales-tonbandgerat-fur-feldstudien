@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline2"
-                android:textColor="@color/color_on_secondary"
+                android:textColor="@color/color_on_background"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
