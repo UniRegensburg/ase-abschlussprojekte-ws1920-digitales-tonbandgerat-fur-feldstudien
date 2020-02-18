@@ -34,8 +34,11 @@
     <string name="no_recordings">No recordings saved</string>
 
     <!-- EditFragment -->
-    <string name="cut_inner_button">CUT INNER</string>
-    <string name="cut_outer_button">CUT OUTER</string>
+    <string name="cut_inner_button">Cut inner</string>
+    <string name="cut_outer_button">Cut outer</string>
+    <string name="marks_text_view">Marks</string>
+    <string name="add_marks_button">Add marks</string>
+    <string name="no_marks">No marks saved</string>
 
     <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>
