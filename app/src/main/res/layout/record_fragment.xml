@@ -27,57 +27,83 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:textSize="@dimen/text_size_big"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline2"
+                android:textColor="@color/color_on_secondary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.263" />
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.7">
 
                 <ImageButton
                     android:id="@+id/cancel_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.4"
+                    android:layout_height="0dp"
                     android:background="@null"
+                    android:tint="@color/icon_color_on_background"
                     android:contentDescription="@string/cancel_button"
                     android:onClick="@{() -> recordViewModel.cancelRecord()}"
-                    android:src="@mipmap/cancel_button_foreground"
-                    android:visibility="@{recordViewModel.buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}" />
+                    android:src="@drawable/ic_close"
+                    android:visibility="@{recordViewModel.buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/record_pause_button"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintVertical_bias="0.0" />
 
-                <ImageButton
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/record_pause_button"
-                    android:layout_width="133dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
                     android:adjustViewBounds="true"
+                    android:layout_marginTop="@dimen/keyline_4"
+                    android:layout_marginBottom="@dimen/keyline_4"
                     android:background="@null"
+                    app:maxImageSize="@dimen/keyline_7"
                     android:contentDescription="@string/record_pause_button"
                     android:onClick="@{() -> recordViewModel.recordPauseButtonClicked()}"
-                    android:scaleType="fitXY"
-                    android:src="@{recordViewModel.isRecording ? @drawable/pause_button : @drawable/record_button_orange, default = @drawable/record_button_orange}" />
+                    android:scaleType="center"
+                    android:src="@{recordViewModel.isRecording ? @drawable/ic_pause : @drawable/ic_mic, default = @drawable/ic_mic}"
+                    app:backgroundTint="@color/color_primary"
+                    app:fabCustomSize="@dimen/keyline_9"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:tint="@color/color_on_primary" />
 
                 <ImageButton
                     android:id="@+id/confirm_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.4"
+                    android:layout_height="0dp"
                     android:background="@null"
+                    android:tint="@color/icon_color_on_background"
                     android:contentDescription="@string/confirm_button"
                     android:onClick="@{() -> recordViewModel.confirmRecord()}"
-                    android:src="@mipmap/confirm_button_foreground"
-                    android:visibility="@{recordViewModel.buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}" />
-            </LinearLayout>
+                    android:src="@drawable/ic_done"
+                    android:visibility="@{recordViewModel.buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/record_pause_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintVertical_bias="0.0" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <Button
                 android:id="@+id/mark_button"

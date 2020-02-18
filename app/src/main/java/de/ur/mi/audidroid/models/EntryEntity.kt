@@ -10,6 +10,7 @@ import androidx.room.*
 @Entity(tableName = "recordingsTable")
 data class EntryEntity(
     @PrimaryKey(autoGenerate = true) val uid: Int,
+    @ColumnInfo(name = "recordingName") val recordingName: String,
     @ColumnInfo(name = "recordingPath") val recordingPath: String,
     @ColumnInfo(name = "date") val date: String,
     @ColumnInfo(name = "duration") val duration: String,

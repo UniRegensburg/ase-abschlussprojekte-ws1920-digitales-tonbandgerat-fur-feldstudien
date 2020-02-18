@@ -20,6 +20,9 @@ interface EntryDao {
     @Query("SELECT * FROM recordingsTable WHERE uid = :key")
     fun getRecordingWithId(key: Int): LiveData<EntryEntity>
 
+    @Query("SELECT * FROM recordingsTable WHERE recordingName IN (:name)")
+    fun getRecordingByName(name: String): EntryEntity
+
     @Insert(onConflict = REPLACE)
     fun insert(entryEntity: EntryEntity):Long
 

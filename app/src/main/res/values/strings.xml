@@ -38,8 +38,11 @@
     <string name="record_pause_button">Record and Pause Button</string>
     <string name="mark_button">Mark</string>
     <string name="mark_made">Moment is marked</string>
+    <string name="suffix_temp_file">/temp.aac</string>
+    <string name="suffix_audio_file">.acc</string>
+    <string name="standard_name_recording">Rec</string>
 
-    <!-- User Feedback Toasts -->
+    <!-- User Feedback Recording -->
     <string name="record_saved">Recording saved</string>
     <string name="record_removed">Recording removed</string>
 
@@ -50,8 +53,19 @@
     <string name="permission_title">Permission required</string>
     <string name="permission_button">OK</string>
 
+    <!-- Save recording dialog -->
+    <string name="dialog_save_recording_name">Name</string>
+    <string name="dialog_save_recording_name_hint">Enter a name for the recording</string>
+    <string name="dialog_save_recording_path">Save location</string>
+    <string name="dialog_save_recording_path_hint">Choose a path</string>
+    <string name="dialog_save_button_text">Save</string>
+    <string name="dialog_cancel_button_text">Cancel</string>
+    <string name="dialog_invalid_name">You can just use letters, numbers and the symbols _ and - for the recording name.</string>
+    <string name="dialog_already_exist">There is already a recording at this location with your entered name. Change the name or the path.</string>
+
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
+    <string name="sad_face">Sad face</string>
 
 </resources>
