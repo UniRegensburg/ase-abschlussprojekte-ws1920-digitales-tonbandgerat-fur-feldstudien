@@ -5,7 +5,6 @@ import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * The Repository isolates the data layer from the rest of the app.
@@ -17,13 +16,10 @@ class Repository(application: Application): CoroutineScope {
     private var entryDao: EntryDao
     private var labelDao: LabelDao
     private var allRecordings: LiveData<List<EntryEntity>>
-    private var allLabels: LiveData<List<LabelEntity>>
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
-
-    // TODO(refactor function calls into singular methods per function, and perform function based on type parameter)
 
     init {
         val database: RecorderDatabase = RecorderDatabase.getInstance(
@@ -32,7 +28,6 @@ class Repository(application: Application): CoroutineScope {
         entryDao = database.entryDao()
         labelDao = database.labelDao()
         allRecordings = entryDao.getAllRecordings()
-        allLabels = labelDao.getAllLabels()
     }
 
     fun getAllRecordings(): LiveData<List<EntryEntity>> {
@@ -40,7 +35,7 @@ class Repository(application: Application): CoroutineScope {
     }
 
     fun getAllLabels(): LiveData<List<LabelEntity>> {
-        return allLabels
+        return labelDao.getAllLabels()
     }
 
     fun delete(entryEntity: EntryEntity) {
@@ -56,14 +51,8 @@ class Repository(application: Application): CoroutineScope {
     }
 
     fun deleteLabel(labelEntity: LabelEntity) {
-        DeleteLabelAsyncTask(labelDao).execute(labelEntity)
-    }
-
-    private class DeleteLabelAsyncTask(val labelDao: LabelDao) :
-        AsyncTask<LabelEntity, Unit, Unit>() {
-
-        override fun doInBackground(vararg params: LabelEntity?) {
-            labelDao.delete(params[0]!!)
+        CoroutineScope(coroutineContext).launch {
+            labelDao.delete(labelEntity)
         }
     }
 
@@ -80,14 +69,8 @@ class Repository(application: Application): CoroutineScope {
     }
 
     fun insertLabel(labelEntity: LabelEntity) {
-        InsertLabelAsyncTask(labelDao).execute(labelEntity)
-    }
-
-    private class InsertLabelAsyncTask(val labelDao: LabelDao) :
-        AsyncTask<LabelEntity, Unit, Unit>() {
-
-        override fun doInBackground(vararg params: LabelEntity?) {
-            labelDao.insert(params[0]!!)
+        CoroutineScope(coroutineContext).launch {
+            labelDao.insert(labelEntity)
         }
     }
 
@@ -109,15 +92,8 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
-    fun getLabelWithId(labelEntity: LabelEntity) {
-        GetLabelWithId(labelDao).execute(labelEntity)
+    fun getLabelById(labelEntity: LabelEntity): LiveData<LabelEntity> {
+        return labelDao.getLabelById(labelEntity.uid)
     }
 
-    private class GetLabelWithId(val labelDao: LabelDao) :
-        AsyncTask<LabelEntity, Unit, Unit>() {
-
-        override fun doInBackground(vararg params: LabelEntity?) {
-            labelDao.getLabelWithId(params[0]!!.uid)
-        }
-    }
 }
