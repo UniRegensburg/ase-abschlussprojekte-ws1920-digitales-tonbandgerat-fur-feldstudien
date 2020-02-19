@@ -32,6 +32,15 @@
             android:orientation="vertical"
             android:visibility="@{filesViewModel.empty ? View.VISIBLE : View.GONE}">
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/sad_face"
+                android:scaleType="center"
+                android:src="@drawable/ic_sentiment_dissatisfied"
+                android:layout_marginBottom="@dimen/keyline_5"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
