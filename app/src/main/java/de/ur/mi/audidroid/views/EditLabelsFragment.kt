@@ -18,7 +18,6 @@ import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.LabelsDialog
 import de.ur.mi.audidroid.viewmodels.EditLabelsViewModel
 import kotlinx.android.synthetic.main.edit_labels_fragment.*
-import kotlinx.android.synthetic.main.record_fragment.*
 import java.lang.IllegalArgumentException
 
 class EditLabelsFragment : Fragment() {
@@ -58,11 +57,25 @@ class EditLabelsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         setupAdapter()
         viewModel.initializeLayout(edit_labels_frame_layout)
-        viewModel.createDialog.observe(this, Observer {
-            if (it) {
+        viewModel.createAlertDialog.observe(this, Observer {
+            if(it) {
                 LabelsDialog.createDialog(
                     context = context!!,
+                    type = R.string.alert_dialog,
+                    labelToBeEdited = viewModel.labelToBeEdited,
                     layoutId = R.layout.labels_dialog,
+                    viewModel = viewModel,
+                    errorMessage = viewModel.errorMessage
+                )
+            }
+        })
+        viewModel.createConfirmDialog.observe(this, Observer {
+            if(it) {
+                LabelsDialog.createDialog(
+                    context = context!!,
+                    type = R.string.confirm_dialog,
+                    labelToBeEdited = viewModel.labelToBeEdited,
+                    layoutId = null,
                     viewModel = viewModel,
                     errorMessage = viewModel.errorMessage
                 )

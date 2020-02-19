@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 
 /**
- * The LabelDao is the data access object to access a table in the apps' room database
+ * The LabelDao is the data access object to access the table storing labels in the apps' room database
  *
  * @author: Jonas Puchinger
  * Adapted from: https://developer.android.com/training/data-storage/room/accessing-data
@@ -12,6 +12,7 @@ import androidx.room.*
 
 @Dao
 interface LabelDao {
+
     @Query("SELECT * FROM labelsTable")
     fun getAllLabels(): LiveData<List<LabelEntity>>
 
@@ -24,12 +25,13 @@ interface LabelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(labelEntity: LabelEntity)
 
-    // TODO("update label name.")
-    // if we correctly connect this to the recordings table (relational db!), it should update across the whole app automatically
+    @Update
+    suspend fun update(labelEntity: LabelEntity)
 
     @Delete
     fun delete(labelEntity: LabelEntity)
 
     @Query("DELETE FROM labelsTable")
     fun clearTable()
+
 }

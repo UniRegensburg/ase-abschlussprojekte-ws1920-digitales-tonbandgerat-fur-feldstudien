@@ -76,7 +76,16 @@
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
     <string name="create_label_dialog_header">Create Label</string>
-    <string name="label_name_too_long">Use a name wit a maximum of 10 characters</string>
+    <string name="label_name_too_long">Use a name with a maximum of 10 characters</string>
     <string name="label_name_nonexistent">Enter a valid label name</string>
+    <string name="alert_dialog">Alert Dialog</string>
+    <string name="confirm_dialog">Confirm Dialog</string>
+    <string name="delete_label_dialog_header">Delete label?</string>
+    <string name="delete">delete</string>
+    <string name="rename_label_dialog_header">Rename Label</string>
+    <string name="create_label">Create Label</string>
+    <string name="update_label">Update Label</string>
+    <string name="label_inserted">Label created</string>
+    <string name="label_updated">Label renamed</string>
 
 </resources>

@@ -12,6 +12,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.LabelEntity
 import de.ur.mi.audidroid.models.Repository
+import java.util.regex.Pattern
 
 class EditLabelsViewModel(dataSource: Repository, application: Application) : AndroidViewModel(application) {
 
@@ -20,16 +21,21 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) : An
     private lateinit var frameLayout: FrameLayout
     val res: Resources = context.resources
     val allLabels: LiveData<List<LabelEntity>> = repository.getAllLabels()
-    private val _createDialog = MutableLiveData<Boolean>()
+    private val _createAlertDialog = MutableLiveData<Boolean>()
+    private val _createConfirmDialog = MutableLiveData<Boolean>()
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
     var errorMessage: String? = null
+    var labelToBeEdited: LabelEntity? = null
 
     fun initializeLayout(layout: FrameLayout) {
         frameLayout = layout
     }
 
-    val createDialog: MutableLiveData<Boolean>
-        get() = _createDialog
+    val createAlertDialog: MutableLiveData<Boolean>
+        get() = _createAlertDialog
+
+    val createConfirmDialog: MutableLiveData<Boolean>
+        get() = _createConfirmDialog
 
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
@@ -43,45 +49,66 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) : An
     }
 
     fun onLabelClicked(labelEntity: LabelEntity) {
-        Log.d("label", "label clicked")
+        labelToBeEdited = labelEntity
+        _createAlertDialog.value = true
     }
 
     fun onLabelDeleteClicked(labelEntity: LabelEntity) {
-        showSnackBar(R.string.label_deleted)
+        labelToBeEdited = labelEntity
+        _createConfirmDialog.value = true
     }
 
     fun onLabelSaveClicked(nameInput: String?) {
         if(!validName(nameInput)) {
+            errorMessage = res.getString(R.string.dialog_invalid_name)
+            _createAlertDialog.value = true
             return
         }
-        _createDialog.value = false
+        _createAlertDialog.value = false
         insertLabelIntoDB(nameInput!!)
     }
 
+    fun onLabelUpdateClicked(nameInput: String?, labelEntity: LabelEntity) {
+        _createAlertDialog.value = false
+        if(!validName(nameInput)) {
+            errorMessage = res.getString(R.string.dialog_invalid_name)
+            _createAlertDialog.value = true
+            return
+        }
+        updateLabelInDB(nameInput!!, labelEntity)
+    }
+
     fun validName(name: String?): Boolean {
-        if(name == null) {
-            errorMessage = R.string.label_name_nonexistent.toString()
-            return false
-        }
-        if(name.length > 10) {
-            errorMessage = R.string.label_name_too_long.toString()
-            return false
-        }
-        return true
+        val labelName = name ?: ""
+        return Pattern.compile("^[a-zA-Z0-9_-]{1,10}$").matcher(labelName).matches()
     }
 
     fun insertLabelIntoDB(labelName: String) {
         val newLabel = LabelEntity(0, labelName)
         repository.insertLabel(newLabel)
+        showSnackBar(R.string.label_inserted)
+    }
+
+    fun updateLabelInDB(labelName: String, labelEntity: LabelEntity) {
+        val updatedLabel = LabelEntity(labelEntity.uid, labelName)
+        repository.updateLabel(updatedLabel)
+        labelToBeEdited = null
+        showSnackBar(R.string.label_updated)
+    }
+
+    fun deleteLabelFromDB(labelEntity: LabelEntity) {
+        repository.deleteLabel(labelEntity)
+        labelToBeEdited = null
+        showSnackBar(R.string.label_deleted)
     }
 
     fun requestLabelDialog() {
-        _createDialog.value = true
+        _createAlertDialog.value = true
     }
 
     fun cancelSaving() {
         errorMessage = null
-        _createDialog.value = false
+        _createAlertDialog.value = false
     }
 
     private fun showSnackBar(text: Int) {
