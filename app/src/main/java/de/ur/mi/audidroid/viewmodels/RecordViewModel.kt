@@ -1,20 +1,23 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.content.Context
 import android.content.res.Resources
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.SystemClock
 import android.text.format.DateUtils
 import android.widget.Chronometer
 import android.widget.FrameLayout
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
-import java.io.File
+import java.io.FileDescriptor
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,7 +33,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
-    private var tempFile = ""
+    private lateinit var tmpFile: DocumentFile
     private lateinit var timer: Chronometer
     private var currentRecordTime: String = ""
     private lateinit var frameLayout: FrameLayout
@@ -58,14 +61,24 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         this.frameLayout = frameLayout
     }
 
+    private fun getStoragePreference(): Uri{
+        val preferences = context!!.getSharedPreferences(res.getString(R.string.storage_preference_key), Context.MODE_PRIVATE)
+        return Uri.parse(preferences.getString(res.getString(R.string.storage_preference_key),"default"))
+    }
+
+    private fun initializeTmpFile(): FileDescriptor{
+        val preferredDir = DocumentFile.fromTreeUri(context!!, getStoragePreference())!!
+        tmpFile = preferredDir.createFile("acc",res.getString(R.string.suffix_temp_file))!!
+        return context.contentResolver.openFileDescriptor(tmpFile.uri, "rwt")!!.fileDescriptor
+    }
+
     /**Initializing the recorder and cache the recording in the internal memory till the user decides the save location in the dialog afterwards */
     private fun initializeRecorder() {
-        tempFile =
-            context.filesDir.absolutePath + res.getString(R.string.suffix_temp_file)
+        val fileDescriptor = initializeTmpFile()
         with(mediaRecorder) {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setOutputFile(tempFile)
+            setOutputFile(fileDescriptor)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
         }
         try {
@@ -118,7 +131,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     fun cancelRecord() {
         if (recorderInitialized) {
             showSnackBar(R.string.record_removed)
-            File(tempFile).delete()
+            tmpFile.delete()
             endRecordSession()
             resetView()
         }
@@ -170,9 +183,21 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         mediaRecorder.resume()
     }
 
+    private fun checkNameUniqueness(name: String): Boolean{
+        val parentDirContent = tmpFile.parentFile!!.listFiles()
+        parentDirContent.forEach {
+            if (it.name.equals(name)) {
+                errorMessage = res.getString(R.string.dialog_already_exist)
+                _createDialog.value = true
+                return false
+            }
+        }
+        return true
+    }
+
     fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
         _createDialog.value = false
-        val name = nameInput ?: java.lang.String.format(
+        var name = nameInput ?: java.lang.String.format(
             "%s_%s",
             res.getString(R.string.standard_name_recording),
             android.text.format.DateFormat.format(
@@ -185,25 +210,19 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             _createDialog.value = true
             return
         }
-
-        val path = java.lang.String.format(
-            "%s/$name%s",
-            (pathInput ?: context.filesDir.absolutePath),
-            res.getString(R.string.suffix_audio_file)
-        )
-        val newFile = File(path)
-        if (newFile.exists()) {
-            errorMessage = res.getString(R.string.dialog_already_exist)
-            _createDialog.value = true
+        name = name + ".aac"
+        if (checkNameUniqueness(name) == false){
             return
         }
+
         endRecordSession()
-        File(tempFile).copyTo(newFile)
+
+        tmpFile.renameTo(name)
+        val path = tmpFile.uri.path!!
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
         val audio =
             EntryEntity(0, name, path, getDate(), recordingDuration)
         saveRecordInDB(audio)
-        File(tempFile).delete()
         resetView()
         errorMessage = null
     }
@@ -219,7 +238,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun getRecordingDuration(): String? {
         val metaRetriever = MediaMetadataRetriever()
-        metaRetriever.setDataSource(tempFile)
+        metaRetriever.setDataSource(context, tmpFile.uri)
         return DateUtils.formatElapsedTime(
             metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() / (res.getInteger(
                 R.integer.one_second
