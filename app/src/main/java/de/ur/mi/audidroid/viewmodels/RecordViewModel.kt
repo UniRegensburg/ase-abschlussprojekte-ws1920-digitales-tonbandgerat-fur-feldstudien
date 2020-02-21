@@ -218,7 +218,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         endRecordSession()
 
         tmpFile.renameTo(name)
-        val path = tmpFile.uri.path!!
+        val path = tmpFile.uri!!.toString()
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
         val audio =
             EntryEntity(0, name, path, getDate(), recordingDuration)
