@@ -1,8 +1,8 @@
 package de.ur.mi.audidroid.utils
 
-import android.app.AlertDialog
 import android.content.Context
 import android.widget.EditText
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 
@@ -14,7 +14,7 @@ import de.ur.mi.audidroid.viewmodels.RecordViewModel
 
 object Dialog {
 
-    private lateinit var dialog: AlertDialog
+    private lateinit var dialog: androidx.appcompat.app.AlertDialog
 
     fun createDialog(
         context: Context,
@@ -23,7 +23,7 @@ object Dialog {
         viewModel: RecordViewModel? = null,
         errorMessage: String? = null
     ) {
-        val builder = AlertDialog.Builder(context)
+        val builder = MaterialAlertDialogBuilder(context)
         if (layoutId != null) {
             builder.setView(layoutId)
             if (errorMessage != null) {
@@ -32,7 +32,7 @@ object Dialog {
             with(builder) {
                 setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
                     var nameInput: String? =
-                        dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)
+                        dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
                             .text.toString()
                     if (nameInput == "") nameInput = null
                     //TODO: Change path parameter to user input in issue #12
