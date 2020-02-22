@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -68,40 +69,11 @@
 
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/button_play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:contentDescription="@string/play_button"
-                android:onClick="@{() -> playerViewModel.onStartPlayer()}"
-                android:src="@mipmap/play_button_foreground"
-                android:visibility="@{playerViewModel.isPlaying ? View.GONE : View.VISIBLE, default=visible}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.93" />
-
-            <ImageButton
-                android:id="@+id/button_pause"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:contentDescription="@string/pause_button"
-                android:onClick="@{() -> playerViewModel.onPausePlayer()}"
-                android:src="@mipmap/pause_button_foreground"
-                android:visibility="@{playerViewModel.isPlaying ? View.VISIBLE : View.GONE, default=gone}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.93" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </FrameLayout>
+        <include
+            layout="@layout/bottom_player_bar"
+            bind:playerViewModel="@{playerViewModel}"/>
 
+    </FrameLayout>
 </layout>

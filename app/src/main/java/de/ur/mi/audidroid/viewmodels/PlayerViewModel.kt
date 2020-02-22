@@ -50,6 +50,7 @@ class PlayerViewModel(
     }
 
     fun initializeMediaPlayer() {
+        isPlaying.value = false
         mediaPlayer = MediaPlayer().apply {
             try {
                 reset()
