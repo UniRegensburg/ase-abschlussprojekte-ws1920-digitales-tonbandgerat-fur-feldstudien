@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
@@ -36,6 +37,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private lateinit var frameLayout: FrameLayout
     private var recorderInitialized = false
     private val context = getApplication<Application>().applicationContext
+    private var markList = mutableListOf<Pair<String, String>>()
     var isRecording = MutableLiveData<Boolean>()
     var buttonsVisible = MutableLiveData<Boolean>()
     val res: Resources = context.resources
@@ -209,7 +211,10 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun saveRecordInDB(audio: EntryEntity) {
-        dataSource.insert(audio)
+        val uid = dataSource.insert(audio).toInt()
+        if (markList.isNotEmpty()){
+            saveMarksInDB(uid)
+        }
         showSnackBar(R.string.record_saved)
     }
 
@@ -225,6 +230,20 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
                 R.integer.one_second
             ).toLong())
         )
+    }
+
+    private fun saveMarksInDB(recordingId: Int) {
+        markList.forEach {
+            val mark = MarkerEntity(0, recordingId, it.first, it.second)
+            dataSource.insertMark(mark)
+        }
+    }
+
+    fun makeMark() {
+        val markEntry =
+            Pair(context.resources.getString(R.string.mark_button), timer.text.toString())
+        markList.add(markEntry)
+        showSnackBar(R.string.mark_made)
     }
 
     /**

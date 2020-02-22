@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase
  * @author: Sabine Roth
  */
 
-@Database(entities = arrayOf(EntryEntity::class), version = 1, exportSchema = false)
+@Database(entities = arrayOf(EntryEntity::class, MarkerEntity::class), version = 1, exportSchema = false)
 abstract class RecorderDatabase : RoomDatabase() {
     abstract fun entryDao(): EntryDao
 
