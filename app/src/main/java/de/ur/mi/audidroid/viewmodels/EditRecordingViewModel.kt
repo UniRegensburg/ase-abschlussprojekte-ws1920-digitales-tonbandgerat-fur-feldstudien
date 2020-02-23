@@ -15,10 +15,13 @@ import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.Repository
+import io.apptik.widget.MultiSlider
+import io.apptik.widget.MultiSlider.SimpleChangeListener
+import io.apptik.widget.MultiSlider.Thumb
 import java.io.File
 import java.io.IOException
 
-class EditViewModel(recordingPath: String, dataSource: Repository, application: Application) :
+class EditRecordingViewModel(recordingPath: String, dataSource: Repository, application: Application) :
     AndroidViewModel(application) {
 
     private var mediaPlayer: MediaPlayer = MediaPlayer()
@@ -41,6 +44,22 @@ class EditViewModel(recordingPath: String, dataSource: Repository, application: 
     // The String version of the current duration
     val currentDurationString = Transformations.map(currentDuration) { duration ->
         DateUtils.formatElapsedTime(duration)
+    }
+
+    private val _curPosThumb1 = MutableLiveData<Long>()
+    private val curPosThumb1: LiveData<Long>
+        get() = _curPosThumb1
+
+    val curPosThumb1String = Transformations.map(curPosThumb1) { posThumb1 ->
+        DateUtils.formatElapsedTime(posThumb1)
+    }
+
+    private val _curPosThumb2 = MutableLiveData<Long>()
+    private val curPosThumb2: LiveData<Long>
+        get() = _curPosThumb2
+
+    val curPosThumb2String = Transformations.map(curPosThumb2) { posThumb2 ->
+        DateUtils.formatElapsedTime(posThumb2)
     }
 
     fun initializeMediaPlayer() {
@@ -119,7 +138,7 @@ class EditViewModel(recordingPath: String, dataSource: Repository, application: 
         isPlaying.value = mediaPlayer.isPlaying
     }
 
-    fun onStopPlayer() {
+    private fun onStopPlayer() {
         mediaPlayer.stop()
         handler.removeCallbacks(runnable)
         isPlaying.value = mediaPlayer.isPlaying
@@ -135,5 +154,38 @@ class EditViewModel(recordingPath: String, dataSource: Repository, application: 
 
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
+    }
+
+    fun initializeRangeBar(rangeBar: MultiSlider) {
+        configureThumb1(rangeBar)
+        configureThumb2(rangeBar)
+        rangeBar.max = mediaPlayer.duration
+
+        rangeBar.setOnThumbValueChangeListener(object : SimpleChangeListener() {
+            override fun onValueChanged(
+                multiSlider: MultiSlider?,
+                thumb: Thumb?,
+                thumbIndex: Int,
+                value: Int
+            ) {
+                if (thumbIndex == 0) {
+                    _curPosThumb1.value = value / oneSecond
+                } else {
+                    _curPosThumb2.value = value / oneSecond
+                }
+            }
+        })
+    }
+
+    private fun configureThumb1(rangeBar: MultiSlider) {
+        val thumb1 = context.getDrawable(R.drawable.ic_range_bar_thumb1)
+        rangeBar.getThumb(0).thumb = thumb1
+        _curPosThumb1.value = rangeBar.getThumb(0).value / oneSecond
+    }
+
+    private fun configureThumb2(rangeBar: MultiSlider) {
+        val thumb2 = context.getDrawable(R.drawable.ic_range_bar_thumb2)
+        rangeBar.getThumb(1).thumb = thumb2
+        _curPosThumb2.value = rangeBar.getThumb(1).value / oneSecond
     }
 }

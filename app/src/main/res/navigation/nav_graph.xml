@@ -37,9 +37,9 @@
     </fragment>
     <fragment
         android:id="@+id/edit"
-        android:name="de.ur.mi.audidroid.views.EditFragment"
+        android:name="de.ur.mi.audidroid.views.EditRecordingFragment"
         android:label="@string/edit_label"
-        tools:layout="@layout/edit_fragment">
+        tools:layout="@layout/edit_recording_fragment">
         <argument
             android:name="recordingPath"
             app:argType="string" />

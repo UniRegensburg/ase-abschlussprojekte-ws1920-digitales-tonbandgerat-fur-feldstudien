@@ -10,15 +10,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.databinding.EditFragmentBinding
+import de.ur.mi.audidroid.databinding.EditRecordingFragmentBinding
 import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.viewmodels.EditViewModel
+import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 import kotlinx.android.synthetic.main.player_fragment.*
 
-class EditFragment : Fragment() {
+class EditRecordingFragment : Fragment() {
 
-    private lateinit var editViewModel: EditViewModel
-    private lateinit var binding: EditFragmentBinding
+    private lateinit var editRecordingViewModel: EditRecordingViewModel
+    private lateinit var binding: EditRecordingFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,17 +26,19 @@ class EditFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = DataBindingUtil.inflate(inflater, R.layout.edit_fragment, container, false)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.edit_recording_fragment, container, false)
 
         val application = this.activity!!.application
-        val args = EditFragmentArgs.fromBundle(arguments!!)
+        val args = EditRecordingFragmentArgs.fromBundle(arguments!!)
 
         val dataSource = Repository(application)
         val viewModelFactory = EditViewModelFactory(args.recordingPath, dataSource, application)
 
-        editViewModel = ViewModelProvider(this, viewModelFactory).get(EditViewModel::class.java)
+        editRecordingViewModel =
+            ViewModelProvider(this, viewModelFactory).get(EditRecordingViewModel::class.java)
 
-        binding.editViewModel = editViewModel
+        binding.editRecordingViewModel = editRecordingViewModel
 
         binding.setLifecycleOwner(this)
 
@@ -45,13 +47,14 @@ class EditFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        editViewModel.initializeMediaPlayer()
-        editViewModel.initializeSeekBar(binding.seekBar)
-        editViewModel.initializeFrameLayout(player_layout)
+        editRecordingViewModel.initializeMediaPlayer()
+        editRecordingViewModel.initializeSeekBar(binding.seekBar)
+        editRecordingViewModel.initializeFrameLayout(player_layout)
+        editRecordingViewModel.initializeRangeBar(binding.rangeBar)
     }
 
     /**
-     * Provides the Repository, recordingPath and context to the EditViewModel.
+     * Provides the Repository, recordingPath and context to the EditRecordingViewModel.
      */
     class EditViewModelFactory(
         private val recordingPath: String,
@@ -60,8 +63,8 @@ class EditFragment : Fragment() {
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(EditViewModel::class.java)) {
-                return EditViewModel(recordingPath, dataSource, application) as T
+            if (modelClass.isAssignableFrom(EditRecordingViewModel::class.java)) {
+                return EditRecordingViewModel(recordingPath, dataSource, application) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

@@ -125,7 +125,7 @@ class PlayerViewModel(
         isPlaying.value = mediaPlayer.isPlaying
     }
 
-    fun onStopPlayer() {
+    private fun onStopPlayer() {
         mediaPlayer.stop()
         handler.removeCallbacks(runnable)
         isPlaying.value = mediaPlayer.isPlaying
