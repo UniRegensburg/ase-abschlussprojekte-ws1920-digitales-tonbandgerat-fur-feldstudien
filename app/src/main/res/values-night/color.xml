@@ -18,4 +18,6 @@
 
     <color name="icon_color_on_background">#ffffff</color>
 
+    <color name="grayed_out">#6D6D6D</color>
+
 </resources>

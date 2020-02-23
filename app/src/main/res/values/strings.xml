@@ -57,6 +57,7 @@
     <string name="dialog_save_recording_name_hint">Enter a name for the recording</string>
     <string name="dialog_save_recording_path">Save location</string>
     <string name="dialog_save_recording_path_hint">Choose a path</string>
+    <string name="dialog_save_recording_label">Labels</string>
     <string name="dialog_save_button_text">Save</string>
     <string name="dialog_cancel_button_text">Cancel</string>
     <string name="dialog_invalid_name">You can just use letters, numbers and the symbols _ and - for the recording name.</string>

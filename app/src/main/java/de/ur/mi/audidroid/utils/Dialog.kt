@@ -2,14 +2,17 @@ package de.ur.mi.audidroid.utils
 
 import android.content.Context
 import android.view.View
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import de.ur.mi.audidroid.R
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.nav_header_main.*
+import de.ur.mi.audidroid.adapter.LabelAdapter
+import de.ur.mi.audidroid.viewmodels.RecordViewModel
 
 
 /**
@@ -21,8 +24,10 @@ object Dialog {
 
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
     private lateinit var pathTextView: TextView
-    private lateinit var labelsListView: ListView
+    private lateinit var labelsRecyclerView: RecyclerView
     private lateinit var context: Context
+    private var selectedLabels = ArrayList<String>()
+    private var selectedPath : String? = null
 
     fun createDialog(
         paramContext: Context,
@@ -44,7 +49,7 @@ object Dialog {
                         dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
                             .text.toString()
                     if (nameInput == "") nameInput = null
-                    viewModel?.getNewFileFromUserInput(nameInput, pathTextView.text.toString())
+                    viewModel?.getNewFileFromUserInput(nameInput, selectedPath, selectedLabels)
                 }
                 setNeutralButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
                     viewModel?.cancelSaving()
@@ -65,42 +70,43 @@ object Dialog {
         dialog = builder.create()
         dialog.setCancelable(false)
         dialog.show()
+        initializeDialog()
+    }
 
+    private fun initializeDialog(){
         pathTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_textview_path)!!
-        if (getStoragePreference() != null) {
-            pathTextView.text = getStoragePreference()
+        val storedPath = getStoragePreference()
+        if (storedPath != null) {
+            pathTextView.text = storedPath
+            selectedPath = storedPath
         }
         dialog.findViewById<ImageButton>(R.id.dialog_save_recording_path_button)!!.setOnClickListener {
             pathButtonClicked()
         }
-        labelsListView = dialog.findViewById<ListView>(R.id.dialog_save_recording_labelslist)!!
+        labelsRecyclerView =
+            dialog.findViewById<RecyclerView>(R.id.dialog_save_recording_recyclerview)!!
         val labelsList = getLabels()
-        if(labelsList != null) showLabels(labelsList) else labelsListView.visibility = View.GONE
+        if (labelsList != null) showLabels(labelsList) else labelsRecyclerView.visibility =
+            View.GONE
     }
 
     private fun getLabels(): ArrayList<String>? {
         //TODO get labels from user preference
-        //TODO: Maybe convert directlly to an array and don't use the for loop
         val labelsList: ArrayList<String>? = ArrayList()
-        labelsList!!.add("uni")
+        labelsList!!.add("Uni")
         labelsList.add("Arbeit")
+        labelsList.add("Label3")
+        labelsList.add("Label4")
         return labelsList
     }
 
     private fun showLabels(labelsList: ArrayList<String>) {
-        val labelsArray = arrayOfNulls<String>(labelsList.size)
-        for (i in 0 until labelsList.size){
-            labelsArray[i] = labelsList[i]
-        }
-        //TODO: Change look of list
-
-       /* val layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        mRecyclerView = findViewById(R.id.recycler_view) as RecyclerView
-        mRecyclerView.setLayoutManager(layoutManager)*/
-        
-        val adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, labelsArray)
-        labelsListView.adapter = adapter
+        //TODO: Check why it does not work with one of three smartphones
+        val layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        labelsRecyclerView.layoutManager = layoutManager
+        val adapter = LabelAdapter(context, labelsList, this)
+        labelsRecyclerView.adapter = adapter
     }
 
     private fun getStoragePreference(): String? {
@@ -118,6 +124,28 @@ object Dialog {
     }
 
     private fun pathButtonClicked() {
-        //Change textview if new location is chosen
+        //TODO: Add folder-clicking
+    }
+
+    fun labelClicked(clickedLabel: View) {
+        for (string in selectedLabels) {
+            if (string == (clickedLabel as MaterialButton).text.toString()) {
+                removeClickedLabel(clickedLabel)
+                return
+            }
+        }
+        addClickedLabel(clickedLabel)
+    }
+
+    private fun addClickedLabel(clickedLabel: View) {
+        clickedLabel.setBackgroundColor(ContextCompat.getColor(context, R.color.color_primary))
+        selectedLabels.add((clickedLabel as MaterialButton).text.toString())
+        println(selectedLabels)
+    }
+
+    private fun removeClickedLabel(clickedLabel: View) {
+        clickedLabel.setBackgroundColor(ContextCompat.getColor(context, R.color.grayed_out))
+        selectedLabels.remove((clickedLabel as MaterialButton).text.toString())
+        println(selectedLabels)
     }
 }

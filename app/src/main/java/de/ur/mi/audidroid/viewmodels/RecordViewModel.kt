@@ -170,7 +170,11 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         mediaRecorder.resume()
     }
 
-    fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
+    fun getNewFileFromUserInput(
+        nameInput: String?,
+        pathInput: String?,
+        labels: ArrayList<String>?
+    ) {
         _createDialog.value = false
         val name = nameInput ?: java.lang.String.format(
             "%s_%s",
@@ -201,7 +205,14 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         File(tempFile).copyTo(newFile)
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
         val audio =
-            EntryEntity(0, name, path, getDate(), recordingDuration)
+            EntryEntity(
+                uid = 0,
+                recordingName = name,
+                recordingPath = path,
+                date = getDate(),
+                duration = recordingDuration,
+                labels = labels
+            )
         saveRecordInDB(audio)
         File(tempFile).delete()
         resetView()
