@@ -7,7 +7,6 @@ Dazu gehören neben dem reinen Aufnehmen von Audiodateien auch das Markieren wic
 
 Technische Informationen zu Audidroid finden sich [hier](./docs/Setup.md), eine detaillierte Übersicht über den Anforderungskontext findet sich [hier](./docs/Overview.md).
 
-//TODO: Link zur aktuellsten Veröffentlichung 
 
 ## Team
 
@@ -22,7 +21,7 @@ Theresa Strohmeier, theresa.strohmeier@stud.uni-regensburg.de, @TheresaStrohmeie
 
 ## Beschreibung
 
-Aktuell sind folgende Features in Audidroid implementiert.
+Aktuell sind folgende Features in Audidroid implementiert:
 
 **Kernfeatures**
 
@@ -31,8 +30,6 @@ Aktuell sind folgende Features in Audidroid implementiert.
 ![Startscreen](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Startscreen.png)
 
 ![Recording](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Recording.png)
-
-- Markierung von Stellen im Audio während der Aufnahme
 
 - Auswählen der Aufnahme aus der Liste der eigenen Audiodateien
 
@@ -49,8 +46,6 @@ Aktuell sind folgende Features in Audidroid implementiert.
 
 
 **Einstellungen**
-
-- Auswahl des präferierten Speicherorts für die aufgenommenen Audiodateien //Löschen?
 
 - Auswahl des präferierten Farbschemas (verfügbar: hell und dunkel)
 
