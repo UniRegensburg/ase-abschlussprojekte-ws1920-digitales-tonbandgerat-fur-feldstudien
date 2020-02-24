@@ -14,7 +14,8 @@ import de.ur.mi.audidroid.models.LabelEntity
 import de.ur.mi.audidroid.models.Repository
 import java.util.regex.Pattern
 
-class EditLabelsViewModel(dataSource: Repository, application: Application) : AndroidViewModel(application) {
+class EditLabelsViewModel(dataSource: Repository, application: Application) :
+    AndroidViewModel(application) {
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
@@ -59,8 +60,8 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) : An
     }
 
     fun onLabelSaveClicked(nameInput: String?) {
-        if(!validName(nameInput)) {
-            errorMessage = res.getString(R.string.dialog_invalid_name)
+        if (!validName(nameInput)) {
+            errorMessage = res.getString(R.string.dialog_label_invalid_name)
             _createAlertDialog.value = true
             return
         }
@@ -70,8 +71,8 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) : An
 
     fun onLabelUpdateClicked(nameInput: String?, labelEntity: LabelEntity) {
         _createAlertDialog.value = false
-        if(!validName(nameInput)) {
-            errorMessage = res.getString(R.string.dialog_invalid_name)
+        if (!validName(nameInput)) {
+            errorMessage = res.getString(R.string.dialog_label_invalid_name)
             _createAlertDialog.value = true
             return
         }
@@ -86,20 +87,30 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) : An
     fun insertLabelIntoDB(labelName: String) {
         val newLabel = LabelEntity(0, labelName)
         repository.insertLabel(newLabel)
-        showSnackBar(R.string.label_inserted)
+        showSnackBar(String.format(context.getString(R.string.label_inserted), newLabel.labelName))
     }
 
     fun updateLabelInDB(labelName: String, labelEntity: LabelEntity) {
         val updatedLabel = LabelEntity(labelEntity.uid, labelName)
         repository.updateLabel(updatedLabel)
         labelToBeEdited = null
-        showSnackBar(R.string.label_updated)
+        showSnackBar(
+            String.format(
+                context.getString(R.string.label_updated),
+                updatedLabel.labelName
+            )
+        )
     }
 
     fun deleteLabelFromDB(labelEntity: LabelEntity) {
         repository.deleteLabel(labelEntity)
+        showSnackBar(
+            String.format(
+                context.getString(R.string.label_deleted),
+                labelToBeEdited!!.labelName
+            )
+        )
         labelToBeEdited = null
-        showSnackBar(R.string.label_deleted)
     }
 
     fun requestLabelDialog() {
@@ -108,10 +119,11 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) : An
 
     fun cancelSaving() {
         errorMessage = null
+        labelToBeEdited = null
         _createAlertDialog.value = false
     }
 
-    private fun showSnackBar(text: Int) {
+    private fun showSnackBar(text: String) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 }

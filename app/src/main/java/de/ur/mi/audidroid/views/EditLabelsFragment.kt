@@ -58,7 +58,7 @@ class EditLabelsFragment : Fragment() {
         setupAdapter()
         viewModel.initializeLayout(edit_labels_frame_layout)
         viewModel.createAlertDialog.observe(this, Observer {
-            if(it) {
+            if (it) {
                 LabelsDialog.createDialog(
                     context = context!!,
                     type = R.string.alert_dialog,
@@ -70,7 +70,7 @@ class EditLabelsFragment : Fragment() {
             }
         })
         viewModel.createConfirmDialog.observe(this, Observer {
-            if(it) {
+            if (it) {
                 LabelsDialog.createDialog(
                     context = context!!,
                     type = R.string.confirm_dialog,
