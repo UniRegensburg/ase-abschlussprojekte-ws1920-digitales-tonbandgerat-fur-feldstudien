@@ -10,6 +10,8 @@ import androidx.lifecycle.Transformations
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.ShareHelper
+import de.ur.mi.audidroid.views.MainActivity
 import java.io.File
 
 /**
@@ -45,10 +47,16 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             when (item.itemId) {
                 R.id.action_delete_recording ->
                     delete(entryEntity)
+                R.id.action_share_recording ->
+                    shareRecording(entryEntity)
             }
             true
         }
         popupMenu.show()
+    }
+
+    private fun shareRecording(entryEntity: EntryEntity) {
+        ShareHelper.shareAudio(entryEntity, context)
     }
 
     private fun delete(entryEntity: EntryEntity) {
