@@ -32,14 +32,4 @@ interface EntryDao {
     @Query("DELETE FROM recordingsTable")
     fun clearTable()
 
-
-    @Insert(onConflict = REPLACE)
-    fun insertMark(marker: MarkerEntity)
-
-    @Transaction
-    @Query("SELECT * FROM recordingsTable WHERE uid = :key")
-    fun getRecordingInclMarks(key: Int): List<RecordingAndMarker>
-
-    @Query("SELECT * FROM markerTable")
-    fun getAllMarks(): List<MarkerEntity>
 }

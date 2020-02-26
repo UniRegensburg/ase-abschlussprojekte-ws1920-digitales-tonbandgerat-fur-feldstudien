@@ -6,6 +6,7 @@ import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.text.format.DateUtils
+import android.view.View
 import android.widget.Chronometer
 import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
@@ -13,7 +14,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.MarkerEntity
+import de.ur.mi.audidroid.models.MarkerTimeRelation
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
@@ -205,6 +206,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         val audio =
             EntryEntity(0, name, path, getDate(), recordingDuration)
         saveRecordInDB(audio)
+
         File(tempFile).delete()
         resetView()
         errorMessage = null
@@ -234,14 +236,14 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
-            val mark = MarkerEntity(0, recordingId, it.first, it.second)
+            val mark = MarkerTimeRelation(0, recordingId, it.first, it.second)
             dataSource.insertMark(mark)
         }
     }
 
-    fun makeMark() {
-        val markEntry =
-            Pair(context.resources.getString(R.string.mark_button), timer.text.toString())
+    fun makeMark(view : View) {
+        val btnId = view.resources.getResourceName(view.id)
+        val markEntry = Pair(btnId, timer.text.toString())
         markList.add(markEntry)
         showSnackBar(R.string.mark_made)
     }

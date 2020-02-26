@@ -15,6 +15,7 @@ class Repository(application: Application): CoroutineScope {
 
     private var entryDao: EntryDao
     private var labelDao: LabelDao
+    private var markerDao: MarkerDao
     private var allRecordings: LiveData<List<EntryEntity>>
 
     private val job = Job()
@@ -27,6 +28,7 @@ class Repository(application: Application): CoroutineScope {
         )
         entryDao = database.entryDao()
         labelDao = database.labelDao()
+        markerDao = database.markerDao()
         allRecordings = entryDao.getAllRecordings()
     }
 
@@ -68,15 +70,16 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
-    fun insertMark(marker: MarkerEntity){
-        InsertAsyncMark(entryDao).execute(marker)
+    fun insertMark(marker: MarkerTimeRelation){
+        //InsertAsyncMark(entryDao).execute(marker)
+        InsertAsyncMark(markerDao).execute(marker)
     }
 
-    private class InsertAsyncMark(val entryDao: EntryDao) :
-        AsyncTask<MarkerEntity, Unit, Unit>() {
+    private class InsertAsyncMark(val markerDao: MarkerDao) :
+        AsyncTask<MarkerTimeRelation, Unit, Unit>() {
 
-        override fun doInBackground(vararg params: MarkerEntity?) {
-            entryDao.insertMark(params[0]!!)
+        override fun doInBackground(vararg params: MarkerTimeRelation?) {
+            markerDao.insertMark(params[0]!!)
         }
     }
 
@@ -105,14 +108,14 @@ class Repository(application: Application): CoroutineScope {
     }
 
     fun getRecordingInclMarks(udi : Int): List<RecordingAndMarker> {
-        return GetRecordingInclMarks(entryDao).execute(udi).get()
+        return GetRecordingInclMarks(markerDao).execute(udi).get()
     }
 
-    private class GetRecordingInclMarks(val entryDao: EntryDao) :
+    private class GetRecordingInclMarks(val markerDao: MarkerDao) :
         AsyncTask<Int, Unit, List<RecordingAndMarker>>() {
 
         override fun doInBackground(vararg params: Int?): List<RecordingAndMarker> {
-            return entryDao.getRecordingInclMarks(params[0]!!)
+            return markerDao.getRecordingInclMarks(params[0]!!)
         }
     }
 
