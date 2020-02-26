@@ -2,6 +2,7 @@ package de.ur.mi.audidroid.views
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -10,11 +11,15 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import androidx.preference.PreferenceManager
+import cafe.adriel.androidaudioconverter.AndroidAudioConverter
+import cafe.adriel.androidaudioconverter.callback.IConvertCallback
+import cafe.adriel.androidaudioconverter.callback.ILoadCallback
 import com.google.android.material.navigation.NavigationView
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.utils.PermissionHelper
 import de.ur.mi.audidroid.utils.ThemeHelper
 import kotlinx.android.synthetic.main.app_bar_main.*
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -45,6 +50,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         initTheme()
         checkPermissions()
+        initAudioConverter()
     }
 
     /** Applies the app theme selected by the user.
@@ -81,6 +87,19 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 }
             }
         }
+    }
+
+    private fun initAudioConverter() {
+        AndroidAudioConverter.load(this@MainActivity, object: ILoadCallback {
+            override fun onSuccess() {
+                Log.d("Audio Converter", "AndroidAudioConverter loaded successfully.")
+            }
+
+            override fun onFailure(error: Exception?) {
+                Log.e("Audio Converter", "FFMPEG not supported on this device.")
+            }
+
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

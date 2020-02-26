@@ -57,6 +57,12 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
 configurations {
     ktlint
 }
@@ -95,6 +101,7 @@ dependencies {
     androidTestImplementation 'androidx.test:core:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
     ktlint "com.pinterest:ktlint:0.35.0"
+    compile 'com.github.adrielcafe:AndroidAudioConverter:0.0.8'
 }
 
 task ktlint(type: JavaExec, group: "verification") {
