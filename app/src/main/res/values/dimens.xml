@@ -36,5 +36,6 @@
     <dimen name="dialog_margin">50dp</dimen>
     <dimen name="dialog_padding">25dp</dimen>
     <dimen name="dialog_margin_small">15dp</dimen>
+    <dimen name="dialog_margin_normal">24dp</dimen>
 
 </resources>

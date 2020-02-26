@@ -7,12 +7,13 @@ import androidx.room.RoomDatabase
 
 /**
  * The abstract class contains the database holder and serves as the main access point for the connection to the persisted data
- * @author: Sabine Roth
+ * @authors: Sabine Roth, Jonas Puchinger
  */
 
-@Database(entities = arrayOf(EntryEntity::class), version = 1, exportSchema = false)
+@Database(entities = [EntryEntity::class, LabelEntity::class], version = 1, exportSchema = false)
 abstract class RecorderDatabase : RoomDatabase() {
     abstract fun entryDao(): EntryDao
+    abstract fun labelDao(): LabelDao
 
     companion object {
         private var INSTANCE: RecorderDatabase? = null
