@@ -10,14 +10,20 @@
 
     <string name="theme_preference_key">theme_preference</string>
     <string name="storage_preference_key">storage_preference</string>
+
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
+
+    <!-- Preferences -->
+    <string name="theme_preference_key">theme_preference</string>
+    <string name="labels_preference_key">labels_preference</string>
 
     <!-- Navigation -->
     <string name="record_label">Record</string>
     <string name="files_label">Files</string>
     <string name="settings_label">Settings</string>
     <string name="player_label">Player</string>
+    <string name="labels_label">Labels</string>
 
     <!-- PlayerFragment -->
     <string name="play_button">Play recording</string>
@@ -41,6 +47,22 @@
     <string name="suffix_temp_file">/temp.aac</string>
     <string name="suffix_audio_file">.acc</string>
     <string name="standard_name_recording">Rec</string>
+
+    <!-- LabelsFragment -->
+    <string name="no_labels">No labels defined</string>
+    <string name="add_label_button_text">Add</string>
+    <string name="add_label_text_hint">Enter label</string>
+    <string name="label_deleted">Label \'%1$s\' deleted</string>
+    <string name="rename_label_dialog_header">Rename Label \'%1$s\'</string>
+    <string name="create_label">Create Label</string>
+    <string name="update_label">Update Label</string>
+    <string name="label_inserted">Label \'%1$s\' created</string>
+    <string name="label_updated">Label renamed to \'%1$s\'</string>
+    <string name="create_label_dialog_header">Create Label</string>
+    <string name="label_name_too_long">Use a name with a maximum of 10 characters</string>
+    <string name="label_name_nonexistent">Enter a valid label name</string>
+    <string name="delete_label_dialog_header">Delete label \'%1$s\'?</string>
+    <string name="dialog_label_invalid_name">The label name should be between one and ten characters long.</string>
 
     <!-- User Feedback Recording -->
     <string name="record_saved">Recording saved</string>
@@ -66,5 +88,12 @@
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
+
+
+    <string name="alert_dialog">Alert Dialog</string>
+    <string name="confirm_dialog">Confirm Dialog</string>
+    <string name="delete">delete</string>
+    <string name="sad_face">Sad face</string>
+
 
 </resources>
