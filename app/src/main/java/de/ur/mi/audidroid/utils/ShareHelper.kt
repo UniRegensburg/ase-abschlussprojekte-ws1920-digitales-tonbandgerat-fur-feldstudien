@@ -11,17 +11,18 @@ import cafe.adriel.androidaudioconverter.callback.IConvertCallback
 import cafe.adriel.androidaudioconverter.model.AudioFormat
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.views.MainActivity
 import java.io.File
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 
 object ShareHelper {
 
-    fun shareAudio(recording: EntryEntity, context: Context) {
-        convertFile(recording.recordingPath, context)
+    fun shareAudio(recording: EntryEntity, convertFormat: String, context: Context) {
+        convertFile(recording.recordingPath, convertFormat, context)
     }
 
-    fun convertFile(filename: String, context: Context) {
+    fun convertFile(filename: String, convertFormat: String, context: Context) {
         val file = File(filename)
 
         val cb = object: IConvertCallback {
@@ -36,7 +37,15 @@ object ShareHelper {
 
         AndroidAudioConverter.with(context)
             .setFile(file)
-            .setFormat(AudioFormat.MP3)
+            .setFormat(when (convertFormat) {
+                context.resources.getString(R.string.audio_format_mp3) -> AudioFormat.MP3
+                context.resources.getString(R.string.audio_format_aac) -> AudioFormat.AAC
+                context.resources.getString(R.string.audio_format_m4a) -> AudioFormat.M4A
+                context.resources.getString(R.string.audio_format_wma) -> AudioFormat.WMA
+                context.resources.getString(R.string.audio_format_wav) -> AudioFormat.WAV
+                context.resources.getString(R.string.audio_format_flac) -> AudioFormat.FLAC
+                else -> AudioFormat.MP3
+            })
             .setCallback(cb)
             .convert()
     }

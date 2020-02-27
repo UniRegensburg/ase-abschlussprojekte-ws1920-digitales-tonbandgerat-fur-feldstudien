@@ -93,6 +93,14 @@
     <string name="sad_face">Sad face</string>
     <string name="popup_menu_option_share">Share</string>
     <string name="share_recording">Share Recoding</string>
+    <string name="choose_file_format">Choose File Format for Export</string>
+    <string name="dialog_export_button_text">Export</string>
+    <string name="audio_format_aac">AAC</string>
+    <string name="audio_format_mp3">MP3</string>
+    <string name="audio_format_m4a">M4A</string>
+    <string name="audio_format_wma">WMA</string>
+    <string name="audio_format_wav">WAV</string>
+    <string name="audio_format_flac">FLAC</string>
 
 
 </resources>

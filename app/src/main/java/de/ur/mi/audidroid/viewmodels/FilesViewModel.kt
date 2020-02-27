@@ -23,9 +23,14 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
+    private val _createAlertDialog = MutableLiveData<Boolean>()
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
+    private var recordingToBeExported: EntryEntity? = null
 
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
+
+    val createAlertDialog: MutableLiveData<Boolean>
+        get() = _createAlertDialog
 
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
@@ -47,16 +52,18 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             when (item.itemId) {
                 R.id.action_delete_recording ->
                     delete(entryEntity)
-                R.id.action_share_recording ->
-                    shareRecording(entryEntity)
+                R.id.action_share_recording -> {
+                    recordingToBeExported = entryEntity
+                    _createAlertDialog.value = true
+                }
             }
             true
         }
         popupMenu.show()
     }
 
-    private fun shareRecording(entryEntity: EntryEntity) {
-        ShareHelper.shareAudio(entryEntity, context)
+    fun shareRecording(format: String) {
+        ShareHelper.shareAudio(recordingToBeExported!!, format, context)
     }
 
     private fun delete(entryEntity: EntryEntity) {
@@ -78,5 +85,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun onPlayerFragmentNavigated() {
         _navigateToPlayerFragment.value = null
+    }
+
+    fun cancelExporting() {
+        recordingToBeExported = null
+        _createAlertDialog.value = false
     }
 }
