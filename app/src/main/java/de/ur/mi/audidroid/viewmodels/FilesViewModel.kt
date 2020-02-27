@@ -55,14 +55,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun delete(entryEntity: EntryEntity) {
-        var file = File(entryEntity.recordingPath)
+        val file = File(entryEntity.recordingPath)
         if (file.exists()) {
             if (file.delete()) {
-                if (repository.delete(entryEntity) == 1) {
-                    _showSnackbarEvent.value = true
-                } else {
-                    showSnackBar(R.string.error_message_file_cannot_be_deleted)
-                }
+                repository.deleteRecording(entryEntity)
+                _showSnackbarEvent.value = true
             } else {
                 showSnackBar(R.string.error_message_file_cannot_be_deleted)
             }

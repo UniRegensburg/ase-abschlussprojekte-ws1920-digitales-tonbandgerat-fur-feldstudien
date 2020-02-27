@@ -31,9 +31,10 @@ class PlayerViewModel(
 ) : AndroidViewModel(application) {
 
     private val database = dataSource
-    private val recording: EntryEntity
+    val recording: LiveData<EntryEntity> = database.getRecordingById(recordingId)
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
+    private var recordingPath = ""
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
@@ -51,14 +52,9 @@ class PlayerViewModel(
         DateUtils.formatElapsedTime(duration)
     }
 
-    init {
-        recording = database.getRecordingWithId(recordingId)
-    }
-
-    fun getRecording() = recording
-
-    fun initializeMediaPlayer() {
-        val uri: Uri = Uri.fromFile(File(recording.recordingPath))
+    fun initializeMediaPlayer(path: String) {
+        recordingPath = path
+        val uri: Uri = Uri.fromFile(File(recordingPath))
         mediaPlayer = MediaPlayer().apply {
             try {
                 reset()
@@ -136,7 +132,7 @@ class PlayerViewModel(
         mediaPlayer.stop()
         handler.removeCallbacks(runnable)
         isPlaying.value = mediaPlayer.isPlaying
-        initializeMediaPlayer()
+        initializeMediaPlayer(recordingPath)
     }
 
     override fun onCleared() {

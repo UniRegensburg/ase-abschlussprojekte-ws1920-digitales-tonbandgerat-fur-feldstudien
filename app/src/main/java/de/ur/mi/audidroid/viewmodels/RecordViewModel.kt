@@ -209,7 +209,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun saveRecordInDB(audio: EntryEntity) {
-        dataSource.insert(audio)
+        dataSource.insertRecording(audio)
         showSnackBar(R.string.record_saved)
     }
 

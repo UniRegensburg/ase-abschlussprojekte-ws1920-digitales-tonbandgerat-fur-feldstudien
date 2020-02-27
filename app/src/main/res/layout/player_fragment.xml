@@ -51,7 +51,7 @@
                     android:layout_weight="0.2"
                     android:gravity="center"
                     android:text="@{playerViewModel.currentDurationString}"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
 
                 <SeekBar
                     android:id="@+id/seekBar"
@@ -65,7 +65,7 @@
                     android:layout_weight="0.2"
                     android:gravity="center"
                     android:text="@{playerViewModel.recording.duration}"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
 
             </LinearLayout>
 

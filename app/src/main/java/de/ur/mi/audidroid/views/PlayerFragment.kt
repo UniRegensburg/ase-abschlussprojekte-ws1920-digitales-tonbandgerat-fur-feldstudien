@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import de.ur.mi.audidroid.R
@@ -47,9 +48,13 @@ class PlayerFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        playerViewModel.initializeMediaPlayer()
-        playerViewModel.initializeSeekBar(binding.seekBar)
         playerViewModel.initializeFrameLayout(player_layout)
+        playerViewModel.recording.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                playerViewModel.initializeMediaPlayer(it.recordingPath)
+                playerViewModel.initializeSeekBar(binding.seekBar)
+            }
+        })
     }
 
     /**

@@ -1,7 +1,6 @@
 package de.ur.mi.audidroid.models
 
 import android.app.Application
-import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -11,7 +10,7 @@ import kotlin.coroutines.CoroutineContext
  * @author: Theresa Strohmeier, Jonas Puchinger
  */
 
-class Repository(application: Application): CoroutineScope {
+class Repository(application: Application) : CoroutineScope {
 
     private var entryDao: EntryDao
     private var labelDao: LabelDao
@@ -38,15 +37,9 @@ class Repository(application: Application): CoroutineScope {
         return labelDao.getAllLabels()
     }
 
-    fun delete(entryEntity: EntryEntity) {
-        DeleteAsyncTask(entryDao).execute(entryEntity)
-    }
-
-    private class DeleteAsyncTask(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Int>() {
-
-        override fun doInBackground(vararg params: EntryEntity?): Int {
-            return entryDao.delete(params[0]!!)
+    fun deleteRecording(entryEntity: EntryEntity) {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.delete(entryEntity)
         }
     }
 
@@ -56,15 +49,9 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
-    fun insert(entryEntity: EntryEntity) {
-        InsertAsyncTask(entryDao).execute(entryEntity)
-    }
-
-    private class InsertAsyncTask(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Unit>() {
-
-        override fun doInBackground(vararg params: EntryEntity?) {
-            entryDao.insert(params[0]!!)
+    fun insertRecording(entryEntity: EntryEntity) {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.insert(entryEntity)
         }
     }
 
@@ -80,16 +67,8 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
-    fun getRecordingWithId(entryEntity: EntryEntity) {
-        GetRecordingWithId(entryDao).execute(entryEntity)
-    }
-
-    private class GetRecordingWithId(val entryDao: EntryDao) :
-        AsyncTask<Int, Unit, EntryEntity>() {
-
-        override fun doInBackground(vararg params: Int?): EntryEntity {
-            return entryDao.getRecordingWithId(params[0]!!)
-        }
+    fun getRecordingById(recordingId: Int): LiveData<EntryEntity> {
+        return entryDao.getRecordingById(recordingId)
     }
 
     fun getLabelById(labelEntity: LabelEntity): LiveData<LabelEntity> {
