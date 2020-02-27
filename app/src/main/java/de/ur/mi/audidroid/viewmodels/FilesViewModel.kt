@@ -25,8 +25,14 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val context = getApplication<Application>().applicationContext
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     private lateinit var frameLayout: FrameLayout
+    var errorMessage: String? = null
+    var recording: EntryEntity? = null
 
+    private val _createConfirmDialog = MutableLiveData<Boolean>()
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
+
+    val createConfirmDialog: LiveData<Boolean>
+        get() = _createConfirmDialog
 
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
@@ -55,24 +61,41 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun delete(entryEntity: EntryEntity) {
+        recording = entryEntity
+        _createConfirmDialog.value = true
+    }
+
+    fun deleteRecording(entryEntity: EntryEntity) {
         val file = File(entryEntity.recordingPath)
         if (file.exists()) {
             if (file.delete()) {
                 repository.deleteRecording(entryEntity)
-                _showSnackbarEvent.value = true
+                showSnackBar(
+                    String.format(
+                        context.getString(R.string.recording_deleted),
+                        entryEntity.recordingName
+                    )
+                )
+                recording = null
             } else {
-                showSnackBar(R.string.error_message_file_cannot_be_deleted)
+                showSnackBar(R.string.error_message_file_cannot_be_deleted.toString())
             }
         } else {
-            showSnackBar(R.string.error_message_path_does_not_exist)
+            showSnackBar(R.string.error_message_path_does_not_exist.toString())
         }
+    }
+
+    fun cancelSaving() {
+        errorMessage = null
+        recording = null
+        _createConfirmDialog.value = false
     }
 
     fun initializeFrameLayout(frameLayout: FrameLayout) {
         this.frameLayout = frameLayout
     }
 
-    private fun showSnackBar(text: Int) {
+    private fun showSnackBar(text: String) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 

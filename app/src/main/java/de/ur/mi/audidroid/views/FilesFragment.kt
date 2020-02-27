@@ -16,6 +16,7 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
 
@@ -45,7 +46,7 @@ class FilesFragment : Fragment() {
         binding.lifecycleOwner = this
 
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
-        filesViewModel.showSnackbarEvent.observe(this, Observer {
+        filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 Snackbar.make(view!!, R.string.recording_deleted, Snackbar.LENGTH_SHORT).show()
                 filesViewModel.doneShowingSnackbar()
@@ -53,15 +54,17 @@ class FilesFragment : Fragment() {
         })
 
         // Observer on the state variable for navigating when a list-item is clicked.
-        filesViewModel.navigateToPlayerFragment.observe(this, Observer { recordingId ->
-            recordingId?.let {
-                this.findNavController().navigate(
-                    FilesFragmentDirections
-                        .actionFilesToPlayer(recordingId)
-                )
-                filesViewModel.onPlayerFragmentNavigated()
-            }
-        })
+        filesViewModel.navigateToPlayerFragment.observe(
+            viewLifecycleOwner,
+            Observer { recordingId ->
+                recordingId?.let {
+                    this.findNavController().navigate(
+                        FilesFragmentDirections
+                            .actionFilesToPlayer(recordingId)
+                    )
+                    filesViewModel.onPlayerFragmentNavigated()
+                }
+            })
 
         return binding.root
     }
@@ -70,6 +73,7 @@ class FilesFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         filesViewModel.initializeFrameLayout(files_layout)
         setupAdapter()
+        createConfirmDialog()
     }
 
     private fun setupAdapter() {
@@ -79,6 +83,20 @@ class FilesFragment : Fragment() {
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.submitList(it)
+            }
+        })
+    }
+
+    private fun createConfirmDialog() {
+        filesViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                FilesDialog.createDialog(
+                    context = context!!,
+                    type = R.string.confirm_dialog,
+                    recording = filesViewModel.recording,
+                    viewModel = filesViewModel,
+                    errorMessage = filesViewModel.errorMessage
+                )
             }
         })
     }
