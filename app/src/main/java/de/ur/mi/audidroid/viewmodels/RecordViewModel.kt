@@ -188,12 +188,13 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun initExternalFile(tempFile: File,name: String): String{
+        val newName = name + res.getString(R.string.suffix_audio_file)
         val preferredDir = DocumentFile.fromTreeUri(context!!, getStoragePreference())!!
-        val newExternalFile = preferredDir.createFile("aac",name)!!
+        val newExternalFile = preferredDir.createFile("aac",newName)!!
         copyToExternalFile(tempFile,newExternalFile)
         return newExternalFile.uri!!.toString()
     }
-
+    //Checks the uniqueness of a name at the given location; works for internal and external storage
     private fun checkExternalNameUniqueness(targetDir: Uri, name: String): Boolean{
         val f = DocumentFile.fromTreeUri(context!!, targetDir)!!
         val parentDirContent = f.listFiles()
@@ -207,30 +208,46 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         return true
     }
 
-    private fun  saveFileAtLocation(newFile: File, name: String): String{
-        val storagePref  = getStoragePreference()
-
+    private fun  checkNameUniqueness(storagePref: Uri,newFile: File, name: String): Boolean{
         if (storagePref.toString().equals("default")){
             if (newFile.exists()) {
                 errorMessage = res.getString(R.string.dialog_already_exist)
                 _createDialog.value = true
-                return "fail"
+                return false
             }
-            File(tempFile).copyTo(newFile)
-            return ""
+            return true
         }else{
-            val newName = name + ".aac"
+            val newName = name + res.getString(R.string.suffix_audio_file)
             if(!checkExternalNameUniqueness(storagePref, newName)){
-                return "fail"
+                return false
             }
-            val path = initExternalFile(File(tempFile),newName)
-            newFile.delete()
-            return path
+            return true
         }
     }
+
+    /*
+    *
+        val result = saveFileAtLocation(newFile,name)
+        if (result.equals("fail")){
+            return
+        } else if (result.isNotEmpty()){
+            path = result
+        }
+
+        File(tempFile).copyTo(newFile)
+
+        endRecordSession()
+        val recordingDuration = getRecordingDuration() ?: currentRecordTime
+        val audio =
+            EntryEntity(0, name, path, getDate(), recordingDuration)
+        saveRecordInDB(audio)
+        File(tempFile).delete()
+        resetView()
+        errorMessage = null
+    }*/
     fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
         _createDialog.value = false
-        var name = nameInput ?: java.lang.String.format(
+        val name = nameInput ?: java.lang.String.format(
             "%s_%s",
             res.getString(R.string.standard_name_recording),
             android.text.format.DateFormat.format(
@@ -243,22 +260,27 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             _createDialog.value = true
             return
         }
+
         var path = java.lang.String.format(
             "%s/$name%s",
             (pathInput ?: context.filesDir.absolutePath),
             res.getString(R.string.suffix_audio_file)
         )
         val newFile = File(path)
-
-
-        val result = saveFileAtLocation(newFile,name)
-        if (result.equals("fail")){
+        val storagePref = getStoragePreference()
+        val uniqueName = checkNameUniqueness(storagePref, newFile, name)
+        if (!uniqueName){
             return
-        } else if (result.isNotEmpty()){
-            path = result
         }
-        println(path)
+
         endRecordSession()
+
+        if (storagePref.toString().equals("default")){
+            File(tempFile).copyTo(newFile)
+        }else{
+            path = initExternalFile(File(tempFile),name)
+            newFile.delete()
+        }
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
         val audio =
             EntryEntity(0, name, path, getDate(), recordingDuration)
@@ -267,6 +289,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         resetView()
         errorMessage = null
     }
+
 
     private fun saveRecordInDB(audio: EntryEntity) {
         dataSource.insert(audio)

@@ -34,7 +34,7 @@ class PlayerViewModel(
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
-    private val uri: Uri = Uri.parse(recordingPath)
+    private val path = recordingPath
     var isPlaying = MutableLiveData<Boolean>()
 
     private lateinit var runnable: Runnable
@@ -60,8 +60,14 @@ class PlayerViewModel(
                         .setContentType(CONTENT_TYPE_SPEECH)
                         .build()
                 )
-                val descriptor = context.contentResolver.openFileDescriptor(uri, "rw")!!.fileDescriptor
-                setDataSource(descriptor)
+                if (path.startsWith("content:")){
+                    val uri = Uri.parse(path)
+                    val fd = context.contentResolver.openFileDescriptor(uri, "rw")!!.fileDescriptor
+                    setDataSource(fd)
+                }else{
+                    val uri = Uri.fromFile(File(path))
+                    setDataSource(context, uri)
+                }
                 setOnCompletionListener {
                     onStopPlayer()
                 }
