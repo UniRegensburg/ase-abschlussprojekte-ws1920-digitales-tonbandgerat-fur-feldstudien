@@ -13,6 +13,16 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        app:key="file_category"
+        app:title="File Organisation">
+
+        <de.ur.mi.audidroid.models.FileNamePreference
+            app:key="@string/filename_preference_key"
+            app:title="Set default filename" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         app:key="theme_category"
         app:title="Theme">
 

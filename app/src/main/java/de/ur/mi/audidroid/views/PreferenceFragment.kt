@@ -7,6 +7,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.models.FileNamePreference
 import de.ur.mi.audidroid.utils.ThemeHelper
 
 class PreferenceFragment : PreferenceFragmentCompat() {
@@ -35,4 +36,19 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                 true
             }
     }
+
+    override fun onDisplayPreferenceDialog(preference: Preference?) {
+        val fileNamePreferenceDialog = preference as? FileNamePreference
+        if(fileNamePreferenceDialog != null) {
+            val dialogFragment = PreferenceDialogFragment.newInstance(fileNamePreferenceDialog.key)
+            dialogFragment.setTargetFragment(this@PreferenceFragment, 0)
+            dialogFragment.positiveResult = {
+                Log.d("Dialog Preference", "Positive Result")
+            }
+            dialogFragment.show(fragmentManager!!, null)
+        } else {
+            super.onDisplayPreferenceDialog(preference)
+        }
+    }
+
 }
