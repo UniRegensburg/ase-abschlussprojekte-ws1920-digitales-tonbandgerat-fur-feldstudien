@@ -21,7 +21,11 @@ import io.apptik.widget.MultiSlider.Thumb
 import java.io.File
 import java.io.IOException
 
-class EditRecordingViewModel(recordingPath: String, dataSource: Repository, application: Application) :
+class EditRecordingViewModel(
+    recordingPath: String,
+    dataSource: Repository,
+    application: Application
+) :
     AndroidViewModel(application) {
 
     private var mediaPlayer: MediaPlayer = MediaPlayer()
@@ -157,9 +161,9 @@ class EditRecordingViewModel(recordingPath: String, dataSource: Repository, appl
     }
 
     fun initializeRangeBar(rangeBar: MultiSlider) {
+        rangeBar.max = mediaPlayer.duration
         configureThumb1(rangeBar)
         configureThumb2(rangeBar)
-        rangeBar.max = mediaPlayer.duration
 
         rangeBar.setOnThumbValueChangeListener(object : SimpleChangeListener() {
             override fun onValueChanged(
@@ -178,14 +182,14 @@ class EditRecordingViewModel(recordingPath: String, dataSource: Repository, appl
     }
 
     private fun configureThumb1(rangeBar: MultiSlider) {
-        val thumb1 = context.getDrawable(R.drawable.ic_range_bar_thumb1)
-        rangeBar.getThumb(0).thumb = thumb1
-        _curPosThumb1.value = rangeBar.getThumb(0).value / oneSecond
+        val thumb1 = rangeBar.getThumb(0)
+        thumb1.setValue(0)
+        _curPosThumb1.value = thumb1.value / oneSecond
     }
 
     private fun configureThumb2(rangeBar: MultiSlider) {
-        val thumb2 = context.getDrawable(R.drawable.ic_range_bar_thumb2)
-        rangeBar.getThumb(1).thumb = thumb2
-        _curPosThumb2.value = rangeBar.getThumb(1).value / oneSecond
+        val thumb2 = rangeBar.getThumb(1)
+        thumb2.setValue(mediaPlayer.duration)
+        _curPosThumb2.value = thumb2.value / oneSecond
     }
 }

@@ -24,6 +24,7 @@
     <dimen name="fab_margin_big">@dimen/keyline_12</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="label_card_view_margin">8dp</dimen>
     <dimen name="files_card_view_margin">8dp</dimen>
     <dimen name="marks_card_view_margin">4dp</dimen>
     <dimen name="constraint_layout_padding">12dp</dimen>

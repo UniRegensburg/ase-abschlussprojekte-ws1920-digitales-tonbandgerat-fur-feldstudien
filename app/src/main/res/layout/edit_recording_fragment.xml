@@ -45,7 +45,9 @@
                     android:id="@+id/seekBar"
                     android:layout_width="@dimen/layout_width_seek_bar_element"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.6" />
+                    android:layout_weight="0.6"
+                    android:progressTint="@color/color_primary"
+                    android:thumbTint="@color/color_primary" />
 
                 <TextView
                     android:layout_width="@dimen/layout_width_seek_bar_element"
