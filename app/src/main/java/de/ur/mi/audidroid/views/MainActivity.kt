@@ -12,7 +12,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import androidx.preference.PreferenceManager
 import cafe.adriel.androidaudioconverter.AndroidAudioConverter
-import cafe.adriel.androidaudioconverter.callback.IConvertCallback
 import cafe.adriel.androidaudioconverter.callback.ILoadCallback
 import com.google.android.material.navigation.NavigationView
 import de.ur.mi.audidroid.R
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         initTheme()
         checkPermissions()
-        initAudioConverter()
+//        initAudioConverter()
     }
 
     /** Applies the app theme selected by the user.
