@@ -179,7 +179,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         mediaRecorder.resume()
     }
 
-    fun copyToExternalFile (src: File, dst: DocumentFile){
+    private fun copyToExternalFile (src: File, dst: DocumentFile){
         val inputStream = src.inputStream()
         val outputStream = context.contentResolver.openOutputStream(dst.uri)
         inputStream.copyTo(outputStream!!)
@@ -187,14 +187,47 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         outputStream.close()
     }
 
-    fun initExternalFile(tempFile: File,name: String): String{
+    private fun initExternalFile(tempFile: File,name: String): String{
         val preferredDir = DocumentFile.fromTreeUri(context!!, getStoragePreference())!!
-        val newName = name + ".aac"
-        val newExternalFile = preferredDir.createFile("aac",newName)!!
+        val newExternalFile = preferredDir.createFile("aac",name)!!
         copyToExternalFile(tempFile,newExternalFile)
         return newExternalFile.uri!!.toString()
     }
 
+    private fun checkExternalNameUniqueness(targetDir: Uri, name: String): Boolean{
+        val f = DocumentFile.fromTreeUri(context!!, targetDir)!!
+        val parentDirContent = f.listFiles()
+        parentDirContent.forEach {
+            if (it.name.equals(name)) {
+                errorMessage = res.getString(R.string.dialog_already_exist)
+                _createDialog.value = true
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun  saveFileAtLocation(newFile: File, name: String): String{
+        val storagePref  = getStoragePreference()
+
+        if (storagePref.toString().equals("default")){
+            if (newFile.exists()) {
+                errorMessage = res.getString(R.string.dialog_already_exist)
+                _createDialog.value = true
+                return "fail"
+            }
+            File(tempFile).copyTo(newFile)
+            return ""
+        }else{
+            val newName = name + ".aac"
+            if(!checkExternalNameUniqueness(storagePref, newName)){
+                return "fail"
+            }
+            val path = initExternalFile(File(tempFile),newName)
+            newFile.delete()
+            return path
+        }
+    }
     fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
         _createDialog.value = false
         var name = nameInput ?: java.lang.String.format(
@@ -216,22 +249,17 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             res.getString(R.string.suffix_audio_file)
         )
         val newFile = File(path)
-        if (newFile.exists()) {
-            errorMessage = res.getString(R.string.dialog_already_exist)
-            _createDialog.value = true
-            return
-        }
 
+
+        val result = saveFileAtLocation(newFile,name)
+        if (result.equals("fail")){
+            return
+        } else if (result.isNotEmpty()){
+            path = result
+        }
+        println(path)
         endRecordSession()
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
-
-        val storagePref  = getStoragePreference()
-        if (storagePref.toString().equals("default")){
-            File(tempFile).copyTo(newFile)
-        }else{
-            path = initExternalFile(File(tempFile),name)
-        }
-
         val audio =
             EntryEntity(0, name, path, getDate(), recordingDuration)
         saveRecordInDB(audio)

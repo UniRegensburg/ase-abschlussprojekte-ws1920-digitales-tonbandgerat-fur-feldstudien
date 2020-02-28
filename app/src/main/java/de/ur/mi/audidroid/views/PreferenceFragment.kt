@@ -28,7 +28,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivityForResult(intent, resources.getInteger(R.integer.request_code_preference_storage))
+            startActivityForResult(intent, resources.getInteger(R.integer.activity_request_code_preference_storage))
             true
 
         }
@@ -36,7 +36,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == resources.getInteger(R.integer.request_code_preference_storage) &&
+        if (requestCode == resources.getInteger(R.integer.activity_request_code_preference_storage) &&
                 resultCode == Activity.RESULT_OK){
             val pref = context!!.getSharedPreferences(getString(R.string.storage_preference_key), Context.MODE_PRIVATE)
             with (pref.edit()){
