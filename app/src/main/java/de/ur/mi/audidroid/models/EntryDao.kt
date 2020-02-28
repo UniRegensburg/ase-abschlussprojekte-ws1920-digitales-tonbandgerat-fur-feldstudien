@@ -27,7 +27,7 @@ interface EntryDao {
     fun getRecordingByName(name: String): EntryEntity
 
     @Insert(onConflict = REPLACE)
-    fun insert(entryEntity: EntryEntity)
+    fun insert(entryEntity: EntryEntity):Long
 
     @Delete
     fun delete(entryEntity: EntryEntity)

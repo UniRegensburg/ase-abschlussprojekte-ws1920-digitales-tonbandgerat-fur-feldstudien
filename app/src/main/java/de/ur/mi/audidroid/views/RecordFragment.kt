@@ -1,5 +1,6 @@
 package de.ur.mi.audidroid.views
 
+import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,6 +26,7 @@ import kotlinx.android.synthetic.main.record_fragment.*
 class RecordFragment : Fragment() {
 
     private lateinit var viewModel: RecordViewModel
+    private lateinit var dataSource: Repository
 
     companion object {
         fun newInstance() = RecordFragment()
@@ -36,7 +38,7 @@ class RecordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val application = this.activity!!.application
-        val dataSource = Repository(application)
+        dataSource = Repository(application)
         val binding: RecordFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
 
@@ -71,7 +73,8 @@ class RecordFragment : Fragment() {
                     paramContext = context!!,
                     layoutId = R.layout.dialog_save_recording,
                     viewModel = viewModel,
-                    errorMessage = viewModel.errorMessage
+                    errorMessage = viewModel.errorMessage,
+                    recordFragment = this
                 )
             }
         })

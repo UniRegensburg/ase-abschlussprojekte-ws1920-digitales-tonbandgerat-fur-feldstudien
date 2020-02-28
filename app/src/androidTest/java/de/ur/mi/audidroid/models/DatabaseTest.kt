@@ -43,7 +43,7 @@ class DatabaseTest {
             context, RecorderDatabase::class.java
         ).allowMainThreadQueries().build()
         testDao = testDatabase.entryDao()
-        testEntity = EntryEntity(testUid, "test", "test", "test")
+        testEntity = EntryEntity(testUid, "test", "test", "test", "test")
         testDao.insert(testEntity)
     }
 
@@ -60,7 +60,7 @@ class DatabaseTest {
     @Test
     @Throws(Exception::class)
     fun testInsert() {
-        val testInsertEntity = EntryEntity(testUidForInsertTest, "test", "test", "test")
+        val testInsertEntity = EntryEntity(testUidForInsertTest, "test", "test", "test", "test")
 
         /** checks if the number of entries in the database increments */
         val currentList = ArrayList<EntryEntity>()

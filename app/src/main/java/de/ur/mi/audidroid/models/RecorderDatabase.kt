@@ -13,12 +13,13 @@ import de.ur.mi.audidroid.utils.Converters
  */
 
 
-@Database(entities = [EntryEntity::class, LabelEntity::class], version = 1, exportSchema = false)
+@Database(entities = [EntryEntity::class, LabelEntity::class, LabelAssignmentEntity::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 
 abstract class RecorderDatabase : RoomDatabase() {
     abstract fun entryDao(): EntryDao
     abstract fun labelDao(): LabelDao
+    abstract fun labelAssignmentDao(): LabelAssignmentDao
 
     companion object {
         private var INSTANCE: RecorderDatabase? = null

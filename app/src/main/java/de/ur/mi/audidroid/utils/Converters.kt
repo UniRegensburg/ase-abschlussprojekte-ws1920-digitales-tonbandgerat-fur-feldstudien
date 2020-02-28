@@ -12,14 +12,14 @@ import com.google.gson.reflect.TypeToken
 
 class Converters {
     @TypeConverter
-    fun handleArrayList(list: ArrayList<String>):String?{
+    fun handleArrayList(list: ArrayList<Int>):String?{
         if(list.size==0) return null
         return Gson().toJson(list)
     }
 
     @TypeConverter
-    fun getBackArrayList(value: String?): ArrayList<String>? {
+    fun getBackArrayList(value: String?): ArrayList<Int>? {
         if (value == null) return null
-        return Gson().fromJson(value, object: TypeToken<ArrayList<String>>(){}.type)
+        return Gson().fromJson(value, object: TypeToken<ArrayList<Int>>(){}.type)
     }
 }

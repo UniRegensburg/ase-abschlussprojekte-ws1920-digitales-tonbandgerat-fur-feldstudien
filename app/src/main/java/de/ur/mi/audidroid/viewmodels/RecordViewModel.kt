@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.LabelAssignmentEntity
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
@@ -173,7 +174,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     fun getNewFileFromUserInput(
         nameInput: String?,
         pathInput: String?,
-        labels: ArrayList<String>?
+        labels: ArrayList<Int>?
     ) {
         _createDialog.value = false
         val name = nameInput ?: java.lang.String.format(
@@ -210,17 +211,17 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
                 recordingName = name,
                 recordingPath = path,
                 date = getDate(),
-                duration = recordingDuration,
-                labels = labels
+                duration = recordingDuration
             )
-        saveRecordInDB(audio)
+        saveRecordInDB(audio, labels)
         File(tempFile).delete()
         resetView()
         errorMessage = null
     }
 
-    private fun saveRecordInDB(audio: EntryEntity) {
-        dataSource.insert(audio)
+    private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
+        val uid = dataSource.insert(audio).toInt()
+        if(labels!=null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid,labels))
         showSnackBar(R.string.record_saved)
     }
 

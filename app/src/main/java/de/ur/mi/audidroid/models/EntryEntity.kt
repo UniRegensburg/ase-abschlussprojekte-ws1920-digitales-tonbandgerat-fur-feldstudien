@@ -15,8 +15,5 @@ data class EntryEntity(
     @ColumnInfo(name = "recordingName") val recordingName: String,
     @ColumnInfo(name = "recordingPath") val recordingPath: String,
     @ColumnInfo(name = "date") val date: String,
-    @ColumnInfo(name = "duration") val duration: String,
-    @ColumnInfo(name = "markName") val markName: String? = null,
-    @ColumnInfo(name = "markTime") val markTime: String? = null,
-    @ColumnInfo(name = "labels") val labels: ArrayList<String>? = null
+    @ColumnInfo(name = "duration") val duration: String
 )

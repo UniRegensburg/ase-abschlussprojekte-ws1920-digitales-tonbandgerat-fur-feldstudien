@@ -15,6 +15,7 @@ class Repository(application: Application): CoroutineScope {
 
     private var entryDao: EntryDao
     private var labelDao: LabelDao
+    private var labelAssignmentDao: LabelAssignmentDao
     private var allRecordings: LiveData<List<EntryEntity>>
 
     private val job = Job()
@@ -27,6 +28,7 @@ class Repository(application: Application): CoroutineScope {
         )
         entryDao = database.entryDao()
         labelDao = database.labelDao()
+        labelAssignmentDao = database.labelAssignmentDao()
         allRecordings = entryDao.getAllRecordings()
     }
 
@@ -56,15 +58,15 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
-    fun insert(entryEntity: EntryEntity) {
-        InsertAsyncTask(entryDao).execute(entryEntity)
+    fun insert(entryEntity: EntryEntity): Long{
+        return InsertAsyncTask(entryDao).execute(entryEntity).get()
     }
 
     private class InsertAsyncTask(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Unit>() {
+        AsyncTask<EntryEntity, Unit, Long>() {
 
-        override fun doInBackground(vararg params: EntryEntity?) {
-            entryDao.insert(params[0]!!)
+        override fun doInBackground(vararg params: EntryEntity?): Long{
+            return entryDao.insert(params[0]!!)
         }
     }
 
@@ -92,8 +94,25 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
-    fun getLabelById(labelEntity: LabelEntity): LiveData<LabelEntity> {
-        return labelDao.getLabelById(labelEntity.uid)
+    fun getLabelById(uid: Int): LiveData<LabelEntity> {
+        return labelDao.getLabelById(uid)
+    }
+
+   /* fun insertRecLabels(labelAssignment: LabelAssignmentEntity){
+        CoroutineScope(coroutineContext).launch {
+            labelAssignmentDao.insertRecLabels(labelAssignment)
+        }
+    }*/
+    //TODO: if it works use coroutines from above
+    fun insertRecLabels(labelAssignment: LabelAssignmentEntity){
+        InsertLabelAssignmentAsyncTask(labelAssignmentDao).execute(labelAssignment)
+    }
+    private class InsertLabelAssignmentAsyncTask(val labelAssignmentDao: LabelAssignmentDao) :
+        AsyncTask<LabelAssignmentEntity, Unit, Unit>() {
+
+        override fun doInBackground(vararg params: LabelAssignmentEntity?){
+            return labelAssignmentDao.insertRecLabels(params[0]!!)
+        }
     }
 
 }

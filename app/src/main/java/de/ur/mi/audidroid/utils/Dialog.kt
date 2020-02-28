@@ -1,18 +1,23 @@
 package de.ur.mi.audidroid.utils
 
+import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.LabelAdapter
+import de.ur.mi.audidroid.models.LabelEntity
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
+import de.ur.mi.audidroid.views.RecordFragment
 
 
 /**
@@ -27,45 +32,32 @@ object Dialog {
     private lateinit var labelsRecyclerView: RecyclerView
     private lateinit var context: Context
     private var selectedLabels = ArrayList<String>()
-    private var selectedPath : String? = null
+    private var selectedPath: String? = null
+    private lateinit var fragment: RecordFragment
+    private lateinit var dataSource: Repository
+    private lateinit var labelEntities: List<LabelEntity>
 
     fun createDialog(
         paramContext: Context,
         layoutId: Int? = null,
         textId: Int? = null,
         viewModel: RecordViewModel? = null,
-        errorMessage: String? = null
+        errorMessage: String? = null,
+        recordFragment: RecordFragment? = null
     ) {
         context = paramContext
+        if (recordFragment != null) fragment = recordFragment
         val builder = MaterialAlertDialogBuilder(context)
         if (layoutId != null) {
             builder.setView(layoutId)
+            prepareDataSource()
             if (errorMessage != null) {
                 builder.setMessage(errorMessage)
             }
-            with(builder) {
-                setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
-                    var nameInput: String? =
-                        dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
-                            .text.toString()
-                    if (nameInput == "") nameInput = null
-                    viewModel?.getNewFileFromUserInput(nameInput, selectedPath, selectedLabels)
-                }
-                setNeutralButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                    viewModel?.cancelSaving()
-                }
-            }
+            setDialogButtons(builder, viewModel)
         }
         if (textId != null) {
-            with(builder) {
-                setTitle(R.string.permission_title)
-                setMessage(textId)
-                setPositiveButton(
-                    R.string.permission_button
-                ) { _, _ ->
-                    PermissionHelper.makeRequest(context)
-                }
-            }
+            createPermissionDialog(builder, textId)
         }
         dialog = builder.create()
         dialog.setCancelable(false)
@@ -73,7 +65,12 @@ object Dialog {
         initializeDialog()
     }
 
-    private fun initializeDialog(){
+    private fun prepareDataSource() {
+        dataSource = Repository((context as Activity).application)
+        dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
+    }
+
+    private fun initializeDialog() {
         pathTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_textview_path)!!
         val storedPath = getStoragePreference()
         if (storedPath != null) {
@@ -85,23 +82,21 @@ object Dialog {
         }
         labelsRecyclerView =
             dialog.findViewById<RecyclerView>(R.id.dialog_save_recording_recyclerview)!!
-        val labelsList = getLabels()
-        if (labelsList != null) showLabels(labelsList) else labelsRecyclerView.visibility =
-            View.GONE
     }
 
-    private fun getLabels(): ArrayList<String>? {
-        //TODO get labels from user preference
-        val labelsList: ArrayList<String>? = ArrayList()
-        labelsList!!.add("Uni")
-        labelsList.add("Arbeit")
-        labelsList.add("Label3")
-        labelsList.add("Label4")
-        return labelsList
+    private fun getLabels(list: List<LabelEntity>) {
+        labelEntities = list
+        if (list.isNotEmpty()) {
+            val labelsArrayList = ArrayList<String>()
+            for (label in list) {
+                labelsArrayList.add(label.labelName)
+            }
+            showLabels(labelsArrayList)
+        } else labelsRecyclerView.visibility = View.GONE
     }
 
     private fun showLabels(labelsList: ArrayList<String>) {
-        //TODO: Check why it does not work with one of three smartphones
+        //TODO: Use Chips
         val layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         labelsRecyclerView.layoutManager = layoutManager
@@ -140,12 +135,55 @@ object Dialog {
     private fun addClickedLabel(clickedLabel: View) {
         clickedLabel.setBackgroundColor(ContextCompat.getColor(context, R.color.color_primary))
         selectedLabels.add((clickedLabel as MaterialButton).text.toString())
-        println(selectedLabels)
     }
 
     private fun removeClickedLabel(clickedLabel: View) {
         clickedLabel.setBackgroundColor(ContextCompat.getColor(context, R.color.grayed_out))
         selectedLabels.remove((clickedLabel as MaterialButton).text.toString())
-        println(selectedLabels)
+    }
+
+    private fun setDialogButtons(builder: MaterialAlertDialogBuilder, viewModel: RecordViewModel?) {
+        with(builder) {
+            setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
+                var nameInput: String? =
+                    dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
+                        .text.toString()
+                if (nameInput == "") nameInput = null
+                viewModel?.getNewFileFromUserInput(
+                    nameInput,
+                    selectedPath,
+                    getLabelIdFromName()
+                )
+            }
+            setNeutralButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
+                viewModel?.cancelSaving()
+            }
+        }
+    }
+
+    private fun createPermissionDialog(builder: MaterialAlertDialogBuilder, textId: Int) {
+        with(builder) {
+            setTitle(R.string.permission_title)
+            setMessage(textId)
+            setPositiveButton(
+                R.string.permission_button
+            ) { _, _ ->
+                PermissionHelper.makeRequest(context)
+            }
+        }
+    }
+
+    private fun getLabelIdFromName(): ArrayList<Int>?{
+        return if(selectedLabels.size!=0){
+            val labelIds = ArrayList<Int>()
+            for(item in selectedLabels){
+                for(i in labelEntities){
+                    if(item == i.labelName){
+                        labelIds.add(i.uid)
+                    }
+                }
+            }
+            labelIds
+        } else null
     }
 }

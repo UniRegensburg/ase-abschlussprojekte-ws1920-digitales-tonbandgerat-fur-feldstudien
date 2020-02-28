@@ -15,7 +15,7 @@ class LabelAdapter(
 ) : RecyclerView.Adapter<LabelAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): Holder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.label_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.label_item2, parent, false)
         return Holder(view, context, dialog)
     }
 
