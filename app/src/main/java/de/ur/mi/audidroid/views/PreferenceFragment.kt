@@ -3,6 +3,7 @@ package de.ur.mi.audidroid.views
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.navigation.findNavController
 import androidx.preference.ListPreference
@@ -19,6 +20,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         initLabelsPreference()
         initThemePreference()
         initStoragePreference()
+
     }
 
     private fun initLabelsPreference() {
@@ -50,7 +52,11 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             true
         }
     }
-
+    private fun setStoragePreferenceSummary(uri: Uri){
+        val storagePreference = findPreference<Preference>(getString(R.string.storage_preference_key))
+        val summary = uri.pathSegments.last().split(":")[1]
+        storagePreference!!.setSummary(summary)
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == resources.getInteger(R.integer.activity_request_code_preference_storage) &&
@@ -60,6 +66,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                 putString(getString(R.string.storage_preference_key), data!!.dataString)
                 commit()
             }
+            setStoragePreferenceSummary(data!!.data!!)
         }
     }
 }
