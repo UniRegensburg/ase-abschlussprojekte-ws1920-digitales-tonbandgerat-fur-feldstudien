@@ -225,26 +225,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
     }
 
-    /*
-    *
-        val result = saveFileAtLocation(newFile,name)
-        if (result.equals("fail")){
-            return
-        } else if (result.isNotEmpty()){
-            path = result
-        }
-
-        File(tempFile).copyTo(newFile)
-
-        endRecordSession()
-        val recordingDuration = getRecordingDuration() ?: currentRecordTime
-        val audio =
-            EntryEntity(0, name, path, getDate(), recordingDuration)
-        saveRecordInDB(audio)
-        File(tempFile).delete()
-        resetView()
-        errorMessage = null
-    }*/
     fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
         _createDialog.value = false
         val name = nameInput ?: java.lang.String.format(

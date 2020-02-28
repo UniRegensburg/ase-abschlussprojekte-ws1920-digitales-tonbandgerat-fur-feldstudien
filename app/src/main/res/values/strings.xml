@@ -8,15 +8,13 @@
     <string name="menu_files">Files</string>
     <string name="menu_settings">Settings</string>
 
-    <string name="theme_preference_key">theme_preference</string>
-    <string name="storage_preference_key">storage_preference</string>
-
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
 
     <!-- Preferences -->
     <string name="theme_preference_key">theme_preference</string>
     <string name="labels_preference_key">labels_preference</string>
+    <string name="storage_preference_key">storage_preference</string>
 
     <!-- Navigation -->
     <string name="record_label">Record</string>
