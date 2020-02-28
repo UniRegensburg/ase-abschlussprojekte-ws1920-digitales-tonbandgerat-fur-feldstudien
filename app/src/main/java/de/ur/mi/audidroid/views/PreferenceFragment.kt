@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.navigation.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -19,6 +18,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
 
         initLabelsPreference()
         initThemePreference()
+        initStoragePreference()
     }
 
     private fun initLabelsPreference() {
@@ -37,7 +37,9 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyTheme(newValue as String)
                 true
             }
+    }
 
+    private fun initStoragePreference(){
         val storagePreference = findPreference<Preference>(getString(R.string.storage_preference_key))!!
         storagePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
@@ -46,7 +48,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             startActivityForResult(intent, resources.getInteger(R.integer.activity_request_code_preference_storage))
             true
-
         }
     }
 

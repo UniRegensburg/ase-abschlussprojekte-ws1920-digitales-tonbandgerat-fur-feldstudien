@@ -15,6 +15,7 @@
     <string name="theme_preference_key">theme_preference</string>
     <string name="labels_preference_key">labels_preference</string>
     <string name="storage_preference_key">storage_preference</string>
+    <string name="storage_location_summary">internal</string>
 
     <!-- Navigation -->
     <string name="record_label">Record</string>
