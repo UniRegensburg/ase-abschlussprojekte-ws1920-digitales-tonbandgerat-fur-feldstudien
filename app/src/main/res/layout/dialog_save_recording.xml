@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="@string/dialog_save_recording_name"
         android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline6"
-        android:textColor="@color/color_on_secondary" />
+        android:textColor="@color/color_on_background" />
 
     <EditText
         android:id="@+id/dialog_save_recording_edittext_name"
