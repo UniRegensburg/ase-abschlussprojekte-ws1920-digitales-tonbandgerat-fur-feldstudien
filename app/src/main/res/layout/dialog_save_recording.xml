@@ -57,28 +57,33 @@
             android:src="@drawable/ic_folder" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/dialog_save_recording_textview_labels"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dialog_margin_medium"
-        android:text="@string/dialog_save_recording_label"
-        android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline6"
-        android:textColor="@color/color_on_background" />
-
-    <HorizontalScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
+        android:id="@+id/dialog_save_recording_label_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/labelChipGroup"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dialog_margin_small"
-            android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1"
-            android:textColor="@color/color_on_surface"
-            app:singleLine="true" />
-    </HorizontalScrollView>
+            android:layout_marginTop="@dimen/dialog_margin_medium"
+            android:text="@string/dialog_save_recording_label"
+            android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline6"
+            android:textColor="@color/color_on_background" />
 
+        <HorizontalScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/labelChipGroup"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dialog_margin_small"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1"
+                android:textColor="@color/color_on_surface"
+                app:singleLine="true" />
+        </HorizontalScrollView>
+    </LinearLayout>
 </LinearLayout>

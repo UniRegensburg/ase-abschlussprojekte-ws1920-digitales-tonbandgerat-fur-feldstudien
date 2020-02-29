@@ -3,7 +3,10 @@ package de.ur.mi.audidroid.models
 import android.app.Application
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -11,7 +14,7 @@ import kotlin.coroutines.CoroutineContext
  * @author: Theresa Strohmeier, Jonas Puchinger
  */
 
-class Repository(application: Application): CoroutineScope {
+class Repository(application: Application) : CoroutineScope {
 
     private var entryDao: EntryDao
     private var labelDao: LabelDao
@@ -58,14 +61,14 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
-    fun insert(entryEntity: EntryEntity): Long{
+    fun insert(entryEntity: EntryEntity): Long {
         return InsertAsyncTask(entryDao).execute(entryEntity).get()
     }
 
     private class InsertAsyncTask(val entryDao: EntryDao) :
         AsyncTask<EntryEntity, Unit, Long>() {
 
-        override fun doInBackground(vararg params: EntryEntity?): Long{
+        override fun doInBackground(vararg params: EntryEntity?): Long {
             return entryDao.insert(params[0]!!)
         }
     }
@@ -105,13 +108,14 @@ class Repository(application: Application): CoroutineScope {
         }
     }*/
 
-    fun insertRecLabels(labelAssignment: LabelAssignmentEntity){
+    fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {
         InsertLabelAssignmentAsyncTask(labelAssignmentDao).execute(labelAssignment)
     }
+
     private class InsertLabelAssignmentAsyncTask(val labelAssignmentDao: LabelAssignmentDao) :
         AsyncTask<LabelAssignmentEntity, Unit, Unit>() {
 
-        override fun doInBackground(vararg params: LabelAssignmentEntity?){
+        override fun doInBackground(vararg params: LabelAssignmentEntity?) {
             return labelAssignmentDao.insertRecLabels(params[0]!!)
         }
     }

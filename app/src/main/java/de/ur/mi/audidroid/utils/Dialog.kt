@@ -6,10 +6,10 @@ import android.content.res.ColorStateList
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -29,7 +29,6 @@ object Dialog {
 
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
     private lateinit var pathTextView: TextView
-    private lateinit var labelsRecyclerView: RecyclerView
     private lateinit var context: Context
     private var selectedLabels = ArrayList<String>()
     private var selectedPath: String? = null
@@ -142,31 +141,26 @@ object Dialog {
     private fun getLabels(list: List<LabelEntity>) {
         labelEntities = list
         if (list.isNotEmpty()) {
-            val labelsArrayList = ArrayList<String>()
+            val chipGroup = dialog.findViewById<ChipGroup>(R.id.labelChipGroup)
             for (label in list) {
-                labelsArrayList.add(label.labelName)
+                chipGroup!!.addView(createChip(label.labelName))
             }
-            showLabels(labelsArrayList)
-        } else {
-            labelsRecyclerView.visibility = View.GONE
-            dialog.findViewById<TextView>(R.id.dialog_save_recording_textview_labels)!!.visibility =
-                View.GONE
-        }
+        } else dialog.findViewById<LinearLayout>(R.id.dialog_save_recording_label_layout)!!.visibility =
+            View.GONE
     }
 
-    private fun showLabels(labelsList: ArrayList<String>) {
-        val chipGroup = dialog.findViewById<ChipGroup>(R.id.labelChipGroup)
-        for (item in labelsList) {
-            val chip = Chip(context)
-            chip.text = item
-            chip.chipBackgroundColor =
-                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
-            chip.setOnClickListener { labelClicked(chip) }
-            chipGroup!!.addView(chip)
+    private fun createChip(name: String): Chip {
+        val chip = Chip(context)
+        with(chip) {
+            text = name
+            chipBackgroundColor =
+                ColorStateList.valueOf(ContextCompat.getColor(Dialog.context, R.color.grayed_out))
+            setOnClickListener { labelClicked(chip) }
         }
+        return chip
     }
 
-    fun labelClicked(clickedLabel: Chip) {
+    private fun labelClicked(clickedLabel: Chip) {
         for (string in selectedLabels) {
             if (string == (clickedLabel).text.toString()) {
                 removeClickedLabel(clickedLabel)
