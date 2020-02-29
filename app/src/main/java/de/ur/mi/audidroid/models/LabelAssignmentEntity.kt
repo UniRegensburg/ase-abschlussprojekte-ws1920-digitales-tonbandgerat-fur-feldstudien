@@ -1,9 +1,6 @@
 package de.ur.mi.audidroid.models
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.Relation
+import androidx.room.*
 
 /**
  * The LabelAssignmentEntity represents the labels referring to the recording.
@@ -17,9 +14,14 @@ import androidx.room.Relation
 data class LabelAssignmentEntity(
     @PrimaryKey(autoGenerate = true) val primaryKey: Int,
     @ColumnInfo(name = "recordingId") val recordingId: Int,
+    @ColumnInfo(name = "listLabelId") val listLabelId: ArrayList<Int>
+)
+
+data class RecordingAndLabel(
+    @Embedded val entryEntity: EntryEntity,
     @Relation(
         parentColumn = "uid",
         entityColumn = "recordingId"
     )
-    @ColumnInfo(name = "listLabelId") val listLabelId: ArrayList<Int>
+    val labelList: List<LabelAssignmentEntity>
 )

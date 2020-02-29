@@ -98,12 +98,13 @@ class Repository(application: Application): CoroutineScope {
         return labelDao.getLabelById(uid)
     }
 
-   /* fun insertRecLabels(labelAssignment: LabelAssignmentEntity){
+    //TODO: Question to everyone: Does anybody knows why the call beneath doesn't work?
+/*   fun insertRecLabels(labelAssignment: LabelAssignmentEntity){
         CoroutineScope(coroutineContext).launch {
             labelAssignmentDao.insertRecLabels(labelAssignment)
         }
     }*/
-    //TODO: if it works use coroutines from above
+
     fun insertRecLabels(labelAssignment: LabelAssignmentEntity){
         InsertLabelAssignmentAsyncTask(labelAssignmentDao).execute(labelAssignment)
     }

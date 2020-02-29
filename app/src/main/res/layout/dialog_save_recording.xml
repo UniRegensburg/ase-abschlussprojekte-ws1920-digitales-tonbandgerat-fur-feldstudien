@@ -31,13 +31,13 @@
         android:layout_marginTop="@dimen/dialog_margin_medium"
         android:text="@string/dialog_save_recording_path"
         android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline6"
-        android:textColor="@color/color_on_secondary" />
+        android:textColor="@color/color_on_background" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="@dimen/dialog_margin_small"
+        android:orientation="horizontal"
         android:weightSum="1">
 
         <TextView
@@ -51,24 +51,34 @@
             android:id="@+id/dialog_save_recording_path_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_folder"
-            android:background="@null"
             android:layout_marginEnd="@dimen/dialog_margin_small"
-            android:contentDescription="@string/dialog_save_recording_path_hint"/>
+            android:background="@null"
+            android:contentDescription="@string/dialog_save_recording_path_hint"
+            android:src="@drawable/ic_folder" />
     </LinearLayout>
 
     <TextView
+        android:id="@+id/dialog_save_recording_textview_labels"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dialog_margin_medium"
         android:text="@string/dialog_save_recording_label"
         android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline6"
-        android:textColor="@color/color_on_secondary" />
+        android:textColor="@color/color_on_background" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/dialog_save_recording_recyclerview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scrollbars="horizontal"/>
+    <HorizontalScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/labelChipGroup"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dialog_margin_small"
+            android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1"
+            android:textColor="@color/color_on_surface"
+            app:singleLine="true" />
+    </HorizontalScrollView>
 
 </LinearLayout>
