@@ -43,11 +43,10 @@
 
                 <SeekBar
                     android:id="@+id/seekBar"
+                    style="@style/Widget.AudidroidTheme.Seekbar"
                     android:layout_width="@dimen/layout_width_seek_bar_element"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.6"
-                    android:progressTint="@color/color_primary"
-                    android:thumbTint="@color/color_primary" />
+                    android:layout_weight="0.6" />
 
                 <TextView
                     android:layout_width="@dimen/layout_width_seek_bar_element"
@@ -79,11 +78,21 @@
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2"
                     android:textColor="@color/color_secondary" />
 
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.02" />
+
                 <io.apptik.widget.MultiSlider
                     android:id="@+id/rangeBar"
                     android:layout_width="@dimen/layout_width_seek_bar_element"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.60" />
+                    android:layout_weight="0.562" />
+
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.02" />
 
                 <TextView
                     android:layout_width="@dimen/layout_width_seek_bar_element"
@@ -100,6 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/color_secondary"
+                android:onClick="@{() -> editRecordingViewModel.cutInner()}"
                 android:text="@string/cut_inner_button"
                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Button"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -113,6 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/color_secondary"
+                android:onClick="@{() -> editRecordingViewModel.cutOuter()}"
                 android:text="@string/cut_outer_button"
                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Button"
                 app:layout_constraintBottom_toBottomOf="parent"

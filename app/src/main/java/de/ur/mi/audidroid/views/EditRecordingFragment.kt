@@ -2,9 +2,7 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
@@ -41,6 +39,7 @@ class EditRecordingFragment : Fragment() {
         binding.editRecordingViewModel = editRecordingViewModel
 
         binding.setLifecycleOwner(this)
+        setHasOptionsMenu(true)
 
         return binding.root
     }
@@ -51,6 +50,23 @@ class EditRecordingFragment : Fragment() {
         editRecordingViewModel.initializeSeekBar(binding.seekBar)
         editRecordingViewModel.initializeFrameLayout(player_layout)
         editRecordingViewModel.initializeRangeBar(binding.rangeBar)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_edit_recording, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_save_edited_rec -> {
+                saveRecording()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun saveRecording() {
     }
 
     /**

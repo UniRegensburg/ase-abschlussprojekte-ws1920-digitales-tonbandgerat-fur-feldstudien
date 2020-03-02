@@ -3,6 +3,7 @@
     <string name="nav_header_title">Audidroid</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="action_save_edited_rec">Save</string>
 
     <string name="menu_record">Record</string>
     <string name="menu_files">Files</string>
