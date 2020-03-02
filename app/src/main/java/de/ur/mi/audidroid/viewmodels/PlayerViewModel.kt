@@ -5,6 +5,7 @@ import android.media.AudioAttributes
 import android.media.AudioAttributes.CONTENT_TYPE_SPEECH
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.text.format.DateUtils
 import android.widget.FrameLayout
@@ -17,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import java.io.File
 import java.io.IOException
+
 
 /**
  * ViewModel for PlayerFragment.
@@ -39,6 +41,7 @@ class PlayerViewModel(
     private var handler: Handler = Handler()
 
     var totalDurationString = ""
+    val jumpTime = 5000
 
     private val _currentDuration = MutableLiveData<Long>()
     private val currentDuration: LiveData<Long>
@@ -126,7 +129,7 @@ class PlayerViewModel(
         isPlaying.value = mediaPlayer.isPlaying
     }
 
-    fun onStopPlayer() {
+    private fun onStopPlayer() {
         mediaPlayer.stop()
         handler.removeCallbacks(runnable)
         isPlaying.value = mediaPlayer.isPlaying
@@ -142,5 +145,31 @@ class PlayerViewModel(
 
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
+    }
+
+    fun jumpForward() {
+        val moveTime =
+            mediaPlayer.currentPosition + jumpTime.toLong()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
+            moveTime,
+            MediaPlayer.SEEK_NEXT_SYNC
+        ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
+        mediaPlayer.setOnSeekCompleteListener {
+            showSnackBar(R.string.player_moved_forward)
+        }
+
+
+    }
+
+    fun jumpBackward() {
+        val moveTime =
+            mediaPlayer.currentPosition - jumpTime.toLong()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
+            moveTime,
+            MediaPlayer.SEEK_PREVIOUS_SYNC
+        ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
+        mediaPlayer.setOnSeekCompleteListener {
+            showSnackBar(R.string.player_moved_backward)
+        }
     }
 }

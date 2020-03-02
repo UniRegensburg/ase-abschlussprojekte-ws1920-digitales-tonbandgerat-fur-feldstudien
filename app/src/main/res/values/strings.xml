@@ -23,6 +23,8 @@
     <string name="pause_button">Pause recording</string>
     <string name="error_message_initialization_failed">Initialization of MediaPlayer failed</string>
     <string name="error_message_path">file moved or deleted</string>
+    <string name="player_moved_forward">5 sec skipped</string>
+    <string name="player_moved_backward">5 sec returned</string>
 
     <!-- FilesFragment -->
     <string name="recording_file_name">Recording</string>
