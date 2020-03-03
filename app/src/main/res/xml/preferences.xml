@@ -16,9 +16,14 @@
         app:key="file_category"
         app:title="File Organisation">
 
-        <de.ur.mi.audidroid.models.FileNamePreference
+        <EditTextPreference
             app:key="@string/filename_preference_key"
-            app:title="Set default filename" />
+            app:title="Set default filename"
+            app:dialogMessage="@string/filename_preference_dialog_message"
+            app:defaultValue="@string/filename_preference_default_value"
+            app:positiveButtonText="@string/dialog_save_button_text"
+            app:dialogLayout="@layout/filename_dialog"
+            app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 
@@ -33,7 +38,7 @@
             app:dialogTitle="Choose theme"
             app:entries="@array/theme_list_array"
             app:entryValues="@array/theme_entry_array"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
 

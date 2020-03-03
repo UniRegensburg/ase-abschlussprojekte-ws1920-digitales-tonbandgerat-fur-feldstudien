@@ -1,13 +1,12 @@
 package de.ur.mi.audidroid.views
 
 import android.os.Bundle
-import android.util.Log
 import androidx.navigation.findNavController
+import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.FileNamePreference
 import de.ur.mi.audidroid.utils.ThemeHelper
 
 class PreferenceFragment : PreferenceFragmentCompat() {
@@ -16,6 +15,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
         initLabelsPreference()
+        initFileNamePreference()
         initThemePreference()
     }
 
@@ -28,6 +28,11 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             }
     }
 
+    private fun initFileNamePreference() {
+        val fileNamePreference = findPreference<EditTextPreference>(getString(R.string.filename_preference_key))!!
+        fileNamePreference.text = resources.getString(R.string.filename_preference_default_value)
+    }
+
     private fun initThemePreference() {
         val themePreference = findPreference<ListPreference>(getString(R.string.theme_preference_key))!!
         themePreference.onPreferenceChangeListener =
@@ -35,20 +40,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                 ThemeHelper.applyTheme(newValue as String)
                 true
             }
-    }
-
-    override fun onDisplayPreferenceDialog(preference: Preference?) {
-        val fileNamePreferenceDialog = preference as? FileNamePreference
-        if(fileNamePreferenceDialog != null) {
-            val dialogFragment = PreferenceDialogFragment.newInstance(fileNamePreferenceDialog.key)
-            dialogFragment.setTargetFragment(this@PreferenceFragment, 0)
-            dialogFragment.positiveResult = {
-                Log.d("Dialog Preference", "Positive Result")
-            }
-            dialogFragment.show(fragmentManager!!, null)
-        } else {
-            super.onDisplayPreferenceDialog(preference)
-        }
     }
 
 }

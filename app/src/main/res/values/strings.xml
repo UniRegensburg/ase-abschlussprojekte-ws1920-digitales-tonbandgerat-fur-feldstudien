@@ -15,6 +15,12 @@
     <string name="theme_preference_key">theme_preference</string>
     <string name="labels_preference_key">labels_preference</string>
     <string name="filename_preference_key">filename_preference</string>
+    <string name="filename_preference_dialog_message">
+        Available variables:\n
+        {date} - inserts current data\n
+        {time} - inserts current timestamp
+    </string>
+    <string name="filename_preference_default_value">rec_{date}_{time}</string>
 
     <!-- Navigation -->
     <string name="record_label">Record</string>
@@ -102,6 +108,5 @@
     <string name="audio_format_wma">WMA</string>
     <string name="audio_format_wav">WAV</string>
     <string name="audio_format_flac">FLAC</string>
-
 
 </resources>
