@@ -45,8 +45,10 @@ class EditRecordingViewModel(
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     private val uri: Uri = Uri.fromFile(File(recordingPath))
     var isPlaying = MutableLiveData<Boolean>()
+    var audioInProgress = MutableLiveData<Boolean>()
+    var enableCutInner = MutableLiveData<Boolean>()
+    var enableCutOuter = MutableLiveData<Boolean>()
     private val recordingPath = recordingPath
-    private var tempFile = ""
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
@@ -173,6 +175,9 @@ class EditRecordingViewModel(
     }
 
     fun initializeRangeBar(rangeBar: MultiSlider) {
+        audioInProgress.value = false
+        enableCutInner.value = true
+        enableCutOuter.value = false
         rangeBar.max = mediaPlayer.duration
         configureThumb1(rangeBar)
         configureThumb2(rangeBar)
@@ -184,11 +189,15 @@ class EditRecordingViewModel(
                 thumbIndex: Int,
                 value: Int
             ) {
+
                 if (thumbIndex == 0) {
                     _curPosThumb1.value = value / oneSecond
                 } else {
                     _curPosThumb2.value = value / oneSecond
                 }
+
+                enableButtons()
+
             }
         })
     }
@@ -205,7 +214,26 @@ class EditRecordingViewModel(
         _curPosThumb2.value = thumb2.value / oneSecond
     }
 
+    private fun enableButtons() {
+        if (_curPosThumb1.value!! != _curPosThumb2.value!!) {
+            enableCutInner.value = true
+            enableCutOuter.value = true
+
+            if ((_curPosThumb1.value!! != 0.toLong()) && (_curPosThumb2.value!! != mediaPlayer.duration / oneSecond)) {
+                enableCutInner.value = true
+                enableCutOuter.value = true
+            } else {
+                enableCutInner.value = true
+                enableCutOuter.value = false
+            }
+        } else {
+            enableCutInner.value = false
+            enableCutOuter.value = false
+        }
+    }
+
     fun cutInner() {
+        audioInProgress.value = true
         AudioCutInner.with(context!!)
             .setFile(File(recordingPath))
             .setStartTime(curPosThumb1String.value!!)
@@ -217,6 +245,7 @@ class EditRecordingViewModel(
     }
 
     fun cutOuter() {
+        audioInProgress.value = true
         val duration = mediaPlayer.duration / oneSecond
         AudioCutOuter.with(context!!)
             .setFile(File(recordingPath))
@@ -230,6 +259,8 @@ class EditRecordingViewModel(
     }
 
     override fun onSuccess(convertedFile: File, type: String) {
+        audioInProgress.value = false
+        Log.d("EditRecording onSuccess", "onSuccess")
         val recordingDuration = getRecordingDuration(convertedFile)
         val audio =
             EntryEntity(0, convertedFile.name, convertedFile.path, getDate(), recordingDuration!!)
@@ -237,10 +268,12 @@ class EditRecordingViewModel(
     }
 
     override fun onFailure(error: Exception) {
+        audioInProgress.value = false
         Log.d("onFailure", "" + error)
     }
 
     override fun onNotAvailable(error: Exception) {
+        audioInProgress.value = false
         Log.d("onNotAvailable", "" + error)
     }
 
@@ -258,7 +291,8 @@ class EditRecordingViewModel(
         val metaRetriever = MediaMetadataRetriever()
         metaRetriever.setDataSource(context, uri)
         return DateUtils.formatElapsedTime(
-            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() / (res.getInteger(
+            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                .toLong() / (res.getInteger(
                 R.integer.one_second
             ).toLong())
         )
