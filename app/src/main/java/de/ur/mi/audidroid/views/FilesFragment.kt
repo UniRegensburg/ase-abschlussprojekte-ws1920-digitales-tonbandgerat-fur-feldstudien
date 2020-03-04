@@ -17,6 +17,7 @@ import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
+import de.ur.mi.audidroid.utils.ConvertDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
 
@@ -42,6 +43,7 @@ class FilesFragment : Fragment() {
 
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
         filesViewModel = ViewModelProvider(this, viewModelFactory).get(FilesViewModel::class.java)
+
         binding.filesViewModel = filesViewModel
         binding.lifecycleOwner = this
 
@@ -65,6 +67,16 @@ class FilesFragment : Fragment() {
                     filesViewModel.onPlayerFragmentNavigated()
                 }
             })
+
+        filesViewModel.createAlertDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                ConvertDialog.createDialog(
+                    context = context!!,
+                    layoutId = R.layout.convert_dialog,
+                    viewModel = filesViewModel
+                )
+            }
+        })
 
         return binding.root
     }

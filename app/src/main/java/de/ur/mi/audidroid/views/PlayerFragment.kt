@@ -39,6 +39,7 @@ class PlayerFragment : Fragment() {
 
         val args = PlayerFragmentArgs.fromBundle(arguments!!)
         val viewModelFactory = PlayerViewModelFactory(dataSource, args.recordingId, application)
+
         playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
         binding.playerViewModel = playerViewModel
         binding.lifecycleOwner = this

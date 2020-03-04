@@ -12,6 +12,8 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.ShareHelper
+import de.ur.mi.audidroid.views.MainActivity
 import java.io.File
 
 /**
@@ -23,16 +25,21 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
+    private val _createAlertDialog = MutableLiveData<Boolean>()
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
     var recording: EntryEntity? = null
+    private var recordingToBeExported: EntryEntity? = null
 
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
 
     val createConfirmDialog: LiveData<Boolean>
         get() = _createConfirmDialog
+
+    val createAlertDialog: MutableLiveData<Boolean>
+        get() = _createAlertDialog
 
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
@@ -54,10 +61,19 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             when (item.itemId) {
                 R.id.action_delete_recording ->
                     delete(entryEntity)
+                R.id.action_share_recording -> {
+                    recordingToBeExported = entryEntity
+                    _createAlertDialog.value = true
+                }
             }
             true
         }
         popupMenu.show()
+    }
+
+    fun shareRecording(format: String) {
+        ShareHelper.shareAudio(recordingToBeExported!!, format, context)
+        _createAlertDialog.value = false
     }
 
     private fun delete(entryEntity: EntryEntity) {
@@ -110,5 +126,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun onPlayerFragmentNavigated() {
         _navigateToPlayerFragment.value = null
+    }
+
+    fun cancelExporting() {
+        recordingToBeExported = null
+        _createAlertDialog.value = false
     }
 }

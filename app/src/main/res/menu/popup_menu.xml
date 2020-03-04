@@ -12,4 +12,9 @@
         android:title="@string/popup_menu_option_edit"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_share_recording"
+        android:title="@string/popup_menu_option_share"
+        app:showAsAction="never" />
+
 </menu>
