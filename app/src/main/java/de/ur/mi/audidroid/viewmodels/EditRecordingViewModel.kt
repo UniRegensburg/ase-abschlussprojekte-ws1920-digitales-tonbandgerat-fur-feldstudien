@@ -7,7 +7,6 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
-import android.util.Log
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.lifecycle.AndroidViewModel
@@ -15,13 +14,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
-import de.ur.mi.audidroid.utils.AudioCutOuter
-import de.ur.mi.audidroid.utils.AudioCutInner
+import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.utils.Utils
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
 import io.apptik.widget.MultiSlider.Thumb
@@ -32,28 +29,35 @@ import java.util.*
 
 class EditRecordingViewModel(
     recordingPath: String,
-    dataSource: Repository,
+    private val dataSource: Repository,
     application: Application
 ) :
     AndroidViewModel(application), FFMpegCallback {
 
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
+    private lateinit var seekBar: SeekBar
+    private lateinit var rangeBar: MultiSlider
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    private val dataSource = dataSource
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
-    private val uri: Uri = Uri.fromFile(File(recordingPath))
     var isPlaying = MutableLiveData<Boolean>()
     var audioInProgress = MutableLiveData<Boolean>()
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
-    private val recordingPath = recordingPath
+    var tempFile = recordingPath
+
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
 
-    var totalDurationString = ""
+    private val _totalDuration = MutableLiveData<Long>()
+    private val totalDuration: LiveData<Long>
+        get() = _totalDuration
+
+    var totalDurationString = Transformations.map(totalDuration) { duration ->
+        DateUtils.formatElapsedTime(duration)
+    }
 
     private val _currentDuration = MutableLiveData<Long>()
     private val currentDuration: LiveData<Long>
@@ -81,6 +85,7 @@ class EditRecordingViewModel(
     }
 
     fun initializeMediaPlayer() {
+        val uri: Uri = Uri.fromFile(File(tempFile))
         mediaPlayer = MediaPlayer().apply {
             try {
                 reset()
@@ -103,12 +108,11 @@ class EditRecordingViewModel(
     }
 
     fun initializeSeekBar(seekBar: SeekBar) {
+        this.seekBar = seekBar
         seekBar.max = mediaPlayer.duration
         _currentDuration.value =
             mediaPlayer.currentPosition / oneSecond
-        totalDurationString =
-            DateUtils.formatElapsedTime(mediaPlayer.duration / oneSecond)
-
+        _totalDuration.value = mediaPlayer.duration / oneSecond
         seekBar.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
@@ -175,6 +179,7 @@ class EditRecordingViewModel(
     }
 
     fun initializeRangeBar(rangeBar: MultiSlider) {
+        this.rangeBar = rangeBar
         audioInProgress.value = false
         enableCutInner.value = true
         enableCutOuter.value = false
@@ -234,51 +239,61 @@ class EditRecordingViewModel(
 
     fun cutInner() {
         audioInProgress.value = true
-        AudioCutInner.with(context!!)
-            .setFile(File(recordingPath))
+        AudioEditor.with(context!!)
+            .setFile(File(tempFile))
             .setStartTime(curPosThumb1String.value!!)
             .setEndTime(curPosThumb2String.value!!)
-            .setOutputPath(Utils.outputPath + "audiotheresa")
+            .setOutputPath(getOutputPath())
             .setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
             .setCallback(this)
-            .trim()
+            .cutInner()
+    }
+
+    private fun getOutputPath(): String {
+        return context.filesDir.absolutePath
     }
 
     fun cutOuter() {
         audioInProgress.value = true
         val duration = mediaPlayer.duration / oneSecond
-        AudioCutOuter.with(context!!)
-            .setFile(File(recordingPath))
+        AudioEditor.with(context!!)
+            .setFile(File(tempFile))
             .setStartTime(curPosThumb1.value.toString())
             .setEndTime(curPosThumb2.value.toString())
             .setDuration(duration.toString())
-            .setOutputPath(Utils.outputPath + "audiotheresa")
+            .setOutputPath(getOutputPath())
             .setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
             .setCallback(this)
-            .trim()
+            .cutOuter()
     }
 
+    // TODO convertedFile löschen
     override fun onSuccess(convertedFile: File, type: String) {
         audioInProgress.value = false
-        Log.d("EditRecording onSuccess", "onSuccess")
-        val recordingDuration = getRecordingDuration(convertedFile)
-        val audio =
-            EntryEntity(0, convertedFile.name, convertedFile.path, getDate(), recordingDuration!!)
-        saveRecordInDB(audio)
+        tempFile = convertedFile.path
+        initializeMediaPlayer()
+        initializeSeekBar(seekBar)
+        initializeRangeBar(rangeBar)
+        initializeFrameLayout(frameLayout)
     }
 
     override fun onFailure(error: Exception) {
         audioInProgress.value = false
-        Log.d("onFailure", "" + error)
     }
 
     override fun onNotAvailable(error: Exception) {
         audioInProgress.value = false
-        Log.d("onNotAvailable", "" + error)
     }
 
     override fun onFinish() {
+        audioInProgress.value = false
+    }
 
+    fun saveRecording() {
+        val recordingDuration = getRecordingDuration(File(tempFile))
+        val audio =
+            EntryEntity(0, File(tempFile).name, File(tempFile).path, getDate(), recordingDuration!!)
+        saveRecordInDB(audio)
     }
 
     private fun saveRecordInDB(audio: EntryEntity) {

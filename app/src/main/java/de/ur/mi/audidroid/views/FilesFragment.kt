@@ -51,7 +51,7 @@ class FilesFragment : Fragment() {
         binding.setLifecycleOwner(this)
 
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
-        filesViewModel.showSnackbarEvent.observe(this, Observer {
+        filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 Snackbar.make(view!!, R.string.recording_deleted, Snackbar.LENGTH_SHORT).show()
                 filesViewModel.doneShowingSnackbar()
@@ -59,15 +59,17 @@ class FilesFragment : Fragment() {
         })
 
         // Observer on the state variable for navigating when a list-item is clicked.
-        filesViewModel.navigateToPlayerFragment.observe(this, Observer { recordingPath ->
-            recordingPath?.let {
-                this.findNavController().navigate(
-                    FilesFragmentDirections
-                        .actionFilesToPlayer(recordingPath)
-                )
-                filesViewModel.onPlayerFragmentNavigated()
-            }
-        })
+        filesViewModel.navigateToPlayerFragment.observe(
+            viewLifecycleOwner,
+            Observer { recordingPath ->
+                recordingPath?.let {
+                    this.findNavController().navigate(
+                        FilesFragmentDirections
+                            .actionFilesToPlayer(recordingPath)
+                    )
+                    filesViewModel.onPlayerFragmentNavigated()
+                }
+            })
 
         return binding.root
     }

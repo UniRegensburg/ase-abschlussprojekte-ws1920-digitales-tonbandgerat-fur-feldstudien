@@ -59,14 +59,11 @@ class EditRecordingFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_save_edited_rec -> {
-                saveRecording()
+                editRecordingViewModel.saveRecording()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun saveRecording() {
     }
 
     /**
