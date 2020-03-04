@@ -14,6 +14,8 @@
     <!-- Preferences -->
     <string name="theme_preference_key">theme_preference</string>
     <string name="labels_preference_key">labels_preference</string>
+    <string name="storage_preference_key">storage_preference</string>
+    <string name="storage_location_summary">internal</string>
 
     <!-- Navigation -->
     <string name="record_label">Record</string>
@@ -26,7 +28,7 @@
     <string name="play_button">Play recording</string>
     <string name="pause_button">Pause recording</string>
     <string name="error_message_initialization_failed">Initialization of MediaPlayer failed</string>
-    <string name="error_message_path">file moved or deleted</string>
+    <string name="error_message_path">File moved or deleted</string>
 
     <!-- FilesFragment -->
     <string name="recording_file_name">Recording</string>
@@ -42,7 +44,7 @@
     <string name="record_pause_button">Record and Pause Button</string>
     <string name="mark_button">Mark</string>
     <string name="suffix_temp_file">/temp.aac</string>
-    <string name="suffix_audio_file">.acc</string>
+    <string name="suffix_audio_file">.aac</string>
     <string name="standard_name_recording">Rec</string>
 
     <!-- LabelsFragment -->
@@ -82,6 +84,7 @@
     <string name="dialog_cancel_button_text">Cancel</string>
     <string name="dialog_invalid_name">You can just use letters, numbers and the symbols _ and - for the recording name.</string>
     <string name="dialog_already_exist">There is already a recording at this location with your entered name. Change the name or the path.</string>
+    <string name="dialog_name_length">The name of the recording should be between one and thirty characters long.</string>
 
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
@@ -93,5 +96,7 @@
     <string name="delete">delete</string>
     <string name="sad_face">Sad face</string>
 
-
+    <!--Storage Location -->
+    <string name="default_storage_location">internal</string>
+    <string name="error_storage_location">Choose an other location</string>
 </resources>

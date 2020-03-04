@@ -3,6 +3,7 @@ package de.ur.mi.audidroid.utils
 import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
+import android.net.Uri
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
@@ -31,7 +32,7 @@ object Dialog {
     private lateinit var pathTextView: TextView
     private lateinit var context: Context
     private var selectedLabels = ArrayList<String>()
-    private var selectedPath: String? = null
+    private var selectedPath: Uri? = null
     private lateinit var fragment: RecordFragment
     private lateinit var dataSource: Repository
     private lateinit var labelEntities: List<LabelEntity>
@@ -73,11 +74,7 @@ object Dialog {
 
     private fun initializeDialog() {
         pathTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_textview_path)!!
-        val storedPath = getStoragePreference()
-        if (storedPath != null) {
-            pathTextView.text = storedPath
-            selectedPath = storedPath
-        }
+        selectedPath = getStoragePreference()
         dialog.findViewById<ImageButton>(R.id.dialog_save_recording_path_button)!!.setOnClickListener {
             pathButtonClicked()
         }
@@ -105,7 +102,6 @@ object Dialog {
             getLabelIdFromName()
         )
         selectedLabels.clear()
-        selectedPath = null
     }
 
     private fun createPermissionDialog(builder: MaterialAlertDialogBuilder, textId: Int) {
@@ -120,22 +116,42 @@ object Dialog {
         }
     }
 
-    private fun getStoragePreference(): String? {
-        /*private fun getStoragePreference(): Uri{
-            val preferences = context!!.getSharedPreferences(res.getString(R.string.storage_preference_key), Context.MODE_PRIVATE)
-            return Uri.parse(preferences.getString(res.getString(R.string.storage_preference_key),"default"))
+    private fun getStoragePreference(): Uri? {
+        val preferences = context.getSharedPreferences(
+            context.getString(R.string.storage_preference_key),
+            Context.MODE_PRIVATE
+        )
+        val storedPathString = preferences.getString(
+            context.getString(R.string.storage_preference_key),
+            context.getString(R.string.default_storage_location)
+        )!!
+        return when (storedPathString == context.getString(R.string.default_storage_location)) {
+            true -> {
+                updateTextView(storedPathString)
+                null
+            }
+            false -> {
+                updateTextView(getNameOfUriPath(Uri.parse(storedPathString)))
+                Uri.parse(storedPathString)
+            }
         }
-
-        private fun initializeTmpFile(): FileDescriptor{
-            val preferredDir = DocumentFile.fromTreeUri(context!!, getStoragePreference())!!
-            tmpFile = preferredDir.createFile("acc",res.getString(R.string.suffix_temp_file))!!
-            return context.contentResolver.openFileDescriptor(tmpFile.uri, "rwt")!!.fileDescriptor
-        }*/
-        return null
     }
 
     private fun pathButtonClicked() {
-        //TODO: Add folder-clicking
+        Pathfinder.openPathDialog(null, context)
+    }
+
+    fun resultPathfinder(path: Uri) {
+        selectedPath = path
+        updateTextView(getNameOfUriPath(path))
+    }
+
+    private fun getNameOfUriPath(uri: Uri): String {
+        return uri.pathSegments.last().split(":")[1]
+    }
+
+    private fun updateTextView(path: String) {
+        pathTextView.text = path
     }
 
     private fun getLabels(list: List<LabelEntity>) {

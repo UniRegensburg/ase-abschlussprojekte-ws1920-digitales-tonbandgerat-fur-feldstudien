@@ -4,10 +4,12 @@ import android.app.Application
 import android.content.res.Resources
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.SystemClock
 import android.text.format.DateUtils
 import android.widget.Chronometer
 import android.widget.FrameLayout
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
@@ -117,7 +119,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     fun cancelRecord() {
-        if (recorderInitialized) {
+        if (recorderInitialized && createDialog.value == false) {
             showSnackBar(R.string.record_removed)
             File(tempFile).delete()
             endRecordSession()
@@ -173,7 +175,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     fun getNewFileFromUserInput(
         nameInput: String?,
-        pathInput: String?,
+        pathInput: Uri?,
         labels: ArrayList<Int>?
     ) {
         _createDialog.value = false
@@ -181,29 +183,53 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             "%s_%s",
             res.getString(R.string.standard_name_recording),
             android.text.format.DateFormat.format(
-                "yyyy-MM-dd_hh-mm",
+                "yyyy-MM-dd_HH-mm",
                 Calendar.getInstance(Locale.getDefault())
             )
         )
         if (!validNameInput(name)) {
-            errorMessage = res.getString(R.string.dialog_invalid_name)
-            _createDialog.value = true
+            errorDialog(res.getString(R.string.dialog_invalid_name))
+            return
+        }
+        if (name.length > res.getInteger(R.integer.max_name_length)) {
+            errorDialog(res.getString(R.string.dialog_name_length))
             return
         }
 
-        val path = java.lang.String.format(
-            "%s/$name%s",
-            (pathInput ?: context.filesDir.absolutePath),
-            res.getString(R.string.suffix_audio_file)
-        )
-        val newFile = File(path)
-        if (newFile.exists()) {
-            errorMessage = res.getString(R.string.dialog_already_exist)
-            _createDialog.value = true
-            return
+        val path: String = if (pathInput == null) {
+            val newFile = File(
+                java.lang.String.format(
+                    "%s/$name%s",
+                    context.filesDir.absolutePath,
+                    res.getString(R.string.suffix_audio_file)
+                )
+            )
+            if (newFile.exists()) {
+                errorDialog(res.getString(R.string.dialog_already_exist))
+                return
+            }
+            endRecordSession()
+            File(tempFile).copyTo(newFile)
+            newFile.path
+        } else {
+            val preferredDir = DocumentFile.fromTreeUri(context, pathInput)!!
+            if (!preferredDir.isDirectory) {
+                errorDialog(res.getString(R.string.error_message_path))
+                return
+            }
+            val filesAtLocation = preferredDir.listFiles()
+            for (files in filesAtLocation) {
+                if (files.name == name + res.getString(R.string.suffix_audio_file)) {
+                    errorDialog(res.getString(R.string.dialog_already_exist))
+                    return
+                }
+            }
+            val newExternalFile =
+                preferredDir.createFile("aac", name + res.getString(R.string.suffix_audio_file))!!
+            endRecordSession()
+            copyToExternalFile(File(tempFile), newExternalFile)
+            newExternalFile.uri.path!!
         }
-        endRecordSession()
-        File(tempFile).copyTo(newFile)
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
         val audio =
             EntryEntity(
@@ -221,12 +247,25 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
         val uid = dataSource.insert(audio).toInt()
-        if(labels!=null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid,labels))
+        if (labels != null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
         showSnackBar(R.string.record_saved)
     }
 
     private fun validNameInput(name: String): Boolean {
         return Pattern.compile("^[a-zA-Z0-9_-]+$").matcher(name).matches()
+    }
+
+    private fun errorDialog(mes: String) {
+        errorMessage = mes
+        _createDialog.value = true
+    }
+
+    private fun copyToExternalFile(src: File, dst: DocumentFile) {
+        val inputStream = src.inputStream()
+        val outputStream = context.contentResolver.openOutputStream(dst.uri)
+        inputStream.copyTo(outputStream!!)
+        inputStream.close()
+        outputStream.close()
     }
 
     private fun getRecordingDuration(): String? {

@@ -18,6 +18,7 @@ import de.ur.mi.audidroid.R
 import java.io.File
 import java.io.IOException
 
+
 /**
  * ViewModel for PlayerFragment.
  * @author: Theresa Strohmeier
@@ -32,7 +33,7 @@ class PlayerViewModel(
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
-    private val uri: Uri = Uri.fromFile(File(recordingPath))
+    private val path = recordingPath
     var isPlaying = MutableLiveData<Boolean>()
 
     private lateinit var runnable: Runnable
@@ -58,7 +59,11 @@ class PlayerViewModel(
                         .setContentType(CONTENT_TYPE_SPEECH)
                         .build()
                 )
-                setDataSource(context, uri)
+                if (!path.startsWith("/data")) {
+                    //TODO: readExternalFile
+                } else {
+                    setDataSource(context, Uri.fromFile(File(path)))
+                }
                 setOnCompletionListener {
                     onStopPlayer()
                 }
