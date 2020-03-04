@@ -12,7 +12,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import androidx.preference.PreferenceManager
 import cafe.adriel.androidaudioconverter.AndroidAudioConverter
-import cafe.adriel.androidaudioconverter.callback.IConvertCallback
 import cafe.adriel.androidaudioconverter.callback.ILoadCallback
 import com.google.android.material.navigation.NavigationView
 import de.ur.mi.audidroid.R
@@ -50,7 +49,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         initTheme()
         checkPermissions()
-        initAudioConverter()
     }
 
     /** Applies the app theme selected by the user.
@@ -87,19 +85,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                 }
             }
         }
-    }
-
-    private fun initAudioConverter() {
-        AndroidAudioConverter.load(this@MainActivity, object: ILoadCallback {
-            override fun onSuccess() {
-                Log.d("Audio Converter", "AndroidAudioConverter loaded successfully.")
-            }
-
-            override fun onFailure(error: Exception?) {
-                Log.e("Audio Converter", "FFMPEG not supported on this device.")
-            }
-
-        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

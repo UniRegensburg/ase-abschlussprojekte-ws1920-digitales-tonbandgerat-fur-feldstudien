@@ -35,9 +35,10 @@ object ShareHelper {
             }
         }
 
-        AndroidAudioConverter.with(context)
-            .setFile(file)
-            .setFormat(when (convertFormat) {
+        val converter = AudioConverter()
+        with(converter) {
+            setFile(file)
+            setFormat(when (convertFormat) {
                 context.resources.getString(R.string.audio_format_mp3) -> AudioFormat.MP3
                 context.resources.getString(R.string.audio_format_aac) -> AudioFormat.AAC
                 context.resources.getString(R.string.audio_format_m4a) -> AudioFormat.M4A
@@ -46,8 +47,9 @@ object ShareHelper {
                 context.resources.getString(R.string.audio_format_flac) -> AudioFormat.FLAC
                 else -> AudioFormat.MP3
             })
-            .setCallback(cb)
-            .convert()
+            setCallback(cb)
+            convert()
+        }
     }
 
     fun getUriFromFile(file: File, context: Context): Uri {

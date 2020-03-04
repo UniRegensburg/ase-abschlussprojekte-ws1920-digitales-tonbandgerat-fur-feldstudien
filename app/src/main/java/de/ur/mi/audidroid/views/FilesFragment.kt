@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
@@ -18,7 +17,6 @@ import de.ur.mi.audidroid.adapter.Adapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ConvertDialog
-import de.ur.mi.audidroid.utils.LabelsDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
 /**
@@ -44,11 +42,9 @@ class FilesFragment : Fragment() {
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
 
         val filesViewModel =
-            ViewModelProviders.of(this, viewModelFactory).get(FilesViewModel::class.java)
-
+            ViewModelProvider(this, viewModelFactory).get(FilesViewModel::class.java)
         binding.filesViewModel = filesViewModel
-
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
 
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
@@ -59,15 +55,17 @@ class FilesFragment : Fragment() {
         })
 
         // Observer on the state variable for navigating when a list-item is clicked.
-        filesViewModel.navigateToPlayerFragment.observe(viewLifecycleOwner, Observer { recordingPath ->
-            recordingPath?.let {
-                this.findNavController().navigate(
-                    FilesFragmentDirections
-                        .actionFilesToPlayer(recordingPath)
-                )
-                filesViewModel.onPlayerFragmentNavigated()
-            }
-        })
+        filesViewModel.navigateToPlayerFragment.observe(
+            viewLifecycleOwner,
+            Observer { recordingPath ->
+                recordingPath?.let {
+                    this.findNavController().navigate(
+                        FilesFragmentDirections
+                            .actionFilesToPlayer(recordingPath)
+                    )
+                    filesViewModel.onPlayerFragmentNavigated()
+                }
+            })
 
         filesViewModel.createAlertDialog.observe(viewLifecycleOwner, Observer {
             if (it) {

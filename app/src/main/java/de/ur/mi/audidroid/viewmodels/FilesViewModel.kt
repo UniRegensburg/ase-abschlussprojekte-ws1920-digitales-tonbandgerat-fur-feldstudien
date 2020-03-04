@@ -64,6 +64,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun shareRecording(format: String) {
         ShareHelper.shareAudio(recordingToBeExported!!, format, context)
+        _createAlertDialog.value = false
     }
 
     private fun delete(entryEntity: EntryEntity) {
