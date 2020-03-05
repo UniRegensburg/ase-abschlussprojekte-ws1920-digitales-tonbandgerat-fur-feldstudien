@@ -1,5 +1,6 @@
 package de.ur.mi.audidroid.views
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.navigation.findNavController
 import androidx.preference.EditTextPreference
@@ -30,7 +31,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
 
     private fun initFileNamePreference() {
         val fileNamePreference = findPreference<EditTextPreference>(getString(R.string.filename_preference_key))!!
-        fileNamePreference.text = resources.getString(R.string.filename_preference_default_value)
+        fileNamePreference.text = fileNamePreference.text
     }
 
     private fun initThemePreference() {
