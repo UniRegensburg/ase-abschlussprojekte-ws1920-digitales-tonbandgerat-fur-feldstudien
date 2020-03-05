@@ -79,6 +79,11 @@ object ShareHelper {
         chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
         context.startActivity(chooserIntent)
+        deleteConvertedFile(file)
+    }
+
+    private fun deleteConvertedFile(fileToBeDeleted: File): Boolean {
+        return fileToBeDeleted.delete()
     }
 
 }
