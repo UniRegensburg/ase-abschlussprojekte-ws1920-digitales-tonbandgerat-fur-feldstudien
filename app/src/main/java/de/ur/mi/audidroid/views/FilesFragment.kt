@@ -18,6 +18,7 @@ import de.ur.mi.audidroid.adapter.Adapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.ConvertDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
 /**
@@ -47,8 +48,7 @@ class FilesFragment : Fragment() {
             ViewModelProvider(this, viewModelFactory).get(FilesViewModel::class.java)
 
         binding.filesViewModel = filesViewModel
-
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
 
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
@@ -71,6 +71,16 @@ class FilesFragment : Fragment() {
                 }
             })
 
+        filesViewModel.createAlertDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                ConvertDialog.createDialog(
+                    context = context!!,
+                    layoutId = R.layout.convert_dialog,
+                    viewModel = filesViewModel
+                )
+            }
+        })
+
         return binding.root
     }
 
@@ -84,6 +94,10 @@ class FilesFragment : Fragment() {
                     filesViewModel.delete(entryEntity)
                 R.id.action_edit_recording ->
                     navigateToEditFragment(entryEntity)
+                R.id.action_share_recording -> {
+                    filesViewModel.recordingToBeExported = entryEntity
+                    filesViewModel._createAlertDialog.value = true
+                }
             }
             true
         }

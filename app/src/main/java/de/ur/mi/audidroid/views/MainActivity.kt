@@ -14,11 +14,14 @@ import androidx.preference.PreferenceManager
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
 import com.github.hiteshsondhi88.libffmpeg.FFmpegLoadBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException
+import cafe.adriel.androidaudioconverter.AndroidAudioConverter
+import cafe.adriel.androidaudioconverter.callback.ILoadCallback
 import com.google.android.material.navigation.NavigationView
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.utils.PermissionHelper
 import de.ur.mi.audidroid.utils.ThemeHelper
 import kotlinx.android.synthetic.main.app_bar_main.*
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 

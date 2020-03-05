@@ -2,6 +2,7 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -43,7 +44,7 @@ class EditLabelsFragment : Fragment() {
         binding.editLabelsViewModel = viewModel
         binding.lifecycleOwner = this
 
-        viewModel.showSnackbarEvent.observe(this, Observer {
+        viewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it) {
                 Snackbar.make(view!!, R.string.label_deleted, Snackbar.LENGTH_SHORT).show()
                 viewModel.doneShowingSnackbar()
@@ -57,7 +58,7 @@ class EditLabelsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         setupAdapter()
         viewModel.initializeLayout(edit_labels_frame_layout)
-        viewModel.createAlertDialog.observe(this, Observer {
+        viewModel.createAlertDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 LabelsDialog.createDialog(
                     context = context!!,
@@ -69,7 +70,7 @@ class EditLabelsFragment : Fragment() {
                 )
             }
         })
-        viewModel.createConfirmDialog.observe(this, Observer {
+        viewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 LabelsDialog.createDialog(
                     context = context!!,

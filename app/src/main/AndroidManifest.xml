@@ -16,6 +16,15 @@
         android:supportsRtl="true"
         android:theme="@style/AudidroidTheme.DayNight"
         tools:ignore="GoogleAppIndexingWarning">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="de.ur.mi.audidroid.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <activity
             android:name=".views.SplashActivity"
             android:theme="@style/AudidroidTheme.Splash">

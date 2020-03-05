@@ -45,8 +45,7 @@ class PlayerFragment : Fragment() {
             ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
         binding.playerViewModel = playerViewModel
-
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
 
         return binding.root
     }

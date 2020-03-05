@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.lifecycle.*
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.ShareHelper
+import de.ur.mi.audidroid.views.MainActivity
 import java.io.File
 
 /**
@@ -14,9 +16,16 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     AndroidViewModel(application) {
 
     private val repository = dataSource
+    private val context = getApplication<Application>().applicationContext
+    val _createAlertDialog = MutableLiveData<Boolean>()
+
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
+    var recordingToBeExported: EntryEntity? = null
 
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
+
+    val createAlertDialog: MutableLiveData<Boolean>
+        get() = _createAlertDialog
 
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
@@ -38,6 +47,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
+    fun shareRecording(format: String) {
+        ShareHelper.shareAudio(recordingToBeExported!!, format, context)
+        _createAlertDialog.value = false
+    }
+
     // Navigation to the PlayerFragment
     private val _navigateToPlayerFragment = MutableLiveData<String>()
     val navigateToPlayerFragment
@@ -49,5 +63,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun onPlayerFragmentNavigated() {
         _navigateToPlayerFragment.value = null
+    }
+
+    fun cancelExporting() {
+        recordingToBeExported = null
+        _createAlertDialog.value = false
     }
 }
