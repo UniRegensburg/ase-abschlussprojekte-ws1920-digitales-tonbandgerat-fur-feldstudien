@@ -36,7 +36,15 @@ object Pathfinder {
         )
     }
 
-    fun getPath(context: Context, uri: Uri): String? {
+    fun getRealPath(context: Context, treePath: Uri): String?{
+        val docUri = DocumentsContract.buildDocumentUriUsingTree(
+            treePath,
+            DocumentsContract.getTreeDocumentId(treePath)
+        )
+        return getPath(context, docUri)
+    }
+
+    private fun getPath(context: Context, uri: Uri): String? {
         if (DocumentsContract.isDocumentUri(context, uri)) {
             if (isExternalStorageDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)

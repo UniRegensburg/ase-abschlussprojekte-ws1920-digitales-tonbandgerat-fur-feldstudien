@@ -1,6 +1,5 @@
 package de.ur.mi.audidroid.views
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -9,11 +8,9 @@ import androidx.navigation.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.utils.Pathfinder
 import de.ur.mi.audidroid.utils.ThemeHelper
-import kotlinx.android.synthetic.main.content_main.*
 
 class PreferenceFragment : PreferenceFragmentCompat() {
 
@@ -47,25 +44,47 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             }
     }
 
-   private fun initStoragePreference() {
+    private fun initStoragePreference() {
         storagePreference =
             findPreference<Preference>(getString(R.string.storage_preference_key))!!
         storagePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-           Pathfinder.openPathDialog(storagePreference, context!!)
+            Pathfinder.openPathDialog(storagePreference, context!!)
             true
         }
+        storagePreference.summary = getSummary()
     }
 
-    fun setStoragePreferenceSummary(preference: Preference, context: Context, data: Intent?) {
-        val pref = context.getSharedPreferences(
+    fun resultPathfinder(preference: Preference, context: Context, data: Intent?) {
+        val preferences = context.getSharedPreferences(
             context.resources.getString(R.string.storage_preference_key),
             Context.MODE_PRIVATE
         )
-        with(pref.edit()) {
-            putString(context.resources.getString(R.string.storage_preference_key), data!!.dataString)
+        val path = data!!.dataString!!
+        val realPath =
+            when (path == context.resources.getString(R.string.default_storage_location)) {
+                true -> path
+                false -> Pathfinder.getRealPath(context, Uri.parse(path))
+            }
+        preference.summary = realPath!!
+        with(preferences.edit()) {
+            putString(context.resources.getString(R.string.storage_preference_key), realPath)
             commit()
         }
-        val summary = data!!.data!!.pathSegments.last().split(":")[1]
-        preference.summary = summary
+    }
+
+    private fun getSummary(): String {
+        val preferences = context!!.getSharedPreferences(
+            getString(R.string.storage_preference_key),
+            Context.MODE_PRIVATE
+        )
+        val storedPathString = preferences.getString(
+            getString(R.string.storage_preference_key),
+            getString(R.string.default_storage_location)
+        )!!
+        with(preferences.edit()) {
+            putString(getString(R.string.storage_preference_key), storedPathString)
+            commit()
+        }
+        return storedPathString
     }
 }

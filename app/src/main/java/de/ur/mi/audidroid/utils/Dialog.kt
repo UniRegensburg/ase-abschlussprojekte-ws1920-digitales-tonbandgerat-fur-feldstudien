@@ -126,17 +126,10 @@ object Dialog {
             context.getString(R.string.storage_preference_key),
             context.getString(R.string.default_storage_location)
         )!!
+        updateTextView(storedPathString)
         return when (storedPathString == context.getString(R.string.default_storage_location)) {
-            true -> {
-                updateTextView(storedPathString)
-                null
-            }
-            false -> {
-                //updateTextView(getNameOfUriPath(Uri.parse(storedPathString)))
-                updateTextView(storedPathString)
-                storedPathString
-                //Uri.parse(storedPathString)
-            }
+            true -> null
+            false -> storedPathString
         }
     }
 
@@ -145,11 +138,7 @@ object Dialog {
     }
 
     fun resultPathfinder(treePath: Uri) {
-        val docUri = DocumentsContract.buildDocumentUriUsingTree(
-            treePath,
-            DocumentsContract.getTreeDocumentId(treePath)
-        )
-        val realPath = Pathfinder.getPath(context, docUri)!!
+        val realPath = Pathfinder.getRealPath(context, treePath)!!
         selectedPath = realPath
         //updateTextView(getNameOfUriPath(realPath))
         updateTextView(realPath)

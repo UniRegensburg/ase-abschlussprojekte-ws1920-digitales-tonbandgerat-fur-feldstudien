@@ -195,42 +195,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             errorDialog(res.getString(R.string.dialog_name_length))
             return
         }
-
-        /*val path: String = if (pathInput == null) {
-            val newFile = File(
-                java.lang.String.format(
-                    "%s/$name%s",
-                    context.filesDir.absolutePath,
-                    res.getString(R.string.suffix_audio_file)
-                )
-            )
-            if (newFile.exists()) {
-                errorDialog(res.getString(R.string.dialog_already_exist))
-                return
-            }
-            endRecordSession()
-            File(tempFile).copyTo(newFile)
-            newFile.path
-        } else {
-            val preferredDir = DocumentFile.fromTreeUri(context, pathInput)!!
-            if (!preferredDir.isDirectory) {
-                errorDialog(res.getString(R.string.error_message_path))
-                return
-            }
-            val filesAtLocation = preferredDir.listFiles()
-            for (files in filesAtLocation) {
-                if (files.name == name + res.getString(R.string.suffix_audio_file)) {
-                    errorDialog(res.getString(R.string.dialog_already_exist))
-                    return
-                }
-            }
-            val newExternalFile =
-                preferredDir.createFile("aac", name + res.getString(R.string.suffix_audio_file))!!
-            endRecordSession()
-            copyToExternalFile(File(tempFile), newExternalFile)
-            newExternalFile.uri.path!!
-        }*/
-
+        
         val path = java.lang.String.format(
             "%s/$name%s",
             (pathInput ?: context.filesDir.absolutePath),
@@ -273,14 +238,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private fun errorDialog(mes: String) {
         errorMessage = mes
         _createDialog.value = true
-    }
-
-    private fun copyToExternalFile(src: File, dst: DocumentFile) {
-        val inputStream = src.inputStream()
-        val outputStream = context.contentResolver.openOutputStream(dst.uri)
-        inputStream.copyTo(outputStream!!)
-        inputStream.close()
-        outputStream.close()
     }
 
     private fun getRecordingDuration(): String? {

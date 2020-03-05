@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             resultCode == Activity.RESULT_OK
         ) {
             if (Pathfinder.preference != null) {
-                PreferenceFragment().setStoragePreferenceSummary(
+                PreferenceFragment().resultPathfinder(
                     Pathfinder.preference!!,
                     applicationContext,
                     data
