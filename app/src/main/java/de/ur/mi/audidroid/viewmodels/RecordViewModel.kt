@@ -175,7 +175,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     fun getNewFileFromUserInput(
         nameInput: String?,
-        pathInput: Uri?,
+        pathInput: String?,
         labels: ArrayList<Int>?
     ) {
         _createDialog.value = false
@@ -196,7 +196,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             return
         }
 
-        val path: String = if (pathInput == null) {
+        /*val path: String = if (pathInput == null) {
             val newFile = File(
                 java.lang.String.format(
                     "%s/$name%s",
@@ -229,7 +229,22 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             endRecordSession()
             copyToExternalFile(File(tempFile), newExternalFile)
             newExternalFile.uri.path!!
+        }*/
+
+        val path = java.lang.String.format(
+            "%s/$name%s",
+            (pathInput ?: context.filesDir.absolutePath),
+            res.getString(R.string.suffix_audio_file)
+        )
+        val newFile = File(path)
+        if (newFile.exists()) {
+            errorMessage = res.getString(R.string.dialog_already_exist)
+            _createDialog.value = true
+            return
         }
+        endRecordSession()
+        File(tempFile).copyTo(newFile)
+
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
         val audio =
             EntryEntity(

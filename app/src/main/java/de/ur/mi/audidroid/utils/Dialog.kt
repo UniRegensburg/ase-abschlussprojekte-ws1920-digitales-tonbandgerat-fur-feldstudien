@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
 import android.net.Uri
+import android.provider.DocumentsContract
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
@@ -32,7 +33,7 @@ object Dialog {
     private lateinit var pathTextView: TextView
     private lateinit var context: Context
     private var selectedLabels = ArrayList<String>()
-    private var selectedPath: Uri? = null
+    private var selectedPath: String? = null
     private lateinit var fragment: RecordFragment
     private lateinit var dataSource: Repository
     private lateinit var labelEntities: List<LabelEntity>
@@ -116,7 +117,7 @@ object Dialog {
         }
     }
 
-    private fun getStoragePreference(): Uri? {
+    private fun getStoragePreference(): String? {
         val preferences = context.getSharedPreferences(
             context.getString(R.string.storage_preference_key),
             Context.MODE_PRIVATE
@@ -131,8 +132,10 @@ object Dialog {
                 null
             }
             false -> {
-                updateTextView(getNameOfUriPath(Uri.parse(storedPathString)))
-                Uri.parse(storedPathString)
+                //updateTextView(getNameOfUriPath(Uri.parse(storedPathString)))
+                updateTextView(storedPathString)
+                storedPathString
+                //Uri.parse(storedPathString)
             }
         }
     }
@@ -141,14 +144,20 @@ object Dialog {
         Pathfinder.openPathDialog(null, context)
     }
 
-    fun resultPathfinder(path: Uri) {
-        selectedPath = path
-        updateTextView(getNameOfUriPath(path))
+    fun resultPathfinder(treePath: Uri) {
+        val docUri = DocumentsContract.buildDocumentUriUsingTree(
+            treePath,
+            DocumentsContract.getTreeDocumentId(treePath)
+        )
+        val realPath = Pathfinder.getPath(context, docUri)!!
+        selectedPath = realPath
+        //updateTextView(getNameOfUriPath(realPath))
+        updateTextView(realPath)
     }
 
-    private fun getNameOfUriPath(uri: Uri): String {
-        return uri.pathSegments.last().split(":")[1]
-    }
+    /* private fun getNameOfUriPath(uri: Uri): String {
+         return uri.pathSegments.last().split(":")[1]
+     }*/
 
     private fun updateTextView(path: String) {
         pathTextView.text = path

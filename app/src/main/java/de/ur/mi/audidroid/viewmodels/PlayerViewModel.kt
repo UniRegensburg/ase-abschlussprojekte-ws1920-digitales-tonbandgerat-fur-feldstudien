@@ -33,7 +33,7 @@ class PlayerViewModel(
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
-    private val path = recordingPath
+    private val uri: Uri = Uri.fromFile(File(recordingPath))
     var isPlaying = MutableLiveData<Boolean>()
 
     private lateinit var runnable: Runnable
@@ -59,11 +59,7 @@ class PlayerViewModel(
                         .setContentType(CONTENT_TYPE_SPEECH)
                         .build()
                 )
-                if (!path.startsWith("/data")) {
-                    //TODO: readExternalFile
-                } else {
-                    setDataSource(context, Uri.fromFile(File(path)))
-                }
+                setDataSource(context, uri)
                 setOnCompletionListener {
                     onStopPlayer()
                 }
