@@ -239,13 +239,14 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             val mark = MarkerTimeRelation(0, recordingId, it.first, it.second)
             dataSource.insertMark(mark)
         }
+        markList = mutableListOf()
     }
 
     fun makeMark(view : View) {
         val btnId = view.resources.getResourceName(view.id)
         val markEntry = Pair(btnId, timer.text.toString())
         markList.add(markEntry)
-        showSnackBar(R.string.mark_made)
+        showSnackBarShort(R.string.mark_made)
     }
 
     /**
@@ -260,6 +261,10 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     /** Sends a snackbar for user information with the given [text] */
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun showSnackBarShort(text: Int) {
+        Snackbar.make(frameLayout, text, Snackbar.LENGTH_SHORT).show()
     }
 
     /** Returns the last stopped time as an Integer value */

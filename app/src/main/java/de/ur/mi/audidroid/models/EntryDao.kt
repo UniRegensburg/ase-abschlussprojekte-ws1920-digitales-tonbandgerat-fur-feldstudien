@@ -24,10 +24,10 @@ interface EntryDao {
     fun getRecordingByName(name: String): EntryEntity
 
     @Insert(onConflict = REPLACE)
-    fun insert(entryEntity: EntryEntity):Long
+    suspend fun insert(entryEntity: EntryEntity): Long
 
     @Delete
-    fun delete(entryEntity: EntryEntity)
+    suspend fun delete(entryEntity: EntryEntity)
 
     @Query("DELETE FROM recordingsTable")
     fun clearTable()

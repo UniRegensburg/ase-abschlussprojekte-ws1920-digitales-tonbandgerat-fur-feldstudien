@@ -41,14 +41,8 @@ class Repository(application: Application): CoroutineScope {
     }
 
     fun delete(entryEntity: EntryEntity) {
-        DeleteAsyncTask(entryDao).execute(entryEntity)
-    }
-
-    private class DeleteAsyncTask(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Unit>() {
-
-        override fun doInBackground(vararg params: EntryEntity?) {
-            entryDao.delete(params[0]!!)
+        CoroutineScope(coroutineContext).launch {
+            entryDao.delete(entryEntity)
         }
     }
 
@@ -58,28 +52,20 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
-    fun insert(entryEntity: EntryEntity): Long{
-        return InsertAsyncTask(entryDao).execute(entryEntity).get()
-    }
 
-    private class InsertAsyncTask(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Long>() {
-
-        override fun doInBackground(vararg params: EntryEntity?): Long{
-            return entryDao.insert(params[0]!!)
+    fun insert(entryEntity: EntryEntity): Long {
+        var temp: Long? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                temp = entryDao.insert(entryEntity)
+            }
         }
+        return temp!!
     }
 
     fun insertMark(marker: MarkerTimeRelation){
-        //InsertAsyncMark(entryDao).execute(marker)
-        InsertAsyncMark(markerDao).execute(marker)
-    }
-
-    private class InsertAsyncMark(val markerDao: MarkerDao) :
-        AsyncTask<MarkerTimeRelation, Unit, Unit>() {
-
-        override fun doInBackground(vararg params: MarkerTimeRelation?) {
-            markerDao.insertMark(params[0]!!)
+        CoroutineScope(coroutineContext).launch {
+            markerDao.insertMark(marker)
         }
     }
 
@@ -95,28 +81,8 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
-    fun getRecordingWithId(entryEntity: EntryEntity) {
-        GetRecordingWithId(entryDao).execute(entryEntity)
-    }
-
-    private class GetRecordingWithId(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Unit>() {
-
-        override fun doInBackground(vararg params: EntryEntity?) {
-            entryDao.getRecordingWithId(params[0]!!.uid)
-        }
-    }
-
-    fun getRecordingInclMarks(udi : Int): List<RecordingAndMarker> {
-        return GetRecordingInclMarks(markerDao).execute(udi).get()
-    }
-
-    private class GetRecordingInclMarks(val markerDao: MarkerDao) :
-        AsyncTask<Int, Unit, List<RecordingAndMarker>>() {
-
-        override fun doInBackground(vararg params: Int?): List<RecordingAndMarker> {
-            return markerDao.getRecordingInclMarks(params[0]!!)
-        }
+    fun getRecordingFromIdInclMarks(uid : Int): List<RecordingAndMarker> {
+        return markerDao.getRecordingFromIdInclMarks(uid)
     }
 
     fun getLabelById(labelEntity: LabelEntity): LiveData<LabelEntity> {
