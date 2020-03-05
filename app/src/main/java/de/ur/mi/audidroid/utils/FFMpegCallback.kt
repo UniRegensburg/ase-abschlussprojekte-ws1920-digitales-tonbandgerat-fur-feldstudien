@@ -4,11 +4,7 @@ import java.io.File
 
 interface FFMpegCallback {
 
-    fun onSuccess(convertedFile: File, type: String)
+    fun onSuccess(convertedFile: File)
 
     fun onFailure(error: Exception)
-
-    fun onNotAvailable(error: Exception)
-
-    fun onFinish()
 }

@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_save_edited_rec"
-        android:icon="@drawable/ic_save_black_24dp"
+        android:icon="@drawable/ic_save"
         android:orderInCategory="100"
         android:title="@string/action_save_edited_rec"
         app:showAsAction="always" />

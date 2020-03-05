@@ -8,7 +8,7 @@ import com.arthenica.mobileffmpeg.FFmpeg
 import java.io.File
 import java.io.IOException
 
-class AudioConverter() {
+class AudioConverter {
 
     private var audioFile: File? = null
     private var audioFormat: AudioFormat? = null

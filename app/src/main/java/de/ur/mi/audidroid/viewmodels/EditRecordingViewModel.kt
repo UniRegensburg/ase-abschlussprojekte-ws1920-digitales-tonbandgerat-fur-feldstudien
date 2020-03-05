@@ -32,7 +32,7 @@ class EditRecordingViewModel(
     private val dataSource: Repository,
     application: Application
 ) :
-    AndroidViewModel(application), FFMpegCallback {
+    AndroidViewModel(application) {
 
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
@@ -237,64 +237,70 @@ class EditRecordingViewModel(
         }
     }
 
-    fun cutInner() {
-        audioInProgress.value = true
-        AudioEditor.with(context!!)
-            .setFile(File(tempFile))
-            .setStartTime(curPosThumb1String.value!!)
-            .setEndTime(curPosThumb2String.value!!)
-            .setOutputPath(getOutputPath())
-            .setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
-            .setCallback(this)
-            .cutInner()
+    val callback = object : FFMpegCallback {
+        override fun onSuccess(convertedFile: File) {
+            audioInProgress.value = false
+            tempFile = convertedFile.path
+            initializeMediaPlayer()
+            initializeSeekBar(seekBar)
+            initializeRangeBar(rangeBar)
+            initializeFrameLayout(frameLayout)
+            convertedFile.delete()
+        }
+
+        override fun onFailure(error: Exception) {
+            audioInProgress.value = false
+        }
     }
 
     private fun getOutputPath(): String {
         return context.filesDir.absolutePath
     }
 
+    fun cutInner() {
+        audioInProgress.value = true
+        val editor = AudioEditor()
+        with(editor) {
+            setFile(File(tempFile))
+            setStartTime(curPosThumb1String.value!!)
+            setEndTime(curPosThumb2String.value!!)
+            setOutputPath(getOutputPath())
+            setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
+            setCallback(callback)
+            cut("cutInner")
+        }
+    }
+
     fun cutOuter() {
         audioInProgress.value = true
         val duration = mediaPlayer.duration / oneSecond
-        AudioEditor.with(context!!)
-            .setFile(File(tempFile))
-            .setStartTime(curPosThumb1.value.toString())
-            .setEndTime(curPosThumb2.value.toString())
-            .setDuration(duration.toString())
-            .setOutputPath(getOutputPath())
-            .setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
-            .setCallback(this)
-            .cutOuter()
+        val editor = AudioEditor()
+        with(editor) {
+            setFile(File(tempFile))
+            setStartTime(curPosThumb1.value.toString())
+            setEndTime(curPosThumb2.value.toString())
+            setDuration(duration.toString())
+            setOutputPath(getOutputPath())
+            setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
+            setCallback(callback)
+            cut("cutOuter")
+        }
     }
 
-    // TODO convertedFile löschen
-    override fun onSuccess(convertedFile: File, type: String) {
-        audioInProgress.value = false
-        tempFile = convertedFile.path
-        initializeMediaPlayer()
-        initializeSeekBar(seekBar)
-        initializeRangeBar(rangeBar)
-        initializeFrameLayout(frameLayout)
-    }
-
-    override fun onFailure(error: Exception) {
-        audioInProgress.value = false
-    }
-
-    override fun onNotAvailable(error: Exception) {
-        audioInProgress.value = false
-    }
-
-    override fun onFinish() {
-        audioInProgress.value = false
-    }
 
     fun saveRecording() {
         val recordingDuration = getRecordingDuration(File(tempFile))
         val audio =
-            EntryEntity(0, File(tempFile).name, File(tempFile).path, getDate(), recordingDuration!!)
+            EntryEntity(
+                0,
+                File(tempFile).name,
+                File(tempFile).path,
+                getDate(),
+                recordingDuration!!
+            )
         saveRecordInDB(audio)
     }
+
 
     private fun saveRecordInDB(audio: EntryEntity) {
         dataSource.insert(audio)
