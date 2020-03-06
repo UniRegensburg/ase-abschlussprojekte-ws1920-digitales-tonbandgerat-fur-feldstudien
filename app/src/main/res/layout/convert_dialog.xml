@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/dialog_margin"
+    android:padding="@dimen/dialog_padding"
+    android:layout_gravity="center">
+
+    <RadioGroup
+        android:id="@+id/dialog_convert_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checkedButton="@id/dialog_convert_default_selection"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/dialog_convert_default_selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/audio_format_mp3"/>
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/audio_format_aac"/>
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/audio_format_m4a"/>
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/audio_format_wma"/>
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/audio_format_wav"/>
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/audio_format_flac"/>
+
+    </RadioGroup>
+
+</LinearLayout>

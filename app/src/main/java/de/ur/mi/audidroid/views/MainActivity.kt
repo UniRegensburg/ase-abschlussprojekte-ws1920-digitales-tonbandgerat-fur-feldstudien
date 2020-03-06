@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import androidx.preference.PreferenceManager
+import cafe.adriel.androidaudioconverter.AndroidAudioConverter
+import cafe.adriel.androidaudioconverter.callback.ILoadCallback
 import com.google.android.material.navigation.NavigationView
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.utils.Dialog
@@ -19,6 +22,7 @@ import de.ur.mi.audidroid.utils.Pathfinder
 import de.ur.mi.audidroid.utils.PermissionHelper
 import de.ur.mi.audidroid.utils.ThemeHelper
 import kotlinx.android.synthetic.main.app_bar_main.*
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 

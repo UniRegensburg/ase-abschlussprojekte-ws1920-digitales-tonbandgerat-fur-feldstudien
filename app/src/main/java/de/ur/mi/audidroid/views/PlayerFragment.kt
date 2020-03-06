@@ -10,7 +10,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import de.ur.mi.audidroid.models.Repository
@@ -40,13 +39,9 @@ class PlayerFragment : Fragment() {
 
         val dataSource = Repository(application)
         val viewModelFactory = PlayerViewModelFactory(args.recordingPath, application)
-
-        playerViewModel =
-            ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
-
+        playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
         binding.playerViewModel = playerViewModel
-
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
 
         return binding.root
     }
