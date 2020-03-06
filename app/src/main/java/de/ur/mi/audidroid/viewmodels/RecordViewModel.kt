@@ -149,7 +149,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         recorderInitialized = false
         mediaRecorder.stop()
         mediaRecorder.reset()
-        mediaRecorder.release()
     }
 
     private fun resetView() {

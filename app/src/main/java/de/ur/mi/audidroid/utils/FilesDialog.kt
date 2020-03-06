@@ -40,5 +40,8 @@ object FilesDialog {
         dialog = builder.create()
         dialog.setCancelable(true)
         dialog.show()
+        dialog.setOnDismissListener {
+            viewModel!!.cancelSaving()
+        }
     }
 }
