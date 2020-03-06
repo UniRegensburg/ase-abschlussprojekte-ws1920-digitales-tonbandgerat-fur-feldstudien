@@ -109,5 +109,6 @@
     <string name="audio_format_wav">WAV</string>
     <string name="audio_format_flac">FLAC</string>
     <string name="no_special_chars_allowed">No special characters allowed</string>
+    <string name="filename_not_saved">Name not saved; contained special characters</string>
 
 </resources>

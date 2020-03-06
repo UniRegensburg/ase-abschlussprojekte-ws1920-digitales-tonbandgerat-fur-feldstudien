@@ -9,6 +9,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.utils.ThemeHelper
 import java.util.regex.Pattern
@@ -49,7 +50,13 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                         resources.getString(R.string.filename_preference_dialog_message)
                     closeDialog = true
                 }
-                Log.d("Filename", "Saved: $closeDialog")
+                if (!closeDialog) {
+                    Snackbar.make(
+                        view!!,
+                        resources.getString(R.string.filename_not_saved),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
                 closeDialog
             }
     }
