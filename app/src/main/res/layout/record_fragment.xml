@@ -115,7 +115,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.95" />
+                app:layout_constraintVertical_bias="0.95"
+                android:visibility="@{recordViewModel.buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
+                android:onClick="@{(view) -> recordViewModel.makeMark(view)}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
