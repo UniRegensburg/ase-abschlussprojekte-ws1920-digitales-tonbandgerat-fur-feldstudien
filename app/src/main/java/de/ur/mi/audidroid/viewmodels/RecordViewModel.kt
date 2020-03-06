@@ -4,12 +4,10 @@ import android.app.Application
 import android.content.res.Resources
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
-import android.net.Uri
 import android.os.SystemClock
 import android.text.format.DateUtils
 import android.widget.Chronometer
 import android.widget.FrameLayout
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
@@ -195,7 +193,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             errorDialog(res.getString(R.string.dialog_name_length))
             return
         }
-        
+
         val path = java.lang.String.format(
             "%s/$name%s",
             (pathInput ?: context.filesDir.absolutePath),
@@ -232,7 +230,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun validNameInput(name: String): Boolean {
-        return Pattern.compile("^[a-zA-Z0-9_{}]+$").matcher(name).matches()
+        return Pattern.compile("^[a-zA-Z0-9_{}-]+$").matcher(name).matches()
     }
 
     private fun errorDialog(mes: String) {

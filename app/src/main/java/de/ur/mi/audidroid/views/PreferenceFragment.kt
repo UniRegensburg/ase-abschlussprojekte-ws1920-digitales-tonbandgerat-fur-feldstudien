@@ -5,9 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.annotation.SuppressLint
-import android.util.Log
-import androidx.core.widget.doAfterTextChanged
 import androidx.navigation.findNavController
 import androidx.preference.EditTextPreference
 import androidx.preference.ListPreference
@@ -48,15 +45,24 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         fileNamePreference.text = fileNamePreference.text
         fileNamePreference.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
+                val input = newValue.toString()
                 var closeDialog = true
-                if (!fileNameClean(newValue.toString())) {
+                if (!fileNameClean(input)) {
                     fileNamePreference.dialogMessage =
-                        resources.getString(R.string.no_special_chars_allowed)
+                        resources.getString(R.string.dialog_invalid_name)
                     closeDialog = false
-                } else if (fileNameClean(newValue.toString())) {
+                } else if (fileNameClean(input)) {
                     fileNamePreference.dialogMessage =
                         resources.getString(R.string.filename_preference_dialog_message)
                     closeDialog = true
+                    val preferences = context!!.getSharedPreferences(
+                        getString(R.string.filename_preference_key),
+                        Context.MODE_PRIVATE
+                    )
+                    with(preferences.edit()) {
+                        putString(getString(R.string.filename_preference_key), input)
+                        commit()
+                    }
                 }
                 if (!closeDialog) {
                     Snackbar.make(
@@ -70,7 +76,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun fileNameClean(name: String): Boolean {
-        return Pattern.compile("^[a-zA-Z0-9_{}]+$").matcher(name).matches()
+        return Pattern.compile("^[a-zA-Z0-9_{}-]+$").matcher(name).matches()
     }
 
     private fun initThemePreference() {
@@ -94,8 +100,12 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     }
 
     fun resultPathfinder(preference: Preference, context: Context, data: Intent?) {
-        if(data== null){
-            Snackbar.make(view!!, context.resources.getString(R.string.external_sd_card_error), Snackbar.LENGTH_LONG).show()
+        if (data == null) {
+            Snackbar.make(
+                view!!,
+                context.resources.getString(R.string.external_sd_card_error),
+                Snackbar.LENGTH_LONG
+            ).show()
             return
         }
         val preferences = context.getSharedPreferences(

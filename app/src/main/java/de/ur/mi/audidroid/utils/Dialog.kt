@@ -20,6 +20,8 @@ import de.ur.mi.audidroid.models.LabelEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import de.ur.mi.audidroid.views.RecordFragment
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -49,7 +51,7 @@ object Dialog {
         recordFragment: RecordFragment? = null
     ) {
         context = paramContext
-        if (layoutId!=null) this.layoutId = layoutId
+        if (layoutId != null) this.layoutId = layoutId
         if (viewModel != null) this.viewModel = viewModel
         if (recordFragment != null) fragment = recordFragment
         val builder = MaterialAlertDialogBuilder(context)
@@ -81,6 +83,7 @@ object Dialog {
         dialog.findViewById<ImageButton>(R.id.dialog_save_recording_path_button)!!.setOnClickListener {
             pathButtonClicked()
         }
+        getNamePreference()
     }
 
     private fun setDialogButtons(builder: MaterialAlertDialogBuilder) {
@@ -140,9 +143,13 @@ object Dialog {
     }
 
     fun resultPathfinder(treePath: Uri?) {
-        if(treePath== null){
-           //createDialog(paramContext = context, layoutId = layoutId, textId = null, errorMessage =  context.resources.getString(R.string.external_sd_card_error), recordFragment = fragment)
-            Snackbar.make(fragment.requireView(),  context.resources.getString(R.string.external_sd_card_error), Snackbar.LENGTH_LONG).show()
+        if (treePath == null) {
+            //createDialog(paramContext = context, layoutId = layoutId, textId = null, errorMessage =  context.resources.getString(R.string.external_sd_card_error), recordFragment = fragment)
+            Snackbar.make(
+                fragment.requireView(),
+                context.resources.getString(R.string.external_sd_card_error),
+                Snackbar.LENGTH_LONG
+            ).show()
             return
         }
         val realPath = Pathfinder.getRealPath(context, treePath)!!
@@ -210,5 +217,35 @@ object Dialog {
             }
             labelIds
         } else null
+    }
+
+    private fun getNamePreference(){
+        val editText = dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
+        val preferences = context.getSharedPreferences(
+            context.getString(R.string.filename_preference_key),
+            Context.MODE_PRIVATE
+        )
+        var storedName = preferences.getString(
+            context.getString(R.string.filename_preference_key),
+            context.getString(R.string.filename_preference_default_value)
+        )!!
+        if(storedName.contains("{date}")){
+            storedName = storedName.replace("{date}",  java.lang.String.format(
+                "%s",
+                android.text.format.DateFormat.format(
+                    "yyyy-MM-dd",
+                    Calendar.getInstance(Locale.getDefault())
+                )))
+        }
+        if(storedName.contains("{time}")){
+            storedName = storedName.replace("{time}", java.lang.String.format(
+                "%s",
+                android.text.format.DateFormat.format(
+                    "HH-mm",
+                    Calendar.getInstance(Locale.getDefault())
+                )))
+        }
+        editText.setText(storedName)
+        editText.setSelection(storedName.length)
     }
 }

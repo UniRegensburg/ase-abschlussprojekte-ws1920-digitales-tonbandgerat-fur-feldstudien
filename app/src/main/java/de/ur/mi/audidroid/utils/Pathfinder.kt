@@ -38,7 +38,7 @@ object Pathfinder {
         )
     }
 
-    fun getRealPath(context: Context, treePath: Uri): String?{
+    fun getRealPath(context: Context, treePath: Uri): String? {
         val docUri = DocumentsContract.buildDocumentUriUsingTree(
             treePath,
             DocumentsContract.getTreeDocumentId(treePath)
@@ -60,7 +60,7 @@ object Pathfinder {
                     }
                 }
                 //External SD-card
-                else{
+                else {
                     return null
                 }
             }
@@ -79,7 +79,7 @@ object Pathfinder {
         return null
     }
 
-    private fun getSDCardPath(): String?{
+    private fun getSDCardPath(): String? {
         var mExternalDirectory = Environment.getExternalStorageDirectory()
             .absolutePath
         if (Build.DEVICE.contains("samsung")
