@@ -18,7 +18,6 @@ import de.ur.mi.audidroid.R
 import java.io.File
 import java.io.IOException
 
-
 /**
  * ViewModel for PlayerFragment.
  * @author: Theresa Strohmeier

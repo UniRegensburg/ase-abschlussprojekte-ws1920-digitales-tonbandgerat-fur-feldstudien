@@ -82,7 +82,7 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun getRecordingFromIdInclMarks(uid : Int): List<RecordingAndMarker> {
+    fun getRecordingFromIdInclMarks(uid: Int): List<RecordingAndMarker> {
         return markerDao.getRecordingFromIdInclMarks(uid)
     }
 
@@ -90,22 +90,13 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getLabelById(uid)
     }
 
-    //TODO: Question to everyone: Does anybody knows why the call beneath doesn't work?
-/*   fun insertRecLabels(labelAssignment: LabelAssignmentEntity){
+   fun insertRecLabels(labelAssignment: LabelAssignmentEntity){
         CoroutineScope(coroutineContext).launch {
             labelAssignmentDao.insertRecLabels(labelAssignment)
         }
-    }*/
-
-    fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {
-        InsertLabelAssignmentAsyncTask(labelAssignmentDao).execute(labelAssignment)
     }
 
-    private class InsertLabelAssignmentAsyncTask(val labelAssignmentDao: LabelAssignmentDao) :
-        AsyncTask<LabelAssignmentEntity, Unit, Unit>() {
-
-        override fun doInBackground(vararg params: LabelAssignmentEntity?) {
-            return labelAssignmentDao.insertRecLabels(params[0]!!)
-        }
+    fun getRecordingFromIdInclLabels(uid: Int): List<RecordingAndLabel> {
+        return labelAssignmentDao.getRecordingFromIdInclLabels(uid)
     }
 }

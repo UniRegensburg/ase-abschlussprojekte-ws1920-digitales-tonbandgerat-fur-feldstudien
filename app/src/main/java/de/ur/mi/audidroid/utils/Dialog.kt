@@ -91,7 +91,7 @@ object Dialog {
             setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
                 saveButtonClicked()
             }
-            setNeutralButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
+            setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
                 viewModel.cancelSaving()
             }
         }
@@ -142,9 +142,9 @@ object Dialog {
         Pathfinder.openPathDialog(null, context)
     }
 
-    fun resultPathfinder(treePath: Uri?) {
-        if (treePath == null) {
-            //createDialog(paramContext = context, layoutId = layoutId, textId = null, errorMessage =  context.resources.getString(R.string.external_sd_card_error), recordFragment = fragment)
+    fun resultPathfinder(treePath: Uri) {
+        val realPath = Pathfinder.getRealPath(context, treePath)
+        if (realPath == null) {
             Snackbar.make(
                 fragment.requireView(),
                 context.resources.getString(R.string.external_sd_card_error),
@@ -152,7 +152,6 @@ object Dialog {
             ).show()
             return
         }
-        val realPath = Pathfinder.getRealPath(context, treePath)!!
         selectedPath = realPath
         updateTextView(realPath)
     }
@@ -219,7 +218,7 @@ object Dialog {
         } else null
     }
 
-    private fun getNamePreference(){
+    private fun getNamePreference() {
         val editText = dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
         val preferences = context.getSharedPreferences(
             context.getString(R.string.filename_preference_key),
@@ -229,21 +228,27 @@ object Dialog {
             context.getString(R.string.filename_preference_key),
             context.getString(R.string.filename_preference_default_value)
         )!!
-        if(storedName.contains("{date}")){
-            storedName = storedName.replace("{date}",  java.lang.String.format(
-                "%s",
-                android.text.format.DateFormat.format(
-                    "yyyy-MM-dd",
-                    Calendar.getInstance(Locale.getDefault())
-                )))
+        if (storedName.contains("{date}")) {
+            storedName = storedName.replace(
+                "{date}", java.lang.String.format(
+                    "%s",
+                    android.text.format.DateFormat.format(
+                        "yyyy-MM-dd",
+                        Calendar.getInstance(Locale.getDefault())
+                    )
+                )
+            )
         }
-        if(storedName.contains("{time}")){
-            storedName = storedName.replace("{time}", java.lang.String.format(
-                "%s",
-                android.text.format.DateFormat.format(
-                    "HH-mm",
-                    Calendar.getInstance(Locale.getDefault())
-                )))
+        if (storedName.contains("{time}")) {
+            storedName = storedName.replace(
+                "{time}", java.lang.String.format(
+                    "%s",
+                    android.text.format.DateFormat.format(
+                        "HH-mm",
+                        Calendar.getInstance(Locale.getDefault())
+                    )
+                )
+            )
         }
         editText.setText(storedName)
         editText.setSelection(storedName.length)
