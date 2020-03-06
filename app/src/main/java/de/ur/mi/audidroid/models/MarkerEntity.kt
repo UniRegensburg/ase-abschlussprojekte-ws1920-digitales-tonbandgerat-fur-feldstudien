@@ -10,13 +10,21 @@ import androidx.room.Relation
  * @author: Lisa Sanladerer
  */
 
-
+@Entity(tableName = "markerTable")
+data class MarkerEntity(
+    @PrimaryKey(autoGenerate = true) val uid: Int,
+    val markerName: String
+)
 
 @Entity(tableName = "markerTimeTable")
 data class MarkerTimeRelation(
     @PrimaryKey(autoGenerate = true) val mid: Int,
     val recordingId: Int,
-    val markName: String,
+    @Embedded val markerEntity: MarkerEntity,
+    @Relation(
+        parentColumn = "uid",
+        entityColumn = "markerName"
+    )
     val markTime: String
 )
 

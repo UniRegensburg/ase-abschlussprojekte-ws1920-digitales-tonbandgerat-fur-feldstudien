@@ -11,7 +11,7 @@ import androidx.room.RoomDatabase
  */
 
 
-@Database(entities = [EntryEntity::class, MarkerTimeRelation::class, LabelEntity::class], version = 1, exportSchema = false)
+@Database(entities = [EntryEntity::class, MarkerTimeRelation::class, MarkerEntity::class, LabelEntity::class], version = 1, exportSchema = false)
 abstract class RecorderDatabase : RoomDatabase() {
     abstract fun entryDao(): EntryDao
     abstract fun labelDao(): LabelDao

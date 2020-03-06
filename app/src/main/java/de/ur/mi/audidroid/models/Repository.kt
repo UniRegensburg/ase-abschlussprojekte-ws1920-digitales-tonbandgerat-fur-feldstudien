@@ -40,6 +40,10 @@ class Repository(application: Application): CoroutineScope {
         return labelDao.getAllLabels()
     }
 
+    fun getAllMarkers(): LiveData<List<MarkerEntity>> {
+        return markerDao.getAllMarkers()
+    }
+
     fun delete(entryEntity: EntryEntity) {
         CoroutineScope(coroutineContext).launch {
             entryDao.delete(entryEntity)
@@ -52,6 +56,11 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
+    fun deleteMarker(markerEntity: MarkerEntity) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.deleteMarker(markerEntity)
+        }
+    }
 
     fun insert(entryEntity: EntryEntity): Long {
         var temp: Long? = null
@@ -61,6 +70,12 @@ class Repository(application: Application): CoroutineScope {
             }
         }
         return temp!!
+    }
+
+    fun insertMarker(markerEntity: MarkerEntity){
+        CoroutineScope(coroutineContext).launch {
+            markerDao.insertMarker(markerEntity)
+        }
     }
 
     fun insertMark(marker: MarkerTimeRelation){
@@ -78,6 +93,12 @@ class Repository(application: Application): CoroutineScope {
     fun updateLabel(labelEntity: LabelEntity) {
         CoroutineScope(coroutineContext).launch {
             labelDao.update(labelEntity)
+        }
+    }
+
+    fun updateMarker(markerEntity: MarkerEntity) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.updateMarker(markerEntity)
         }
     }
 

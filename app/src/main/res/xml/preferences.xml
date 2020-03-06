@@ -10,6 +10,10 @@
             app:key="@string/labels_preference_key"
             app:title="Edit labels" />
 
+        <Preference
+            app:key="@string/markers_preference_key"
+            app:title="Edit markers" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

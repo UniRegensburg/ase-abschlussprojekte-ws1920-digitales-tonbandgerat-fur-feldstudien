@@ -39,5 +39,12 @@
     <action
         android:id="@+id/action_global_editLabelsFragment"
         app:destination="@id/editLabelsFragment" />
+    <fragment
+        android:id="@+id/editMarkersFragment"
+        android:name="de.ur.mi.audidroid.views.EditMarkersFragment"
+        android:label="EditMarkersFragment" />
+    <action
+        android:id="@+id/action_global_editMarkersFragment"
+        app:destination="@id/editMarkersFragment" />
 
 </navigation>

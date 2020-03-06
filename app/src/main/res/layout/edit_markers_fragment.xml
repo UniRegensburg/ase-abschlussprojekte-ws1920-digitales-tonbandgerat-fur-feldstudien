@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="editMarkersViewModel"
+            type="de.ur.mi.audidroid.viewmodels.EditMarkersViewModel" />
+    </data>
+
+    <FrameLayout
+        android:id="@+id/edit_markers_frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".views.EditMarkersFragment">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/markers_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/marker_item" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="@{editMarkersViewModel.empty ? View.VISIBLE : View.GONE}">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_markers"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:src="@drawable/ic_add"
+            android:onClick="@{() -> editMarkersViewModel.requestMarkerDialog()}"
+            android:contentDescription="@string/add_marker_button_text"
+            app:tint="@color/color_on_secondary"
+            android:layout_margin="16dp"/>
+
+    </FrameLayout>
+
+</layout>
