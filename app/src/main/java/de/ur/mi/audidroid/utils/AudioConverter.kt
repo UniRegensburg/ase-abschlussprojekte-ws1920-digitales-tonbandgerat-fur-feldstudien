@@ -8,7 +8,7 @@ import com.arthenica.mobileffmpeg.FFmpeg
 import java.io.File
 import java.io.IOException
 
-class AudioConverter() {
+class AudioConverter {
 
     private var audioFile: File? = null
     private var audioFormat: AudioFormat? = null
@@ -36,13 +36,16 @@ class AudioConverter() {
         val convertedFile = getConvertedFile(audioFile!!, audioFormat!!)
         val cmd: String = "-y -i ${audioFile!!.path} ${convertedFile.path}"
         try {
-            val response: Int = FFmpeg.execute(cmd)
-            if (response == Config.RETURN_CODE_SUCCESS) {
-                callback!!.onSuccess(convertedFile)
-            } else if (response == Config.RETURN_CODE_CANCEL) {
-                Log.d("AudioConverter", "Conversion cancelled")
-            } else {
-                callback!!.onFailure(IOException("Conversion failed for $cmd"))
+            when (FFmpeg.execute(cmd)) {
+                Config.RETURN_CODE_SUCCESS -> {
+                    callback!!.onSuccess(convertedFile)
+                }
+                Config.RETURN_CODE_CANCEL -> {
+                    Log.d("AudioConverter", "Conversion cancelled")
+                }
+                else -> {
+                    callback!!.onFailure(IOException("Conversion failed for $cmd"))
+                }
             }
         } catch (e: Exception) {
             callback!!.onFailure(e)

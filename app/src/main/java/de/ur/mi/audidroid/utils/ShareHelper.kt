@@ -1,17 +1,15 @@
 package de.ur.mi.audidroid.utils
 
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
-import cafe.adriel.androidaudioconverter.AndroidAudioConverter
 import cafe.adriel.androidaudioconverter.callback.IConvertCallback
 import cafe.adriel.androidaudioconverter.model.AudioFormat
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.views.MainActivity
 import java.io.File
 import java.lang.Exception
 import java.lang.IllegalArgumentException
@@ -67,7 +65,7 @@ object ShareHelper {
     }
 
     fun shareFile(file: File, context: Context) {
-        val uri = getUriFromFile(file, context)
+        val uri: Uri = getUriFromFile(file, context)
         val shareIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             type = "audio/*"
