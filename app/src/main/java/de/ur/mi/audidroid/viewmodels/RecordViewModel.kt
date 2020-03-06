@@ -6,6 +6,7 @@ import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.text.format.DateUtils
+import android.view.View
 import android.widget.Chronometer
 import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
@@ -13,6 +14,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.MarkerTimeRelation
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
@@ -36,6 +38,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private lateinit var frameLayout: FrameLayout
     private var recorderInitialized = false
     private val context = getApplication<Application>().applicationContext
+    private var markList = mutableListOf<Pair<String, String>>()
     var isRecording = MutableLiveData<Boolean>()
     var buttonsVisible = MutableLiveData<Boolean>()
     val res: Resources = context.resources
@@ -203,13 +206,17 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         val audio =
             EntryEntity(0, name, path, getDate(), recordingDuration)
         saveRecordInDB(audio)
+
         File(tempFile).delete()
         resetView()
         errorMessage = null
     }
 
     private fun saveRecordInDB(audio: EntryEntity) {
-        dataSource.insert(audio)
+        val uid = dataSource.insert(audio).toInt()
+        if (markList.isNotEmpty()){
+            saveMarksInDB(uid)
+        }
         showSnackBar(R.string.record_saved)
     }
 
@@ -227,6 +234,21 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         )
     }
 
+    private fun saveMarksInDB(recordingId: Int) {
+        markList.forEach {
+            val mark = MarkerTimeRelation(0, recordingId, it.first, it.second)
+            dataSource.insertMark(mark)
+        }
+        markList = mutableListOf()
+    }
+
+    fun makeMark(view : View) {
+        val btnId = view.resources.getResourceName(view.id)
+        val markEntry = Pair(btnId, timer.text.toString())
+        markList.add(markEntry)
+        showSnackBarShort(R.string.mark_made)
+    }
+
     /**
      * Returns the current date
      * Adapted from: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
@@ -239,6 +261,10 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     /** Sends a snackbar for user information with the given [text] */
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun showSnackBarShort(text: Int) {
+        Snackbar.make(frameLayout, text, Snackbar.LENGTH_SHORT).show()
     }
 
     /** Returns the last stopped time as an Integer value */
