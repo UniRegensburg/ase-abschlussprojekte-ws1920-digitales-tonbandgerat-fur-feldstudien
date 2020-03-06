@@ -4,7 +4,7 @@
     <string-array name="theme_list_array" tools:ignore="InconsistentArrays">
         <item>Light</item>
         <item>Dark</item>
-        <item>Default</item>
+        <item>System Default</item>
     </string-array>
 
     <string-array name="theme_entry_array" tools:ignore="InconsistentArrays">

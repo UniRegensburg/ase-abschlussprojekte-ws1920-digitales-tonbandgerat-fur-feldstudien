@@ -85,6 +85,9 @@ object LabelsDialog {
         dialog.setCancelable(true)
         dialog.setOnCancelListener {
             viewModel!!.cancelSaving()
+            dialog.findViewById<EditText>(R.id.dialog_add_label_edit_text)?.let { editText ->
+                KeyboardHelper.hideSoftKeyboard(editText)
+            }
         }
         dialog.setOnDismissListener {
             dialog.findViewById<EditText>(R.id.dialog_add_label_edit_text)?.let { editText ->
