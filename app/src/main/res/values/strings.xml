@@ -82,7 +82,7 @@
     <string name="dialog_save_recording_label">Labels</string>
     <string name="dialog_save_button_text">Save</string>
     <string name="dialog_cancel_button_text">Cancel</string>
-    <string name="dialog_invalid_name">You can just use letters, numbers and the symbols _ and - for the recording name.</string>
+    <string name="dialog_invalid_name">You can just use letters, numbers and the symbols _ and {} for the recording name.</string>
     <string name="dialog_already_exist">There is already a recording at this location with your entered name. Change the name or the path.</string>
     <string name="dialog_name_length">The name of the recording should be between one and thirty characters long.</string>
 
@@ -99,4 +99,5 @@
     <!--Storage Location -->
     <string name="default_storage_location">internal</string>
     <string name="error_storage_location">Choose an other location</string>
+    <string name="external_sd_card_error">Saving on an external sd card is not possible</string>
 </resources>

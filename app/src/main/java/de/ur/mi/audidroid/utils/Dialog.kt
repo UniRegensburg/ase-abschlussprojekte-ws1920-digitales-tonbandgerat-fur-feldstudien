@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
 import android.net.Uri
-import android.provider.DocumentsContract
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
@@ -15,6 +14,7 @@ import androidx.lifecycle.Observer
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.LabelEntity
 import de.ur.mi.audidroid.models.Repository
@@ -38,6 +38,7 @@ object Dialog {
     private lateinit var dataSource: Repository
     private lateinit var labelEntities: List<LabelEntity>
     private lateinit var viewModel: RecordViewModel
+    private var layoutId: Int? = null
 
     fun createDialog(
         paramContext: Context,
@@ -48,6 +49,7 @@ object Dialog {
         recordFragment: RecordFragment? = null
     ) {
         context = paramContext
+        if (layoutId!=null) this.layoutId = layoutId
         if (viewModel != null) this.viewModel = viewModel
         if (recordFragment != null) fragment = recordFragment
         val builder = MaterialAlertDialogBuilder(context)
@@ -137,16 +139,16 @@ object Dialog {
         Pathfinder.openPathDialog(null, context)
     }
 
-    fun resultPathfinder(treePath: Uri) {
+    fun resultPathfinder(treePath: Uri?) {
+        if(treePath== null){
+           //createDialog(paramContext = context, layoutId = layoutId, textId = null, errorMessage =  context.resources.getString(R.string.external_sd_card_error), recordFragment = fragment)
+            Snackbar.make(fragment.requireView(),  context.resources.getString(R.string.external_sd_card_error), Snackbar.LENGTH_LONG).show()
+            return
+        }
         val realPath = Pathfinder.getRealPath(context, treePath)!!
         selectedPath = realPath
-        //updateTextView(getNameOfUriPath(realPath))
         updateTextView(realPath)
     }
-
-    /* private fun getNameOfUriPath(uri: Uri): String {
-         return uri.pathSegments.last().split(":")[1]
-     }*/
 
     private fun updateTextView(path: String) {
         pathTextView.text = path

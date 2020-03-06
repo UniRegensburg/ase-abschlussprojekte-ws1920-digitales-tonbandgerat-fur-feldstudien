@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     applicationContext,
                     data
                 )
-            } else Dialog.resultPathfinder(data!!.data!!)
+            } else Dialog.resultPathfinder(data!!.data)
         }
     }
 

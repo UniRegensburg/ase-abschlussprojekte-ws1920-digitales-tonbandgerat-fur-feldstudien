@@ -8,6 +8,7 @@ import androidx.navigation.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.utils.Pathfinder
 import de.ur.mi.audidroid.utils.ThemeHelper
@@ -55,11 +56,15 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     }
 
     fun resultPathfinder(preference: Preference, context: Context, data: Intent?) {
+        if(data== null){
+            Snackbar.make(view!!, context.resources.getString(R.string.external_sd_card_error), Snackbar.LENGTH_LONG).show()
+            return
+        }
         val preferences = context.getSharedPreferences(
             context.resources.getString(R.string.storage_preference_key),
             Context.MODE_PRIVATE
         )
-        val path = data!!.dataString!!
+        val path = data.dataString!!
         val realPath =
             when (path == context.resources.getString(R.string.default_storage_location)) {
                 true -> path

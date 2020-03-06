@@ -232,7 +232,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun validNameInput(name: String): Boolean {
-        return Pattern.compile("^[a-zA-Z0-9_-]+$").matcher(name).matches()
+        return Pattern.compile("^[a-zA-Z0-9_{}]+$").matcher(name).matches()
     }
 
     private fun errorDialog(mes: String) {

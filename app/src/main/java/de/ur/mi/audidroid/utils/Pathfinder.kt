@@ -5,10 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import androidx.preference.Preference
 import de.ur.mi.audidroid.R
+import java.io.File
 
 
 /**
@@ -50,8 +52,16 @@ object Pathfinder {
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":").toTypedArray()
                 val type = split[0]
-                if ("primary".equals(type, ignoreCase = true)) {
-                    return Environment.getExternalStorageDirectory().toString() + "/" + split[1]
+                return if ("primary".equals(type, ignoreCase = true)) {
+                    try {
+                        Environment.getExternalStorageDirectory().toString() + "/" + split[1]
+                    } catch (e: ArrayIndexOutOfBoundsException) {
+                        Environment.getExternalStorageDirectory().toString() + "/"
+                    }
+                }
+                //External SD-card
+                else{
+                    return null
                 }
             }
         } else if ("content".equals(
@@ -67,6 +77,34 @@ object Pathfinder {
             return uri.path
         }
         return null
+    }
+
+    private fun getSDCardPath(): String?{
+        var mExternalDirectory = Environment.getExternalStorageDirectory()
+            .absolutePath
+        if (Build.DEVICE.contains("samsung")
+            || Build.MANUFACTURER.contains("samsung")
+        ) {
+            var f = File(
+                Environment.getExternalStorageDirectory()
+                    .parent + "/extSdCard" + "/myDirectory"
+            )
+            if (f.exists() && f.isDirectory()) {
+                mExternalDirectory = Environment.getExternalStorageDirectory()
+                    .parent + "/extSdCard"
+            } else {
+                f = File(
+                    Environment.getExternalStorageDirectory()
+                        .absolutePath + "/external_sd" + "/myDirectory"
+                )
+                if (f.exists() && f.isDirectory()) {
+                    mExternalDirectory = (Environment
+                        .getExternalStorageDirectory().absolutePath
+                            + "/external_sd")
+                }
+            }
+        }
+        return mExternalDirectory
     }
 
     private fun getDataColumn(
