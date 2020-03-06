@@ -108,5 +108,6 @@
     <string name="audio_format_wma">WMA</string>
     <string name="audio_format_wav">WAV</string>
     <string name="audio_format_flac">FLAC</string>
+    <string name="no_special_chars_allowed">No special characters allowed</string>
 
 </resources>
