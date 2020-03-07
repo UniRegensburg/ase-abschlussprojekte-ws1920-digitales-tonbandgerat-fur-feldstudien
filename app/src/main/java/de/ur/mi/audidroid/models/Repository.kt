@@ -1,6 +1,8 @@
+
 package de.ur.mi.audidroid.models
 
 import android.app.Application
+import android.icu.text.CaseMap
 import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.*
@@ -15,6 +17,7 @@ class Repository(application: Application): CoroutineScope {
 
     private var entryDao: EntryDao
     private var labelDao: LabelDao
+    private var folderDao: FolderDao
     private var markerDao: MarkerDao
     private var allRecordings: LiveData<List<EntryEntity>>
 
@@ -28,6 +31,7 @@ class Repository(application: Application): CoroutineScope {
         )
         entryDao = database.entryDao()
         labelDao = database.labelDao()
+        folderDao = database.folderDao()
         markerDao = database.markerDao()
         allRecordings = entryDao.getAllRecordings()
     }
@@ -40,6 +44,9 @@ class Repository(application: Application): CoroutineScope {
         return labelDao.getAllLabels()
     }
 
+    fun getAllFolders(): LiveData<List<FolderEntity>>{
+        return folderDao.getAllFolders()
+    }
     fun delete(entryEntity: EntryEntity) {
         CoroutineScope(coroutineContext).launch {
             entryDao.delete(entryEntity)
@@ -52,6 +59,11 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
+    fun deleteFolder(folderEntity: FolderEntity) {
+        CoroutineScope(coroutineContext).launch {
+            folderDao.delete(folderEntity)
+        }
+    }
 
     fun insert(entryEntity: EntryEntity): Long {
         var temp: Long? = null
@@ -75,6 +87,18 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
+    fun insertFolder(folderEntity: FolderEntity) {
+        CoroutineScope(coroutineContext).launch {
+            folderDao.insert(folderEntity)
+        }
+    }
+
+    fun updateEntry(entryEntity: EntryEntity) {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.update(entryEntity)
+        }
+    }
+
     fun updateLabel(labelEntity: LabelEntity) {
         CoroutineScope(coroutineContext).launch {
             labelDao.update(labelEntity)
@@ -88,5 +112,11 @@ class Repository(application: Application): CoroutineScope {
     fun getLabelById(labelEntity: LabelEntity): LiveData<LabelEntity> {
         return labelDao.getLabelById(labelEntity.uid)
     }
-}
+    fun getFolderById(uid: Int): LiveData<FolderEntity> {
+        return folderDao.getFolderById(uid)
+    }
 
+    fun getRecordingByFolder(uid: Int?): LiveData<List<EntryEntity>>{
+        return entryDao.getRecordingByFolder(uid)
+    }
+}

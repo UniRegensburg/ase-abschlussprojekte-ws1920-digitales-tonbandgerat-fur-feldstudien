@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
 import de.ur.mi.audidroid.views.MainActivity
@@ -26,6 +27,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val _createAlertDialog = MutableLiveData<Boolean>()
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     private var recordingToBeExported: EntryEntity? = null
+    val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingByFolder(R.integer.no_folder_association)
+    val folderToBeMoved = MutableLiveData<EntryEntity>()
+    var dialogType: Int = R.string.alert_dialog
 
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
 
@@ -52,6 +56,8 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             when (item.itemId) {
                 R.id.action_delete_recording ->
                     delete(entryEntity)
+                R.id.action_move_recording ->
+                    onMoveFileClicked(entryEntity)
                 R.id.action_share_recording -> {
                     recordingToBeExported = entryEntity
                     _createAlertDialog.value = true
@@ -91,5 +97,18 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     fun cancelExporting() {
         recordingToBeExported = null
         _createAlertDialog.value = false
+    }
+    private fun onMoveFileClicked(entryEntity: EntryEntity){
+        folderToBeMoved.value = entryEntity
+    }
+
+    fun deleteEntriesInFolders(folderList: MutableList<FolderEntity>) {
+        folderList.forEach { folder ->
+            allRecordings.value!!.forEach {
+                if (folder.uid == it.folder) {
+                    delete(it)
+                }
+            }
+        }
     }
 }

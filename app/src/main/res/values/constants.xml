@@ -4,4 +4,5 @@
     <integer name="counter_divider_minutes_hours">60</integer>
     <integer name="counter_multiplier">1000</integer>
     <integer name="one_second">1000</integer>
+    <integer name="no_folder_association">0</integer>
 </resources>

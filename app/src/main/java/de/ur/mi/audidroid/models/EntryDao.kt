@@ -23,6 +23,9 @@ interface EntryDao {
     @Query("SELECT * FROM recordingsTable WHERE recordingName IN (:name)")
     fun getRecordingByName(name: String): EntryEntity
 
+    @Query("SELECT * FROM recordingsTable WHERE folder = :folderUid")
+    fun getRecordingByFolder(folderUid: Int?):  LiveData<List<EntryEntity>>
+
     @Insert(onConflict = REPLACE)
     suspend fun insert(entryEntity: EntryEntity): Long
 
@@ -32,4 +35,6 @@ interface EntryDao {
     @Query("DELETE FROM recordingsTable")
     fun clearTable()
 
+    @Update
+    suspend fun update(entryEntity: EntryEntity)
 }

@@ -36,10 +36,14 @@
     <string name="error_message_path">file moved or deleted</string>
 
     <!-- FilesFragment -->
+    <string name="files_container_internal">Internal Storage</string>
+    <string name="files_container_external">External Storage</string>
     <string name="recording_file_name">Recording</string>
     <string name="popup_menu_button">Popup Menu</string>
     <string name="popup_menu_option_delete">Delete</string>
     <string name="popup_menu_option_edit">Edit</string>
+    <string name="popup_menu_option_add_folder">Add Folder</string>
+    <string name="popup_menu_option_move_file">Move to Folder</string>
     <string name="recording_deleted">Recording deleted</string>
     <string name="no_recordings">No recordings saved</string>
 
@@ -49,7 +53,7 @@
     <string name="record_pause_button">Record and Pause Button</string>
     <string name="mark_button">Mark</string>
     <string name="suffix_temp_file">/temp.aac</string>
-    <string name="suffix_audio_file">.acc</string>
+    <string name="suffix_audio_file">.aac</string>
     <string name="standard_name_recording">Rec</string>
     <string name="mark_made">Mark saved</string>
 
@@ -68,6 +72,18 @@
     <string name="label_name_nonexistent">Enter a valid label name</string>
     <string name="delete_label_dialog_header">Delete label \'%1$s\'?</string>
     <string name="dialog_label_invalid_name">The label name should be between one and ten characters long.</string>
+
+    <!-- Folder Dialog -->
+    <string name="delete_folder_dialog_header">Delete folder \'%1$s\' and its content?</string>
+    <string name="add_folder_text_hint">Enter folder name</string>
+    <string name="create_folder_dialog_header">Create folder</string>
+    <string name="rename_folder">Rename</string>
+    <string name="move_file">Move</string>
+    <string name="no_folder_available">There are no folders.</string>
+    <string name="dialog_no_folder">Remove from folder</string>
+    <string name="create_folder">Create folder</string>
+    <string name="update_folder">Update folder</string>
+    <string name="move_file_dialog_header">Folders:</string>
 
     <!-- User Feedback Recording -->
     <string name="record_saved">Recording saved</string>
@@ -93,7 +109,6 @@
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
-
 
     <string name="alert_dialog">Alert Dialog</string>
     <string name="confirm_dialog">Confirm Dialog</string>

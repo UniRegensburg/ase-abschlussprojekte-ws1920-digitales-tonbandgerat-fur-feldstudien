@@ -11,7 +11,10 @@
         android:id="@+id/action_edit_recording"
         android:title="@string/popup_menu_option_edit"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/action_move_recording"
+        android:title="@string/popup_menu_option_move_file"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_share_recording"
         android:title="@string/popup_menu_option_share"

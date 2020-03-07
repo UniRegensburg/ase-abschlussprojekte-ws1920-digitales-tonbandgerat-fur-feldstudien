@@ -10,42 +10,82 @@
         <variable
             name="filesViewModel"
             type="de.ur.mi.audidroid.viewmodels.FilesViewModel" />
+        <variable
+            name="folderViewModel"
+            type="de.ur.mi.audidroid.viewmodels.FolderViewModel" />
+        <variable
+            name="recordingAdapter"
+            type="de.ur.mi.audidroid.adapter.Adapter" />
+        <variable
+            name="folderListener"
+            type="de.ur.mi.audidroid.adapter.FolderUserActionsListener" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".views.FilesFragment">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recording_list"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/entry_item" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:visibility="@{filesViewModel.empty ? View.VISIBLE : View.GONE}">
-
-            <ImageView
-                android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/sad_face"
-                android:scaleType="center"
-                android:src="@drawable/ic_sentiment_dissatisfied"
-                android:layout_marginBottom="@dimen/keyline_5"/>
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                app:layout_constraintTop_toTopOf="parent">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/rubik_medium"
+                        android:text="@string/files_container_internal"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_recordings"
-                android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
+                    <ImageButton
+                        android:id="@+id/add_internal_folder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:contentDescription="@string/popup_menu_option_add_folder"
+                        android:onClick="@{() -> folderViewModel.addInternalFolder()}"
+                        android:src="@drawable/ic_create_new_folder"
+                        android:layout_gravity="end"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toEndOf="@+id/linearLayout"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.016" />
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recording_list_no_folder"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:paddingTop="@dimen/constraint_layout_padding"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/entry_item" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/folder_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:paddingTop="30dp"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/folder_item" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/rubik_medium"
+                    android:text="@string/files_container_external"/>
+
+            </LinearLayout>
+        </ScrollView>
     </FrameLayout>
 </layout>
