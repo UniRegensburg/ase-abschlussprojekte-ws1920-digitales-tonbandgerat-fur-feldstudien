@@ -9,6 +9,7 @@ import android.os.Handler
 import android.text.format.DateUtils
 import android.widget.FrameLayout
 import android.widget.SeekBar
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,6 +17,7 @@ import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import java.io.File
+import java.io.FileDescriptor
 import java.io.IOException
 
 /**
@@ -32,7 +34,7 @@ class PlayerViewModel(
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
-    private val uri: Uri = Uri.fromFile(File(recordingPath))
+    private val path = recordingPath
     var isPlaying = MutableLiveData<Boolean>()
 
     private lateinit var runnable: Runnable
@@ -58,7 +60,14 @@ class PlayerViewModel(
                         .setContentType(CONTENT_TYPE_SPEECH)
                         .build()
                 )
-                setDataSource(context, uri)
+                if (path.startsWith("content:")){
+                    val uri = Uri.parse(path)
+                    val fd = context.contentResolver.openFileDescriptor(uri, "rw")!!.fileDescriptor
+                    setDataSource(fd)
+                }else{
+                    val uri = Uri.fromFile(File(path))
+                    setDataSource(context, uri)
+                }
                 setOnCompletionListener {
                     onStopPlayer()
                 }

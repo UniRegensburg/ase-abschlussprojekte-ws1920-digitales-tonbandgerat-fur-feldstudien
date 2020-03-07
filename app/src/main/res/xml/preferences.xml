@@ -41,5 +41,15 @@
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
+    <PreferenceCategory
+        app:key ="theme_category"
+        app:title ="Storage">
 
+        <Preference
+            app:key = "@string/storage_preference_key"
+            app:title="Set Storage Location"
+            app:summary="@string/storage_location_summary"
+            app:defaultValue="default"/>
+
+    </PreferenceCategory>
 </PreferenceScreen>
