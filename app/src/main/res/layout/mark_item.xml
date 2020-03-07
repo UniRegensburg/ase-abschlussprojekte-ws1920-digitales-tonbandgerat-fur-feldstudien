@@ -4,6 +4,16 @@
 
     <data>
 
+        <import type="android.view.View.OnClickListener" />
+
+        <variable
+            name="mark"
+            type="de.ur.mi.audidroid.models.MarkerEntity" />
+
+        <variable
+            name="listener"
+            type="de.ur.mi.audidroid.adapter.MarkUserActionsListener" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -11,13 +21,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/marks_card_view_margin"
         android:layout_marginTop="@dimen/marks_card_view_margin"
-        android:layout_marginEnd="@dimen/marks_card_view_margin">
+        android:layout_marginEnd="@dimen/marks_card_view_margin"
+        android:onClick="@{() -> listener.onMarkClicked(mark)}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/constraint_layout_padding"
-            android:paddingBottom="@dimen/constraint_layout_padding">
+            android:padding="@dimen/constraint_layout_padding">
 
             <LinearLayout
                 android:id="@+id/linearLayout"
@@ -33,16 +43,16 @@
                     android:id="@+id/mark_name"
                     android:layout_width="@dimen/layout_width_edit_fragment"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.20"
-                    android:gravity="center"
-                    android:text="Mark 1"
+                    android:layout_weight="0.30"
+                    android:text="Mark"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body1" />
 
                 <TextView
                     android:id="@+id/comment"
                     android:layout_width="@dimen/layout_width_edit_fragment"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.60"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.50"
                     android:text="Sample comment"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
 
@@ -51,8 +61,8 @@
                     android:layout_width="@dimen/layout_width_edit_fragment"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.20"
-                    android:gravity="center"
-                    android:text="10:00"
+                    android:gravity="end"
+                    android:text="@{mark.markTime}"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
 
             </LinearLayout>

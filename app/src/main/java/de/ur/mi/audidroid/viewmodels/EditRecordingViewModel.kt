@@ -18,6 +18,8 @@ import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.MarkerEntity
+import de.ur.mi.audidroid.models.RecordingAndMarker
 import de.ur.mi.audidroid.models.Repository
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
@@ -28,7 +30,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class EditRecordingViewModel(
-    recordingPath: String,
+    private val recordingId: Int,
     private val dataSource: Repository,
     application: Application
 ) :
@@ -40,12 +42,15 @@ class EditRecordingViewModel(
     private lateinit var rangeBar: MultiSlider
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
+    val recording: LiveData<List<RecordingAndMarker>> =
+        dataSource.getRecordingFromIdInclMarks(recordingId)
+    val getAllMarkers: LiveData<List<MarkerEntity>> = dataSource.getAllMarks(recordingId)
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
     var audioInProgress = MutableLiveData<Boolean>()
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
-    var tempFile = recordingPath
+    var tempFile = ""
 
 
     private lateinit var runnable: Runnable
@@ -301,6 +306,11 @@ class EditRecordingViewModel(
         saveRecordInDB(audio)
     }
 
+    fun onMarkClicked(markTime: String) {
+    }
+
+    fun addMark() {
+    }
 
     private fun saveRecordInDB(audio: EntryEntity) {
         dataSource.insert(audio)

@@ -1,7 +1,6 @@
 package de.ur.mi.audidroid.models
 
 import android.app.Application
-import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -11,7 +10,7 @@ import kotlin.coroutines.CoroutineContext
  * @author: Theresa Strohmeier, Jonas Puchinger
  */
 
-class Repository(application: Application): CoroutineScope {
+class Repository(application: Application) : CoroutineScope {
 
     private var entryDao: EntryDao
     private var labelDao: LabelDao
@@ -63,7 +62,7 @@ class Repository(application: Application): CoroutineScope {
         return temp!!
     }
 
-    fun insertMark(marker: MarkerTimeRelation){
+    fun insertMark(marker: MarkerEntity) {
         CoroutineScope(coroutineContext).launch {
             markerDao.insertMark(marker)
         }
@@ -81,8 +80,12 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
-    fun getRecordingFromIdInclMarks(uid : Int): List<RecordingAndMarker> {
+    fun getRecordingFromIdInclMarks(uid: Int): LiveData<List<RecordingAndMarker>> {
         return markerDao.getRecordingFromIdInclMarks(uid)
+    }
+
+    fun getAllMarks(uid: Int): LiveData<List<MarkerEntity>> {
+        return markerDao.getAllMarks(uid)
     }
 
     fun getLabelById(labelEntity: LabelEntity): LiveData<LabelEntity> {

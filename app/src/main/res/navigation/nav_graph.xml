@@ -42,7 +42,7 @@
         tools:layout="@layout/edit_recording_fragment">
         <argument
             android:name="recordingPath"
-            app:argType="string" />
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/editLabelsFragment"

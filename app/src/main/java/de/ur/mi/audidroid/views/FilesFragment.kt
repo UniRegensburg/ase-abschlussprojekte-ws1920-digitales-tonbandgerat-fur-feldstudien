@@ -106,7 +106,7 @@ class FilesFragment : Fragment() {
 
     private fun navigateToEditFragment(entryEntity: EntryEntity) {
         this.findNavController().navigate(
-            FilesFragmentDirections.actionFilesToEdit(entryEntity.recordingPath)
+            FilesFragmentDirections.actionFilesToEdit(entryEntity.uid)
         )
     }
 

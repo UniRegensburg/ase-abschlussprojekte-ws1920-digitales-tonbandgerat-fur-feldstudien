@@ -2,12 +2,15 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.adapter.MarkerItemAdapter
 import de.ur.mi.audidroid.databinding.EditRecordingFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
@@ -15,6 +18,7 @@ import kotlinx.android.synthetic.main.player_fragment.*
 
 class EditRecordingFragment : Fragment() {
 
+    private lateinit var adapter: MarkerItemAdapter
     private lateinit var editRecordingViewModel: EditRecordingViewModel
     private lateinit var binding: EditRecordingFragmentBinding
 
@@ -46,11 +50,33 @@ class EditRecordingFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        editRecordingViewModel.initializeMediaPlayer()
-        editRecordingViewModel.initializeSeekBar(binding.seekBar)
-        editRecordingViewModel.initializeFrameLayout(player_layout)
-        editRecordingViewModel.initializeRangeBar(binding.rangeBar)
+
+
+        editRecordingViewModel.recording.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                editRecordingViewModel.tempFile = it[0].entryEntity.recordingPath
+                editRecordingViewModel.initializeMediaPlayer()
+                editRecordingViewModel.initializeSeekBar(binding.seekBar)
+                editRecordingViewModel.initializeFrameLayout(player_layout)
+                editRecordingViewModel.initializeRangeBar(binding.rangeBar)
+            }
+        })
+        setupAdapter()
     }
+
+    private fun setupAdapter() {
+
+        adapter = MarkerItemAdapter(editRecordingViewModel)
+        binding.markerList.adapter = adapter
+
+        editRecordingViewModel.getAllMarkers.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                Log.d("markers", "" + it)
+                adapter.submitList(it)
+            }
+        })
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_edit_recording, menu)
@@ -70,14 +96,14 @@ class EditRecordingFragment : Fragment() {
      * Provides the Repository, recordingPath and context to the EditRecordingViewModel.
      */
     class EditViewModelFactory(
-        private val recordingPath: String,
+        private val recordingId: Int,
         private val dataSource: Repository,
         private val application: Application
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(EditRecordingViewModel::class.java)) {
-                return EditRecordingViewModel(recordingPath, dataSource, application) as T
+                return EditRecordingViewModel(recordingId, dataSource, application) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

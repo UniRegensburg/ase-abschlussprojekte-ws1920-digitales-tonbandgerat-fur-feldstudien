@@ -14,7 +14,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.MarkerTimeRelation
+import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
@@ -214,7 +214,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun saveRecordInDB(audio: EntryEntity) {
         val uid = dataSource.insert(audio).toInt()
-        if (markList.isNotEmpty()){
+        if (markList.isNotEmpty()) {
             saveMarksInDB(uid)
         }
         showSnackBar(R.string.record_saved)
@@ -228,7 +228,8 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         val metaRetriever = MediaMetadataRetriever()
         metaRetriever.setDataSource(tempFile)
         return DateUtils.formatElapsedTime(
-            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() / (res.getInteger(
+            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                .toLong() / (res.getInteger(
                 R.integer.one_second
             ).toLong())
         )
@@ -236,13 +237,13 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
-            val mark = MarkerTimeRelation(0, recordingId, it.first, it.second)
+            val mark = MarkerEntity(0, recordingId, it.first, it.second)
             dataSource.insertMark(mark)
         }
         markList = mutableListOf()
     }
 
-    fun makeMark(view : View) {
+    fun makeMark(view: View) {
         val btnId = view.resources.getResourceName(view.id)
         val markEntry = Pair(btnId, timer.text.toString())
         markList.add(markEntry)
