@@ -43,7 +43,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:key ="theme_category"
+        app:key ="storage_category"
         app:title ="Storage">
 
         <Preference

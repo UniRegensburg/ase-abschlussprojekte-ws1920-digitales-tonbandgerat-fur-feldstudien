@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
 import android.net.Uri
+import android.opengl.Visibility
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
@@ -41,6 +42,7 @@ object Dialog {
     private lateinit var labelEntities: List<LabelEntity>
     private lateinit var viewModel: RecordViewModel
     private var layoutId: Int? = null
+    private lateinit var errorTextView : TextView
 
     fun createDialog(
         paramContext: Context,
@@ -58,9 +60,6 @@ object Dialog {
         if (layoutId != null) {
             builder.setView(layoutId)
             prepareDataSource()
-            if (errorMessage != null) {
-                builder.setMessage(errorMessage)
-            }
             setDialogButtons(builder)
         }
         if (textId != null) {
@@ -69,7 +68,7 @@ object Dialog {
         dialog = builder.create()
         dialog.setCancelable(false)
         dialog.show()
-        initializeDialog()
+        initializeDialog(errorMessage)
     }
 
     private fun prepareDataSource() {
@@ -77,13 +76,18 @@ object Dialog {
         dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
     }
 
-    private fun initializeDialog() {
+    private fun initializeDialog(errorMessage: String?) {
         pathTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_textview_path)!!
         selectedPath = getStoragePreference()
         dialog.findViewById<ImageButton>(R.id.dialog_save_recording_path_button)!!.setOnClickListener {
             pathButtonClicked()
         }
         getNamePreference()
+        if(errorMessage!=null){
+                errorTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_error_textview)!!
+                errorTextView.text = errorMessage
+                errorTextView.visibility = View.VISIBLE
+        }
     }
 
     private fun setDialogButtons(builder: MaterialAlertDialogBuilder) {
