@@ -152,10 +152,10 @@ class FilesFragment : Fragment() {
             binding.folderList.adapter = folderAdapter
 
             //Sets Adapter to RecyclingView for Recordings with no folder association
-            println(filesViewModel.allRecordings)
-            filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
+            filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     recordingAdapter.submitList(it)
+
                 }
             })
 

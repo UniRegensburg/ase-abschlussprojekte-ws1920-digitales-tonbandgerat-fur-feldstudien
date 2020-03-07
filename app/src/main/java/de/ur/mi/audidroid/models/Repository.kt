@@ -119,4 +119,8 @@ class Repository(application: Application): CoroutineScope {
     fun getRecordingByFolder(uid: Int?): LiveData<List<EntryEntity>>{
         return entryDao.getRecordingByFolder(uid)
     }
+
+    fun getRecordingWithNoFolder(): LiveData<List<EntryEntity>>{
+        return entryDao.getRecordingWithNoFolder()
+    }
 }

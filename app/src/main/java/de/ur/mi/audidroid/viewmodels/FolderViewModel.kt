@@ -117,7 +117,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     private fun createFolderInDB(nameInput: String, parentFolder: FolderEntity?){
         var nestingDescr = ""
-        var parentFolderRef = R.integer.no_folder_association
+        var parentFolderRef: Int? = null
         if (parentFolder != null){
             nestingDescr = parentFolder.folderName
             parentFolderRef = parentFolder.uid
@@ -134,11 +134,9 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     }
 
     fun updateEntryFolderInDB(entryEntity: EntryEntity, folderUid: Int?){
-        println(entryEntity)
         val updatedEntry = EntryEntity(entryEntity.uid,entryEntity.recordingName,entryEntity.recordingPath,
             entryEntity.date, entryEntity.duration, folderUid, entryEntity.labels)
         repository.updateEntry(updatedEntry)
-        print(updatedEntry)
     }
 
     //handels the sorting of the folders, so they can be displayed in order
@@ -160,7 +158,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         if (allFolders.isNotEmpty()) {
             val foldersSorted: MutableList<FolderEntity> = mutableListOf()
             allFolders.forEach {
-                if (it.parentDir == R.integer.no_folder_association){
+                if (it.parentDir == null){
                     foldersSorted.add(it)
                 }
             }
@@ -177,7 +175,6 @@ class FolderViewModel(dataSource: Repository, application: Application) :
                     }
                 }
             }
-            println(foldersSorted)
             return foldersSorted
         }
         return null

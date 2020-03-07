@@ -11,6 +11,6 @@ data class FolderEntity(
     @ColumnInfo(name = "folderName") val folderName: String,
     @ColumnInfo(name = "dirPath") val dirPath: String,
     @ColumnInfo(name = "isExternal") val isExternal: Boolean,
-    @ColumnInfo(name = "parentDir") val parentDir: Int? = R.integer.no_folder_association,
+    @ColumnInfo(name = "parentDir") val parentDir: Int? = null,
     @ColumnInfo(name = "nestingDescr") val nestingDescr: String? = ""
 )

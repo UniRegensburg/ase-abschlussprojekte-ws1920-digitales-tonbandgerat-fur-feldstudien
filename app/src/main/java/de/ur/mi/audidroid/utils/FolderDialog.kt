@@ -80,7 +80,7 @@ object FolderDialog {
                             viewModel?.cancelFolderDialog()
                         }
                         setNeutralButton(R.string.dialog_no_folder){_, _ ->
-                            viewModel!!.onEntryMoveFolderClicked(entryToBeMoved, R.integer.no_folder_association)
+                            viewModel!!.onEntryMoveFolderClicked(entryToBeMoved,null)
                         }
                     }
                 }else{

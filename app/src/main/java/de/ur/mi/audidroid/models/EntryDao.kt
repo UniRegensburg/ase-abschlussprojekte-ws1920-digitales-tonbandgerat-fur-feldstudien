@@ -26,6 +26,9 @@ interface EntryDao {
     @Query("SELECT * FROM recordingsTable WHERE folder = :folderUid")
     fun getRecordingByFolder(folderUid: Int?):  LiveData<List<EntryEntity>>
 
+    @Query("SELECT * FROM recordingsTable WHERE folder IS NULL")
+    fun getRecordingWithNoFolder():  LiveData<List<EntryEntity>>
+
     @Insert(onConflict = REPLACE)
     suspend fun insert(entryEntity: EntryEntity): Long
 

@@ -27,7 +27,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val _createAlertDialog = MutableLiveData<Boolean>()
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     private var recordingToBeExported: EntryEntity? = null
-    val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingByFolder(R.integer.no_folder_association)
+    val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
     val folderToBeMoved = MutableLiveData<EntryEntity>()
     var dialogType: Int = R.string.alert_dialog
 
