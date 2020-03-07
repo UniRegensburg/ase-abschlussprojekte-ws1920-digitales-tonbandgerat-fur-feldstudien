@@ -52,7 +52,7 @@ class PlayerFragment : Fragment() {
         playerViewModel.initializeFrameLayout(player_layout)
         playerViewModel.recording.observe(viewLifecycleOwner, Observer {
             it?.let {
-                playerViewModel.initializeMediaPlayer(it.recordingPath)
+                playerViewModel.initializeMediaPlayer(it[0].entryEntity.recordingPath)
                 playerViewModel.initializeSeekBar(binding.seekBar)
             }
         })

@@ -15,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
+import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
@@ -94,7 +95,9 @@ class FilesFragment : Fragment() {
 
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
             it?.let {
-                adapter.submitList(it)
+                var array = arrayListOf<EntryEntity>()
+                array = filesViewModel.checkExistence(it, array)
+                adapter.submitList(array)
             }
         })
     }

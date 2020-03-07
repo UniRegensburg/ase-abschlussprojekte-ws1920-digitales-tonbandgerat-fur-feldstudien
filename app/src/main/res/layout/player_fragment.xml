@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{playerViewModel.recording.recordingName}"
+                android:text="@{playerViewModel.recording[0].entryEntity.recordingName}"
                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline4"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +66,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.2"
                     android:gravity="center"
-                    android:text="@{playerViewModel.recording.duration}"
+                    android:text="@{playerViewModel.recording[0].entryEntity.duration}"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
 
             </LinearLayout>

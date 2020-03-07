@@ -86,5 +86,11 @@ class Repository(application: Application) : CoroutineScope {
     fun getLabelById(labelEntity: LabelEntity): LiveData<LabelEntity> {
         return labelDao.getLabelById(labelEntity.uid)
     }
+
+    fun deleteAllRecordings() {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.clearTable()
+        }
+    }
 }
 

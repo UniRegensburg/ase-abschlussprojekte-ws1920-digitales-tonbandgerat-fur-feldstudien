@@ -16,6 +16,7 @@ import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.RecordingAndMarker
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
@@ -31,7 +32,8 @@ class PlayerViewModel(
 ) : AndroidViewModel(application) {
 
     private val database = dataSource
-    val recording: LiveData<EntryEntity> = database.getRecordingById(recordingId)
+    val recording: LiveData<List<RecordingAndMarker>> =
+        database.getRecordingByIdInclMarks(recordingId)
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
     private var recordingPath = ""

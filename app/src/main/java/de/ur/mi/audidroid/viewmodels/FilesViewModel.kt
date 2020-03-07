@@ -83,21 +83,17 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun deleteRecording(entryEntity: EntryEntity) {
         val file = File(entryEntity.recordingPath)
-        if (file.exists()) {
-            if (file.delete()) {
-                repository.deleteRecording(entryEntity)
-                showSnackBar(
-                    String.format(
-                        context.getString(R.string.recording_deleted),
-                        entryEntity.recordingName
-                    )
+        if (file.delete()) {
+            repository.deleteRecording(entryEntity)
+            showSnackBar(
+                String.format(
+                    context.getString(R.string.recording_deleted),
+                    entryEntity.recordingName
                 )
-                recording = null
-            } else {
-                showSnackBar(R.string.error_message_file_cannot_be_deleted.toString())
-            }
+            )
+            recording = null
         } else {
-            showSnackBar(R.string.error_message_path_does_not_exist.toString())
+            showSnackBar(R.string.error_message_file_cannot_be_deleted.toString())
         }
     }
 
@@ -113,6 +109,22 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private fun showSnackBar(text: String) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
+    }
+
+    fun checkExistence(
+        it: List<EntryEntity>,
+        array: ArrayList<EntryEntity>
+    ): ArrayList<EntryEntity> {
+        for (i in it.indices) {
+            val file = File(it[i].recordingPath)
+            if (file.exists()) {
+                array.add(it[i])
+            }
+        }
+        if (array.size == 0 && it.isNotEmpty()) {
+            repository.deleteAllRecordings()
+        }
+        return array
     }
 
     // Navigation to the PlayerFragment
