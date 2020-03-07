@@ -21,10 +21,6 @@ data class MarkerTimeRelation(
     @PrimaryKey(autoGenerate = true) val mid: Int,
     val recordingId: Int,
     @Embedded val markerEntity: MarkerEntity,
-    @Relation(
-        parentColumn = "uid",
-        entityColumn = "markerName"
-    )
     val markTime: String
 )
 

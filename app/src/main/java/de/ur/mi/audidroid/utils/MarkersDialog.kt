@@ -67,7 +67,7 @@ object MarkersDialog {
             with(builder) {
                 setMessage(
                     String.format(
-                        context.getString(R.string.delete_label_dialog_header),
+                        context.getString(R.string.delete_marker_dialog_header),
                         markerToBeEdited!!.markerName
                     )
                 )

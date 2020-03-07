@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.adapter.MarkerButtonAdapter
+import de.ur.mi.audidroid.adapter.MarkerItemAdapter
+import de.ur.mi.audidroid.databinding.MarkerButtonBinding
 import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
@@ -25,6 +29,8 @@ import kotlinx.android.synthetic.main.record_fragment.*
 class RecordFragment : Fragment() {
 
     private lateinit var viewModel: RecordViewModel
+    private lateinit var adapter: MarkerButtonAdapter
+    private lateinit var binding: RecordFragmentBinding
 
     companion object {
         fun newInstance() = RecordFragment()
@@ -37,8 +43,7 @@ class RecordFragment : Fragment() {
     ): View? {
         val application = this.activity!!.application
         val dataSource = Repository(application)
-        val binding: RecordFragmentBinding =
-            DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
 
         val viewModelFactory = RecordViewModelFactory(dataSource, application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(RecordViewModel::class.java)
@@ -65,7 +70,8 @@ class RecordFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel.initializeTimer(chronometer)
         viewModel.initializeLayout(frameLayout)
-        viewModel.createDialog.observe(this, Observer {
+        setupAdapter()
+        viewModel.createDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 de.ur.mi.audidroid.utils.Dialog.createDialog(
                     context = context!!,
@@ -73,6 +79,17 @@ class RecordFragment : Fragment() {
                     viewModel = viewModel,
                     errorMessage = viewModel.errorMessage
                 )
+            }
+        })
+    }
+
+    private fun setupAdapter() {
+        adapter = MarkerButtonAdapter(viewModel)
+        binding.markerButtonList.adapter = adapter
+
+        viewModel.allMarkers.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                adapter.submitList(it)
             }
         })
     }
