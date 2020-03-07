@@ -17,5 +17,6 @@
     <color name="color_on_error">#ffffff</color>
 
     <color name="icon_color_on_background">#ffffff</color>
+    <color name="button_disabled_background">#63ffffff</color>
 
 </resources>

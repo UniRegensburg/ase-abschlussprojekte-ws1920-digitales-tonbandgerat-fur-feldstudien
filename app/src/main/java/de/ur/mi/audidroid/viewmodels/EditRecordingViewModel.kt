@@ -250,11 +250,13 @@ class EditRecordingViewModel(
             initializeSeekBar(seekBar)
             initializeRangeBar(rangeBar)
             initializeFrameLayout(frameLayout)
-            convertedFile.delete()
+            //convertedFile.delete()
+            showSnackBar(R.string.recording_cut)
         }
 
         override fun onFailure(error: Exception) {
             audioInProgress.value = false
+            showSnackBar(R.string.error_message_cut)
         }
     }
 

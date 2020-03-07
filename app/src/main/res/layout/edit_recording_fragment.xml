@@ -108,7 +108,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/color_secondary"
+                android:backgroundTint="@drawable/button_state"
                 android:enabled="@{editRecordingViewModel.enableCutInner}"
                 android:onClick="@{() -> editRecordingViewModel.cutInner()}"
                 android:text="@string/cut_inner_button"
@@ -137,7 +137,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/color_secondary"
+                android:backgroundTint="@drawable/button_state"
                 android:enabled="@{editRecordingViewModel.enableCutOuter}"
                 android:onClick="@{() -> editRecordingViewModel.cutOuter()}"
                 android:text="@string/cut_outer_button"

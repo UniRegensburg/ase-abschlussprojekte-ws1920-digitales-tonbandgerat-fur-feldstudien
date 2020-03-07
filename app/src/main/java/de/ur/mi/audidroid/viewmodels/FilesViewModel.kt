@@ -5,7 +5,6 @@ import androidx.lifecycle.*
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
-import de.ur.mi.audidroid.views.MainActivity
 import java.io.File
 
 /**
@@ -53,12 +52,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     // Navigation to the PlayerFragment
-    private val _navigateToPlayerFragment = MutableLiveData<String>()
+    private val _navigateToPlayerFragment = MutableLiveData<Int>()
     val navigateToPlayerFragment
         get() = _navigateToPlayerFragment
 
-    fun onRecordingClicked(recordingPath: String) {
-        _navigateToPlayerFragment.value = recordingPath
+    fun onRecordingClicked(recordingId: Int) {
+        _navigateToPlayerFragment.value = recordingId
     }
 
     fun onPlayerFragmentNavigated() {

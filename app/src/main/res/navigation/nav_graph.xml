@@ -32,8 +32,8 @@
         android:label="@string/player_label"
         tools:layout="@layout/player_fragment">
         <argument
-            android:name="recordingPath"
-            app:argType="string" />
+            android:name="recordingId"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/edit"

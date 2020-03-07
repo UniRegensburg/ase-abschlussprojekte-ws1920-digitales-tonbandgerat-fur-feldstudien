@@ -15,6 +15,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.models.MarkerEntity
+import de.ur.mi.audidroid.models.RecordingAndMarker
+import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
 
@@ -23,7 +26,8 @@ import java.io.IOException
  * @author: Theresa Strohmeier
  */
 class PlayerViewModel(
-    recordingPath: String,
+    private val recordingId: Int,
+    dataSource: Repository,
     application: Application
 ) : AndroidViewModel(application) {
 
@@ -32,13 +36,21 @@ class PlayerViewModel(
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
-    private val uri: Uri = Uri.fromFile(File(recordingPath))
+    val recording: LiveData<List<RecordingAndMarker>> =
+        dataSource.getRecordingFromIdInclMarks(recordingId)
+    val getAllMarkers: LiveData<List<MarkerEntity>> = dataSource.getAllMarks(recordingId)
     var isPlaying = MutableLiveData<Boolean>()
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
 
-    var totalDurationString = ""
+    private val _totalDuration = MutableLiveData<Long>()
+    private val totalDuration: LiveData<Long>
+        get() = _totalDuration
+
+    var totalDurationString = Transformations.map(totalDuration) { duration ->
+        DateUtils.formatElapsedTime(duration)
+    }
 
     private val _currentDuration = MutableLiveData<Long>()
     private val currentDuration: LiveData<Long>
@@ -50,6 +62,7 @@ class PlayerViewModel(
     }
 
     fun initializeMediaPlayer() {
+        val uri: Uri = Uri.fromFile(File(recording.value!![0].entryEntity.recordingPath))
         mediaPlayer = MediaPlayer().apply {
             try {
                 reset()
@@ -75,8 +88,7 @@ class PlayerViewModel(
         seekBar.max = mediaPlayer.duration
         _currentDuration.value =
             mediaPlayer.currentPosition / oneSecond
-        totalDurationString =
-            DateUtils.formatElapsedTime(mediaPlayer.duration / oneSecond)
+        _totalDuration.value = mediaPlayer.duration / oneSecond
 
         seekBar.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {

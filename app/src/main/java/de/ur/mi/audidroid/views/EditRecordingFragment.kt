@@ -2,7 +2,6 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -10,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.adapter.MarkerItemAdapter
+import de.ur.mi.audidroid.adapter.EditMarkerItemAdapter
 import de.ur.mi.audidroid.databinding.EditRecordingFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
@@ -18,7 +17,7 @@ import kotlinx.android.synthetic.main.player_fragment.*
 
 class EditRecordingFragment : Fragment() {
 
-    private lateinit var adapter: MarkerItemAdapter
+    private lateinit var adapter: EditMarkerItemAdapter
     private lateinit var editRecordingViewModel: EditRecordingViewModel
     private lateinit var binding: EditRecordingFragmentBinding
 
@@ -66,12 +65,11 @@ class EditRecordingFragment : Fragment() {
 
     private fun setupAdapter() {
 
-        adapter = MarkerItemAdapter(editRecordingViewModel)
+        adapter = EditMarkerItemAdapter(editRecordingViewModel)
         binding.markerList.adapter = adapter
 
         editRecordingViewModel.getAllMarkers.observe(viewLifecycleOwner, Observer {
             it?.let {
-                Log.d("markers", "" + it)
                 adapter.submitList(it)
             }
         })

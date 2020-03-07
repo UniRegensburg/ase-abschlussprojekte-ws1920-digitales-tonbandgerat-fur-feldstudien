@@ -7,15 +7,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.MarkItemBinding
 import de.ur.mi.audidroid.models.MarkerEntity
-import de.ur.mi.audidroid.viewmodels.PlayerViewModel
+import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 
-class MarkItemAdapter(
-    private val playerViewModel: PlayerViewModel
+class EditMarkerItemAdapter(
+    private val editRecordingViewModel: EditRecordingViewModel
 ) :
-    ListAdapter<MarkerEntity, MarkItemAdapter.ViewHolder>(MarkDiffCallback()) {
+    ListAdapter<MarkerEntity, EditMarkerItemAdapter.ViewHolder>(EditMarkDiffCallback()) {
 
     val userActionsListener = object : MarkUserActionsListener {
         override fun onMarkClicked(markerEntity: MarkerEntity) {
+            editRecordingViewModel.onMarkClicked(markerEntity.markTime)
         }
     }
 
@@ -49,7 +50,7 @@ class MarkItemAdapter(
     }
 }
 
-class MarkDiffCallback : DiffUtil.ItemCallback<MarkerEntity>() {
+class EditMarkDiffCallback : DiffUtil.ItemCallback<MarkerEntity>() {
 
     override fun areItemsTheSame(oldItem: MarkerEntity, newItem: MarkerEntity): Boolean {
         return oldItem.mid == newItem.mid

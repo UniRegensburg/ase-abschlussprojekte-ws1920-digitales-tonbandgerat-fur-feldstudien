@@ -44,7 +44,7 @@
                     android:layout_width="@dimen/layout_width_edit_fragment"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.30"
-                    android:text="Mark"
+                    android:text="@string/sample_mark"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body1" />
 
                 <TextView
@@ -53,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.50"
-                    android:text="Sample comment"
+                    android:text="@string/sample_comment"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
 
                 <TextView

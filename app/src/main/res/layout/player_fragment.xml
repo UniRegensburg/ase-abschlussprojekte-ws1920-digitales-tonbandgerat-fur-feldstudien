@@ -27,12 +27,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/recording_file_name"
-                android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline4"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline5"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.263" />
+                app:layout_constraintVertical_bias="0.10" />
 
             <LinearLayout
                 android:id="@+id/seekBarLayout"
@@ -42,7 +42,7 @@
                 android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.70"
+                app:layout_constraintVertical_bias="0.30"
                 tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
 
                 <TextView
@@ -55,6 +55,7 @@
 
                 <SeekBar
                     android:id="@+id/seekBar"
+                    style="@style/Widget.AudidroidTheme.Seekbar"
                     android:layout_width="@dimen/layout_width_seek_bar_element"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.6" />
@@ -69,37 +70,82 @@
 
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/button_play"
+            <TextView
+                android:id="@+id/text_view_marks"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:contentDescription="@string/play_button"
-                android:onClick="@{() -> playerViewModel.onStartPlayer()}"
-                android:src="@mipmap/play_button_foreground"
-                android:visibility="@{playerViewModel.isPlaying ? View.GONE : View.VISIBLE, default=visible}"
+                android:text="@string/marks_text_view"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintHorizontal_bias="0.042"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.93" />
+                app:layout_constraintVertical_bias="0.42" />
 
-            <ImageButton
-                android:id="@+id/button_pause"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/marker_list"
+                android:layout_width="@dimen/layout_width_edit_fragment"
+                android:layout_height="@dimen/layout_height_edit_fragment"
+                android:layout_marginTop="@dimen/keyline_2"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toTopOf="@id/image_button_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_view_marks"
+                tools:listitem="@layout/mark_item" />
+
+            <LinearLayout
+                android:layout_width="@dimen/layout_width_edit_fragment"
+                android:layout_height="@dimen/layout_height_edit_fragment"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/image_button_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/seekBarLayout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_marks"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/image_button_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:contentDescription="@string/pause_button"
-                android:onClick="@{() -> playerViewModel.onPausePlayer()}"
-                android:src="@mipmap/pause_button_foreground"
-                android:visibility="@{playerViewModel.isPlaying ? View.VISIBLE : View.GONE, default=gone}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.93" />
+                app:layout_constraintVertical_bias="0.99">
+
+                <ImageButton
+                    android:id="@+id/button_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:contentDescription="@string/play_button"
+                    android:onClick="@{() -> playerViewModel.onStartPlayer()}"
+                    android:src="@mipmap/play_button_foreground"
+                    android:visibility="@{playerViewModel.isPlaying ? View.GONE : View.VISIBLE, default=visible}" />
+
+                <ImageButton
+                    android:id="@+id/button_pause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:contentDescription="@string/pause_button"
+                    android:onClick="@{() -> playerViewModel.onPausePlayer()}"
+                    android:src="@mipmap/pause_button_foreground"
+                    android:visibility="@{playerViewModel.isPlaying ? View.VISIBLE : View.GONE, default=gone}" />
+
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
