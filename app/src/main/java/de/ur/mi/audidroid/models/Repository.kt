@@ -14,6 +14,7 @@ class Repository(application: Application) : CoroutineScope {
 
     private var entryDao: EntryDao
     private var labelDao: LabelDao
+    private var markerDao: MarkerDao
     private var allRecordings: LiveData<List<EntryEntity>>
 
     private val job = Job()
@@ -26,6 +27,7 @@ class Repository(application: Application) : CoroutineScope {
         )
         entryDao = database.entryDao()
         labelDao = database.labelDao()
+        markerDao = database.markerDao()
         allRecordings = entryDao.getAllRecordings()
     }
 
@@ -49,9 +51,19 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun insertRecording(entryEntity: EntryEntity) {
+    fun insertRecording(entryEntity: EntryEntity): Long {
+        var temp: Long? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                temp = entryDao.insert(entryEntity)
+            }
+        }
+        return temp!!
+    }
+
+    fun insertMark(marker: MarkerTimeRelation) {
         CoroutineScope(coroutineContext).launch {
-            entryDao.insert(entryEntity)
+            markerDao.insertMark(marker)
         }
     }
 
@@ -67,12 +79,12 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun getRecordingById(recordingId: Int): LiveData<EntryEntity> {
-        return entryDao.getRecordingById(recordingId)
+    fun getRecordingByIdInclMarks(uid: Int): LiveData<List<RecordingAndMarker>> {
+        return markerDao.getRecordingFromIdInclMarks(uid)
     }
 
     fun getLabelById(labelEntity: LabelEntity): LiveData<LabelEntity> {
         return labelDao.getLabelById(labelEntity.uid)
     }
-
 }
+
