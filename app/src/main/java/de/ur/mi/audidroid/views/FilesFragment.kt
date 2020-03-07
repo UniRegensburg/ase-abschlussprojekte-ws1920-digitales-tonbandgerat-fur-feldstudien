@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +17,7 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.Adapter
 import de.ur.mi.audidroid.adapter.FolderAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
+import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ConvertDialog
 import de.ur.mi.audidroid.utils.FolderDialog
@@ -133,6 +135,7 @@ class FilesFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        folderViewModel.initFolderSorting()
         setupAdapter()
     }
 
@@ -157,6 +160,7 @@ class FilesFragment : Fragment() {
             })
 
             //Sets Adapter to RecyclingView containing the known folders and their content
+           // val folders = folderViewModel.initFolderSorting()
             val folders = folderViewModel.initFolderSorting()
             folders.observe(viewLifecycleOwner, Observer {
                 it?.let {

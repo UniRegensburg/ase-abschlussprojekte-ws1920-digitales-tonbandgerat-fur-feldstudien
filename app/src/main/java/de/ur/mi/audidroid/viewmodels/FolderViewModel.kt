@@ -15,7 +15,6 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
-import kotlinx.android.synthetic.main.folder_item.view.*
 import java.util.regex.Pattern
 
 class FolderViewModel(dataSource: Repository, application: Application) :
@@ -40,7 +39,8 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         folderToBeCreated = null
     }
 
-    fun initFolderSorting(): MediatorLiveData<List<FolderEntity>>{
+    fun initFolderSorting():MediatorLiveData<List<FolderEntity>>{
+        allFoldersSorted.removeSource(allFolders)
         allFoldersSorted.addSource(allFolders){
             allFoldersSorted.value = getFolderHierachy(allFolders.value!!)
         }
