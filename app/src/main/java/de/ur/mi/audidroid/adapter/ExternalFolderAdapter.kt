@@ -14,13 +14,12 @@ import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 
-class FolderAdapter(private val filesViewModel: FilesViewModel, private val folderViewModel: FolderViewModel) :
-    ListAdapter<FolderEntity, FolderAdapter.ViewHolder>(FolderDiffCallback()) {
+class ExternalFolderAdapter(private val filesViewModel: FilesViewModel, private val folderViewModel: FolderViewModel) :
+    ListAdapter<FolderEntity, ExternalFolderAdapter.ViewHolder>(ExternalFolderDiffCallback()) {
 
     lateinit var holderContext: Context
     lateinit var recordingAdapter: Adapter
     lateinit var folderItem: FolderEntity //FolderEntry der gerade bearbeitet wird
-    var isSubfolder: Boolean = false
 
     val folderUserActionsListener = object : FolderUserActionsListener{
         override fun onAddFolderClicked(folderEntity: FolderEntity?, view: View) {
@@ -31,12 +30,10 @@ class FolderAdapter(private val filesViewModel: FilesViewModel, private val fold
         }
     }
 
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         folderItem = getItem(position)
-        isSubfolder = folderViewModel.isSubfolder(folderItem)
         setUpRecordingAdapter(holder)
-        holder.bind(getItem(position)!!, recordingAdapter, folderUserActionsListener, isSubfolder)
+        holder.bind(getItem(position)!!, recordingAdapter, folderUserActionsListener)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -50,13 +47,11 @@ class FolderAdapter(private val filesViewModel: FilesViewModel, private val fold
         fun bind(
             item: FolderEntity,
             adapter: Adapter,
-            listener: FolderUserActionsListener,
-            boolean: Boolean
+            listener: FolderUserActionsListener
         ) {
             binding.folder = item
             binding.recordingAdapter = adapter
             binding.listener = listener
-            binding.isSubfolder = boolean
             binding.executePendingBindings()
         }
 
@@ -86,7 +81,7 @@ class FolderAdapter(private val filesViewModel: FilesViewModel, private val fold
 }
 
 // DiffUtil uses these two methods to figure out how the list and items have changed
-class FolderDiffCallback : DiffUtil.ItemCallback<FolderEntity>() {
+class ExternalFolderDiffCallback : DiffUtil.ItemCallback<FolderEntity>() {
 
     override fun areItemsTheSame(oldItem: FolderEntity, newItem: FolderEntity): Boolean {
         return oldItem.uid == newItem.uid

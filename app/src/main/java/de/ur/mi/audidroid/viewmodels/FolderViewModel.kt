@@ -32,11 +32,19 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     var dialogType: Int = R.string.confirm_dialog
     var errorMessage: String? = null
     var folderToBeEdited: FolderEntity? = null
+    var isSubFolderEntity: Boolean = false
 
     fun cancelFolderDialog(){
         errorMessage = null
         _createAlertDialog.value = false
         folderToBeCreated = null
+    }
+
+    fun isSubfolder(folder: FolderEntity): Boolean{
+        if (folder.parentDir != null){
+            return true
+        }
+            return false
     }
 
     fun initFolderSorting():MediatorLiveData<List<FolderEntity>>{
@@ -154,36 +162,37 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         }
         return foldersToBeDeleted
     }
-    fun getFolderHierachy(allFolders: List<FolderEntity>): List<FolderEntity>?{
+    fun getFolderHierachy(allFolders: List<FolderEntity>): List<FolderEntity>? {
         if (allFolders.isNotEmpty()) {
             val foldersSorted: MutableList<FolderEntity> = mutableListOf()
             allFolders.forEach {
-                if (it.parentDir == null){
+                if (it.parentDir == null) {
                     foldersSorted.add(it)
                 }
             }
 
-            while (foldersSorted.size != allFolders.size){
-                foldersSorted.forEach {parentFolder ->
+            while (foldersSorted.size != allFolders.size) {
+                foldersSorted.forEach { parentFolder ->
                     allFolders.forEach {
-                        if (!foldersSorted.contains(it)){
-                            if (it.parentDir == parentFolder.uid){
+                        if (!foldersSorted.contains(it)) {
+                            if (it.parentDir == parentFolder.uid) {
                                 val index = foldersSorted.indexOf(parentFolder)
-                                foldersSorted.add(index+1, it)
+                                foldersSorted.add(index + 1, it)
                             }
                         }
                     }
                 }
             }
+            println(foldersSorted)
             return foldersSorted
         }
         return null
     }
 
-    private fun validName(name: String?): Boolean {
+        private fun validName(name: String?): Boolean {
         val folderName = name ?: ""
         return Pattern.compile("^[a-zA-Z0-9_-]{1,10}$").matcher(folderName).matches()
-    }
+        }
 
     fun initializeLayout(layout: FrameLayout) {
         frameLayout = layout

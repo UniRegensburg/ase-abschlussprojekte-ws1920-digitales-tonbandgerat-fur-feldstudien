@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.Adapter
+import de.ur.mi.audidroid.adapter.ExternalFolderAdapter
 import de.ur.mi.audidroid.adapter.FolderAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.FolderEntity
@@ -34,6 +35,7 @@ class FilesFragment : Fragment() {
 
     private lateinit var folderAdapter: FolderAdapter
     private lateinit var recordingAdapter: Adapter
+    private lateinit var externalFolderAdapter: ExternalFolderAdapter
     private lateinit var binding: FilesFragmentBinding
     private lateinit var folderViewModel: FolderViewModel
     private lateinit var filesViewModel: FilesViewModel
@@ -146,10 +148,14 @@ class FilesFragment : Fragment() {
         if (filesViewModel != null && folderViewModel != null) {
             folderAdapter = FolderAdapter(filesViewModel, folderViewModel)
             recordingAdapter = Adapter(filesViewModel)
+            externalFolderAdapter = ExternalFolderAdapter(filesViewModel, folderViewModel)
 
             //binding of adapters to Views
             binding.recordingListNoFolder.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
+            binding.externalFolderList.adapter = folderAdapter
+
+
 
             //Sets Adapter to RecyclingView for Recordings with no folder association
             filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {
@@ -161,12 +167,19 @@ class FilesFragment : Fragment() {
 
             //Sets Adapter to RecyclingView containing the known folders and their content
            // val folders = folderViewModel.initFolderSorting()
-            val folders = folderViewModel.initFolderSorting()
+            val folders = folderViewModel.allFolders
             folders.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     folderAdapter.submitList(it)
                 }
             })
+
+            folders.observe(viewLifecycleOwner, Observer {
+                it?.let {
+                    externalFolderAdapter.submitList(it)
+                }
+            })
+
         }
     }
 

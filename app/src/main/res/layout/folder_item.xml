@@ -10,6 +10,9 @@
             name="folder"
             type="de.ur.mi.audidroid.models.FolderEntity" />
         <variable
+            name="isSubfolder"
+            type="Boolean" />
+        <variable
             name="filesViewModel"
             type="de.ur.mi.audidroid.viewmodels.FilesViewModel" />
         <variable
@@ -23,6 +26,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingLeft="@{isSubfolder ? @dimen/keyline_7 : @dimen/keyline_0}"
         tools:context=".views.FilesFragment">
         <LinearLayout
             android:id="@+id/recycler_container"
