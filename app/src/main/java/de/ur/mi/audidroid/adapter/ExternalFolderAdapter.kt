@@ -67,16 +67,16 @@ class ExternalFolderAdapter(private val filesViewModel: FilesViewModel, private 
     //adapter, which is provided for the nested recyclerview
     private fun setUpRecordingAdapter(holder: ViewHolder) {
         val filesViewModel = filesViewModel
-        val recordings = folderViewModel.getAllRecordingsByFolder(folderItem)
-        if (filesViewModel != null){
-            recordingAdapter = Adapter(filesViewModel)
-            recordings.observe( holder.itemView.context as LifecycleOwner, Observer {
-                it?.let {
-                    recordingAdapter.submitList(it)
-                }
-            })
+        val recordings = filesViewModel.getAllRecordingsByFolder(folderItem)
 
-        }
+        recordingAdapter = Adapter(filesViewModel)
+        recordings.observe( holder.itemView.context as LifecycleOwner, Observer {
+            it?.let {
+                recordingAdapter.submitList(it)
+            }
+        })
+
+
     }
 }
 

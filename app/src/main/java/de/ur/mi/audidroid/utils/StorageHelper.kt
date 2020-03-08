@@ -29,7 +29,7 @@ object StorageHelper {
 
 
     fun deleteFile(context: Context, entryEntity: EntryEntity): Boolean{
-        var deletedSuccessfully = false
+        var deletedSuccessfully: Boolean
         if(entryEntity.recordingPath.startsWith(context.resources.getString(R.string.content_uri_prefix))){
             deletedSuccessfully = deleteExternalFile(context, entryEntity.recordingPath, entryEntity.recordingName)
         }else{
@@ -49,6 +49,19 @@ object StorageHelper {
         }
         return false
     }
+
+    fun createInternalFolderEntity(name: String, parentFolder: FolderEntity?): FolderEntity{
+        var nestingDescr = ""
+        var parentFolderRef: Int? = null
+        if (parentFolder != null){
+            nestingDescr = parentFolder.folderName
+            parentFolderRef = parentFolder.uid
+        }
+        val newFolderEntity = FolderEntity(0, name,null,
+            false, parentFolderRef , nestingDescr)
+        return newFolderEntity
+    }
+
     //==================================================================================================
     fun moveEntryStorage(context: Context, entryEntity: EntryEntity, folderPath: String): String{
         var newPath = ""
@@ -78,17 +91,18 @@ object StorageHelper {
         return name + context.resources.getString(R.string.suffix_audio_file)
     }
 
-    // check if external Folder has already an entry in DB
-    fun checkExternalFolderReference(allFolders: List<FolderEntity>,path: String): Int?{
-        println("StorageHelper")
-        val folders = allFolders
-        folders.forEach {
-            if (it.dirPath == path){
-                return it.uid
+    // Checks if an external path already has a reference in Database.
+    fun checkExternalFolderReference(allFolderPaths: List<String>,path: String): Int?{
+        var index: Int? = null
+        for (i in allFolderPaths.indices){
+            if (allFolderPaths[i] == path){
+                index = i
+                break
             }
         }
-        return null
+        return index
     }
+
     fun createFolderFromUri(repository: Repository ,path: String): Int{
         val uri = Uri.parse(path)
         var name = getFolderName(uri.lastPathSegment.toString())

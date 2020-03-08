@@ -64,6 +64,7 @@ class FilesFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
+
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -213,10 +214,9 @@ class FilesFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == resources.getInteger(R.integer.activity_request_code_external_folder) &&
             resultCode == Activity.RESULT_OK){
-            println(data!!.dataString)
-            if (data != null){
-                folderViewModel.handleActivityResult(data!!.dataString!!)
-            }
+
+            folderViewModel.handleActivityResult(data!!.dataString!!)
+
 
         }
     }

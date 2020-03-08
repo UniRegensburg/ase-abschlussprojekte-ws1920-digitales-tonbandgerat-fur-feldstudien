@@ -43,7 +43,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _showSnackbarEvent.value = null
     }
 
-    
+
     // If there are no recordings in the database, a TextView is displayed.
     val empty: LiveData<Boolean> = Transformations.map(allRecordings) {
         it.isEmpty()
@@ -91,6 +91,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 }
             }
         }
+    }
+
+    fun getAllRecordingsByFolder(folder : FolderEntity): LiveData<List<EntryEntity>>{
+        return repository.getRecordingByFolder(folder.uid)
     }
 
     // Navigation to the PlayerFragment

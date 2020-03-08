@@ -314,7 +314,11 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     fun handleFolderReferece(path: String?):Int? {
         var folderReference: Int? = null
         if (path != null){
-            val existingFolder = StorageHelper.checkExternalFolderReference(allFolders.value!!,path)
+            val folders = allFolders.value
+            val allFolderPaths: ArrayList<String> = arrayListOf()
+            folders!!.forEach { allFolderPaths.add(it.dirPath!!) }
+
+            val existingFolder = StorageHelper.checkExternalFolderReference(allFolderPaths, path)
             if (existingFolder != null){
                 folderReference =  existingFolder
             }else {

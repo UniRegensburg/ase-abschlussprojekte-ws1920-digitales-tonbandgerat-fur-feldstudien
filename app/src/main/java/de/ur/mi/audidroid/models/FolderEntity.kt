@@ -9,7 +9,7 @@ import de.ur.mi.audidroid.R
 data class FolderEntity(
     @PrimaryKey(autoGenerate = true) val uid: Int,
     @ColumnInfo(name = "folderName") val folderName: String,
-    @ColumnInfo(name = "dirPath") val dirPath: String,
+    @ColumnInfo(name = "dirPath") val dirPath: String? = null,
     @ColumnInfo(name = "isExternal") val isExternal: Boolean = false,
     @ColumnInfo(name = "parentDir") val parentDir: Int? = null,
     @ColumnInfo(name = "nestingDescr") val nestingDescr: String? = ""
