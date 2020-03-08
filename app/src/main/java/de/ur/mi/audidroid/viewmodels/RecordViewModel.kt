@@ -13,10 +13,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.LabelAssignmentEntity
-import de.ur.mi.audidroid.models.MarkerTimeRelation
-import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -257,7 +254,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
-            val mark = MarkerTimeRelation(0, recordingId, it.first, it.second)
+            val mark = MarkerEntity(0, recordingId, it.first, it.second)
             dataSource.insertMark(mark)
         }
         markList = mutableListOf()
