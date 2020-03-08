@@ -1,7 +1,6 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
-import android.content.res.Resources
 import android.view.View
 import android.widget.PopupMenu
 import androidx.lifecycle.AndroidViewModel
@@ -14,8 +13,6 @@ import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
 import de.ur.mi.audidroid.utils.StorageHelper
-import de.ur.mi.audidroid.views.MainActivity
-import java.io.File
 
 /**
  * ViewModel for FilesFragment.
@@ -26,18 +23,18 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
-    private val _createAlertDialog = MutableLiveData<Boolean>()
-    private val res: Resources = context.resources
-    val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     private var recordingToBeExported: EntryEntity? = null
+    val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
     val folderToBeMoved = MutableLiveData<EntryEntity>()
-    var dialogType: Int = R.string.alert_dialog
+    var folderList = MutableLiveData<List<FolderEntity>>()
 
-    private var _showSnackbarEvent = MutableLiveData<Boolean>()
+    private val _createAlertDialog = MutableLiveData<Boolean>()
 
     val createAlertDialog: MutableLiveData<Boolean>
         get() = _createAlertDialog
+
+    private var _showSnackbarEvent = MutableLiveData<Boolean>()
 
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
@@ -46,7 +43,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _showSnackbarEvent.value = null
     }
 
-
+    
     // If there are no recordings in the database, a TextView is displayed.
     val empty: LiveData<Boolean> = Transformations.map(allRecordings) {
         it.isEmpty()
@@ -61,7 +58,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 R.id.action_delete_recording ->
                     delete(entryEntity)
                 R.id.action_move_recording ->
-                    onMoveFileClicked(entryEntity)
+                    folderToBeMoved.value = entryEntity
                 R.id.action_share_recording -> {
                     recordingToBeExported = entryEntity
                     _createAlertDialog.value = true
@@ -78,21 +75,21 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun delete(entryEntity: EntryEntity) {
-        println(entryEntity)
-        var deletedSuccessful: Boolean
-        println(entryEntity.recordingPath)
-
-        if (entryEntity.recordingPath.startsWith( res.getString(R.string.content_uri_prefix),false)){
-           println("EXTERNAL")
-            deletedSuccessful = StorageHelper.deleteExternalFile(context,entryEntity.recordingPath,
-                entryEntity.recordingName)
-        }else {
-            println("INTERNAL")
-            deletedSuccessful = File(entryEntity.recordingPath).delete()
-        }
+        val deletedSuccessful = StorageHelper.deleteFile(context, entryEntity)
         if (deletedSuccessful) {
             repository.delete(entryEntity)
             _showSnackbarEvent.value = true
+        }
+    }
+
+    fun deleteEntriesInInternalFolders() {
+        val folderList = folderList.value!!
+        folderList.forEach { folder ->
+            allRecordings.value!!.forEach {
+                if (folder.uid == it.folder) {
+                    delete(it)
+                }
+            }
         }
     }
 
@@ -112,18 +109,5 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     fun cancelExporting() {
         recordingToBeExported = null
         _createAlertDialog.value = false
-    }
-    private fun onMoveFileClicked(entryEntity: EntryEntity){
-        folderToBeMoved.value = entryEntity
-    }
-
-    fun deleteEntriesInInternalFolders(folderList: MutableList<FolderEntity>) {
-        folderList.forEach { folder ->
-            allRecordings.value!!.forEach {
-                if (folder.uid == it.folder) {
-                    delete(it)
-                }
-            }
-        }
     }
 }

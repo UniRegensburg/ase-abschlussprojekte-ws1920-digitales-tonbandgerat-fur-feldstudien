@@ -42,7 +42,6 @@ class Repository(application: Application): CoroutineScope {
         return allRecordings
     }
 
-
     fun getAllLabels(): LiveData<List<LabelEntity>> {
         return labelDao.getAllLabels()
     }
@@ -50,6 +49,7 @@ class Repository(application: Application): CoroutineScope {
     fun getAllFolders(): LiveData<List<FolderEntity>>{
         return allFolders
     }
+
     fun delete(entryEntity: EntryEntity) {
         CoroutineScope(coroutineContext).launch {
             entryDao.delete(entryEntity)

@@ -73,7 +73,10 @@ class FilesFragment : Fragment() {
         })
 
         folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
-            if(it == true){
+            if(it == context!!.resources.getString(R.string.delete)){
+                Snackbar.make(view!!,  R.string.folder_deleted, Snackbar.LENGTH_SHORT).show()
+                folderViewModel.doneShowingSnackbar()
+            }else if (it == context!!.resources.getString(R.string.create_folder)){
                 Snackbar.make(view!!,  R.string.folder_created, Snackbar.LENGTH_SHORT).show()
                 folderViewModel.doneShowingSnackbar()
             }
@@ -85,6 +88,7 @@ class FilesFragment : Fragment() {
         folderViewModel.allExternalFolders.observe(viewLifecycleOwner, Observer {})
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {})
         filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {})
+        filesViewModel.folderList.observe(viewLifecycleOwner, Observer { filesViewModel.deleteEntriesInInternalFolders() })
 
         // Observer on the state variable for navigating when a list-item is clicked.
         filesViewModel.navigateToPlayerFragment.observe(
@@ -178,21 +182,23 @@ class FilesFragment : Fragment() {
             filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     recordingAdapter.submitList(it)
+
                 }
             })
 
             //Sets Adapters to RecyclingView containing the known folders and their content
-           // val folders = folderViewModel.initFolderSorting()
             folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     folderAdapter.submitList(it)
+                    view!!.invalidate()
+
                 }
             })
 
             folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
-
                     externalFolderAdapter.submitList(it)
+                    view!!.invalidate()
                 }
             })
         }

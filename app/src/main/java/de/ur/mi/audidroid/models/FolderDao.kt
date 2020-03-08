@@ -21,12 +21,6 @@ interface FolderDao {
     @Query("SELECT * FROM foldersTable WHERE isExternal =:isExternal")
     fun getFolderByStorage(isExternal : Boolean): LiveData<List<FolderEntity>>
 
-    @Query("SELECT * FROM foldersTable WHERE isExternal = 1")
-    fun getExternalFolders(): LiveData<List<FolderEntity>>
-
-    @Query("SELECT * FROM foldersTable WHERE isExternal = 0")
-    fun getInternalFolders(): LiveData<List<FolderEntity>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(folderEntity: FolderEntity): Long
 

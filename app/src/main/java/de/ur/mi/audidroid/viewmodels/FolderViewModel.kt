@@ -24,13 +24,13 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
-    private lateinit var frameLayout: FrameLayout
-    val res: Resources = context.resources
+    private val res: Resources = context.resources
     private val _createAlertDialog = MutableLiveData<Boolean>()
     private val _createConfirmDialog = MutableLiveData<Boolean>()
+    private lateinit var frameLayout: FrameLayout
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
-    var allInternalFolders: LiveData<List<FolderEntity>> = repository.getInternalFolders()
-    var allExternalFolders: LiveData<List<FolderEntity>> = repository.getExternalFolders()
+    var allInternalFolders: LiveData<List<FolderEntity>> = repository.getFolderByStorage(false)
+    var allExternalFolders: LiveData<List<FolderEntity>> = repository.getFolderByStorage(true)
     var allInternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var allExternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var folderToBeCreated: Boolean? = null
@@ -39,13 +39,13 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     var folderToBeEdited: FolderEntity? = null
 
 
-    private var _showSnackbarEvent = MutableLiveData<Boolean>()
+    private var _showSnackbarEvent = MutableLiveData<String>()
 
-    val showSnackbarEvent: LiveData<Boolean>
+    val showSnackbarEvent: LiveData<String>
         get() = _showSnackbarEvent
 
     fun doneShowingSnackbar() {
-        _showSnackbarEvent.value = null
+        _showSnackbarEvent.value = ""
     }
 
     fun cancelFolderDialog(){
@@ -61,21 +61,14 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
 
     fun initFolderSorting(){
-        println("______________________________")
         if (allInternalFoldersSorted.value == null){
             allInternalFoldersSorted.addSource(allInternalFolders){
-                println(allFolders)
-                println(allInternalFolders.value)
                 allInternalFoldersSorted.value = StorageHelper.getInternalFolderHierarchy(allInternalFolders.value!!)
-                println(allInternalFolders.value)
             }
-
         }
         if (allExternalFoldersSorted.value == null){
             allExternalFoldersSorted.addSource(allExternalFolders){
-                println(allExternalFolders.value)
                 allExternalFoldersSorted.value = allExternalFolders.value
-
             }
         }
     }
@@ -130,6 +123,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     fun deleteFolderFromDB(folderList: MutableList<FolderEntity>) {
         folderList.forEach { repository.deleteFolder(it) }
+        _showSnackbarEvent.value = res.getString(R.string.delete)
         folderToBeEdited = null
     }
 
@@ -154,6 +148,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             return
         }
         createFolderInDB(nameInput, parentFolder)
+        _showSnackbarEvent.value = res.getString(R.string.create_folder)
     }
 
     private fun createFolderInDB(nameInput: String, parentFolder: FolderEntity?){
@@ -169,17 +164,34 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         folderToBeEdited = null
     }
 
+
+
     //handels the move of a folder from one folder to another
     fun onEntryMoveFolderClicked(entryEntity: EntryEntity, folderUid: Int?, folderPath: String?){
-        if (folderPath!!.contains(res.getString(R.string.content_uri_prefix))||
+        println("MOVE A ENTRY FROM FOLDER TO FOLDER")
+        println(entryEntity)
+        println(folderUid)
+        println(folderPath)
+        var newPath: String? = null
+        // if dest external OR src external
+        if (folderPath != null){
+            if (folderPath!!.contains(res.getString(R.string.content_uri_prefix))||
                 entryEntity.recordingPath.contains(res.getString(R.string.content_uri_prefix))){
-            StorageHelper.moveEntryStorage(context, entryEntity, folderPath)
+                newPath =  StorageHelper.moveEntryStorage(context, entryEntity, folderPath)
+            }
         }
-        updateEntryFolderInDB(entryEntity,folderUid)
+
+        println("nklnkönkln")
+        updateEntryFolderInDB(entryEntity,folderUid, newPath)
     }
 
-    fun updateEntryFolderInDB(entryEntity: EntryEntity, folderUid: Int?){
-        val updatedEntry = EntryEntity(entryEntity.uid,entryEntity.recordingName,entryEntity.recordingPath,
+    fun updateEntryFolderInDB(entryEntity: EntryEntity, folderUid: Int?, newPath: String?){
+
+        var recordingPath = entryEntity.recordingPath
+        if (newPath != null){ recordingPath = newPath!!}
+
+        val updatedEntry = EntryEntity(entryEntity.uid,
+            entryEntity.recordingName, recordingPath,
             entryEntity.date, entryEntity.duration, folderUid, entryEntity.labels)
         repository.updateEntry(updatedEntry)
     }
@@ -210,7 +222,4 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         frameLayout = layout
     }
 
-    private fun showSnackBar(text: String) {
-        Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
-    }
 }

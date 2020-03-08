@@ -5,6 +5,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
@@ -66,7 +68,8 @@ object FolderDialog {
                 if(errorMessage != null){
                     builder.setMessage(errorMessage)
                 }
-                val folderNameArray = getFolderOptions(listOfAvailableFolders)
+
+                val folderNameArray = getFolderOptions(context, listOfAvailableFolders, entryToBeMoved)
                 if (listOfAvailableFolders!!.isNotEmpty()){
                     with(builder){
                         setTitle(R.string.move_file_dialog_header)
@@ -138,7 +141,7 @@ object FolderDialog {
                              viewModel: FolderViewModel, position: Int){
         if (position != -1){
             viewModel.onEntryMoveFolderClicked(entryToBeMoved, listOfAvailableFolders!![position].uid,
-                listOfAvailableFolders!![position].dirPath)
+                listOfAvailableFolders[position].dirPath)
         }else{
             viewModel.cancelFolderDialog()
         }
@@ -151,6 +154,7 @@ object FolderDialog {
             //internal
             val folderAndSubfolders = mutableListOf(folderToBeEdited)
             StorageHelper.getAllInternalSubFolders(allFolders, folderAndSubfolders)
+            filesViewModel.folderList = MutableLiveData(folderAndSubfolders)
             filesViewModel.deleteEntriesInInternalFolders(folderAndSubfolders)
             viewModel.deleteFolderFromDB(folderAndSubfolders)
         }else{
@@ -160,12 +164,35 @@ object FolderDialog {
     }
 
     //gets folder names for choosable options
-    private fun getFolderOptions(listOfAvailableFolders: List<FolderEntity>?): Array<String>{
+    private fun getFolderOptions(context: Context, listOfAvailableFolders: List<FolderEntity>?, entryToBeMoved: EntryEntity): Array<String>{
+
+        var folderNameList: ArrayList<String> = ArrayList()
+        println(entryToBeMoved.recordingPath)
+        if (entryToBeMoved.recordingPath.startsWith(context.getString(R.string.content_uri_prefix))){
+            listOfAvailableFolders!!.forEach {
+                println(it)
+                if (it.isExternal){
+                    folderNameList.add(it.folderName)
+                }
+            }
+        }else{
+            listOfAvailableFolders!!.forEach {
+                folderNameList.add(it.folderName)
+            }
+        }
+        val folderNameArray = arrayOfNulls<String>(folderNameList.size)
+        return folderNameList.toArray(folderNameArray)
+    }
+    /*
+    *
+
         var folderNameList: ArrayList<String> = ArrayList()
         listOfAvailableFolders!!.forEach {
             folderNameList.add(it.folderName)
         }
         val folderNameArray = arrayOfNulls<String>(folderNameList.size)
         return folderNameList.toArray(folderNameArray)
-    }
+    * */
+
+
 }
