@@ -117,7 +117,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         folderToBeMoved.value = entryEntity
     }
 
-    fun deleteEntriesInFolders(folderList: MutableList<FolderEntity>) {
+    fun deleteEntriesInInternalFolders(folderList: MutableList<FolderEntity>) {
         folderList.forEach { folder ->
             allRecordings.value!!.forEach {
                 if (folder.uid == it.folder) {

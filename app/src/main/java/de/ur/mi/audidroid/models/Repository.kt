@@ -134,4 +134,8 @@ class Repository(application: Application): CoroutineScope {
     fun getFolderByPath(path: String): LiveData<FolderEntity>{
         return folderDao.getFolderByPath(path)
     }
+
+    fun getFolderByStorage(isExternal: Boolean): LiveData<List<FolderEntity>>{
+        return folderDao.getFolderByStorage(isExternal)
+    }
 }

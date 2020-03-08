@@ -12,6 +12,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.utils.StorageHelper
 import de.ur.mi.audidroid.utils.ThemeHelper
 import java.util.regex.Pattern
 
@@ -81,11 +82,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     private fun initStoragePreference(){
         val storagePreference = findPreference<Preference>(getString(R.string.storage_preference_key))!!
         storagePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivityForResult(intent, resources.getInteger(R.integer.activity_request_code_preference_storage))
+            startActivityForResult(StorageHelper.setOpenDocumentTreeIntent(), resources.getInteger(R.integer.activity_request_code_preference_storage))
             true
         }
     }

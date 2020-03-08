@@ -5,5 +5,6 @@
     <integer name="counter_multiplier">1000</integer>
     <integer name="one_second">1000</integer>
     <integer name="activity_request_code_preference_storage">1</integer>
+    <integer name="activity_request_code_external_folder">2</integer>
 
 </resources>

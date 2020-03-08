@@ -80,7 +80,7 @@ object FolderDialog {
                             viewModel?.cancelFolderDialog()
                         }
                         setNeutralButton(R.string.dialog_no_folder){_, _ ->
-                            viewModel!!.onEntryMoveFolderClicked(entryToBeMoved,null)
+                            viewModel!!.onEntryMoveFolderClicked(entryToBeMoved,null, null)
                         }
                     }
                 }else{
@@ -137,7 +137,8 @@ object FolderDialog {
     private fun onMoveFolder(entryToBeMoved: EntryEntity, listOfAvailableFolders: List<FolderEntity>?,
                              viewModel: FolderViewModel, position: Int){
         if (position != -1){
-            viewModel.onEntryMoveFolderClicked(entryToBeMoved, listOfAvailableFolders!![position].uid)
+            viewModel.onEntryMoveFolderClicked(entryToBeMoved, listOfAvailableFolders!![position].uid,
+                listOfAvailableFolders!![position].dirPath)
         }else{
             viewModel.cancelFolderDialog()
         }
@@ -146,10 +147,16 @@ object FolderDialog {
     //deletes folder and subfolders along with their content
     private fun onDeleteFolderAndContent(folderToBeEdited: FolderEntity,viewModel: FolderViewModel,
                                          filesViewModel: FilesViewModel){
-        val folderAndSubfolders = mutableListOf(folderToBeEdited)
-        viewModel.getAllSubFolder(folderAndSubfolders)
-        viewModel.deleteFolderFromDB(folderAndSubfolders)
-        filesViewModel.deleteEntriesInFolders(folderAndSubfolders)
+        if (folderToBeEdited.isExternal == false){
+            //internal
+            val folderAndSubfolders = mutableListOf(folderToBeEdited)
+            viewModel.getAllInternalSubFolders(folderAndSubfolders)
+            filesViewModel.deleteEntriesInInternalFolders(folderAndSubfolders)
+            viewModel.deleteFolderFromDB(folderAndSubfolders)
+        }else{
+            println("JO, Folder is External")
+        }
+
     }
 
     //gets folder names for choosable options

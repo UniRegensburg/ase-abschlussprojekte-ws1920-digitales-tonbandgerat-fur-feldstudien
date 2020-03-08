@@ -1,17 +1,48 @@
 package de.ur.mi.audidroid.utils
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import java.io.File
+import java.io.IOException
 
 object StorageHelper {
+
+
+    fun moveEntryStorage(context: Context, entryEntity: EntryEntity, folderPath: String): String{
+        if(folderPath.contains(context.getString(R.string.content_uri_prefix))){
+            println(entryEntity.recordingPath)
+            val srcFile = File(entryEntity.recordingPath)
+            val uri = Uri.parse(folderPath)
+            val dstFile = DocumentFile.fromTreeUri(context, uri)!!
+                .createFile("aac", getDocumentName(context,entryEntity.recordingName))
+            if (copyToExternalFile(context, srcFile , dstFile!!)){
+                srcFile.delete()
+            }
+        }else{
+            val filePath = context.filesDir.absolutePath + getDocumentName(context,entryEntity.recordingName)
+            val dstFile = File(filePath)
+            val uri = Uri.parse(folderPath)
+            val srcFile = DocumentFile.fromTreeUri(context, uri)!!.findFile(getDocumentName(context, entryEntity.recordingName))
+
+        }
+        return ""
+    }
+    fun setOpenDocumentTreeIntent():Intent{
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        return intent
+    }
 
     //checks if String is contentUri and returns dir
     fun getExternalFolderPath(context: Context,path: String, name: String): String?{
@@ -21,6 +52,9 @@ object StorageHelper {
         return null
     }
 
+    fun getDocumentName(context: Context, name: String): String{
+        return name + context.resources.getString(R.string.suffix_audio_file)
+    }
 
     // check if external Folder has already an entry in DB
     fun checkExternalFolderReference(allFolders: List<FolderEntity>,path: String): Int?{
@@ -34,7 +68,7 @@ object StorageHelper {
     }
     fun createFolderFromUri(repository: Repository ,path: String): Int{
         val uri = Uri.parse(path)
-        var name = StorageHelper.getFolderName(uri.lastPathSegment.toString())
+        var name = getFolderName(uri.lastPathSegment.toString())
         val newFolderEntity = FolderEntity(0, name,
             path, true, null,uri.lastPathSegment.toString())
         return repository.insertFolder(newFolderEntity).toInt()
@@ -58,16 +92,21 @@ object StorageHelper {
         val preferredDir = DocumentFile.fromTreeUri(context!!, treeUri)!!
         val newExternalFile = preferredDir.createFile("aac",newName)!!
         copyToExternalFile(context, tempFile, newExternalFile)
-        return newExternalFile.uri!!.toString()
+        return newExternalFile.uri.toString()
     }
 
     //copies content of a File to DocumentFile
-    fun copyToExternalFile (context: Context, src: File, dst: DocumentFile){
-        val inputStream = src.inputStream()
-        val outputStream = context.contentResolver.openOutputStream(dst.uri)
-        inputStream.copyTo(outputStream!!)
-        inputStream.close()
-        outputStream.close()
+    fun copyToExternalFile (context: Context, src: File, dst: DocumentFile): Boolean{
+        try {
+            val inputStream = src.inputStream()
+            val outputStream = context.contentResolver.openOutputStream(dst.uri)
+            inputStream.copyTo(outputStream!!)
+            inputStream.close()
+            outputStream.close()
+            return true
+        }catch (e: IOException){
+            return false
+        }
     }
 
     // deletes list of recordings in folder; if folder is empty afterwards delete it too
@@ -107,7 +146,6 @@ object StorageHelper {
     fun checkExternalFolderEmpty(context: Context, path: String): Boolean{
         val treeUri = Uri.parse(path)
         val dir = DocumentFile.fromTreeUri(context,treeUri)
-
         if (dir!!.listFiles() == null){
             return true
         }

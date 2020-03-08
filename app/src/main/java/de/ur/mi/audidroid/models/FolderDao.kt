@@ -18,6 +18,9 @@ interface FolderDao {
     @Query("SELECT * FROM foldersTable WHERE folderName IN (:path)")
     fun getFolderByPath(path: String): LiveData<FolderEntity>
 
+    @Query("SELECT * FROM foldersTable WHERE isExternal IN (:isExternal)")
+    fun getFolderByStorage(isExternal : Boolean): LiveData<List<FolderEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(folderEntity: FolderEntity): Long
 

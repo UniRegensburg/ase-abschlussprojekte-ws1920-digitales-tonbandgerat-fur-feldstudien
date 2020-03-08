@@ -204,11 +204,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun  checkNameUniqueness(storagePref: Uri,newFile: File, name: String): Boolean{
-        if (name.equals("")) {
-            errorMessage = res.getString(R.string.dialog_invalid_name)
-            _createDialog.value = true
-            return false
-        }
         if (storagePref.toString().equals(res.getString(R.string.storage_location_default))){
             if (newFile.exists()) {
                 errorMessage = res.getString(R.string.dialog_already_exist)

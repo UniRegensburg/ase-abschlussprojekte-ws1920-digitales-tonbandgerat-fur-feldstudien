@@ -1,10 +1,14 @@
 package de.ur.mi.audidroid.views
 
+import android.app.Activity
 import android.app.Application
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
@@ -12,6 +16,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.preference.Preference
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.Adapter
@@ -22,6 +27,7 @@ import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ConvertDialog
 import de.ur.mi.audidroid.utils.FolderDialog
+import de.ur.mi.audidroid.utils.StorageHelper
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 
@@ -31,7 +37,6 @@ import de.ur.mi.audidroid.viewmodels.FolderViewModel
  */
 class FilesFragment : Fragment() {
 
-    private lateinit var adapter: Adapter
 
     private lateinit var folderAdapter: FolderAdapter
     private lateinit var recordingAdapter: Adapter
@@ -154,7 +159,7 @@ class FilesFragment : Fragment() {
             binding.recordingListNoFolder.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
             binding.externalFolderList.adapter = folderAdapter
-
+            binding.addExternalFolder.setOnClickListener { _ -> initActivityForResult() }
 
 
             //Sets Adapter to RecyclingView for Recordings with no folder association
@@ -180,6 +185,22 @@ class FilesFragment : Fragment() {
                 }
             })
 
+            folderViewModel.pathForExternalFolder.observe(viewLifecycleOwner, Observer {
+                   println("DER WERT HAT SICH GEÄNDERT")
+            })
+        }
+    }
+
+    private fun initActivityForResult(){
+        startActivityForResult(StorageHelper.setOpenDocumentTreeIntent(),
+            resources.getInteger(R.integer.activity_request_code_external_folder))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == resources.getInteger(R.integer.activity_request_code_external_folder) &&
+            resultCode == Activity.RESULT_OK){
+            folderViewModel.handleActivityResult(data!!.dataString!!)
         }
     }
 

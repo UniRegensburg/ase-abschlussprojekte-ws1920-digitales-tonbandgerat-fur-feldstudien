@@ -3,6 +3,7 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.content.res.Resources
+import android.net.Uri
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupMenu
@@ -15,6 +16,7 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.StorageHelper
 import java.util.regex.Pattern
 
 class FolderViewModel(dataSource: Repository, application: Application) :
@@ -28,6 +30,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
     var allFoldersSorted = MediatorLiveData<List<FolderEntity>>()
+    val pathForExternalFolder = MutableLiveData<String>()
     var folderToBeCreated: Boolean? = null
     var dialogType: Int = R.string.confirm_dialog
     var errorMessage: String? = null
@@ -41,10 +44,8 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     }
 
     fun isSubfolder(folder: FolderEntity): Boolean{
-        if (folder.parentDir != null){
-            return true
-        }
-            return false
+        folder.parentDir?.let { return true }
+        return false
     }
 
     fun initFolderSorting():MediatorLiveData<List<FolderEntity>>{
@@ -63,7 +64,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     //queries for recordings, which are not assigned to any folders
     fun getRecordingsWithNoFolder(): LiveData<List<EntryEntity>>{
-        return repository.getRecordingByFolder(0)
+        return repository.getRecordingByFolder(null)
     }
 
     fun getAllRecordingsByFolder(folder : FolderEntity): LiveData<List<EntryEntity>>{
@@ -94,6 +95,17 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         folderToBeEdited = folderEntity
     }
 
+    //creates a reference in Database for folder
+    fun handleActivityResult(result: String){
+        val existingFolder = StorageHelper.checkExternalFolderReference(allFolders.value!!,result)
+        if (existingFolder == null) {
+            StorageHelper.createFolderFromUri(repository, result)
+        }
+        val uri = Uri.parse(result)
+        println(result)
+        println(uri.pathSegments)
+        println(uri.lastPathSegment)
+    }
 
     fun deleteFolderFromDB(folderList: MutableList<FolderEntity>) {
         folderList.forEach { repository.deleteFolder(it) }
@@ -137,7 +149,11 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     }
 
     //handels the move of a folder from one folder to another
-    fun onEntryMoveFolderClicked(entryEntity: EntryEntity, folderUid: Int?){
+    fun onEntryMoveFolderClicked(entryEntity: EntryEntity, folderUid: Int?, folderPath: String?){
+        if (folderPath!!.contains(res.getString(R.string.content_uri_prefix))||
+                entryEntity.recordingPath.contains(res.getString(R.string.content_uri_prefix))){
+            StorageHelper.moveEntryStorage(context, entryEntity, folderPath)
+        }
         updateEntryFolderInDB(entryEntity,folderUid)
     }
 
@@ -148,14 +164,14 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     }
 
     //handels the sorting of the folders, so they can be displayed in order
-    fun getAllSubFolder(folderList: MutableList<FolderEntity>): MutableList<FolderEntity>{
+    fun getAllInternalSubFolders(folderList: MutableList<FolderEntity>): MutableList<FolderEntity>{
         val foldersToBeDeleted = folderList
         foldersToBeDeleted.forEach { parent ->
             allFolders.value!!.forEach {
                 if (!foldersToBeDeleted.contains(it)){
                     if (parent.uid == it.parentDir){
                         foldersToBeDeleted.add(it)
-                        return getAllSubFolder(foldersToBeDeleted)
+                        return getAllInternalSubFolders(foldersToBeDeleted)
                     }
                 }
             }
