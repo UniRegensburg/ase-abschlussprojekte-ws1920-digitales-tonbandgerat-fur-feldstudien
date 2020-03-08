@@ -32,7 +32,7 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 
 /**
- * The fragment displays all recordings.
+ * The fragment displays all recordings and folders.
  * @author: Theresa Strohmeier
  */
 class FilesFragment : Fragment() {
@@ -54,10 +54,9 @@ class FilesFragment : Fragment() {
         val dataSource = Repository(application)
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
 
-
-        val viewModelFactory = FilesViewModelFactory(dataSource, application)
+        val filesViewModelFactory = FilesViewModelFactory(dataSource, application)
         val folderViewModelFactory = FolderViewModelFactory(dataSource, application)
-        filesViewModel = ViewModelProvider(this, viewModelFactory).get(FilesViewModel::class.java)
+        filesViewModel = ViewModelProvider(this, filesViewModelFactory).get(FilesViewModel::class.java)
         folderViewModel = ViewModelProvider(this, folderViewModelFactory).get(FolderViewModel::class.java)
 
         binding.folderViewModel = folderViewModel
@@ -72,6 +71,18 @@ class FilesFragment : Fragment() {
                 filesViewModel.doneShowingSnackbar()
             }
         })
+
+        folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
+            if(it == true){
+                Snackbar.make(view!!,  R.string.folder_created, Snackbar.LENGTH_SHORT).show()
+                folderViewModel.doneShowingSnackbar()
+            }
+        })
+
+        folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
+
+        })
+
 
         // Observer on the state variable for navigating when a list-item is clicked.
         filesViewModel.navigateToPlayerFragment.observe(
@@ -95,31 +106,31 @@ class FilesFragment : Fragment() {
                 )
             }
         })
-        //calls dialog for creating an in internal folder
+        //calls dialog for creating a new folder
         folderViewModel.createAlertDialog.observe(this, Observer {
             if (it){
                 FolderDialog.createDialog(
                     context = context!!,
-                    type = R.string.alert_dialog,
-                    folderToBeEdited = folderViewModel.folderToBeEdited,
                     layoutId = R.layout.folder_dialog,
                     viewModel = folderViewModel,
+                    type = R.string.alert_dialog,
+                    folderToBeEdited = folderViewModel.folderToBeEdited,
                     errorMessage = folderViewModel.errorMessage,
                     folderToBeCreated = folderViewModel.folderToBeCreated)
 
             }
         })
-        //calls dialog for deleting a new folder
+        //calls dialog for deleting a folder
         folderViewModel.createConfirmDialog.observe(this, Observer {
             if (it){
                 FolderDialog.createDialog(
                     context = context!!,
-                    type = R.string.confirm_dialog,
-                    folderToBeEdited = folderViewModel.folderToBeEdited,
                     layoutId = null,
                     viewModel = folderViewModel,
-                    filesViewModel = filesViewModel,
-                    errorMessage = folderViewModel.errorMessage)
+                    type = R.string.confirm_dialog,
+                    folderToBeEdited = folderViewModel.folderToBeEdited,
+                    errorMessage = folderViewModel.errorMessage,
+                    filesViewModel = filesViewModel)
             }
         })
         //calls dialog for moving a recording
@@ -127,12 +138,11 @@ class FilesFragment : Fragment() {
             if (it != null){
                 FolderDialog.createDialog(
                     context = context!!,
-                    type = R.string.alert_dialog,
                     viewModel = folderViewModel,
+                    type = R.string.alert_dialog,
                     errorMessage = folderViewModel.errorMessage,
                     entryToBeMoved = it,
                     listOfAvailableFolders = folderViewModel.allFolders.value
-                    //listOfAvailableFolders = filesViewModel.allFolders.value
                 )
             }
         })
@@ -159,39 +169,32 @@ class FilesFragment : Fragment() {
             binding.recordingListNoFolder.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
             binding.externalFolderList.adapter = folderAdapter
-            binding.addExternalFolder.setOnClickListener { _ -> initActivityForResult() }
-
+            binding.addExternalFolder.setOnClickListener { _ -> onClickAddExternalFolder() }
 
             //Sets Adapter to RecyclingView for Recordings with no folder association
             filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     recordingAdapter.submitList(it)
-
                 }
             })
 
-            //Sets Adapter to RecyclingView containing the known folders and their content
+            //Sets Adapters to RecyclingView containing the known folders and their content
            // val folders = folderViewModel.initFolderSorting()
-            val folders = folderViewModel.allFolders
-            folders.observe(viewLifecycleOwner, Observer {
+            folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     folderAdapter.submitList(it)
                 }
             })
 
-            folders.observe(viewLifecycleOwner, Observer {
+            folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     externalFolderAdapter.submitList(it)
                 }
             })
-
-            folderViewModel.pathForExternalFolder.observe(viewLifecycleOwner, Observer {
-                   println("DER WERT HAT SICH GEÄNDERT")
-            })
         }
     }
 
-    private fun initActivityForResult(){
+    private fun onClickAddExternalFolder(){
         startActivityForResult(StorageHelper.setOpenDocumentTreeIntent(),
             resources.getInteger(R.integer.activity_request_code_external_folder))
     }
@@ -200,7 +203,11 @@ class FilesFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == resources.getInteger(R.integer.activity_request_code_external_folder) &&
             resultCode == Activity.RESULT_OK){
-            folderViewModel.handleActivityResult(data!!.dataString!!)
+            println(data!!.dataString)
+            if (data != null){
+                folderViewModel.handleActivityResult(data!!.dataString!!)
+            }
+
         }
     }
 

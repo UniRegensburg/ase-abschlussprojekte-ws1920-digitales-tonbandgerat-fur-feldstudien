@@ -40,8 +40,8 @@
     <string name="error_message_path">file moved or deleted</string>
 
     <!-- FilesFragment -->
-    <string name="files_container_internal">Internal Storage</string>
-    <string name="files_container_external">External Storage</string>
+    <string name="files_container_internal">Internal Folders</string>
+    <string name="files_container_external">External Folders</string>
     <string name="recording_file_name">Recording</string>
     <string name="popup_menu_button">Popup Menu</string>
     <string name="popup_menu_option_delete">Delete</string>
@@ -50,6 +50,8 @@
     <string name="popup_menu_option_move_file">Move to Folder</string>
     <string name="recording_deleted">Recording deleted</string>
     <string name="no_recordings">No recordings saved</string>
+    <string name="folder_created">Folder created</string>
+    <string name="folder_deleted">Folder deleted</string>
 
     <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>

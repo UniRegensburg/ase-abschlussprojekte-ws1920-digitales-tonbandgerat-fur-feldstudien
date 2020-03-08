@@ -37,6 +37,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/rubik_medium"
+                    android:text="@string/files_container_internal"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recording_list_no_folder"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:paddingTop="@dimen/constraint_layout_padding"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/entry_item" />
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -63,14 +78,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.016" />
                 </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recording_list_no_folder"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:paddingTop="@dimen/constraint_layout_padding"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/entry_item" />
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/folder_list"
                     android:layout_width="match_parent"

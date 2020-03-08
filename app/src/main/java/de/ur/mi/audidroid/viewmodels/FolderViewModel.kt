@@ -29,13 +29,22 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     private val _createAlertDialog = MutableLiveData<Boolean>()
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
-    var allFoldersSorted = MediatorLiveData<List<FolderEntity>>()
-    val pathForExternalFolder = MutableLiveData<String>()
+    var allInternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
+    var allExternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var folderToBeCreated: Boolean? = null
     var dialogType: Int = R.string.confirm_dialog
     var errorMessage: String? = null
     var folderToBeEdited: FolderEntity? = null
-    var isSubFolderEntity: Boolean = false
+
+
+    private var _showSnackbarEvent = MutableLiveData<Boolean>()
+
+    val showSnackbarEvent: LiveData<Boolean>
+        get() = _showSnackbarEvent
+
+    fun doneShowingSnackbar() {
+        _showSnackbarEvent.value = null
+    }
 
     fun cancelFolderDialog(){
         errorMessage = null
@@ -48,12 +57,21 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         return false
     }
 
-    fun initFolderSorting():MediatorLiveData<List<FolderEntity>>{
-        allFoldersSorted.removeSource(allFolders)
-        allFoldersSorted.addSource(allFolders){
-            allFoldersSorted.value = getFolderHierachy(allFolders.value!!)
+
+    fun initFolderSorting(){
+        val allInternalFolders = repository.getFolderByStorage(false)
+        val allExternalFolders = repository. getFolderByStorage(true)
+        if (allInternalFoldersSorted.value == null){
+            allInternalFoldersSorted.addSource(allInternalFolders){
+                allInternalFoldersSorted.value = getFolderHierachy(allInternalFolders.value!!)
+            }
+
         }
-        return allFoldersSorted
+        if (allExternalFoldersSorted.value == null){
+            allExternalFoldersSorted.addSource(allExternalFolders){
+                allExternalFoldersSorted.value = allExternalFolders.value
+            }
+        }
     }
 
     val createAlertDialog: MutableLiveData<Boolean>
@@ -97,10 +115,14 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     //creates a reference in Database for folder
     fun handleActivityResult(result: String){
+        println("+++")
+        println(result)
         val existingFolder = StorageHelper.checkExternalFolderReference(allFolders.value!!,result)
+        println(1)
         if (existingFolder == null) {
             StorageHelper.createFolderFromUri(repository, result)
         }
+        println(2)
         val uri = Uri.parse(result)
         println(result)
         println(uri.pathSegments)
@@ -179,6 +201,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         return foldersToBeDeleted
     }
     fun getFolderHierachy(allFolders: List<FolderEntity>): List<FolderEntity>? {
+        println("Hello there ")
         if (allFolders.isNotEmpty()) {
             val foldersSorted: MutableList<FolderEntity> = mutableListOf()
             allFolders.forEach {
@@ -186,7 +209,18 @@ class FolderViewModel(dataSource: Repository, application: Application) :
                     foldersSorted.add(it)
                 }
             }
-
+            while (foldersSorted.size != allFolders.size){
+                for (i in 0 until foldersSorted.size){
+                    for(x in 0 until allFolders.size){
+                        if (!foldersSorted.contains(allFolders[x])){
+                            if (allFolders[x].parentDir == foldersSorted[i].uid){
+                                foldersSorted.add(i+1, allFolders[x])
+                            }
+                        }
+                    }
+                }
+            }
+            /*
             while (foldersSorted.size != allFolders.size) {
                 foldersSorted.forEach { parentFolder ->
                     allFolders.forEach {
@@ -198,7 +232,8 @@ class FolderViewModel(dataSource: Repository, application: Application) :
                         }
                     }
                 }
-            }
+            }*/
+            println("____________________________________________________")
             println(foldersSorted)
             return foldersSorted
         }
