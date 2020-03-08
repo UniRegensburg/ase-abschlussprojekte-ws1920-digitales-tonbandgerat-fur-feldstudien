@@ -42,8 +42,8 @@ class EditRecordingViewModel(
     private lateinit var rangeBar: MultiSlider
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    val recording: LiveData<List<RecordingAndMarker>> =
-        dataSource.getRecordingFromIdInclMarks(recordingId)
+    val recording: LiveData<EntryEntity> =
+        dataSource.getRecordingById(recordingId)
     val getAllMarkers: LiveData<List<MarkerEntity>> = dataSource.getAllMarks(recordingId)
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()

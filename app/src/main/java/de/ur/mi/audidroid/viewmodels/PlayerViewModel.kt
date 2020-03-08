@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.models.RecordingAndMarker
 import de.ur.mi.audidroid.models.Repository
@@ -26,7 +27,7 @@ import java.io.IOException
  * @author: Theresa Strohmeier
  */
 class PlayerViewModel(
-    private val recordingId: Int,
+    recordingId: Int,
     dataSource: Repository,
     application: Application
 ) : AndroidViewModel(application) {
@@ -36,10 +37,11 @@ class PlayerViewModel(
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
-    val recording: LiveData<List<RecordingAndMarker>> =
-        dataSource.getRecordingFromIdInclMarks(recordingId)
+    val recording: LiveData<EntryEntity> =
+        dataSource.getRecordingById(recordingId)
     val getAllMarkers: LiveData<List<MarkerEntity>> = dataSource.getAllMarks(recordingId)
     var isPlaying = MutableLiveData<Boolean>()
+    var recordingPath = ""
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
@@ -62,7 +64,7 @@ class PlayerViewModel(
     }
 
     fun initializeMediaPlayer() {
-        val uri: Uri = Uri.fromFile(File(recording.value!![0].entryEntity.recordingPath))
+        val uri: Uri = Uri.fromFile(File(recordingPath))
         mediaPlayer = MediaPlayer().apply {
             try {
                 reset()

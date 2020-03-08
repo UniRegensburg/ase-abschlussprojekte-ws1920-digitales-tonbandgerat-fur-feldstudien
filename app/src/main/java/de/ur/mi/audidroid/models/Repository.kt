@@ -88,6 +88,10 @@ class Repository(application: Application) : CoroutineScope {
         return markerDao.getAllMarks(uid)
     }
 
+    fun getRecordingById(uid: Int): LiveData<EntryEntity> {
+        return entryDao.getRecordingById(uid)
+    }
+
     fun getLabelById(labelEntity: LabelEntity): LiveData<LabelEntity> {
         return labelDao.getLabelById(labelEntity.uid)
     }
