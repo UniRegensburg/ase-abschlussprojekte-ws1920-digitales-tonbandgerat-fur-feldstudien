@@ -15,7 +15,6 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.MarkerEntity
-import de.ur.mi.audidroid.models.LabelAssignmentEntity
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
@@ -120,7 +119,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     fun cancelRecord() {
-        if (recorderInitialized && createDialog.value == false) {
+        if (recorderInitialized) {
             showSnackBar(R.string.record_removed)
             File(tempFile).delete()
             endRecordSession()
@@ -174,26 +173,19 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         mediaRecorder.resume()
     }
 
-    fun getNewFileFromUserInput(
-        nameInput: String?,
-        pathInput: String?,
-        labels: ArrayList<Int>?
-    ) {
+    fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
         _createDialog.value = false
         val name = nameInput ?: java.lang.String.format(
             "%s_%s",
             res.getString(R.string.standard_name_recording),
             android.text.format.DateFormat.format(
-                "yyyy-MM-dd_HH-mm",
+                "yyyy-MM-dd_hh-mm",
                 Calendar.getInstance(Locale.getDefault())
             )
         )
         if (!validNameInput(name)) {
-            errorDialog(res.getString(R.string.dialog_invalid_name))
-            return
-        }
-        if (name.length > res.getInteger(R.integer.max_name_length)) {
-            errorDialog(res.getString(R.string.dialog_name_length))
+            errorMessage = res.getString(R.string.dialog_invalid_name)
+            _createDialog.value = true
             return
         }
 
@@ -210,25 +202,18 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
         endRecordSession()
         File(tempFile).copyTo(newFile)
-
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
         val audio =
-            EntryEntity(
-                uid = 0,
-                recordingName = name,
-                recordingPath = path,
-                date = getDate(),
-                duration = recordingDuration
-            )
-        saveRecordInDB(audio, labels)
+            EntryEntity(0, name, path, getDate(), recordingDuration)
+        saveRecordInDB(audio)
+
         File(tempFile).delete()
         resetView()
         errorMessage = null
     }
 
-    private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
+    private fun saveRecordInDB(audio: EntryEntity) {
         val uid = dataSource.insert(audio).toInt()
-        if (labels != null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
         if (markList.isNotEmpty()) {
             saveMarksInDB(uid)
         }
@@ -236,12 +221,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun validNameInput(name: String): Boolean {
-        return Pattern.compile("^[a-zA-Z0-9_{}-]+$").matcher(name).matches()
-    }
-
-    private fun errorDialog(mes: String) {
-        errorMessage = mes
-        _createDialog.value = true
+        return Pattern.compile("^[a-zA-Z0-9_-]+$").matcher(name).matches()
     }
 
     private fun getRecordingDuration(): String? {

@@ -70,15 +70,15 @@ object PermissionHelper {
     fun showDialog(missingPermission: String, context: Context) {
         when (missingPermission) {
             recordPermission -> Dialog.createDialog(
-                paramContext = context,
+                context = context,
                 textId = R.string.permission_record
             )
             writePermission -> Dialog.createDialog(
-                paramContext = context,
+                context = context,
                 textId = R.string.permission_write
             )
             readPermission -> Dialog.createDialog(
-                paramContext = context,
+                context = context,
                 textId = R.string.permission_read
             )
             firstRequest -> {
