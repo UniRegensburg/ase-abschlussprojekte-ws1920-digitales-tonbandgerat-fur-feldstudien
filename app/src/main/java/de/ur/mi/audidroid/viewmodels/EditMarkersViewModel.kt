@@ -115,7 +115,11 @@ class EditMarkersViewModel(dataSource: Repository, application: Application) :
     }
 
     fun requestMarkerDialog() {
-        _createAlertDialog.value = true
+        if (repository.getMarkerCount() < 6) {
+            _createAlertDialog.value = true
+        } else {
+            showSnackBar(res.getString(R.string.max_markers_created))
+        }
     }
 
     fun cancelSaving() {

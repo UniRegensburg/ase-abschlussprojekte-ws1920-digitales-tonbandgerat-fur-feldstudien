@@ -5,13 +5,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import java.util.concurrent.Executor
+import kotlinx.coroutines.*
+import java.lang.Runnable
 import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.coroutineContext
+
 
 /**
  * The abstract class contains the database holder and serves as the main access point for the connection to the persisted data
@@ -26,10 +25,6 @@ abstract class RecorderDatabase : RoomDatabase() {
     abstract fun labelDao(): LabelDao
     abstract fun markerDao(): MarkerDao
 
-    private val job = Job()
-    private val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Main
-
     companion object {
         private var INSTANCE: RecorderDatabase? = null
         fun getInstance(context: Context?): RecorderDatabase {
@@ -38,18 +33,22 @@ abstract class RecorderDatabase : RoomDatabase() {
                     INSTANCE = Room.databaseBuilder(
                         context,
                         RecorderDatabase::class.java, "recorder-database"
-                    ).build()
-                    INSTANCE!!.populateInitialData()
+                    ).addCallback(object: RoomDatabase.Callback() {
+                        override fun onCreate(db: SupportSQLiteDatabase) {
+                            super.onCreate(db)
+                            Executors.newSingleThreadScheduledExecutor().execute {
+                                val defaultMarker = MarkerEntity(0, "Mark")
+                                val job = Job()
+                                CoroutineScope(job + Dispatchers.Main).launch {
+                                    getInstance(context).markerDao().insertMarker(defaultMarker)
+                                }
+                            }
+                        }
+                    })
+                    .build()
                 }
             }
             return INSTANCE as RecorderDatabase
-        }
-    }
-
-    private fun populateInitialData() {
-        val defaultMarker = MarkerEntity(0, "Mark")
-        CoroutineScope(coroutineContext).launch {
-            markerDao().insertMarker(defaultMarker)
         }
     }
 

@@ -44,6 +44,16 @@ class Repository(application: Application): CoroutineScope {
         return markerDao.getAllMarkers()
     }
 
+    fun getMarkerCount(): Int {
+        var count: Int? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                count = markerDao.getMarkerCount()
+            }
+        }
+        return count!!
+    }
+
     fun delete(entryEntity: EntryEntity) {
         CoroutineScope(coroutineContext).launch {
             entryDao.delete(entryEntity)
