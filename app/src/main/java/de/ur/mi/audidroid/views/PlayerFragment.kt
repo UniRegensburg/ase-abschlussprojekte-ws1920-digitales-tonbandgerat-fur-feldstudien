@@ -3,20 +3,19 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.PlayerViewModel
 import kotlinx.android.synthetic.main.player_fragment.*
-import java.lang.IllegalArgumentException
 
 /**
  * The fragment allows the user to play a voice recording.
