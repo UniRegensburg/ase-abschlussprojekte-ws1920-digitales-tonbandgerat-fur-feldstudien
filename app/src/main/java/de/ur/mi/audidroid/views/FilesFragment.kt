@@ -79,10 +79,12 @@ class FilesFragment : Fragment() {
             }
         })
 
-        folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
-
-        })
-
+        folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
+        folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
+        folderViewModel.allInternalFolders.observe(viewLifecycleOwner, Observer {})
+        folderViewModel.allExternalFolders.observe(viewLifecycleOwner, Observer {})
+        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {})
+        filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {})
 
         // Observer on the state variable for navigating when a list-item is clicked.
         filesViewModel.navigateToPlayerFragment.observe(
@@ -130,7 +132,8 @@ class FilesFragment : Fragment() {
                     type = R.string.confirm_dialog,
                     folderToBeEdited = folderViewModel.folderToBeEdited,
                     errorMessage = folderViewModel.errorMessage,
-                    filesViewModel = filesViewModel)
+                    filesViewModel = filesViewModel,
+                    listOfAvailableFolders = folderViewModel.allFolders.value)
             }
         })
         //calls dialog for moving a recording
@@ -168,7 +171,7 @@ class FilesFragment : Fragment() {
             //binding of adapters to Views
             binding.recordingListNoFolder.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
-            binding.externalFolderList.adapter = folderAdapter
+            binding.externalFolderList.adapter = externalFolderAdapter
             binding.addExternalFolder.setOnClickListener { _ -> onClickAddExternalFolder() }
 
             //Sets Adapter to RecyclingView for Recordings with no folder association
@@ -188,6 +191,7 @@ class FilesFragment : Fragment() {
 
             folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
+
                     externalFolderAdapter.submitList(it)
                 }
             })

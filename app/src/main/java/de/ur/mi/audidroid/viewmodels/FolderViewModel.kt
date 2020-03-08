@@ -29,6 +29,8 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     private val _createAlertDialog = MutableLiveData<Boolean>()
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
+    var allInternalFolders: LiveData<List<FolderEntity>> = repository.getInternalFolders()
+    var allExternalFolders: LiveData<List<FolderEntity>> = repository.getExternalFolders()
     var allInternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var allExternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var folderToBeCreated: Boolean? = null
@@ -59,17 +61,21 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
 
     fun initFolderSorting(){
-        val allInternalFolders = repository.getFolderByStorage(false)
-        val allExternalFolders = repository. getFolderByStorage(true)
+        println("______________________________")
         if (allInternalFoldersSorted.value == null){
             allInternalFoldersSorted.addSource(allInternalFolders){
-                allInternalFoldersSorted.value = getFolderHierachy(allInternalFolders.value!!)
+                println(allFolders)
+                println(allInternalFolders.value)
+                allInternalFoldersSorted.value = StorageHelper.getInternalFolderHierarchy(allInternalFolders.value!!)
+                println(allInternalFolders.value)
             }
 
         }
         if (allExternalFoldersSorted.value == null){
             allExternalFoldersSorted.addSource(allExternalFolders){
+                println(allExternalFolders.value)
                 allExternalFoldersSorted.value = allExternalFolders.value
+
             }
         }
     }
@@ -115,18 +121,11 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     //creates a reference in Database for folder
     fun handleActivityResult(result: String){
-        println("+++")
-        println(result)
+        println(allFolders.value!!)
         val existingFolder = StorageHelper.checkExternalFolderReference(allFolders.value!!,result)
-        println(1)
         if (existingFolder == null) {
             StorageHelper.createFolderFromUri(repository, result)
         }
-        println(2)
-        val uri = Uri.parse(result)
-        println(result)
-        println(uri.pathSegments)
-        println(uri.lastPathSegment)
     }
 
     fun deleteFolderFromDB(folderList: MutableList<FolderEntity>) {
@@ -185,6 +184,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         repository.updateEntry(updatedEntry)
     }
 
+    /*
     //handels the sorting of the folders, so they can be displayed in order
     fun getAllInternalSubFolders(folderList: MutableList<FolderEntity>): MutableList<FolderEntity>{
         val foldersToBeDeleted = folderList
@@ -199,51 +199,12 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             }
         }
         return foldersToBeDeleted
-    }
-    fun getFolderHierachy(allFolders: List<FolderEntity>): List<FolderEntity>? {
-        println("Hello there ")
-        if (allFolders.isNotEmpty()) {
-            val foldersSorted: MutableList<FolderEntity> = mutableListOf()
-            allFolders.forEach {
-                if (it.parentDir == null) {
-                    foldersSorted.add(it)
-                }
-            }
-            while (foldersSorted.size != allFolders.size){
-                for (i in 0 until foldersSorted.size){
-                    for(x in 0 until allFolders.size){
-                        if (!foldersSorted.contains(allFolders[x])){
-                            if (allFolders[x].parentDir == foldersSorted[i].uid){
-                                foldersSorted.add(i+1, allFolders[x])
-                            }
-                        }
-                    }
-                }
-            }
-            /*
-            while (foldersSorted.size != allFolders.size) {
-                foldersSorted.forEach { parentFolder ->
-                    allFolders.forEach {
-                        if (!foldersSorted.contains(it)) {
-                            if (it.parentDir == parentFolder.uid) {
-                                val index = foldersSorted.indexOf(parentFolder)
-                                foldersSorted.add(index + 1, it)
-                            }
-                        }
-                    }
-                }
-            }*/
-            println("____________________________________________________")
-            println(foldersSorted)
-            return foldersSorted
-        }
-        return null
-    }
+    }*/
 
-        private fun validName(name: String?): Boolean {
+    private fun validName(name: String?): Boolean {
         val folderName = name ?: ""
         return Pattern.compile("^[a-zA-Z0-9_-]{1,10}$").matcher(folderName).matches()
-        }
+    }
 
     fun initializeLayout(layout: FrameLayout) {
         frameLayout = layout

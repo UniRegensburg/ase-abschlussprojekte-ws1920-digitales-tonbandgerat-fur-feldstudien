@@ -108,7 +108,7 @@ object FolderDialog {
                 )
                 setPositiveButton(context.getString(R.string.delete)){ _, _ ->
                     if (folderToBeEdited != null){
-                        onDeleteFolderAndContent(folderToBeEdited, viewModel!!, filesViewModel!!)
+                        onDeleteFolderAndContent(listOfAvailableFolders!! ,folderToBeEdited, viewModel!!, filesViewModel!!)
                     }
                 }
                 setNegativeButton(context.getString(R.string.dialog_cancel_button_text)){_, _ ->
@@ -145,12 +145,12 @@ object FolderDialog {
     }
 
     //deletes folder and subfolders along with their content
-    private fun onDeleteFolderAndContent(folderToBeEdited: FolderEntity,viewModel: FolderViewModel,
+    private fun onDeleteFolderAndContent(allFolders: List<FolderEntity>, folderToBeEdited: FolderEntity,viewModel: FolderViewModel,
                                          filesViewModel: FilesViewModel){
         if (folderToBeEdited.isExternal == false){
             //internal
             val folderAndSubfolders = mutableListOf(folderToBeEdited)
-            viewModel.getAllInternalSubFolders(folderAndSubfolders)
+            StorageHelper.getAllInternalSubFolders(allFolders, folderAndSubfolders)
             filesViewModel.deleteEntriesInInternalFolders(folderAndSubfolders)
             viewModel.deleteFolderFromDB(folderAndSubfolders)
         }else{
