@@ -16,4 +16,7 @@ interface MarkerDao {
 
     @Query("SELECT * FROM markerTimeTable")
     fun getAllMarks(): List<MarkerTimeRelation>
+
+    @Query("DELETE FROM markerTimeTable WHERE recordingId = :key")
+    suspend fun deleteRecMarks(key: Int)
 }

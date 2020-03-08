@@ -26,7 +26,4 @@ interface EntryDao {
     @Delete
     suspend fun delete(entryEntity: EntryEntity)
 
-    @Query("DELETE FROM recordingsTable")
-    suspend fun clearTable()
-
 }

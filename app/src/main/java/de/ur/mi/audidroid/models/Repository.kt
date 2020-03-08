@@ -89,18 +89,23 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getLabelById(uid)
     }
 
-   fun insertRecLabels(labelAssignment: LabelAssignmentEntity){
+    fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {
         CoroutineScope(coroutineContext).launch {
             labelAssignmentDao.insertRecLabels(labelAssignment)
         }
     }
 
-    fun deleteAllRecordings() {
+    fun deleteRecMarks(uid: Int) {
         CoroutineScope(coroutineContext).launch {
-            entryDao.clearTable()
+            markerDao.deleteRecMarks(uid)
         }
     }
-}
+
+    fun deleteRecLabels(uid: Int) {
+        CoroutineScope(coroutineContext).launch {
+            labelAssignmentDao.deleteRecLabels(uid)
+        }
+    }
 
     fun getRecordingFromIdInclLabels(uid: Int): List<RecordingAndLabel> {
         return labelAssignmentDao.getRecordingFromIdInclLabels(uid)

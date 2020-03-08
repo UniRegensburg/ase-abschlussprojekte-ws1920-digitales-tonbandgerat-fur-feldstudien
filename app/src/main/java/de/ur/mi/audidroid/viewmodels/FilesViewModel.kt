@@ -13,7 +13,6 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
-import de.ur.mi.audidroid.views.MainActivity
 import java.io.File
 
 /**
@@ -119,10 +118,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             val file = File(it[i].recordingPath)
             if (file.exists()) {
                 array.add(it[i])
+            } else {
+                repository.deleteRecording(it[i])
+                repository.deleteRecMarks(it[i].uid)
+                repository.deleteRecLabels(it[i].uid)
             }
-        }
-        if (array.size == 0 && it.isNotEmpty()) {
-            repository.deleteAllRecordings()
         }
         return array
     }

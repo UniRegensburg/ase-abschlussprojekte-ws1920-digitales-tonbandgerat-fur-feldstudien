@@ -22,4 +22,7 @@ interface LabelAssignmentDao {
     @Transaction
     @Query("SELECT * FROM recordingsTable WHERE uid = :key")
     fun getRecordingFromIdInclLabels(key: Int): List<RecordingAndLabel>
+
+    @Query("DELETE FROM labelAssignmentTable WHERE recordingId = :key")
+    suspend fun deleteRecLabels(key: Int)
 }
