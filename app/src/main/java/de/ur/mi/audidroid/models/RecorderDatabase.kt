@@ -13,7 +13,7 @@ import de.ur.mi.audidroid.utils.Converters
  */
 
 @Database(
-    entities = [EntryEntity::class, MarkerEntity::class, LabelEntity::class, LabelAssignmentEntity::class],
+    entities = [EntryEntity::class, MarkerEntity::class, LabelEntity::class],
     version = 1,
     exportSchema = false
 )
