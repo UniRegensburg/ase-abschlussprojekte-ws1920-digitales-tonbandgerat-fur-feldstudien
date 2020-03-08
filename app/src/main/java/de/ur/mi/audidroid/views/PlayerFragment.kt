@@ -3,7 +3,6 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -56,9 +55,9 @@ class PlayerFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         playerViewModel.recording.observe(viewLifecycleOwner, Observer {
             it?.let {
+                playerViewModel.recordingPath = it.recordingPath
                 playerViewModel.initializeMediaPlayer()
                 playerViewModel.initializeSeekBar(binding.seekBar)
                 playerViewModel.initializeFrameLayout(player_layout)
@@ -72,9 +71,8 @@ class PlayerFragment : Fragment() {
         adapter = MarkItemAdapter(playerViewModel)
         binding.markerList.adapter = adapter
 
-        playerViewModel.getAllMarkers.observe(viewLifecycleOwner, Observer {
+        playerViewModel.allMarks.observe(viewLifecycleOwner, Observer {
             it?.let {
-                Log.d("markers", "" + it)
                 adapter.submitList(it)
             }
         })
