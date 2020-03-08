@@ -9,5 +9,5 @@ data class RecordingAndMarker(
         parentColumn = "uid",
         entityColumn = "recordingId"
     )
-    val markList: List<MarkerEntity>
+    val markList: List<MarkerTimeRelation>
 )
