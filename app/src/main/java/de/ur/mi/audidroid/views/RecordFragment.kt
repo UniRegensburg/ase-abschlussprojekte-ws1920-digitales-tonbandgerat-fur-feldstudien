@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.HandlePlayerBar
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import kotlinx.android.synthetic.main.record_fragment.*
 
@@ -43,6 +44,7 @@ class RecordFragment : Fragment() {
         val viewModelFactory = RecordViewModelFactory(dataSource, application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(RecordViewModel::class.java)
         binding.recordViewModel = viewModel
+        binding.handlePlayerBar = HandlePlayerBar
         binding.lifecycleOwner = this
         return binding.root
     }

@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.utils.HandlePlayerBar
 import java.io.File
 import java.io.IOException
 
@@ -34,6 +35,7 @@ class PlayerViewModel(
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     private val uri: Uri = Uri.fromFile(File(recordingPath))
     var isPlaying = MutableLiveData<Boolean>()
+    var isPlayerViewModel = MutableLiveData<Boolean>()
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
@@ -50,6 +52,7 @@ class PlayerViewModel(
     }
 
     fun initializeMediaPlayer() {
+        isPlayerViewModel.value = true
         isPlaying.value = false
         mediaPlayer = MediaPlayer().apply {
             try {

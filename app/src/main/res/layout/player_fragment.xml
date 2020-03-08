@@ -10,6 +10,9 @@
         <variable
             name="playerViewModel"
             type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
+        <variable
+            name="handlePlayerBar"
+            type="de.ur.mi.audidroid.utils.HandlePlayerBar" />
     </data>
 
     <FrameLayout
@@ -73,7 +76,10 @@
 
         <include
             layout="@layout/bottom_player_bar"
-            bind:playerViewModel="@{playerViewModel}"/>
+            bind:playerViewModel="@{playerViewModel}"
+            bind:isPlayerViewModel="@{playerViewModel.isPlayerViewModel}"
+            bind:handlePlayerBar="@{handlePlayerBar}"
+            bind:isPlaying="@{playerViewModel.isPlaying()}"/>
 
     </FrameLayout>
 </layout>

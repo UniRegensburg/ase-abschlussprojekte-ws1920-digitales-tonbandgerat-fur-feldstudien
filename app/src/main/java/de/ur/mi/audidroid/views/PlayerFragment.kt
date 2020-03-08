@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.HandlePlayerBar
 import de.ur.mi.audidroid.viewmodels.PlayerViewModel
 import kotlinx.android.synthetic.main.player_fragment.*
 
@@ -45,7 +46,7 @@ class PlayerFragment : Fragment() {
             ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
 
         binding.playerViewModel = playerViewModel
-
+        binding.handlePlayerBar = HandlePlayerBar
         binding.setLifecycleOwner(this)
 
         return binding.root

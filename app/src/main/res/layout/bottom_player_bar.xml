@@ -5,9 +5,22 @@
 
     <data>
         <import type="android.view.View" />
+
+        <variable
+            name="handlePlayerBar"
+            type="de.ur.mi.audidroid.utils.HandlePlayerBar" />
+        <variable
+            name="isPlayerViewModel"
+            type="Boolean" />
+        <variable
+            name="isPlaying"
+            type="Boolean" />
         <variable
             name="playerViewModel"
             type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
+        <variable
+            name="recordViewModel"
+            type="de.ur.mi.audidroid.viewmodels.RecordViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -50,8 +63,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/color_primary"
-            android:onClick="@{() -> playerViewModel.isPlaying ? playerViewModel.onPausePlayer() :  playerViewModel.onStartPlayer()}"
-            android:src="@{playerViewModel.isPlaying ? @drawable/ic_pause : @drawable/ic_play_arrow, default = @drawable/ic_play_arrow}"
+            android:onClick="@{() -> isPlayerViewModel ? (isPlaying ? handlePlayerBar.pauseOnPlayerView(playerViewModel) : handlePlayerBar.playOnPlayerView(playerViewModel)) : (isPlaying ? handlePlayerBar.pauseOnEditView(recordViewModel) : handlePlayerBar.playOnEditView(recordViewModel))}"
+            android:src="@{isPlaying ? @drawable/ic_pause : @drawable/ic_play_arrow, default = @drawable/ic_play_arrow}"
             app:layout_anchor="@id/bottom_app_bar" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
