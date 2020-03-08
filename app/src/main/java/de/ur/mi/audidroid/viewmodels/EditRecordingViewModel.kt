@@ -19,6 +19,7 @@ import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.MarkerEntity
+import de.ur.mi.audidroid.models.RecordingAndMarker
 import de.ur.mi.audidroid.models.Repository
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
@@ -41,9 +42,9 @@ class EditRecordingViewModel(
     private lateinit var rangeBar: MultiSlider
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    val recording: LiveData<EntryEntity> =
-        dataSource.getRecordingById(recordingId)
-    val allMarks: LiveData<List<MarkerEntity>> = dataSource.getAllMarks(recordingId)
+    val recording: LiveData<List<RecordingAndMarker>> =
+        dataSource.getRecordingFromIdInclMarks(recordingId)
+    val getAllMarkers: LiveData<List<MarkerEntity>> = dataSource.getAllMarks(recordingId)
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
     var audioInProgress = MutableLiveData<Boolean>()
@@ -54,11 +55,6 @@ class EditRecordingViewModel(
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
-
-    // If there are no recordings in the database, a TextView is displayed.
-    val empty: LiveData<Boolean> = Transformations.map(allMarks) {
-        it.isEmpty()
-    }
 
     private val _totalDuration = MutableLiveData<Long>()
     private val totalDuration: LiveData<Long>

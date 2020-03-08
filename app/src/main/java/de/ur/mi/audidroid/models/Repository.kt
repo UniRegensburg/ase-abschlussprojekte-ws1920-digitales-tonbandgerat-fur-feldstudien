@@ -91,9 +91,5 @@ class Repository(application: Application) : CoroutineScope {
     fun getLabelById(labelEntity: LabelEntity): LiveData<LabelEntity> {
         return labelDao.getLabelById(labelEntity.uid)
     }
-
-    fun getRecordingById(uid: Int): LiveData<EntryEntity> {
-        return entryDao.getRecordingById(uid)
-    }
 }
 
