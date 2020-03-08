@@ -225,9 +225,9 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         resetView()
         errorMessage = null
     }
-
+          
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
-        val uid = dataSource.insert(audio).toInt()
+        val uid = dataSource.insertRecording(audio).toInt()
         if (labels != null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
         if (markList.isNotEmpty()){
             saveMarksInDB(uid)
@@ -248,7 +248,8 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         val metaRetriever = MediaMetadataRetriever()
         metaRetriever.setDataSource(tempFile)
         return DateUtils.formatElapsedTime(
-            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() / (res.getInteger(
+            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                .toLong() / (res.getInteger(
                 R.integer.one_second
             ).toLong())
         )
@@ -262,7 +263,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         markList = mutableListOf()
     }
 
-    fun makeMark(view : View) {
+    fun makeMark(view: View) {
         val btnId = view.resources.getResourceName(view.id)
         val markEntry = Pair(btnId, timer.text.toString())
         markList.add(markEntry)

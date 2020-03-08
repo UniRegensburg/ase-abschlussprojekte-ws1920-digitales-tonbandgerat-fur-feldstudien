@@ -18,18 +18,12 @@ interface EntryDao {
     fun getAllRecordings(): LiveData<List<EntryEntity>>
 
     @Query("SELECT * FROM recordingsTable WHERE uid = :key")
-    fun getRecordingWithId(key: Int): LiveData<EntryEntity>
-
-    @Query("SELECT * FROM recordingsTable WHERE recordingName IN (:name)")
-    fun getRecordingByName(name: String): EntryEntity
+    fun getRecordingById(key: Int): LiveData<EntryEntity>
 
     @Insert(onConflict = REPLACE)
     suspend fun insert(entryEntity: EntryEntity): Long
 
     @Delete
     suspend fun delete(entryEntity: EntryEntity)
-
-    @Query("DELETE FROM recordingsTable")
-    fun clearTable()
 
 }

@@ -1,7 +1,6 @@
 package de.ur.mi.audidroid.models
 
 import android.app.Application
-import android.os.AsyncTask
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -42,7 +41,7 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getAllLabels()
     }
 
-    fun delete(entryEntity: EntryEntity) {
+    fun deleteRecording(entryEntity: EntryEntity) {
         CoroutineScope(coroutineContext).launch {
             entryDao.delete(entryEntity)
         }
@@ -54,7 +53,7 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun insert(entryEntity: EntryEntity): Long {
+    fun insertRecording(entryEntity: EntryEntity): Long {
         var temp: Long? = null
         runBlocking {
             CoroutineScope(coroutineContext).launch {
@@ -64,7 +63,7 @@ class Repository(application: Application) : CoroutineScope {
         return temp!!
     }
 
-    fun insertMark(marker: MarkerTimeRelation){
+    fun insertMark(marker: MarkerTimeRelation) {
         CoroutineScope(coroutineContext).launch {
             markerDao.insertMark(marker)
         }
@@ -82,7 +81,7 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun getRecordingFromIdInclMarks(uid: Int): List<RecordingAndMarker> {
+    fun getRecordingByIdInclMarks(uid: Int): LiveData<List<RecordingAndMarker>> {
         return markerDao.getRecordingFromIdInclMarks(uid)
     }
 
@@ -90,9 +89,21 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getLabelById(uid)
     }
 
-   fun insertRecLabels(labelAssignment: LabelAssignmentEntity){
+    fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {
         CoroutineScope(coroutineContext).launch {
             labelAssignmentDao.insertRecLabels(labelAssignment)
+        }
+    }
+
+    fun deleteRecMarks(uid: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.deleteRecMarks(uid)
+        }
+    }
+
+    fun deleteRecLabels(uid: Int) {
+        CoroutineScope(coroutineContext).launch {
+            labelAssignmentDao.deleteRecLabels(uid)
         }
     }
 

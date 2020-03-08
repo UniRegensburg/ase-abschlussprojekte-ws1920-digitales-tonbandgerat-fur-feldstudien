@@ -13,6 +13,7 @@
     </data>
 
     <FrameLayout
+        android:id="@+id/files_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".views.FilesFragment">
@@ -22,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/entry_item" />
+            tools:listitem="@layout/recording_item" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -34,11 +35,12 @@
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/keyline_5"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/sad_face"
                 android:scaleType="center"
                 android:src="@drawable/ic_sentiment_dissatisfied"
-                android:layout_marginBottom="@dimen/keyline_5"/>
+                android:tint="@color/color_on_surface" />
 
             <TextView
                 android:layout_width="wrap_content"
