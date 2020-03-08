@@ -15,6 +15,8 @@
     <!-- Preferences -->
     <string name="theme_preference_key">theme_preference</string>
     <string name="labels_preference_key">labels_preference</string>
+    <string name="storage_preference_key">storage_preference</string>
+    <string name="storage_location_summary">internal</string>
     <string name="filename_preference_key">filename_preference</string>
     <string name="filename_preference_dialog_message">
         Available variables:\n
@@ -35,7 +37,7 @@
     <string name="play_button">Play recording</string>
     <string name="pause_button">Pause recording</string>
     <string name="error_message_initialization_failed">Initialization of MediaPlayer failed</string>
-    <string name="error_message_path">file moved or deleted</string>
+    <string name="error_message_path">File moved or deleted</string>
 
     <!-- FilesFragment -->
     <string name="recording_file_name">Recording</string>
@@ -62,7 +64,7 @@
     <string name="record_pause_button">Record and Pause Button</string>
     <string name="mark_button">Mark</string>
     <string name="suffix_temp_file">/temp.aac</string>
-    <string name="suffix_audio_file">.acc</string>
+    <string name="suffix_audio_file">.aac</string>
     <string name="standard_name_recording">Rec</string>
     <string name="mark_made">Mark saved</string>
 
@@ -98,10 +100,12 @@
     <string name="dialog_save_recording_name_hint">Enter a name for the recording</string>
     <string name="dialog_save_recording_path">Save location</string>
     <string name="dialog_save_recording_path_hint">Choose a path</string>
+    <string name="dialog_save_recording_label">Labels</string>
     <string name="dialog_save_button_text">Save</string>
     <string name="dialog_cancel_button_text">Cancel</string>
-    <string name="dialog_invalid_name">You can just use letters, numbers and the symbols _ and - for the recording name.</string>
-    <string name="dialog_already_exist">There is already a recording at this location with your entered name. Change the name or the path.</string>
+    <string name="dialog_invalid_name">Just use letters, numbers and _-{}.</string>
+    <string name="dialog_already_exist">Duplication error. Change the name or the path.</string>
+    <string name="dialog_name_length">Enter a maximum of thirty characters.</string>
 
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
@@ -112,6 +116,12 @@
     <string name="confirm_dialog">Confirm Dialog</string>
     <string name="delete">delete</string>
     <string name="sad_face">Sad face</string>
+
+
+    <!--Storage Location -->
+    <string name="default_storage_location">internal</string>
+    <string name="error_storage_location">Choose an other location</string>
+    <string name="external_sd_card_error">Saving on an external sd card is not possible</string>
     <string name="popup_menu_option_share">Share</string>
     <string name="share_recording">Share Recoding</string>
     <string name="choose_file_format">Choose File Format for Export</string>
@@ -122,7 +132,6 @@
     <string name="audio_format_wma">WMA</string>
     <string name="audio_format_wav">WAV</string>
     <string name="audio_format_flac">FLAC</string>
-    <string name="no_special_chars_allowed">No special characters allowed</string>
     <string name="filename_not_saved">Name not saved; contained special characters</string>
 
 </resources>

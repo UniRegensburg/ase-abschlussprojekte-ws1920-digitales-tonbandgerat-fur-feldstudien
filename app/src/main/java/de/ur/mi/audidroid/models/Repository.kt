@@ -14,6 +14,7 @@ class Repository(application: Application) : CoroutineScope {
 
     private var entryDao: EntryDao
     private var labelDao: LabelDao
+    private var labelAssignmentDao: LabelAssignmentDao
     private var markerDao: MarkerDao
     private var allRecordings: LiveData<List<EntryEntity>>
 
@@ -27,6 +28,7 @@ class Repository(application: Application) : CoroutineScope {
         )
         entryDao = database.entryDao()
         labelDao = database.labelDao()
+        labelAssignmentDao = database.labelAssignmentDao()
         markerDao = database.markerDao()
         allRecordings = entryDao.getAllRecordings()
     }
@@ -50,7 +52,6 @@ class Repository(application: Application) : CoroutineScope {
             labelDao.delete(labelEntity)
         }
     }
-
 
     fun insert(entryEntity: EntryEntity): Long {
         var temp: Long? = null
@@ -90,6 +91,16 @@ class Repository(application: Application) : CoroutineScope {
 
     fun getLabelById(labelEntity: LabelEntity): LiveData<LabelEntity> {
         return labelDao.getLabelById(labelEntity.uid)
+
+    }
+
+    fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {
+        CoroutineScope(coroutineContext).launch {
+            labelAssignmentDao.insertRecLabels(labelAssignment)
+        }
+    }
+
+    fun getRecordingFromIdInclLabels(uid: Int): List<RecordingAndLabel> {
+        return labelAssignmentDao.getRecordingFromIdInclLabels(uid)
     }
 }
-
