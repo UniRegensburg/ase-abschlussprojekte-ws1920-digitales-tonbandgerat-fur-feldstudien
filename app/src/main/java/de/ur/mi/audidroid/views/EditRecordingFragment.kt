@@ -2,6 +2,7 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -13,6 +14,7 @@ import de.ur.mi.audidroid.adapter.EditMarkerItemAdapter
 import de.ur.mi.audidroid.databinding.EditRecordingFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
+import kotlinx.android.synthetic.main.filename_dialog.*
 import kotlinx.android.synthetic.main.player_fragment.*
 
 class EditRecordingFragment : Fragment() {
@@ -49,7 +51,6 @@ class EditRecordingFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
 
         editRecordingViewModel.recording.observe(viewLifecycleOwner, Observer {
             it?.let {

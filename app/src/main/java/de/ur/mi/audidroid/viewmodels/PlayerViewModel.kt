@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
+import android.util.Log
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.lifecycle.AndroidViewModel
@@ -26,7 +27,7 @@ import java.io.IOException
  * @author: Theresa Strohmeier
  */
 class PlayerViewModel(
-    private val recordingId: Int,
+    recordingId: Int,
     dataSource: Repository,
     application: Application
 ) : AndroidViewModel(application) {
@@ -40,6 +41,7 @@ class PlayerViewModel(
         dataSource.getRecordingFromIdInclMarks(recordingId)
     val getAllMarkers: LiveData<List<MarkerEntity>> = dataSource.getAllMarks(recordingId)
     var isPlaying = MutableLiveData<Boolean>()
+    var recordingPath = ""
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
@@ -62,7 +64,7 @@ class PlayerViewModel(
     }
 
     fun initializeMediaPlayer() {
-        val uri: Uri = Uri.fromFile(File(recording.value!![0].entryEntity.recordingPath))
+        val uri: Uri = Uri.fromFile(File(recordingPath))
         mediaPlayer = MediaPlayer().apply {
             try {
                 reset()
