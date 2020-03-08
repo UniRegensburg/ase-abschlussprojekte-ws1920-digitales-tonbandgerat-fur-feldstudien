@@ -1,6 +1,7 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.content.res.Resources
 import android.view.View
 import android.widget.PopupMenu
 import androidx.lifecycle.AndroidViewModel
@@ -12,6 +13,7 @@ import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
+import de.ur.mi.audidroid.utils.StorageHelper
 import de.ur.mi.audidroid.views.MainActivity
 import java.io.File
 
@@ -25,6 +27,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
     private val _createAlertDialog = MutableLiveData<Boolean>()
+    private val res: Resources = context.resources
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     private var recordingToBeExported: EntryEntity? = null
     val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
@@ -75,7 +78,18 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun delete(entryEntity: EntryEntity) {
-        val deletedSuccessful = File(entryEntity.recordingPath).delete()
+        println(entryEntity)
+        var deletedSuccessful: Boolean
+        println(entryEntity.recordingPath)
+
+        if (entryEntity.recordingPath.startsWith( res.getString(R.string.content_uri_prefix),false)){
+           println("EXTERNAL")
+            deletedSuccessful = StorageHelper.deleteExternalFile(context,entryEntity.recordingPath,
+                entryEntity.recordingName)
+        }else {
+            println("INTERNAL")
+            deletedSuccessful = File(entryEntity.recordingPath).delete()
+        }
         if (deletedSuccessful) {
             repository.delete(entryEntity)
             _showSnackbarEvent.value = true

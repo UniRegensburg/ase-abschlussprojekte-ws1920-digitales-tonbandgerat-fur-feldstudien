@@ -20,6 +20,7 @@ class Repository(application: Application): CoroutineScope {
     private var folderDao: FolderDao
     private var markerDao: MarkerDao
     private var allRecordings: LiveData<List<EntryEntity>>
+    private var allFolders: LiveData<List<FolderEntity>>
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
@@ -34,18 +35,20 @@ class Repository(application: Application): CoroutineScope {
         folderDao = database.folderDao()
         markerDao = database.markerDao()
         allRecordings = entryDao.getAllRecordings()
+        allFolders = folderDao.getAllFolders()
     }
 
     fun getAllRecordings(): LiveData<List<EntryEntity>> {
         return allRecordings
     }
 
+
     fun getAllLabels(): LiveData<List<LabelEntity>> {
         return labelDao.getAllLabels()
     }
 
     fun getAllFolders(): LiveData<List<FolderEntity>>{
-        return folderDao.getAllFolders()
+        return allFolders
     }
     fun delete(entryEntity: EntryEntity) {
         CoroutineScope(coroutineContext).launch {
@@ -87,10 +90,14 @@ class Repository(application: Application): CoroutineScope {
         }
     }
 
-    fun insertFolder(folderEntity: FolderEntity) {
-        CoroutineScope(coroutineContext).launch {
-            folderDao.insert(folderEntity)
+    fun insertFolder(folderEntity: FolderEntity): Long {
+        var temp: Long? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                temp = folderDao.insert(folderEntity)
+            }
         }
+        return temp!!
     }
 
     fun updateEntry(entryEntity: EntryEntity) {
@@ -122,5 +129,9 @@ class Repository(application: Application): CoroutineScope {
 
     fun getRecordingWithNoFolder(): LiveData<List<EntryEntity>>{
         return entryDao.getRecordingWithNoFolder()
+    }
+
+    fun getFolderByPath(path: String): LiveData<FolderEntity>{
+        return folderDao.getFolderByPath(path)
     }
 }

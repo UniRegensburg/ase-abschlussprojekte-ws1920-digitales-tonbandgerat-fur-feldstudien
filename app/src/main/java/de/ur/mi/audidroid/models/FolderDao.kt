@@ -15,8 +15,11 @@ interface FolderDao {
     @Query("SELECT * FROM foldersTable WHERE folderName IN (:name)")
     fun getFolderByName(name: String): LiveData<FolderEntity>
 
+    @Query("SELECT * FROM foldersTable WHERE folderName IN (:path)")
+    fun getFolderByPath(path: String): LiveData<FolderEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(folderEntity: FolderEntity)
+    suspend fun insert(folderEntity: FolderEntity): Long
 
     @Update
     suspend fun update(folderEntity: FolderEntity)

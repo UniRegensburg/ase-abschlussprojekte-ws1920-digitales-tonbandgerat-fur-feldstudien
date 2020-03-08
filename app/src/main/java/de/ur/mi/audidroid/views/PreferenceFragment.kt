@@ -85,6 +85,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            startActivityForResult(intent, resources.getInteger(R.integer.activity_request_code_preference_storage))
             true
         }
     }

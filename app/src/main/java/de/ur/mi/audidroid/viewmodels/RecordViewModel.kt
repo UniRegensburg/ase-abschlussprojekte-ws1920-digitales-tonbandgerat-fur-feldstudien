@@ -13,12 +13,15 @@ import android.widget.Chronometer
 import android.widget.FrameLayout
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.MarkerTimeRelation
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.StorageHelper
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -33,6 +36,7 @@ import java.util.regex.Pattern
 class RecordViewModel(private val dataSource: Repository, application: Application) :
     AndroidViewModel(application) {
 
+    private val repository = dataSource
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
     private var tempFile = ""
@@ -42,15 +46,18 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private var recorderInitialized = false
     private val context = getApplication<Application>().applicationContext
     private var markList = mutableListOf<Pair<String, String>>()
+    var allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
     var isRecording = MutableLiveData<Boolean>()
     var buttonsVisible = MutableLiveData<Boolean>()
     val res: Resources = context.resources
     private val _createDialog = MutableLiveData<Boolean>()
     var errorMessage: String? = null
 
+
     init {
         isRecording.value = false
         buttonsVisible.value = false
+
     }
 
     val createDialog: MutableLiveData<Boolean>
@@ -59,6 +66,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     fun initializeTimer(chronometer: Chronometer) {
         timer = chronometer
     }
+
 
     fun initializeLayout(frameLayout: FrameLayout) {
         this.frameLayout = frameLayout
@@ -71,13 +79,12 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     /**Initializing the recorder and cache the recording in the internal memory till the user decides the save location in the dialog afterwards */
     private fun initializeRecorder() {
-        //val fileDescriptor = initializeTmpFile()
+
         tempFile = context.filesDir.absolutePath + res.getString(R.string.suffix_temp_file)
         with(mediaRecorder) {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             setOutputFile(tempFile)
-            //setOutputFile(fileDescriptor)
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
         }
         try {
@@ -182,21 +189,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         mediaRecorder.resume()
     }
 
-    private fun copyToExternalFile (src: File, dst: DocumentFile){
-        val inputStream = src.inputStream()
-        val outputStream = context.contentResolver.openOutputStream(dst.uri)
-        inputStream.copyTo(outputStream!!)
-        inputStream.close()
-        outputStream.close()
-    }
-
-    private fun initExternalFile(tempFile: File,name: String): String{
-        val newName = name + res.getString(R.string.suffix_audio_file)
-        val preferredDir = DocumentFile.fromTreeUri(context!!, getStoragePreference())!!
-        val newExternalFile = preferredDir.createFile("aac",newName)!!
-        copyToExternalFile(tempFile,newExternalFile)
-        return newExternalFile.uri!!.toString()
-    }
     //Checks the uniqueness of a name at the given location; works for internal and external storage
     private fun checkExternalNameUniqueness(targetDir: Uri, name: String): Boolean{
         val f = DocumentFile.fromTreeUri(context!!, targetDir)!!
@@ -212,7 +204,12 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun  checkNameUniqueness(storagePref: Uri,newFile: File, name: String): Boolean{
-        if (storagePref.toString().equals("default")){
+        if (name.equals("")) {
+            errorMessage = res.getString(R.string.dialog_invalid_name)
+            _createDialog.value = true
+            return false
+        }
+        if (storagePref.toString().equals(res.getString(R.string.storage_location_default))){
             if (newFile.exists()) {
                 errorMessage = res.getString(R.string.dialog_already_exist)
                 _createDialog.value = true
@@ -258,17 +255,24 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
         endRecordSession()
 
-        if (storagePref.toString().equals("default")){
+        if (storagePref.toString().equals(res.getString(R.string.storage_location_default))){
             File(tempFile).copyTo(newFile)
         }else{
-            path = initExternalFile(File(tempFile),name)
+            path = StorageHelper.createExternalFile(context,
+                File(tempFile), name, getStoragePreference
+            ())
             newFile.delete()
         }
-        val recordingDuration = getRecordingDuration() ?: currentRecordTime
-        val audio =
-            EntryEntity(0, name, path, getDate(), recordingDuration)
-        saveRecordInDB(audio)
 
+        val recordingDuration = getRecordingDuration() ?: currentRecordTime
+
+        val folderPath = StorageHelper.getExternalFolderPath(context, path, name)
+        val folderRef = handleFolderReferece(folderPath)
+
+        val audio =
+            EntryEntity(0, name, path, getDate(), recordingDuration, folderRef)
+        saveRecordInDB(audio)
+        println(audio)
         File(tempFile).delete()
         resetView()
         errorMessage = null
@@ -276,7 +280,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
 
     private fun saveRecordInDB(audio: EntryEntity) {
-        val uid = dataSource.insert(audio).toInt()
+        val uid = repository.insert(audio).toInt()
         if (markList.isNotEmpty()){
             saveMarksInDB(uid)
         }
@@ -289,7 +293,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun getRecordingDuration(): String? {
         val metaRetriever = MediaMetadataRetriever()
-        //metaRetriever.setDataSource(context, tmpFile.uri)
         metaRetriever.setDataSource(tempFile)
         return DateUtils.formatElapsedTime(
             metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() / (res.getInteger(
@@ -301,7 +304,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
             val mark = MarkerTimeRelation(0, recordingId, it.first, it.second)
-            dataSource.insertMark(mark)
+            repository.insertMark(mark)
         }
         markList = mutableListOf()
     }
@@ -311,6 +314,19 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         val markEntry = Pair(btnId, timer.text.toString())
         markList.add(markEntry)
         showSnackBarShort(R.string.mark_made)
+    }
+
+    fun handleFolderReferece(path: String?):Int? {
+        var folderReference: Int? = null
+        if (path != null){
+            val existingFolder = StorageHelper.checkExternalFolderReference(allFolders.value!!,path)
+            if (existingFolder != null){
+                folderReference =  existingFolder
+            }else {
+               folderReference = StorageHelper.createFolderFromUri(repository, path)
+            }
+        }
+        return folderReference
     }
 
     /**

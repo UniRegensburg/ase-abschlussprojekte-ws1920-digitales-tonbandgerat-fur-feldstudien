@@ -37,6 +37,7 @@ class PlayerViewModel(
     private val path = recordingPath
     var isPlaying = MutableLiveData<Boolean>()
 
+
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
 
@@ -60,7 +61,7 @@ class PlayerViewModel(
                         .setContentType(CONTENT_TYPE_SPEECH)
                         .build()
                 )
-                if (path.startsWith("content:")){
+                if (path.startsWith(res.getString(R.string.content_uri_prefix))){
                     val uri = Uri.parse(path)
                     val fd = context.contentResolver.openFileDescriptor(uri, "rw")!!.fileDescriptor
                     setDataSource(fd)

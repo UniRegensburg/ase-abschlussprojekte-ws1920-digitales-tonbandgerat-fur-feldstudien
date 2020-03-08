@@ -75,6 +75,7 @@ class RecordFragment : Fragment() {
                 )
             }
         })
+        viewModel.allFolders.observe(this, Observer {})
     }
 
     override fun onPause() {
