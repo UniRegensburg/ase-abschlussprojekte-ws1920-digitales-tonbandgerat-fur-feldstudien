@@ -30,9 +30,11 @@
     <dimen name="layout_width_seek_bar_element">0dp</dimen>
 
     <!-- Dialog -->
-    <dimen name="dialog_margin">50dp</dimen>
     <dimen name="dialog_padding">25dp</dimen>
+    <dimen name="dialog_padding_small">15dp</dimen>
     <dimen name="dialog_margin_small">15dp</dimen>
+    <dimen name="dialog_margin_medium">35dp</dimen>
+    <dimen name="dialog_margin_big">50dp</dimen>
     <dimen name="dialog_margin_normal">24dp</dimen>
 
 </resources>
