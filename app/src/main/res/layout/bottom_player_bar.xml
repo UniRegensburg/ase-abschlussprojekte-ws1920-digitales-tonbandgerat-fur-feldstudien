@@ -4,20 +4,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <import type="android.view.View" />
 
         <variable
             name="handlePlayerBar"
             type="de.ur.mi.audidroid.utils.HandlePlayerBar" />
+
         <variable
             name="isPlayerViewModel"
             type="Boolean" />
+
         <variable
             name="isPlaying"
             type="Boolean" />
+
         <variable
             name="playerViewModel"
             type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
+
         <variable
             name="recordViewModel"
             type="de.ur.mi.audidroid.viewmodels.RecordViewModel" />
@@ -34,28 +39,28 @@
             android:layout_gravity="bottom"
             app:backgroundTint="@color/color_surface"
             app:fabAlignmentMode="center"
-            app:hideOnScroll="false"
-            app:fabCradleMargin="@dimen/bar_cradle_margin"/>
+            app:fabCradleMargin="@dimen/bar_cradle_margin"
+            app:hideOnScroll="false" />
 
         <ImageButton
+            android:id="@+id/bar_jump_backwards"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/bar_jump_backwards"
-            android:background="@drawable/ic_replay_5"
+            android:layout_gravity="bottom"
             android:layout_marginStart="@dimen/bar_margin"
             android:layout_marginBottom="@dimen/keyline_4"
-            android:layout_gravity="bottom"
+            android:background="@drawable/ic_replay_5"
             android:backgroundTint="@color/color_on_surface"
-            android:contentDescription="@string/player_bar_jump_backwards"/>
+            android:contentDescription="@string/player_bar_jump_backwards" />
 
         <ImageButton
+            android:id="@+id/bar_jump_forwards"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/bar_jump_forwards"
-            android:background="@drawable/ic_forward_5"
+            android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/bar_margin"
             android:layout_marginBottom="@dimen/keyline_4"
-            android:layout_gravity="bottom|end"
+            android:background="@drawable/ic_forward_5"
             android:backgroundTint="@color/color_on_surface"
             android:contentDescription="@string/player_bar_jump_forwards" />
 
@@ -63,17 +68,17 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/color_primary"
-            app:tint="@color/color_on_primary"
-            android:background="@null"
-            app:maxImageSize="@dimen/bar_size_image"
-            app:fabCustomSize="@dimen/bar_size_fab"
-            android:scaleType="center"
             android:adjustViewBounds="true"
+            android:background="@null"
+            android:backgroundTint="@color/color_primary"
             android:onClick="@{() -> isPlayerViewModel ? (isPlaying ? handlePlayerBar.pauseOnPlayerView(playerViewModel) : handlePlayerBar.playOnPlayerView(playerViewModel)) : (isPlaying ? handlePlayerBar.pauseOnEditView(recordViewModel) : handlePlayerBar.playOnEditView(recordViewModel))}"
+            android:scaleType="center"
             android:src="@{isPlaying ? @drawable/ic_pause : @drawable/ic_play_arrow, default = @drawable/ic_play_arrow}"
+            app:fabCustomSize="@dimen/bar_size_fab"
+            app:fabSize="auto"
             app:layout_anchor="@id/bottom_app_bar"
-            app:fabSize="auto"/>
+            app:maxImageSize="@dimen/bar_size_image"
+            app:tint="@color/color_on_primary" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

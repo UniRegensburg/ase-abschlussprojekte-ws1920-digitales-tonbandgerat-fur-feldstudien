@@ -47,6 +47,4 @@
 
     <style name="AudidroidTheme.DayNight.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light"/>
-
 </resources>
