@@ -27,7 +27,7 @@ Aktuell sind folgende Features in Audidroid implementiert:
 
 - Aufnahme von Audiodateien mit Optimierung von gesprochener Sprache. Während der Aufnahme können relevante Stellen markiert werden.
 
-![Recording](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/rec.jpg)
+![Recording](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/tree/editReadmev2/requirements/Screenshots/rec.jpg)
 
 - Speichern der Aufnahme an einem beliebigen Speicherort mit bevorzugtem Namen und zugewiesenen Labels
 
