@@ -68,7 +68,7 @@
                         android:layout_height="wrap_content"
                         android:background="@null"
                         android:contentDescription="@string/popup_menu_option_add_folder"
-                        android:onClick="@{() -> folderViewModel.addInternalFolder()}"
+                        android:onClick="@{() -> folderViewModel.onAddFolderBase()}"
                         android:src="@drawable/ic_create_new_folder"
                         android:layout_gravity="end"
                         app:layout_constraintBottom_toBottomOf="parent"

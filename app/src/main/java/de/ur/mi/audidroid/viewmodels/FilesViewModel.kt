@@ -24,15 +24,22 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
     private var recordingToBeExported: EntryEntity? = null
+    var recordingToBeMoved: EntryEntity? = null
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
-    val folderToBeMoved = MutableLiveData<EntryEntity>()
     var folderReferenceList = MutableLiveData<List<Int>>()
+    var errorMessage: String? = null
 
-    private val _createAlertDialog = MutableLiveData<Boolean>()
 
-    val createAlertDialog: MutableLiveData<Boolean>
-        get() = _createAlertDialog
+    private val _createAlertFolderDialog = MutableLiveData<Boolean>()
+
+    val createAlertFolderDialog: MutableLiveData<Boolean>
+        get() = _createAlertFolderDialog
+
+    private val _createAlertConvertDialog = MutableLiveData<Boolean>()
+
+    val createAlertConvertDialog: MutableLiveData<Boolean>
+        get() = _createAlertConvertDialog
 
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
 
@@ -43,6 +50,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _showSnackbarEvent.value = null
     }
 
+    fun cancelFolderDialog(){
+        _createAlertFolderDialog.value = false
+    }
 
     // If there are no recordings in the database, a TextView is displayed.
     val empty: LiveData<Boolean> = Transformations.map(allRecordings) {
@@ -57,11 +67,13 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             when (item.itemId) {
                 R.id.action_delete_recording ->
                     delete(entryEntity)
-                R.id.action_move_recording ->
-                    folderToBeMoved.value = entryEntity
+                R.id.action_move_recording ->{
+                    recordingToBeMoved = entryEntity
+                    _createAlertFolderDialog.value = true
+                }
                 R.id.action_share_recording -> {
                     recordingToBeExported = entryEntity
-                    _createAlertDialog.value = true
+                    _createAlertConvertDialog.value = true
                 }
             }
             true
@@ -71,7 +83,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun shareRecording(format: String) {
         ShareHelper.shareAudio(recordingToBeExported!!, format, context)
-        _createAlertDialog.value = false
+        _createAlertConvertDialog.value = false
     }
 
     private fun delete(entryEntity: EntryEntity) {
@@ -81,6 +93,24 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             _showSnackbarEvent.value = true
         }
     }
+
+
+    /** Checks if a recording is allowed to be moved to the destination, i. e. catch and deny
+     *  the attempt of moving an external file to the internal storage (via 'remove from folder').
+     */
+    fun recordingMoveValid(entryEntity: EntryEntity, destFolder: Int?){
+        _createAlertFolderDialog.value = false
+        if (destFolder == null) {
+            if (entryEntity.recordingPath.startsWith(context.getString(R.string.content_uri_prefix))) {
+                errorMessage = context.getString(R.string.dialog_invalide_enty_move)
+                _createAlertFolderDialog.value = true
+                return
+            }
+        }
+        errorMessage = null
+        recordingToBeMoved = null
+    }
+
 
     fun deleteEntriesInInternalFolders() {
         val folderList = folderReferenceList.value
@@ -117,6 +147,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun cancelExporting() {
         recordingToBeExported = null
-        _createAlertDialog.value = false
+        _createAlertConvertDialog.value = false
     }
 }

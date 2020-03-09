@@ -116,8 +116,8 @@ object StorageHelper {
 
 
     //==================================================================================================
-    fun moveEntryStorage(context: Context, entryEntity: EntryEntity, folderPath: String): String{
-        var newPath = ""
+    fun moveEntryStorage(context: Context, entryEntity: EntryEntity, folderPath: String): String?{
+        var newPath: String? = null
         if(folderPath.contains(context.getString(R.string.content_uri_prefix))){
             println(entryEntity.recordingPath)
 

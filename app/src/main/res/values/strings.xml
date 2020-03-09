@@ -93,6 +93,7 @@
     <string name="create_folder">Create folder</string>
     <string name="update_folder">Update folder</string>
     <string name="move_file_dialog_header">Folders:</string>
+    <string name="dialog_missing_folder_name">The folder must be named.</string>
     <string name="dialog_invalide_enty_move">External files can\'t be moved to the app internal storage.  </string>
 
     <!-- User Feedback Recording -->

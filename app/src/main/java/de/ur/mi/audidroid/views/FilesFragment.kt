@@ -103,8 +103,8 @@ class FilesFragment : Fragment() {
                     filesViewModel.onPlayerFragmentNavigated()
                 }
             })
-
-        filesViewModel.createAlertDialog.observe(viewLifecycleOwner, Observer {
+        //Dialog for conversion.
+        filesViewModel.createAlertConvertDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 ConvertDialog.createDialog(
                     context = context!!,
@@ -113,17 +113,36 @@ class FilesFragment : Fragment() {
                 )
             }
         })
+
+        // alerts the dialog, that a recording should be moved
+        filesViewModel.createAlertFolderDialog.observe(viewLifecycleOwner, Observer {
+            if (it){
+               FolderDialog.createDialog(
+                   context = context!!,
+                   type = R.string.alert_dialog,
+                   folderViewModel =  folderViewModel,
+                   filesViewModel = filesViewModel,
+                   errorMessage = filesViewModel.errorMessage,
+                   layoutId = R.layout.folder_dialog,
+                   recordingToBeMoved = filesViewModel.recordingToBeMoved,
+                   listOfAvailableFolders = folderViewModel.allFolders.value
+               )
+            }
+        })
+
+
         //calls dialog for creating a new folder
-        folderViewModel.createAlertDialog.observe(this, Observer {
+        folderViewModel.createAlertFolderDialog.observe(this, Observer {
             if (it){
                 FolderDialog.createDialog(
                     context = context!!,
-                    layoutId = R.layout.folder_dialog,
-                    viewModel = folderViewModel,
                     type = R.string.alert_dialog,
-                    folderToBeEdited = folderViewModel.folderToBeEdited,
+                    folderViewModel =  folderViewModel,
+                    filesViewModel = filesViewModel,
                     errorMessage = folderViewModel.errorMessage,
-                    folderToBeCreated = folderViewModel.folderToBeCreated)
+                    layoutId = R.layout.folder_dialog,
+                    folderToBeEdited = folderViewModel.folderToBeEdited,
+                    folderToBeAdded = folderViewModel.folderToBeAdded)
 
             }
         })
@@ -132,26 +151,13 @@ class FilesFragment : Fragment() {
             if (it){
                 FolderDialog.createDialog(
                     context = context!!,
-                    layoutId = null,
-                    viewModel = folderViewModel,
                     type = R.string.confirm_dialog,
-                    folderToBeEdited = folderViewModel.folderToBeEdited,
-                    errorMessage = folderViewModel.errorMessage,
+                    folderViewModel = folderViewModel,
                     filesViewModel = filesViewModel,
-                    listOfAvailableFolders = folderViewModel.allFolders.value)
-            }
-        })
-        //calls dialog for moving a recording
-        filesViewModel.folderToBeMoved.observe(this, Observer {
-            if (it != null){
-                FolderDialog.createDialog(
-                    context = context!!,
-                    viewModel = folderViewModel,
-                    type = R.string.alert_dialog,
                     errorMessage = folderViewModel.errorMessage,
-                    entryToBeMoved = it,
-                    listOfAvailableFolders = folderViewModel.allFolders.value
-                )
+                    folderToBeEdited = folderViewModel.folderToBeEdited,
+                    layoutId = R.layout.folder_dialog,
+                    listOfAvailableFolders = folderViewModel.allFolders.value)
             }
         })
 

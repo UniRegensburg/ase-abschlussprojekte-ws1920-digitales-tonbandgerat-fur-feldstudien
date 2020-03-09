@@ -3,15 +3,12 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.content.res.Resources
-import android.net.Uri
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.PopupMenu
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
@@ -25,25 +22,24 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
     private val res: Resources = context.resources
-    private val _createAlertDialog = MutableLiveData<Boolean>()
+    private val _createAlertFolderDialog = MutableLiveData<Boolean>()
     private val _createConfirmDialog = MutableLiveData<Boolean>()
-    private lateinit var frameLayout: FrameLayout
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
     var allInternalFolders: LiveData<List<FolderEntity>> = repository.getFolderByStorage(false)
     var allExternalFolders: LiveData<List<FolderEntity>> = repository.getFolderByStorage(true)
     var allInternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var allExternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
-
-    var folderToBeCreated: Boolean? = null
+    var folderToBeAdded: Boolean? = null
     var dialogType: Int = R.string.confirm_dialog
     var errorMessage: String? = null
     var folderToBeEdited: FolderEntity? = null
 
 
+
     private var _showSnackbarEvent = MutableLiveData<String>()
 
-    val createAlertDialog: MutableLiveData<Boolean>
-        get() = _createAlertDialog
+    val createAlertFolderDialog: MutableLiveData<Boolean>
+        get() = _createAlertFolderDialog
 
     val createConfirmDialog: MutableLiveData<Boolean>
         get() = _createConfirmDialog
@@ -57,8 +53,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     fun cancelFolderDialog(){
         errorMessage = null
-        _createAlertDialog.value = false
-        folderToBeCreated = null
+        _createAlertFolderDialog.value = false
     }
 
     fun isSubfolder(folder: FolderEntity): Boolean{
@@ -136,68 +131,51 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         return folderReferences
     }
 
+    //==============================================================================
 
-    //Binds the add-internal_folder-Button in files_fragment.xml.
-    fun addInternalFolder(){
+
+    fun onAddFolderBase(){
         onAddFolderClicked(null)
     }
 
     fun onAddFolderClicked(folder: FolderEntity? = null){
-        _createAlertDialog.value = true
-        dialogType = R.string.alert_dialog
-        folderToBeCreated = true
+        folderToBeAdded = true
         folderToBeEdited = folder
+        dialogType = R.string.alert_dialog
+        _createAlertFolderDialog.value = true
     }
 
     fun onFolderSaveClicked(nameInput: String, parentFolder: FolderEntity?){
-        _createAlertDialog.value = false
+        _createAlertFolderDialog.value = false
+        if(nameInput == ""){
+            errorMessage = res.getString(R.string.dialog_missing_folder_name)
+            _createAlertFolderDialog.value = true
+            return
+        }
+
         if (!validName(nameInput)) {
             errorMessage = res.getString(R.string.dialog_folder_invalid_name)
-            _createAlertDialog.value = true
+            _createAlertFolderDialog.value = true
             return
         }
         if (!folderNameUnique(nameInput)){
             errorMessage = res.getString(R.string.dialog_folder_name_occurance)
-            _createAlertDialog.value = true
+            _createAlertFolderDialog.value = true
             return
         }
+
+
+        folderToBeEdited = null
+        folderToBeAdded = null
+        errorMessage = null
+
         createFolderInDB(nameInput, parentFolder)
+
         _showSnackbarEvent.value = res.getString(R.string.create_folder)
     }
 
     private fun createFolderInDB(nameInput: String, parentFolder: FolderEntity?){
         repository.insertFolder(StorageHelper.createInternalFolderEntity(nameInput,parentFolder))
-        folderToBeEdited = null
-    }
-
-    //handels the move of a folder from one folder to another
-    fun onEntryMoveFolderClicked(entryEntity: EntryEntity, folderUid: Int?, folderPath: String?){
-        var newPath: String? = null
-        if (folderPath != null){
-            if (folderPath.contains(res.getString(R.string.content_uri_prefix))||
-                entryEntity.recordingPath.contains(res.getString(R.string.content_uri_prefix))){
-                newPath =  StorageHelper.moveEntryStorage(context, entryEntity, folderPath)
-            }
-        }else{
-            if(entryEntity.recordingPath.contains(res.getString(R.string.content_uri_prefix))) {
-                errorMessage = res.getString(R.string.dialog_external_to_internal)
-                folderToBeCreated = true
-                _createConfirmDialog.value = true
-                return
-                }
-        }
-        updateEntryFolderInDB(entryEntity,folderUid, newPath)
-    }
-
-    fun updateEntryFolderInDB(entryEntity: EntryEntity, folderUid: Int?, newPath: String?){
-
-        var recordingPath = entryEntity.recordingPath
-        if (newPath != null){ recordingPath = newPath}
-
-        val updatedEntry = EntryEntity(entryEntity.uid,
-            entryEntity.recordingName, recordingPath,
-            entryEntity.date, entryEntity.duration, folderUid, entryEntity.labels)
-        repository.updateEntry(updatedEntry)
     }
 
     private fun folderNameUnique(name: String?): Boolean{
@@ -212,5 +190,42 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     private fun validName(name: String?): Boolean {
         val folderName = name ?: ""
         return Pattern.compile("^[a-zA-Z0-9_-]{1,10}$").matcher(folderName).matches()
+    }
+
+
+    //==============================================================================
+
+    fun onMoveRecordingToFolder(recording: EntryEntity, destFolder: FolderEntity?){
+
+        var newRecordingPath: String? = null
+        var folderRef: Int? = null
+        var moveSuccessful = true
+
+
+        if (destFolder != null){
+            folderRef = destFolder.uid
+        }
+
+        if (destFolder != null && destFolder.isExternal){
+            //make an operation outside, ie int -> ext, ext ->
+            newRecordingPath = StorageHelper.moveEntryStorage(context, recording, destFolder.dirPath!!)
+            if (newRecordingPath == null){
+                moveSuccessful = false
+            }
+        }
+        if (moveSuccessful){
+            updateFolderReference(recording, folderRef , newRecordingPath)
+        }
+    }
+
+    private fun updateFolderReference(entryEntity: EntryEntity, folderUid: Int?, newPath: String?){
+
+        var recordingPath = entryEntity.recordingPath
+        if (newPath != null){ recordingPath = newPath}
+
+        val updatedEntry = EntryEntity(entryEntity.uid,
+            entryEntity.recordingName, recordingPath,
+            entryEntity.date, entryEntity.duration, folderUid, entryEntity.labels)
+        repository.updateEntry(updatedEntry)
     }
 }
