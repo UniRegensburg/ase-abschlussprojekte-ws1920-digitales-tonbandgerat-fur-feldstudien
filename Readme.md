@@ -25,7 +25,7 @@ Aktuell sind folgende Features in Audidroid implementiert:
 
 **Kernfeatures**
 
-- Aufnahme von Audiodateien mit Optimierung von gesprochener Sprache
+- Aufnahme von Audiodateien mit Optimierung von gesprochener Sprache. Während der Aufnahme können relevante Stellen markiert werden.
 
 ![Startscreen](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Startscreen.png)
 
@@ -39,13 +39,23 @@ Aktuell sind folgende Features in Audidroid implementiert:
 
 ![Playing](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Playing.png)
 
-- Wechsel zwischen den Screens mithilfe eines Navigation Drawers
+- Export der Aufnahmen mit der Möglichkeit, in andere Dateiformate zu konvertieren
+
+- Bearbeitung der Aufnahmen mit Möglichkeiten zum Zuschneiden der Audiodateien, sowie Editieren von Labels und Markierungen.
+
+- Navigation in der App mit Hilfe eines Navigation Drawers
 
 ![NavigationDrawer](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/NavigationDrawer.png)
 
 
 
 **Einstellungen**
+
+- Definition von Labels, die später den Aufnahmen zugewiesen werden können
+
+- Definition des gewünschten Standarddateinamens
+
+- Auswahl des präferierten Speicherorts auf dem Gerät
 
 - Auswahl des präferierten Farbschemas (verfügbar: hell und dunkel)
 
