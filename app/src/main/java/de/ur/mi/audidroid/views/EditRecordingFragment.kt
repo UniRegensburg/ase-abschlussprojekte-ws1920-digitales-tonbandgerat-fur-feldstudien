@@ -60,6 +60,19 @@ class EditRecordingFragment : Fragment() {
                 editRecordingViewModel.initializeRangeBar(binding.rangeBar)
             }
         })
+
+        editRecordingViewModel.createDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                de.ur.mi.audidroid.utils.EditRecordingDialog.createDialog(
+                    paramContext = context!!,
+                    layoutId = R.layout.save_dialog,
+                    viewModel = editRecordingViewModel,
+                    errorMessage = editRecordingViewModel.errorMessage,
+                    editRecordingFragment = this
+                )
+            }
+        })
+
         setupAdapter()
     }
 
@@ -74,7 +87,6 @@ class EditRecordingFragment : Fragment() {
             }
         })
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_edit_recording, menu)

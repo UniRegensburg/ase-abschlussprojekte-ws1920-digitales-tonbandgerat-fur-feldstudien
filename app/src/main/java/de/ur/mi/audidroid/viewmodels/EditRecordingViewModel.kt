@@ -27,6 +27,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 
 class EditRecordingViewModel(
     private val recordingId: Int,
@@ -51,6 +52,12 @@ class EditRecordingViewModel(
     var enableCutOuter = MutableLiveData<Boolean>()
     var tempFile = ""
 
+    private val _createDialog = MutableLiveData<Boolean>()
+
+    val createDialog: LiveData<Boolean>
+        get() = _createDialog
+
+    var errorMessage: String? = null
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
@@ -248,6 +255,7 @@ class EditRecordingViewModel(
 
     val callback = object : FFMpegCallback {
         override fun onSuccess(convertedFile: File) {
+            Log.d("convertedFile", "" + convertedFile.path + " " + convertedFile.name)
             audioInProgress.value = false
             tempFile = convertedFile.path
             initializeMediaPlayer()
@@ -271,6 +279,7 @@ class EditRecordingViewModel(
     fun cutInner() {
         audioInProgress.value = true
         val editor = AudioEditor()
+        Log.d("convertedFile", "tempFile " + tempFile)
         with(editor) {
             setFile(File(tempFile))
             setStartTime(curPosThumb1String.value!!)
@@ -298,18 +307,79 @@ class EditRecordingViewModel(
         }
     }
 
+    fun getNewFileFromUserInput(
+        nameInput: String?,
+        pathInput: String?,
+        labels: ArrayList<Int>?
+    ) {
+        _createDialog.value = false
+        val name = nameInput ?: java.lang.String.format(
+            "%s_%s",
+            res.getString(R.string.standard_name_recording),
+            android.text.format.DateFormat.format(
+                "yyyy-MM-dd_HH-mm",
+                Calendar.getInstance(Locale.getDefault())
+            )
+        )
+        if (!validNameInput(name)) {
+            errorDialog(res.getString(R.string.dialog_invalid_name))
+            return
+        }
+        if (name.length > res.getInteger(R.integer.max_name_length)) {
+            errorDialog(res.getString(R.string.dialog_name_length))
+            return
+        }
 
-    fun saveRecording() {
+        val path = java.lang.String.format(
+            "%s/$name%s",
+            (pathInput ?: context.filesDir.absolutePath),
+            res.getString(R.string.suffix_audio_file)
+        )
+        val newFile = File(path)
+        if (newFile.exists()) {
+            errorMessage = res.getString(R.string.dialog_already_exist)
+            _createDialog.value = true
+            return
+        }
+
+        File(tempFile).copyTo(newFile)
+
         val recordingDuration = getRecordingDuration(File(tempFile))
         val audio =
             EntryEntity(
-                0,
-                File(tempFile).name,
-                File(tempFile).path,
-                getDate(),
-                recordingDuration!!
+                uid = 0,
+                recordingName = name,
+                recordingPath = path,
+                date = getDate(),
+                duration = recordingDuration!!
             )
-        saveRecordInDB(audio)
+        saveRecordInDB(audio, labels)
+        File(tempFile).delete()
+        errorMessage = null
+    }
+
+    private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
+        val uid = dataSource.insertRecording(audio).toInt()
+        if (labels != null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
+        showSnackBar(R.string.record_saved)
+    }
+
+    fun saveRecording() {
+        _createDialog.value = true
+    }
+
+    fun cancelSaving() {
+        errorMessage = null
+        _createDialog.value = false
+    }
+
+    private fun validNameInput(name: String): Boolean {
+        return Pattern.compile("^[a-zA-Z0-9_{}-]+$").matcher(name).matches()
+    }
+
+    private fun errorDialog(mes: String) {
+        errorMessage = mes
+        _createDialog.value = true
     }
 
     fun onMarkClicked(markTime: String) {
@@ -325,11 +395,6 @@ class EditRecordingViewModel(
     fun deleteMark(mid: Int) {
         dataSource.deleteMark(mid)
         showSnackBar(R.string.mark_deleted)
-    }
-
-    private fun saveRecordInDB(audio: EntryEntity) {
-        dataSource.insertRecording(audio)
-        showSnackBar(R.string.record_saved)
     }
 
     private fun getRecordingDuration(file: File): String? {
