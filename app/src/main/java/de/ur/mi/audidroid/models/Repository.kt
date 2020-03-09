@@ -81,8 +81,16 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun getRecordingByIdInclMarks(uid: Int): LiveData<List<RecordingAndMarker>> {
+    fun getRecordingFromIdInclMarks(uid: Int): LiveData<List<RecordingAndMarker>> {
         return markerDao.getRecordingFromIdInclMarks(uid)
+    }
+
+    fun getAllMarks(uid: Int): LiveData<List<MarkerTimeRelation>> {
+        return markerDao.allMarks(uid)
+    }
+
+    fun getRecordingById(uid: Int): LiveData<EntryEntity> {
+        return entryDao.getRecordingById(uid)
     }
 
     fun getLabelById(uid: Int): LiveData<LabelEntity> {
@@ -98,6 +106,12 @@ class Repository(application: Application) : CoroutineScope {
     fun deleteRecMarks(uid: Int) {
         CoroutineScope(coroutineContext).launch {
             markerDao.deleteRecMarks(uid)
+        }
+    }
+
+    fun deleteMark(mid: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.deleteMark(mid)
         }
     }
 

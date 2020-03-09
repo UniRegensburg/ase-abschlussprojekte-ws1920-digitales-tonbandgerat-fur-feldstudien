@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="editRecordingViewModel"
+            type="de.ur.mi.audidroid.viewmodels.EditRecordingViewModel" />
+    </data>
+
+    <FrameLayout
+        android:id="@+id/player_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".views.EditRecordingFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/seekBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.10"
+                tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
+
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:gravity="center"
+                    android:text="@{editRecordingViewModel.currentDurationString}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    style="@style/Widget.AudidroidTheme.Seekbar"
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6" />
+
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:gravity="center"
+                    android:text="@{editRecordingViewModel.totalDurationString}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/rangeBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.15"
+                tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
+
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:gravity="center"
+                    android:text="@{editRecordingViewModel.curPosThumb1String}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2"
+                    android:textColor="@color/color_secondary" />
+
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.02" />
+
+                <io.apptik.widget.MultiSlider
+                    android:id="@+id/rangeBar"
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.562" />
+
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.02" />
+
+                <TextView
+                    android:layout_width="@dimen/layout_width_seek_bar_element"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.2"
+                    android:gravity="center"
+                    android:text="@{editRecordingViewModel.curPosThumb2String}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2"
+                    android:textColor="@color/color_secondary" />
+
+            </LinearLayout>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@drawable/button_state"
+                android:enabled="@{editRecordingViewModel.enableCutInner}"
+                android:onClick="@{() -> editRecordingViewModel.cutInner()}"
+                android:text="@string/cut_inner_button"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Button"
+                android:visibility="@{editRecordingViewModel.audioInProgress ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.15"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.242" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{editRecordingViewModel.audioInProgress ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.500"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.242" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@drawable/button_state"
+                android:enabled="@{editRecordingViewModel.enableCutOuter}"
+                android:onClick="@{() -> editRecordingViewModel.cutOuter()}"
+                android:text="@string/cut_outer_button"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Button"
+                android:visibility="@{editRecordingViewModel.audioInProgress ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.857"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.242" />
+
+            <TextView
+                android:id="@+id/text_view_marks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/marks_text_view"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.042"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.396" />
+
+            <Button
+                android:id="@+id/button_add_mark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/color_primary"
+                android:onClick="@{(view) -> editRecordingViewModel.addMark(view)}"
+                android:text="@string/add_marks_button"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.950"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.386" />
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/marker_list"
+                android:layout_width="@dimen/layout_width_edit_fragment"
+                android:layout_height="@dimen/layout_height_edit_fragment"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toTopOf="@id/image_button_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/button_add_mark"
+                tools:listitem="@layout/edit_mark_item" />
+
+            <LinearLayout
+                android:layout_width="@dimen/layout_width_edit_fragment"
+                android:layout_height="@dimen/layout_height_edit_fragment"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="@{editRecordingViewModel.empty ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toTopOf="@id/image_button_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/button_add_mark">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_marks"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/image_button_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.99">
+
+                <ImageButton
+                    android:id="@+id/button_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:contentDescription="@string/play_button"
+                    android:onClick="@{() -> editRecordingViewModel.onStartPlayer()}"
+                    android:src="@mipmap/play_button_foreground"
+                    android:visibility="@{editRecordingViewModel.isPlaying ? View.GONE : View.VISIBLE, default=visible}" />
+
+                <ImageButton
+                    android:id="@+id/button_pause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:contentDescription="@string/pause_button"
+                    android:onClick="@{() -> editRecordingViewModel.onPausePlayer()}"
+                    android:src="@mipmap/pause_button_foreground"
+                    android:visibility="@{editRecordingViewModel.isPlaying ? View.VISIBLE : View.GONE, default=gone}" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
+</layout>

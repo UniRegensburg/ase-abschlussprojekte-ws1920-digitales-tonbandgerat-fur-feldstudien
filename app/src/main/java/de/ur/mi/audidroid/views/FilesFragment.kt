@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -82,6 +83,32 @@ class FilesFragment : Fragment() {
         return binding.root
     }
 
+    // When the ImageButton is clicked, a PopupMenu opens.
+    fun openPopupMenu(entryEntity: EntryEntity, view: View) {
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_delete_recording ->
+                    filesViewModel.delete(entryEntity)
+                R.id.action_edit_recording ->
+                    navigateToEditFragment(entryEntity)
+                R.id.action_share_recording -> {
+                    filesViewModel.recordingToBeExported = entryEntity
+                    filesViewModel._createAlertDialog.value = true
+                }
+            }
+            true
+        }
+        popupMenu.show()
+    }
+
+    private fun navigateToEditFragment(entryEntity: EntryEntity) {
+        this.findNavController().navigate(
+            FilesFragmentDirections.actionFilesToEdit(entryEntity.uid)
+        )
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         filesViewModel.initializeFrameLayout(files_layout)
@@ -90,7 +117,7 @@ class FilesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = RecordingItemAdapter(filesViewModel)
+        adapter = RecordingItemAdapter(this, filesViewModel)
         binding.recordingList.adapter = adapter
 
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {

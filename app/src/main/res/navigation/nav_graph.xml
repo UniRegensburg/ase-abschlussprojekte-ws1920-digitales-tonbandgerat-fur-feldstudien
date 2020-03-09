@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_files_to_player"
             app:destination="@id/player" />
+        <action
+            android:id="@+id/action_files_to_edit"
+            app:destination="@id/edit" />
     </fragment>
     <fragment
         android:id="@+id/settings"
@@ -28,6 +31,15 @@
         android:name="de.ur.mi.audidroid.views.PlayerFragment"
         android:label="@string/player_label"
         tools:layout="@layout/player_fragment">
+        <argument
+            android:name="recordingId"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/edit"
+        android:name="de.ur.mi.audidroid.views.EditRecordingFragment"
+        android:label="@string/edit_label"
+        tools:layout="@layout/edit_recording_fragment">
         <argument
             android:name="recordingId"
             app:argType="integer" />

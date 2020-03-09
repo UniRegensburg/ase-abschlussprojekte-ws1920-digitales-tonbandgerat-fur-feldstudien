@@ -3,6 +3,7 @@
     <string name="nav_header_title">Audidroid</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="action_save_edited_rec">Save</string>
 
     <string name="menu_record">Record</string>
     <string name="menu_files">Files</string>
@@ -29,6 +30,7 @@
     <string name="files_label">Files</string>
     <string name="settings_label">Settings</string>
     <string name="player_label">Player</string>
+    <string name="edit_label">Edit</string>
     <string name="labels_label">Labels</string>
 
     <!-- PlayerFragment -->
@@ -47,6 +49,18 @@
     <string name="error_message_file_cannot_be_deleted">File cannot be deleted.</string>
     <string name="error_message_path_does_not_exist">File cannot be deleted. File path does not exist.</string>
     <string name="delete_recording_dialog_header">Delete recording \'%1$s\'?</string>
+
+    <!-- EditRecordingFragment -->
+    <string name="cut_inner_button">Cut inner</string>
+    <string name="cut_outer_button">Cut outer</string>
+    <string name="marks_text_view">Marks</string>
+    <string name="add_marks_button">Add mark</string>
+    <string name="no_marks">No marks saved</string>
+    <string name="recording_cut">Recording changed</string>
+    <string name="error_message_cut">Cut recording failed</string>
+    <string name="sample_comment">Sample comment</string>
+    <string name="sample_mark">Mark</string>
+    <string name="mark_deleted">Mark deleted</string>
 
     <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>
