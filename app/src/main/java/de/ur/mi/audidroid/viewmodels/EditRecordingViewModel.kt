@@ -11,10 +11,8 @@ import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
+import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
@@ -254,7 +252,7 @@ class EditRecordingViewModel(
     }
 
     val callback = object : FFMpegCallback {
-        override fun onSuccess(convertedFile: File) {
+        override fun onSuccess(convertedFile: File, startTime: String, endTime: String) {
             audioInProgress.value = false
             tempFile = convertedFile.path
             initializeMediaPlayer()
@@ -263,7 +261,7 @@ class EditRecordingViewModel(
             initializeFrameLayout(frameLayout)
             showSnackBar(R.string.recording_cut)
 
-            saveEditRecordingInDb(convertedFile)
+            saveEditRecordingInDb(convertedFile, startTime, endTime)
             //saveinDatenbank getId
         }
 
@@ -273,7 +271,7 @@ class EditRecordingViewModel(
         }
     }
 
-    private fun saveEditRecordingInDb(convertedFile: File) {
+    private fun saveEditRecordingInDb(convertedFile: File, startTime: String, endTime: String) {
 
         val recordingDuration = getRecordingDuration(convertedFile)
         val audio =
@@ -284,13 +282,12 @@ class EditRecordingViewModel(
                 date = getDate(),
                 duration = recordingDuration!!
             )
-        saveRecordInDB(audio)
+        saveRecordInDB(audio, startTime, endTime)
     }
 
-    private fun saveRecordInDB(audio: EntryEntity) {
+    private fun saveRecordInDB(audio: EntryEntity, startTime: String, endTime: String) {
         editRecordingId = repository.insertRecording(audio).toInt()
-        Log.d("recordingId", "" + editRecordingId)
-        //return marks im richtigen zeitraum
+        Log.d("recordingId", "" + allMarks.value)
         /*if (markList.isNotEmpty()) {
             saveMarksInDB(uid)
         }*/
@@ -378,7 +375,6 @@ class EditRecordingViewModel(
                 duration = recordingDuration!!
             )
         updateRecordingInDB(audio, labels)
-        File(tempFile).delete()
         errorMessage = null
     }
 

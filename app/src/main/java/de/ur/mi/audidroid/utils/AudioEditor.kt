@@ -86,7 +86,7 @@ class AudioEditor {
         try {
             val response: Int = com.arthenica.mobileffmpeg.FFmpeg.execute(cmd)
             if (response == Config.RETURN_CODE_SUCCESS) {
-                callback!!.onSuccess(outputLocation)
+                callback!!.onSuccess(outputLocation,startTime,endTime)
             } else if (response == Config.RETURN_CODE_CANCEL) {
                 Log.d("AudioEditor", "Cut recording canceled")
             } else {
