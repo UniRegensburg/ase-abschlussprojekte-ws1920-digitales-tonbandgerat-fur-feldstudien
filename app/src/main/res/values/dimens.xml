@@ -25,9 +25,9 @@
     <dimen name="fab_margin">@dimen/keyline_4</dimen>
 
     <dimen name="card_view_margin">@dimen/keyline_2</dimen>
-    <dimen name="label_card_view_margin">8dp</dimen>
-    <dimen name="files_card_view_margin">8dp</dimen>
-    <dimen name="marks_card_view_margin">4dp</dimen>
+    <dimen name="label_card_view_margin">@dimen/keyline_2</dimen>
+    <dimen name="files_card_view_margin">@dimen/keyline_2</dimen>
+    <dimen name="marks_card_view_margin">@dimen/keyline_1</dimen>
 
     <dimen name="constraint_layout_padding">12dp</dimen>
     <dimen name="seek_bar_layout_absolute_x">0dp</dimen>

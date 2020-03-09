@@ -24,8 +24,8 @@
             type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
 
         <variable
-            name="recordViewModel"
-            type="de.ur.mi.audidroid.viewmodels.RecordViewModel" />
+            name="editRecordingViewModel"
+            type="de.ur.mi.audidroid.viewmodels.EditRecordingViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -71,7 +71,7 @@
             android:adjustViewBounds="true"
             android:background="@null"
             android:backgroundTint="@color/color_primary"
-            android:onClick="@{() -> isPlayerViewModel ? (isPlaying ? handlePlayerBar.pauseOnPlayerView(playerViewModel) : handlePlayerBar.playOnPlayerView(playerViewModel)) : (isPlaying ? handlePlayerBar.pauseOnEditView(recordViewModel) : handlePlayerBar.playOnEditView(recordViewModel))}"
+            android:onClick="@{() -> isPlayerViewModel ? (isPlaying ? handlePlayerBar.pauseOnPlayerView(playerViewModel) : handlePlayerBar.playOnPlayerView(playerViewModel)) : (isPlaying ? handlePlayerBar.pauseOnEditView(editRecordingViewModel) : handlePlayerBar.playOnEditView(editRecordingViewModel))}"
             android:scaleType="center"
             android:src="@{isPlaying ? @drawable/ic_pause : @drawable/ic_play_arrow, default = @drawable/ic_play_arrow}"
             app:fabCustomSize="@dimen/bar_size_fab"
