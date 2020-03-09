@@ -29,33 +29,31 @@ Aktuell sind folgende Features in Audidroid implementiert:
 
 - Aufnahme von Audiodateien mit Optimierung von gesprochener Sprache. Während der Aufnahme können relevante Stellen markiert werden.
 
-<!-- ![Recording](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/tree/editReadmev2/requirements/Screenshots/rec.jpg) -->
-
 <div style="text-align:center"><img src="requirements/Screenshots/rec.jpg" width=200 /></div>
 
 - Speichern der Aufnahme an einem beliebigen Speicherort mit bevorzugtem Namen und zugewiesenen Labels
 
-![Saving](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/save.jpg)
+<div style="text-align:center"><img src="requirements/Screenshots/save.jpg" width=200 /></div>
 
 - Auswählen der Aufnahme aus der Liste der eigenen Audiodateien
 
-![Files](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/list.jpg)
+<div style="text-align:center"><img src="requirements/Screenshots/list.jpg" width=200 /></div>
 
 - Abspielen der aufgenommenen Audiodateien
 
-![Playing](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/play.jpg)
+<div style="text-align:center"><img src="requirements/Screenshots/play.jpg" width=200 /></div>
 
 - Export der Aufnahmen mit der Möglichkeit, in andere Dateiformate zu konvertieren
 
-![Export](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/export.jpg)
+<div style="text-align:center"><img src="requirements/Screenshots/export.jpg" width=200 /></div>
 
 - Bearbeitung der Aufnahmen mit Möglichkeiten zum Zuschneiden der Audiodateien, sowie Editieren von Labels und Markierungen.
 
-![Edit](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/edit.jpg)
+<div style="text-align:center"><img src="requirements/Screenshots/edit.jpg" width=200 /></div>
 
 - Navigation in der App mit Hilfe eines Navigation Drawers
 
-![NavigationDrawer](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/nav.jpg)
+<div style="text-align:center"><img src="requirements/Screenshots/nav.jpg" width=200 /></div>
 
 
 
@@ -63,7 +61,7 @@ Aktuell sind folgende Features in Audidroid implementiert:
 
 - Definition von Labels, die später den Aufnahmen zugewiesen werden können
 
-![Labels](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/labels.jpg)
+<div style="text-align:center"><img src="requirements/Screenshots/labels.jpg" width=200 /></div>
 
 - Definition des gewünschten Standarddateinamens
 
@@ -71,4 +69,4 @@ Aktuell sind folgende Features in Audidroid implementiert:
 
 - Auswahl des präferierten Farbschemas (verfügbar: hell und dunkel)
 
-![Settings](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/settings.jpg)
+<div style="text-align:center"><img src="requirements/Screenshots/settings.jpg" width=200 /></div>
