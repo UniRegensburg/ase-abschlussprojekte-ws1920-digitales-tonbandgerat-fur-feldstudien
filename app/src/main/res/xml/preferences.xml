@@ -20,6 +20,7 @@
             app:dialogLayout="@layout/filename_dialog"
             app:dialogMessage="@string/filename_preference_dialog_message"
             app:key="@string/filename_preference_key"
+            app:negativeButtonText="@string/dialog_cancel_button_text"
             app:positiveButtonText="@string/dialog_save_button_text"
             app:title="Set default filename"
             app:useSimpleSummaryProvider="true" />
@@ -42,6 +43,7 @@
             app:entries="@array/theme_list_array"
             app:entryValues="@array/theme_entry_array"
             app:key="@string/theme_preference_key"
+            app:negativeButtonText="@string/dialog_cancel_button_text"
             app:title="Choose theme"
             app:useSimpleSummaryProvider="true" />
 
