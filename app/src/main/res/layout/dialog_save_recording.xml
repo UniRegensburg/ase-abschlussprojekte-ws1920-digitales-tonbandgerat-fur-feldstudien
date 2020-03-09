@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="@dimen/dialog_margin"
+    android:layout_margin="@dimen/keyline_7"
     android:orientation="vertical"
-    android:padding="@dimen/dialog_padding">
+    android:padding="@dimen/keyline_5">
 
     <TextView
         android:id="@+id/dialog_save_recording_textview_name"
@@ -20,7 +20,7 @@
         android:id="@+id/dialog_save_recording_edittext_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dialog_margin_small"
+        android:layout_marginTop="@dimen/keyline_7"
         android:hint="@string/dialog_save_recording_name_hint"
         android:importantForAutofill="no"
         android:inputType="text"
