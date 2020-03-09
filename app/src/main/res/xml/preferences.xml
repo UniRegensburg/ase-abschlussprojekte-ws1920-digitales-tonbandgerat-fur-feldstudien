@@ -25,6 +25,12 @@
             app:dialogLayout="@layout/filename_dialog"
             app:useSimpleSummaryProvider="true" />
 
+        <Preference
+            app:key = "@string/storage_preference_key"
+            app:title="Set default save location"
+            app:summary="@string/storage_location_summary"
+            app:defaultValue="default"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -41,17 +47,5 @@
             app:useSimpleSummaryProvider="true" />
 
     </PreferenceCategory>
-
-    <PreferenceCategory
-        app:key ="storage_category"
-        app:title ="Storage">
-
-        <Preference
-            app:key = "@string/storage_preference_key"
-            app:title="Set Storage Location"
-            app:summary="@string/storage_location_summary"
-            app:defaultValue="default"/>
-
-    </PreferenceCategory>
-
+    
 </PreferenceScreen>
