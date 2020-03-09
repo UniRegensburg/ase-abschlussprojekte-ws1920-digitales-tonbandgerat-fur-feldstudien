@@ -2,19 +2,30 @@ package de.ur.mi.audidroid.utils
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.LiveData
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import java.io.File
 import java.io.IOException
+import java.util.ArrayList
 
+
+/**
+ * StorageHelper provides central functions for the handling of files and folders.
+ * @author: Lisa Sanladerer
+ */
 object StorageHelper {
+    fun handleFolderReferece(path: String, allFolders: List<FolderEntity>, repository: Repository):Int{
+        allFolders.forEach {
+            if (it.dirPath == path){
+               return it.uid
+            }
+        }
+        return createFolderFromUri(repository, path)
+    }
 
     fun setOpenDocumentTreeIntent():Intent{
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
@@ -25,7 +36,7 @@ object StorageHelper {
     }
 
     fun deleteFile(context: Context, entryEntity: EntryEntity): Boolean{
-        var deletedSuccessfully: Boolean
+        val deletedSuccessfully: Boolean
         if(entryEntity.recordingPath.startsWith(context.resources.getString(R.string.content_uri_prefix))){
             deletedSuccessfully = deleteExternalFile(context, entryEntity.recordingPath, entryEntity.recordingName)
         }else{
@@ -150,7 +161,7 @@ object StorageHelper {
         val uri = Uri.parse(path)
         var name = getFolderName(uri.lastPathSegment.toString())
         val newFolderEntity = FolderEntity(0, name,
-            path, true, null,uri.lastPathSegment.toString())
+            path, true, null, uri.lastPathSegment.toString())
         println(newFolderEntity)
         return repository.insertFolder(newFolderEntity).toInt()
     }
@@ -230,5 +241,4 @@ object StorageHelper {
         }
         return foldersToBeDeleted
     }
-
 }

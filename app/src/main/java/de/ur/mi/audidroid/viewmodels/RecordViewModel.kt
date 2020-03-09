@@ -262,12 +262,13 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             ())
             newFile.delete()
         }
-
+        println("_____________")
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
+        println(path)
         var folderRef: Int? = null
         if (!fileIsInternal){
             val folderPath = StorageHelper.getExternalFolderPath(context, path, name)
-            folderRef = handleFolderReferece(folderPath!!)
+            folderRef = StorageHelper.handleFolderReferece(folderPath!!, allFolders.value!!, repository)
         }
 
         val audio =
@@ -316,7 +317,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         markList.add(markEntry)
         showSnackBarShort(R.string.mark_made)
     }
-
+/*
     private fun handleFolderReferece(path: String):Int{
 
         val folders = allFolders.value
@@ -331,7 +332,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
           return StorageHelper.createFolderFromUri(repository, path)
         }
     }
-
+*/
     /**
      * Returns the current date
      * Adapted from: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
