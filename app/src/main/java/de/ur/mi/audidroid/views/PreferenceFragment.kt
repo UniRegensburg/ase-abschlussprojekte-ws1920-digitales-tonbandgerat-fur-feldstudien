@@ -47,7 +47,11 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceChangeListener { _, newValue ->
                 val input = newValue.toString()
                 var closeDialog = true
-                if (!fileNameClean(input)) {
+                if (input.length > context!!.resources.getInteger(R.integer.max_name_length)) {
+                    fileNamePreference.dialogMessage =
+                        resources.getString(R.string.dialog_name_length)
+                    closeDialog = false
+                } else if (!fileNameClean(input)) {
                     fileNamePreference.dialogMessage =
                         resources.getString(R.string.dialog_invalid_name)
                     closeDialog = false
