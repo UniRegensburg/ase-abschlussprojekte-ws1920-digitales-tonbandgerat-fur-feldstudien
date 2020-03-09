@@ -17,10 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.MarkerEntity
-import de.ur.mi.audidroid.models.RecordingAndMarker
-import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.*
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
 import io.apptik.widget.MultiSlider.Thumb
@@ -44,7 +41,7 @@ class EditRecordingViewModel(
     private val res = context.resources
     val recording: LiveData<EntryEntity> =
         dataSource.getRecordingById(recordingId)
-    val getAllMarkers: LiveData<List<MarkerEntity>> = dataSource.getAllMarks(recordingId)
+    val allMarks: LiveData<List<MarkerTimeRelation>> = dataSource.getAllMarks(recordingId)
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
     var audioInProgress = MutableLiveData<Boolean>()
@@ -87,6 +84,11 @@ class EditRecordingViewModel(
 
     val curPosThumb2String = Transformations.map(curPosThumb2) { posThumb2 ->
         DateUtils.formatElapsedTime(posThumb2)
+    }
+
+    // If there are no recordings in the database, a TextView is displayed.
+    val empty: LiveData<Boolean> = Transformations.map(allMarks) {
+        it.isEmpty()
     }
 
     fun initializeMediaPlayer() {
@@ -315,7 +317,7 @@ class EditRecordingViewModel(
     }
 
     private fun saveRecordInDB(audio: EntryEntity) {
-        dataSource.insert(audio)
+        dataSource.insertRecording(audio)
         showSnackBar(R.string.record_saved)
     }
 

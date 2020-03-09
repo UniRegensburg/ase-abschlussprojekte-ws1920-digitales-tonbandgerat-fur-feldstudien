@@ -6,16 +6,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.MarkItemBinding
-import de.ur.mi.audidroid.models.MarkerEntity
+import de.ur.mi.audidroid.models.MarkerTimeRelation
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 
 class EditMarkerItemAdapter(
     private val editRecordingViewModel: EditRecordingViewModel
 ) :
-    ListAdapter<MarkerEntity, EditMarkerItemAdapter.ViewHolder>(EditMarkDiffCallback()) {
+    ListAdapter<MarkerTimeRelation, EditMarkerItemAdapter.ViewHolder>(EditMarkDiffCallback()) {
 
     val userActionsListener = object : MarkUserActionsListener {
-        override fun onMarkClicked(markerEntity: MarkerEntity) {
+        override fun onMarkClicked(markerEntity: MarkerTimeRelation) {
             editRecordingViewModel.onMarkClicked(markerEntity.markTime)
         }
     }
@@ -32,7 +32,7 @@ class EditMarkerItemAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: MarkerEntity,
+            item: MarkerTimeRelation,
             listener: MarkUserActionsListener
         ) {
             binding.mark = item
@@ -50,13 +50,19 @@ class EditMarkerItemAdapter(
     }
 }
 
-class EditMarkDiffCallback : DiffUtil.ItemCallback<MarkerEntity>() {
+class EditMarkDiffCallback : DiffUtil.ItemCallback<MarkerTimeRelation>() {
 
-    override fun areItemsTheSame(oldItem: MarkerEntity, newItem: MarkerEntity): Boolean {
+    override fun areItemsTheSame(
+        oldItem: MarkerTimeRelation,
+        newItem: MarkerTimeRelation
+    ): Boolean {
         return oldItem.mid == newItem.mid
     }
 
-    override fun areContentsTheSame(oldItem: MarkerEntity, newItem: MarkerEntity): Boolean {
+    override fun areContentsTheSame(
+        oldItem: MarkerTimeRelation,
+        newItem: MarkerTimeRelation
+    ): Boolean {
         return oldItem == newItem
     }
 }

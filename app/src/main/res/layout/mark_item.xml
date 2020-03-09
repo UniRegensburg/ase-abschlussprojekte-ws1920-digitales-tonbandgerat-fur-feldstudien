@@ -8,7 +8,7 @@
 
         <variable
             name="mark"
-            type="de.ur.mi.audidroid.models.MarkerEntity" />
+            type="de.ur.mi.audidroid.models.MarkerTimeRelation" />
 
         <variable
             name="listener"

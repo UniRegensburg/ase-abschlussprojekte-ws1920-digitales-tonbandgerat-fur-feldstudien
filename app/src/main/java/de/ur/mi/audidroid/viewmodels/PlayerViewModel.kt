@@ -37,7 +37,7 @@ class PlayerViewModel(
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     val recording: LiveData<EntryEntity> =
         dataSource.getRecordingById(recordingId)
-    val getAllMarkers: LiveData<List<MarkerTimeRelation>> = dataSource.getAllMarks(recordingId)
+    val allMarks: LiveData<List<MarkerTimeRelation>> = dataSource.getAllMarks(recordingId)
     var isPlaying = MutableLiveData<Boolean>()
     var recordingPath = ""
 
@@ -59,6 +59,11 @@ class PlayerViewModel(
     // The String version of the current duration
     val currentDurationString = Transformations.map(currentDuration) { duration ->
         DateUtils.formatElapsedTime(duration)
+    }
+
+    // If there are no recordings in the database, a TextView is displayed.
+    val empty: LiveData<Boolean> = Transformations.map(allMarks) {
+        it.isEmpty()
     }
 
     fun initializeMediaPlayer() {

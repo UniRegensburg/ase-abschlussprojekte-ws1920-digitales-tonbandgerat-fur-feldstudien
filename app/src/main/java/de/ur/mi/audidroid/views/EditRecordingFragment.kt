@@ -34,7 +34,7 @@ class EditRecordingFragment : Fragment() {
         val args = EditRecordingFragmentArgs.fromBundle(arguments!!)
 
         val dataSource = Repository(application)
-        val viewModelFactory = EditViewModelFactory(args.recordingPath, dataSource, application)
+        val viewModelFactory = EditViewModelFactory(args.recordingId, dataSource, application)
 
         editRecordingViewModel =
             ViewModelProvider(this, viewModelFactory).get(EditRecordingViewModel::class.java)
@@ -68,7 +68,7 @@ class EditRecordingFragment : Fragment() {
         adapter = EditMarkerItemAdapter(editRecordingViewModel)
         binding.markerList.adapter = adapter
 
-        editRecordingViewModel.getAllMarkers.observe(viewLifecycleOwner, Observer {
+        editRecordingViewModel.allMarks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.submitList(it)
             }

@@ -102,7 +102,7 @@
                 android:layout_height="@dimen/layout_height_edit_fragment"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="gone"
+                android:visibility="@{playerViewModel.empty ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toTopOf="@id/image_button_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

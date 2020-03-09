@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
  */
 
 @Entity(tableName = "markerTimeTable")
-data class MarkerEntity(
+data class MarkerTimeRelation(
     @PrimaryKey(autoGenerate = true) val mid: Int,
     val recordingId: Int,
     val markName: String,

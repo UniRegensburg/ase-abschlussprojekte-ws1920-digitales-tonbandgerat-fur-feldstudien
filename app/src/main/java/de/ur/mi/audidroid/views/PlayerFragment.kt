@@ -68,7 +68,7 @@ class PlayerFragment : Fragment() {
         adapter = MarkItemAdapter(playerViewModel)
         binding.markerList.adapter = adapter
 
-        playerViewModel.getAllMarkers.observe(viewLifecycleOwner, Observer {
+        playerViewModel.allMarks.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.submitList(it)
             }
