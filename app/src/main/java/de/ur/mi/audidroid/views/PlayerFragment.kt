@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import de.ur.mi.audidroid.models.Repository
@@ -34,42 +34,43 @@ class PlayerFragment : Fragment() {
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
-
         val application = this.activity!!.application
+        val dataSource = Repository(application)
 
         val args = PlayerFragmentArgs.fromBundle(arguments!!)
+        val viewModelFactory = PlayerViewModelFactory(dataSource, args.recordingId, application)
 
-        val dataSource = Repository(application)
-        val viewModelFactory = PlayerViewModelFactory(args.recordingPath, application)
-
-        playerViewModel =
-            ViewModelProviders.of(this, viewModelFactory).get(PlayerViewModel::class.java)
-
+        playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
         binding.playerViewModel = playerViewModel
         binding.handlePlayerBar = HandlePlayerBar
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
 
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        playerViewModel.initializeMediaPlayer()
-        playerViewModel.initializeSeekBar(binding.seekBar)
         playerViewModel.initializeFrameLayout(player_layout)
+        playerViewModel.recording.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                playerViewModel.initializeMediaPlayer(it[0].entryEntity.recordingPath)
+                playerViewModel.initializeSeekBar(binding.seekBar)
+            }
+        })
     }
 
     /**
-     * Provides the recordingPath and context to the PlayerViewModel.
+     * Provides the Repository, recordingId and context to the PlayerViewModel.
      */
     class PlayerViewModelFactory(
-        private val recordingPath: String,
+        private val dataSource: Repository,
+        private val recordingId: Int,
         private val application: Application
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
-                return PlayerViewModel(recordingPath, application) as T
+                return PlayerViewModel(dataSource, recordingId, application) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

@@ -2,14 +2,17 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.PopupMenu
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
 
 /**
@@ -21,9 +24,21 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
+    private val _createAlertDialog = MutableLiveData<Boolean>()
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
+    private lateinit var frameLayout: FrameLayout
+    var errorMessage: String? = null
+    var recording: EntryEntity? = null
+    private var recordingToBeExported: EntryEntity? = null
 
+    private val _createConfirmDialog = MutableLiveData<Boolean>()
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
+
+    val createConfirmDialog: LiveData<Boolean>
+        get() = _createConfirmDialog
+
+    val createAlertDialog: MutableLiveData<Boolean>
+        get() = _createAlertDialog
 
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
@@ -45,30 +60,88 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             when (item.itemId) {
                 R.id.action_delete_recording ->
                     delete(entryEntity)
+                R.id.action_share_recording -> {
+                    recordingToBeExported = entryEntity
+                    _createAlertDialog.value = true
+                }
             }
             true
         }
         popupMenu.show()
     }
 
+    fun shareRecording(format: String) {
+        ShareHelper.shareAudio(recordingToBeExported!!, format, context)
+        _createAlertDialog.value = false
+    }
+
     private fun delete(entryEntity: EntryEntity) {
-        val deletedSuccessful = File(entryEntity.recordingPath).delete()
-        if (deletedSuccessful) {
-            repository.delete(entryEntity)
-            _showSnackbarEvent.value = true
+        recording = entryEntity
+        _createConfirmDialog.value = true
+    }
+
+    fun deleteRecording(entryEntity: EntryEntity) {
+        val file = File(entryEntity.recordingPath)
+        if (file.delete()) {
+            repository.deleteRecording(entryEntity)
+            showSnackBar(
+                String.format(
+                    context.getString(R.string.recording_deleted),
+                    entryEntity.recordingName
+                )
+            )
+            recording = null
+        } else {
+            showSnackBar(R.string.error_message_file_cannot_be_deleted.toString())
         }
     }
 
+    fun cancelSaving() {
+        errorMessage = null
+        recording = null
+        _createConfirmDialog.value = false
+    }
+
+    fun initializeFrameLayout(frameLayout: FrameLayout) {
+        this.frameLayout = frameLayout
+    }
+
+    private fun showSnackBar(text: String) {
+        Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
+    }
+
+    fun checkExistence(
+        it: List<EntryEntity>,
+        array: ArrayList<EntryEntity>
+    ): ArrayList<EntryEntity> {
+        for (i in it.indices) {
+            val file = File(it[i].recordingPath)
+            if (file.exists()) {
+                array.add(it[i])
+            } else {
+                repository.deleteRecording(it[i])
+                repository.deleteRecMarks(it[i].uid)
+                repository.deleteRecLabels(it[i].uid)
+            }
+        }
+        return array
+    }
+
     // Navigation to the PlayerFragment
-    private val _navigateToPlayerFragment = MutableLiveData<String>()
+    private val _navigateToPlayerFragment = MutableLiveData<Int>()
     val navigateToPlayerFragment
         get() = _navigateToPlayerFragment
 
-    fun onRecordingClicked(recordingPath: String) {
-        _navigateToPlayerFragment.value = recordingPath
+    fun onRecordingClicked(recordingId: Int) {
+        _navigateToPlayerFragment.value = recordingId
     }
 
     fun onPlayerFragmentNavigated() {
         _navigateToPlayerFragment.value = null
+    }
+
+    fun cancelExporting() {
+        recordingToBeExported = null
+        _createAlertDialog.value = false
     }
 }

@@ -35,4 +35,12 @@
     <dimen name="bar_margin">70dp</dimen>
     <dimen name="bar_cradle_margin">6dp</dimen>
 
+    <!-- Dialog -->
+    <dimen name="dialog_padding">25dp</dimen>
+    <dimen name="dialog_padding_small">15dp</dimen>
+    <dimen name="dialog_margin_small">15dp</dimen>
+    <dimen name="dialog_margin_medium">35dp</dimen>
+    <dimen name="dialog_margin_big">50dp</dimen>
+    <dimen name="dialog_margin_normal">24dp</dimen>
+
 </resources>

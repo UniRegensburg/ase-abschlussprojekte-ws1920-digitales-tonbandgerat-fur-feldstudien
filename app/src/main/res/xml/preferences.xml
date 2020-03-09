@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="labels_and_marks_category"
+        app:title="Labels and Marks">
+
+        <Preference
+            app:key="@string/labels_preference_key"
+            app:title="Edit labels" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="file_category"
+        app:title="File Organisation">
+
+        <EditTextPreference
+            app:key="@string/filename_preference_key"
+            app:title="Set default filename"
+            app:dialogMessage="@string/filename_preference_dialog_message"
+            app:defaultValue="@string/filename_preference_default_value"
+            app:positiveButtonText="@string/dialog_save_button_text"
+            app:dialogLayout="@layout/filename_dialog"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
 
     <PreferenceCategory
         app:key="theme_category"
@@ -12,7 +38,19 @@
             app:dialogTitle="Choose theme"
             app:entries="@array/theme_list_array"
             app:entryValues="@array/theme_entry_array"
-            app:useSimpleSummaryProvider="true"/>
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key ="storage_category"
+        app:title ="Storage">
+
+        <Preference
+            app:key = "@string/storage_preference_key"
+            app:title="Set Storage Location"
+            app:summary="@string/storage_location_summary"
+            app:defaultValue="default"/>
 
     </PreferenceCategory>
 

@@ -1,63 +1,113 @@
 package de.ur.mi.audidroid.models
 
 import android.app.Application
-import android.os.AsyncTask
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 /**
  * The Repository isolates the data layer from the rest of the app.
- * @author: Theresa Strohmeier
+ * @author: Theresa Strohmeier, Jonas Puchinger
  */
-class Repository(application: Application) {
+
+class Repository(application: Application) : CoroutineScope {
 
     private var entryDao: EntryDao
+    private var labelDao: LabelDao
+    private var labelAssignmentDao: LabelAssignmentDao
+    private var markerDao: MarkerDao
     private var allRecordings: LiveData<List<EntryEntity>>
+
+    private val job = Job()
+    override val coroutineContext: CoroutineContext
+        get() = job + Dispatchers.Main
 
     init {
         val database: RecorderDatabase = RecorderDatabase.getInstance(
             application.applicationContext
         )
         entryDao = database.entryDao()
+        labelDao = database.labelDao()
+        labelAssignmentDao = database.labelAssignmentDao()
+        markerDao = database.markerDao()
         allRecordings = entryDao.getAllRecordings()
-    }
-
-    fun delete(entryEntity: EntryEntity) {
-        DeleteAsyncTask(entryDao).execute(entryEntity)
     }
 
     fun getAllRecordings(): LiveData<List<EntryEntity>> {
         return allRecordings
     }
 
-    private class DeleteAsyncTask(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Unit>() {
+    fun getAllLabels(): LiveData<List<LabelEntity>> {
+        return labelDao.getAllLabels()
+    }
 
-        override fun doInBackground(vararg params: EntryEntity?) {
-            entryDao.delete(params[0]!!)
+    fun deleteRecording(entryEntity: EntryEntity) {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.delete(entryEntity)
         }
     }
 
-    fun insert(entryEntity: EntryEntity) {
-        InsertAsyncTask(entryDao).execute(entryEntity)
-    }
-
-    private class InsertAsyncTask(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Unit>() {
-
-        override fun doInBackground(vararg params: EntryEntity?) {
-            entryDao.insert(params[0]!!)
+    fun deleteLabel(labelEntity: LabelEntity) {
+        CoroutineScope(coroutineContext).launch {
+            labelDao.delete(labelEntity)
         }
     }
 
-    fun getRecordingWithId(entryEntity: EntryEntity) {
-        GetRecordingWithId(entryDao).execute(entryEntity)
+    fun insertRecording(entryEntity: EntryEntity): Long {
+        var temp: Long? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                temp = entryDao.insert(entryEntity)
+            }
+        }
+        return temp!!
     }
 
-    private class GetRecordingWithId(val entryDao: EntryDao) :
-        AsyncTask<EntryEntity, Unit, Unit>() {
-
-        override fun doInBackground(vararg params: EntryEntity?) {
-            entryDao.getRecordingWithId(params[0]!!.uid)
+    fun insertMark(marker: MarkerTimeRelation) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.insertMark(marker)
         }
+    }
+
+    fun insertLabel(labelEntity: LabelEntity) {
+        CoroutineScope(coroutineContext).launch {
+            labelDao.insert(labelEntity)
+        }
+    }
+
+    fun updateLabel(labelEntity: LabelEntity) {
+        CoroutineScope(coroutineContext).launch {
+            labelDao.update(labelEntity)
+        }
+    }
+
+    fun getRecordingByIdInclMarks(uid: Int): LiveData<List<RecordingAndMarker>> {
+        return markerDao.getRecordingFromIdInclMarks(uid)
+    }
+
+    fun getLabelById(uid: Int): LiveData<LabelEntity> {
+        return labelDao.getLabelById(uid)
+    }
+
+    fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {
+        CoroutineScope(coroutineContext).launch {
+            labelAssignmentDao.insertRecLabels(labelAssignment)
+        }
+    }
+
+    fun deleteRecMarks(uid: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.deleteRecMarks(uid)
+        }
+    }
+
+    fun deleteRecLabels(uid: Int) {
+        CoroutineScope(coroutineContext).launch {
+            labelAssignmentDao.deleteRecLabels(uid)
+        }
+    }
+
+    fun getRecordingFromIdInclLabels(uid: Int): List<RecordingAndLabel> {
+        return labelAssignmentDao.getRecordingFromIdInclLabels(uid)
     }
 }
