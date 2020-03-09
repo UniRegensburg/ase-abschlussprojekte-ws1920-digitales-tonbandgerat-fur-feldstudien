@@ -33,6 +33,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     var allExternalFolders: LiveData<List<FolderEntity>> = repository.getFolderByStorage(true)
     var allInternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var allExternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
+
     var folderToBeCreated: Boolean? = null
     var dialogType: Int = R.string.confirm_dialog
     var errorMessage: String? = null
@@ -123,6 +124,19 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     }
 
 
+    fun onDeleteFolderAndContent(folder: FolderEntity): List<Int>{
+        val folderReferences = mutableListOf<Int>()
+        if (!folder.isExternal){
+            val allFoldersToBeDeleted = StorageHelper.getAllInternalSubFolders(allFolders.value!!, mutableListOf(folder))
+            allFoldersToBeDeleted.forEach {
+                folderReferences.add(it.uid)
+            }
+            deleteFolderFromDB(allFoldersToBeDeleted)
+        }
+        return folderReferences
+    }
+
+
     //Binds the add-internal_folder-Button in files_fragment.xml.
     fun addInternalFolder(){
         onAddFolderClicked(null)
@@ -156,11 +170,8 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         folderToBeEdited = null
     }
 
-
-
     //handels the move of a folder from one folder to another
     fun onEntryMoveFolderClicked(entryEntity: EntryEntity, folderUid: Int?, folderPath: String?){
-
         var newPath: String? = null
         if (folderPath != null){
             if (folderPath.contains(res.getString(R.string.content_uri_prefix))||

@@ -27,7 +27,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
     val folderToBeMoved = MutableLiveData<EntryEntity>()
-    var folderList = MutableLiveData<List<FolderEntity>>()
+    var folderReferenceList = MutableLiveData<List<Int>>()
 
     private val _createAlertDialog = MutableLiveData<Boolean>()
 
@@ -83,13 +83,18 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun deleteEntriesInInternalFolders() {
-        val folderList = folderList.value!!
-        folderList.forEach { folder ->
-            allRecordings.value!!.forEach {
-                if (folder.uid == it.folder) {
-                    delete(it)
+        val folderList = folderReferenceList.value
+        if (folderList!!.isNotEmpty()){
+            folderList.forEach {ref ->
+                allRecordings.value!!.forEach {
+                    if (it.folder == ref) {
+                        delete(it)
+                    }
                 }
             }
+        }
+        folderList.forEach { folder ->
+
         }
     }
 

@@ -49,7 +49,7 @@
             app:key = "@string/storage_preference_key"
             app:title="Set Storage Location"
             app:summary="@string/storage_location_summary"
-            app:defaultValue="default"/>
+            app:defaultValue="internal"/>
 
     </PreferenceCategory>
 </PreferenceScreen>

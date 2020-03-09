@@ -14,6 +14,7 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 
 object FolderDialog {
+
     private lateinit var dialog: AlertDialog
 
     fun createDialog(
@@ -49,10 +50,9 @@ object FolderDialog {
                 }
                 with(builder) {
                     setTitle(
-                        if (folderToBeCreated == true) String.format(
-                            context.getString(R.string.create_folder_dialog_header),
-                            R.string.popup_menu_option_add_folder
-                        ) else context.getString(R.string.create_folder_dialog_header)
+                        String.format(
+                            context.getString(R.string.create_folder_dialog_header)
+                        )
                     )
                     setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
                         onCreateFolder(folderToBeEdited,viewModel!!,editText)
@@ -87,6 +87,7 @@ object FolderDialog {
                         }
                     }
                 }else{
+                    //dialog for no Folders
                     with(builder){
                         setTitle(R.string.no_folder_available)
                         setNegativeButton(R.string.permission_button){_, _ ->
@@ -110,9 +111,9 @@ object FolderDialog {
                     )
                 )
                 setPositiveButton(context.getString(R.string.delete)){ _, _ ->
-                    if (folderToBeEdited != null){
-                        onDeleteFolderAndContent(listOfAvailableFolders!! ,folderToBeEdited, viewModel!!, filesViewModel!!)
-                    }
+                    val folderReferences = viewModel!!.onDeleteFolderAndContent(folderToBeEdited)
+
+                    filesViewModel!!.folderReferenceList = MutableLiveData(folderReferences)
                 }
                 setNegativeButton(context.getString(R.string.dialog_cancel_button_text)){_, _ ->
                     viewModel?.cancelFolderDialog()
@@ -128,6 +129,8 @@ object FolderDialog {
             }
         }
     }
+
+    //Dialog is partially fragmented for better readability.
 
     private fun onCreateFolder(folderToBeEdited: FolderEntity?, viewModel: FolderViewModel, editText: EditText){
         var nameInput: String? = editText.text.toString()
@@ -147,6 +150,7 @@ object FolderDialog {
         }
     }
 
+    /*
     //deletes folder and subfolders along with their content
     private fun onDeleteFolderAndContent(allFolders: List<FolderEntity>, folderToBeEdited: FolderEntity,viewModel: FolderViewModel,
                                          filesViewModel: FilesViewModel){
@@ -155,22 +159,21 @@ object FolderDialog {
             val folderAndSubfolders = mutableListOf(folderToBeEdited)
             StorageHelper.getAllInternalSubFolders(allFolders, folderAndSubfolders)
             filesViewModel.folderList = MutableLiveData(folderAndSubfolders)
-            filesViewModel.deleteEntriesInInternalFolders(folderAndSubfolders)
+            filesViewModel.deleteEntriesInInternalFolders()
             viewModel.deleteFolderFromDB(folderAndSubfolders)
         }else{
             println("JO, Folder is External")
         }
 
-    }
+    }*/
 
-    //gets folder names for choosable options
+   // Gets the possible options for a file move. Once a file is stored outside the app, it won't be able to become
+   // internalized again.
     private fun getFolderOptions(context: Context, listOfAvailableFolders: List<FolderEntity>?, entryToBeMoved: EntryEntity): Array<String>{
-
-        var folderNameList: ArrayList<String> = ArrayList()
+        val folderNameList: ArrayList<String> = ArrayList()
         println(entryToBeMoved.recordingPath)
         if (entryToBeMoved.recordingPath.startsWith(context.getString(R.string.content_uri_prefix))){
             listOfAvailableFolders!!.forEach {
-                println(it)
                 if (it.isExternal){
                     folderNameList.add(it.folderName)
                 }
@@ -183,6 +186,8 @@ object FolderDialog {
         val folderNameArray = arrayOfNulls<String>(folderNameList.size)
         return folderNameList.toArray(folderNameArray)
     }
+
+
     /*
     *
 

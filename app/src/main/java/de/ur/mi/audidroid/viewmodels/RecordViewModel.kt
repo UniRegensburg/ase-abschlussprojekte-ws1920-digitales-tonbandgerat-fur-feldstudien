@@ -74,7 +74,9 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun getStoragePreference(): Uri{
         val preferences = context!!.getSharedPreferences(res.getString(R.string.storage_preference_key), Context.MODE_PRIVATE)
-        return Uri.parse(preferences.getString(res.getString(R.string.storage_preference_key),"default"))
+        val value = preferences.getString(res.getString(R.string.storage_preference_key),context.getString(R.string.storage_location_default))
+        println(value)
+        return Uri.parse(value)
     }
 
     /**Initializing the recorder and cache the recording in the internal memory till the user decides the save location in the dialog afterwards */
@@ -243,6 +245,9 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         )
         val newFile = File(path)
         val storagePref = getStoragePreference()
+
+        println("++++++++++++++++++++++++++++++++")
+        println(storagePref.toString())
         val uniqueName = checkNameUniqueness(storagePref, newFile, name)
         if (!uniqueName){
             return

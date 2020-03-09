@@ -86,10 +86,10 @@ class FilesFragment : Fragment() {
         folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
         folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
         folderViewModel.allInternalFolders.observe(viewLifecycleOwner, Observer {})
-        folderViewModel.allExternalFolders.observe(viewLifecycleOwner, Observer {})
-        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {})
+        folderViewModel.allExternalFolders.observe(viewLifecycleOwner, Observer {container?.invalidate()})
+        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {container?.invalidate()})
         filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {})
-        filesViewModel.folderList.observe(viewLifecycleOwner, Observer { filesViewModel.deleteEntriesInInternalFolders() })
+        filesViewModel.folderReferenceList.observe(viewLifecycleOwner, Observer { filesViewModel.deleteEntriesInInternalFolders() })
 
         // Observer on the state variable for navigating when a list-item is clicked.
         filesViewModel.navigateToPlayerFragment.observe(

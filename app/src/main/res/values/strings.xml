@@ -23,7 +23,7 @@
     <string name="filename_preference_default_value">rec_{date}_{time}</string>
     <string name="storage_preference_key">storage_preference</string>
     <string name="storage_location_summary">internal</string>
-    <string name="storage_location_default">default</string>
+    <string name="storage_location_default">internal</string>
 
 
     <!-- Navigation -->
