@@ -14,12 +14,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.adapter.Adapter
+import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
+import kotlinx.android.synthetic.main.files_fragment.*
 
 /**
  * The fragment displays all recordings.
@@ -27,7 +29,7 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
  */
 class FilesFragment : Fragment() {
 
-    private lateinit var adapter: Adapter
+    private lateinit var adapter: RecordingItemAdapter
     private lateinit var binding: FilesFragmentBinding
     private lateinit var filesViewModel: FilesViewModel
 
@@ -38,14 +40,11 @@ class FilesFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
-
         val application = this.activity!!.application
-
         val dataSource = Repository(application)
-        val viewModelFactory = FilesViewModelFactory(dataSource, application)
 
-        filesViewModel =
-            ViewModelProvider(this, viewModelFactory).get(FilesViewModel::class.java)
+        val viewModelFactory = FilesViewModelFactory(dataSource, application)
+        filesViewModel = ViewModelProvider(this, viewModelFactory).get(FilesViewModel::class.java)
 
         binding.filesViewModel = filesViewModel
         binding.lifecycleOwner = this
@@ -112,16 +111,34 @@ class FilesFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        filesViewModel.initializeFrameLayout(files_layout)
         setupAdapter()
+        createConfirmDialog()
     }
 
     private fun setupAdapter() {
-        adapter = Adapter(this, filesViewModel)
+        adapter = RecordingItemAdapter(this, filesViewModel)
         binding.recordingList.adapter = adapter
 
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
             it?.let {
-                adapter.submitList(it)
+                var array = arrayListOf<EntryEntity>()
+                array = filesViewModel.checkExistence(it, array)
+                adapter.submitList(array)
+            }
+        })
+    }
+
+    private fun createConfirmDialog() {
+        filesViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                FilesDialog.createDialog(
+                    context = context!!,
+                    type = R.string.confirm_dialog,
+                    recording = filesViewModel.recording,
+                    viewModel = filesViewModel,
+                    errorMessage = filesViewModel.errorMessage
+                )
             }
         })
     }

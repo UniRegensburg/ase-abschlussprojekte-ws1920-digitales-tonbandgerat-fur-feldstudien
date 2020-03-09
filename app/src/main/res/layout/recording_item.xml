@@ -41,22 +41,24 @@
                     android:id="@+id/text_recording_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/rubik_medium"
-                    android:text="@{recording.date}" />
+                    android:text="@{recording.date}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
 
                 <TextView
                     android:id="@+id/label_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/rubik"
-                    android:text="@string/recording_file_name" />
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@{recording.recordingName}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body1" />
 
                 <TextView
                     android:id="@+id/text_recording_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/rubik_light"
-                    android:text="@{recording.duration}" />
+                    android:text="@{recording.duration}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
 
             </LinearLayout>
 
@@ -67,13 +69,14 @@
                 android:background="@null"
                 android:contentDescription="@string/popup_menu_button"
                 android:onClick="@{(view) -> listener.onButtonClicked(recording, view)}"
+                android:padding="@dimen/keyline_2"
                 android:src="@drawable/ic_popup_menu"
+                android:tint="@color/color_on_surface"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toEndOf="@+id/linearLayout"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.016" />
+                app:layout_constraintVertical_bias="0.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

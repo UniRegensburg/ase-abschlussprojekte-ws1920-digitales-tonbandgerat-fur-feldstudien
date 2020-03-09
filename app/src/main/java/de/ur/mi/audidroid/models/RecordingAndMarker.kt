@@ -4,15 +4,16 @@ import androidx.room.Embedded
 import androidx.room.Relation
 
 /**
- * This class captures the relationship between [EntryEntity] and [MarkerEntity], which is
- * used by Room to fetch the related entities.
+ *  RecordingAndMarker maps the one-to-many relationship between a recording and its marks.
+ * @author: Lisa Sanladerer
  */
+
 data class RecordingAndMarker(
     @Embedded val entryEntity: EntryEntity,
     @Relation(
         parentColumn = "uid",
         entityColumn = "recordingId"
     )
-    val markList: List<MarkerEntity>
+    val markList: List<MarkerTimeRelation>
 )
 
