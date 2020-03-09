@@ -56,7 +56,7 @@
     <string name="marks_text_view">Marks</string>
     <string name="add_marks_button">Add mark</string>
     <string name="no_marks">No marks saved</string>
-    <string name="recording_cut">Recording cut </string>
+    <string name="recording_cut">Recording changed</string>
     <string name="error_message_cut">Cut recording failed</string>
     <string name="sample_comment">Sample comment</string>
     <string name="sample_mark">Mark</string>

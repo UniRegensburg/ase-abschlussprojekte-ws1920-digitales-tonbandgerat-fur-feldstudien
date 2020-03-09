@@ -88,9 +88,9 @@ class AudioEditor {
             if (response == Config.RETURN_CODE_SUCCESS) {
                 callback!!.onSuccess(outputLocation)
             } else if (response == Config.RETURN_CODE_CANCEL) {
-                Log.d("AudioEditor", "Cutting cancelled")
+                Log.d("AudioEditor", "Cut recording canceled")
             } else {
-                callback!!.onFailure(IOException("Cutting failed for $cmd"))
+                callback!!.onFailure(IOException("Cut recording failed for $cmd"))
             }
         } catch (e: Exception) {
             callback!!.onFailure(e)

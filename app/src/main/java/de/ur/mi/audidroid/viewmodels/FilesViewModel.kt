@@ -22,8 +22,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
-    val _createAlertDialog = MutableLiveData<Boolean>()
-
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
@@ -31,14 +29,14 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     var recordingToBeExported: EntryEntity? = null
 
     private val _createConfirmDialog = MutableLiveData<Boolean>()
-    private var _showSnackbarEvent = MutableLiveData<Boolean>()
-
     val createConfirmDialog: LiveData<Boolean>
         get() = _createConfirmDialog
 
+    val _createAlertDialog = MutableLiveData<Boolean>()
     val createAlertDialog: MutableLiveData<Boolean>
         get() = _createAlertDialog
 
+    private var _showSnackbarEvent = MutableLiveData<Boolean>()
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
 

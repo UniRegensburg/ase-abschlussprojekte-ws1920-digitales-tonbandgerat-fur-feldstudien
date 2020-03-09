@@ -86,7 +86,7 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun getAllMarks(uid: Int): LiveData<List<MarkerTimeRelation>> {
-        return markerDao.getAllMarks(uid)
+        return markerDao.allMarks(uid)
     }
 
     fun getRecordingById(uid: Int): LiveData<EntryEntity> {

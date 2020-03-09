@@ -29,15 +29,15 @@ class PlayerViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val database = dataSource
+    private val repository = dataSource
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     val recording: LiveData<EntryEntity> =
-        dataSource.getRecordingById(recordingId)
-    val allMarks: LiveData<List<MarkerTimeRelation>> = dataSource.getAllMarks(recordingId)
+        repository.getRecordingById(recordingId)
+    val allMarks: LiveData<List<MarkerTimeRelation>> = repository.getAllMarks(recordingId)
     var isPlaying = MutableLiveData<Boolean>()
     var recordingPath = ""
 

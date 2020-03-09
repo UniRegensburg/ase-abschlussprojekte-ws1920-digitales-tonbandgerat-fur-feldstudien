@@ -7,7 +7,6 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
@@ -31,11 +30,12 @@ import java.util.regex.Pattern
 
 class EditRecordingViewModel(
     private val recordingId: Int,
-    private val dataSource: Repository,
+    dataSource: Repository,
     application: Application
 ) :
     AndroidViewModel(application) {
 
+    private val repository = dataSource
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
     private lateinit var seekBar: SeekBar
@@ -43,24 +43,22 @@ class EditRecordingViewModel(
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     val recording: LiveData<EntryEntity> =
-        dataSource.getRecordingById(recordingId)
-    val allMarks: LiveData<List<MarkerTimeRelation>> = dataSource.getAllMarks(recordingId)
+        repository.getRecordingById(recordingId)
+    val allMarks: LiveData<List<MarkerTimeRelation>> = repository.getAllMarks(recordingId)
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
     var audioInProgress = MutableLiveData<Boolean>()
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
     var tempFile = ""
-
-    private val _createDialog = MutableLiveData<Boolean>()
-
-    val createDialog: LiveData<Boolean>
-        get() = _createDialog
-
     var errorMessage: String? = null
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
+
+    private val _createDialog = MutableLiveData<Boolean>()
+    val createDialog: LiveData<Boolean>
+        get() = _createDialog
 
     private val _totalDuration = MutableLiveData<Long>()
     private val totalDuration: LiveData<Long>
@@ -255,14 +253,12 @@ class EditRecordingViewModel(
 
     val callback = object : FFMpegCallback {
         override fun onSuccess(convertedFile: File) {
-            Log.d("convertedFile", "" + convertedFile.path + " " + convertedFile.name)
             audioInProgress.value = false
             tempFile = convertedFile.path
             initializeMediaPlayer()
             initializeSeekBar(seekBar)
             initializeRangeBar(rangeBar)
             initializeFrameLayout(frameLayout)
-            //convertedFile.delete()
             showSnackBar(R.string.recording_cut)
         }
 
@@ -279,7 +275,6 @@ class EditRecordingViewModel(
     fun cutInner() {
         audioInProgress.value = true
         val editor = AudioEditor()
-        Log.d("convertedFile", "tempFile " + tempFile)
         with(editor) {
             setFile(File(tempFile))
             setStartTime(curPosThumb1String.value!!)
@@ -359,8 +354,8 @@ class EditRecordingViewModel(
     }
 
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
-        val uid = dataSource.insertRecording(audio).toInt()
-        if (labels != null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
+        val uid = repository.insertRecording(audio).toInt()
+        if (labels != null) repository.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
         showSnackBar(R.string.record_saved)
     }
 
@@ -388,12 +383,12 @@ class EditRecordingViewModel(
     fun addMark(view: View) {
         val btnId = view.resources.getResourceName(view.id)
         val mark = MarkerTimeRelation(0, recordingId, btnId, currentDurationString.value!!)
-        dataSource.insertMark(mark)
+        repository.insertMark(mark)
         showSnackBar(R.string.mark_made)
     }
 
     fun deleteMark(mid: Int) {
-        dataSource.deleteMark(mid)
+        repository.deleteMark(mid)
         showSnackBar(R.string.mark_deleted)
     }
 

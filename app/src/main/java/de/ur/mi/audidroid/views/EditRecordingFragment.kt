@@ -61,6 +61,11 @@ class EditRecordingFragment : Fragment() {
             }
         })
 
+        createEditRecordingDialog()
+        setupAdapter()
+    }
+
+    private fun createEditRecordingDialog() {
         editRecordingViewModel.createDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 de.ur.mi.audidroid.utils.EditRecordingDialog.createDialog(
@@ -72,8 +77,6 @@ class EditRecordingFragment : Fragment() {
                 )
             }
         })
-
-        setupAdapter()
     }
 
     private fun setupAdapter() {

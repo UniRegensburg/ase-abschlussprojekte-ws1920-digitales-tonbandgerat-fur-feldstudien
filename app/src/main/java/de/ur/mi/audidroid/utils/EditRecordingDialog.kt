@@ -15,7 +15,6 @@ import androidx.lifecycle.Observer
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.LabelEntity
 import de.ur.mi.audidroid.models.Repository
@@ -41,7 +40,6 @@ object EditRecordingDialog {
     fun createDialog(
         paramContext: Context,
         layoutId: Int? = null,
-        textId: Int? = null,
         viewModel: EditRecordingViewModel? = null,
         errorMessage: String? = null,
         editRecordingFragment: EditRecordingFragment? = null
@@ -55,9 +53,6 @@ object EditRecordingDialog {
             builder.setView(layoutId)
             prepareDataSource()
             setDialogButtons(builder)
-        }
-        if (textId != null) {
-            createPermissionDialog(builder, textId)
         }
         dialog = builder.create()
         dialog.setCancelable(false)
@@ -110,18 +105,6 @@ object EditRecordingDialog {
         selectedLabels.clear()
     }
 
-    private fun createPermissionDialog(builder: MaterialAlertDialogBuilder, textId: Int) {
-        with(builder) {
-            setTitle(R.string.permission_title)
-            setMessage(textId)
-            setPositiveButton(
-                R.string.permission_button
-            ) { _, _ ->
-                PermissionHelper.makeRequest(context)
-            }
-        }
-    }
-
     private fun getStoragePreference(): String? {
         val preferences = context.getSharedPreferences(
             context.getString(R.string.storage_preference_key),
@@ -140,20 +123,6 @@ object EditRecordingDialog {
 
     private fun pathButtonClicked() {
         Pathfinder.openPathDialog(null, context)
-    }
-
-    fun resultPathfinder(treePath: Uri) {
-        val realPath = Pathfinder.getRealPath(context, treePath)
-        if (realPath == null) {
-            Snackbar.make(
-                fragment.requireView(),
-                context.resources.getString(R.string.external_sd_card_error),
-                Snackbar.LENGTH_LONG
-            ).show()
-            return
-        }
-        selectedPath = realPath
-        updateTextView(realPath)
     }
 
     private fun updateTextView(path: String) {

@@ -7,11 +7,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.MarkItemBinding
 import de.ur.mi.audidroid.models.MarkerTimeRelation
-import de.ur.mi.audidroid.viewmodels.PlayerViewModel
 
-class MarkItemAdapter(
-    private val playerViewModel: PlayerViewModel
-) :
+class MarkItemAdapter :
     ListAdapter<MarkerTimeRelation, MarkItemAdapter.ViewHolder>(MarkDiffCallback()) {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
