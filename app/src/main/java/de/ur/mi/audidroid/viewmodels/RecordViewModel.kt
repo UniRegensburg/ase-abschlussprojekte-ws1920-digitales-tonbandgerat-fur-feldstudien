@@ -246,8 +246,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         val newFile = File(path)
         val storagePref = getStoragePreference()
 
-        println("++++++++++++++++++++++++++++++++")
-        println(storagePref.toString())
         val uniqueName = checkNameUniqueness(storagePref, newFile, name)
         if (!uniqueName){
             return
@@ -255,7 +253,8 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
         endRecordSession()
 
-        if (storagePref.toString().equals(res.getString(R.string.storage_location_default))){
+        val fileIsInternal = storagePref.toString().equals(res.getString(R.string.storage_location_default))
+        if (fileIsInternal){
             File(tempFile).copyTo(newFile)
         }else{
             path = StorageHelper.createExternalFile(context,
@@ -265,14 +264,16 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
 
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
-
-        val folderPath = StorageHelper.getExternalFolderPath(context, path, name)
-        val folderRef = handleFolderReferece(folderPath)
+        var folderRef: Int? = null
+        if (!fileIsInternal){
+            val folderPath = StorageHelper.getExternalFolderPath(context, path, name)
+            folderRef = handleFolderReferece(folderPath!!)
+        }
 
         val audio =
             EntryEntity(0, name, path, getDate(), recordingDuration, folderRef)
-        saveRecordInDB(audio)
         println(audio)
+        saveRecordInDB(audio)
         File(tempFile).delete()
         resetView()
         errorMessage = null
@@ -316,21 +317,19 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         showSnackBarShort(R.string.mark_made)
     }
 
-    fun handleFolderReferece(path: String?):Int? {
-        var folderReference: Int? = null
-        if (path != null){
-            val folders = allFolders.value
-            val allFolderPaths: ArrayList<String> = arrayListOf()
-            folders!!.forEach { allFolderPaths.add(it.dirPath!!) }
+    private fun handleFolderReferece(path: String):Int{
 
-            val existingFolder = StorageHelper.checkExternalFolderReference(allFolderPaths, path)
-            if (existingFolder != null){
-                folderReference =  existingFolder
-            }else {
-               folderReference = StorageHelper.createFolderFromUri(repository, path)
-            }
+        val folders = allFolders.value
+        val allFolderPaths: ArrayList<String> = arrayListOf()
+        folders!!.forEach { allFolderPaths.add(it.dirPath!!) }
+
+        val dbReference = StorageHelper.checkExternalFolderReference(allFolderPaths, path)
+
+        if (dbReference != null){
+           return dbReference
+        }else{
+          return StorageHelper.createFolderFromUri(repository, path)
         }
-        return folderReference
     }
 
     /**

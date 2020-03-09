@@ -62,6 +62,59 @@ object StorageHelper {
         return newFolderEntity
     }
 
+    //Returns the last component of the external folder (to be used as name).
+    fun getFolderName(name:String):String{
+        var newName = name.trim()
+        newName = newName.substringAfter(":")
+        if (newName.last() == '/'){
+            newName = newName.dropLast(1)}
+        if(newName.contains("/")){
+            newName = newName.substringAfterLast("/")
+        }
+        return newName
+    }
+
+
+    //Returns a sorted list of FolderEntries, derived from the parentDir reference.
+    fun getInternalFolderHierarchy(allFolders: List<FolderEntity>): List<FolderEntity>? {
+
+        if (allFolders.isNotEmpty()) {
+            val foldersSorted: MutableList<FolderEntity> = mutableListOf()
+            allFolders.forEach {
+                if (it.parentDir == null) {
+                    foldersSorted.add(it)
+                }
+            }
+            while (foldersSorted.size != allFolders.size){
+                for (i in 0 until foldersSorted.size){
+                    for(x in 0 until allFolders.size){
+                        if (!foldersSorted.contains(allFolders[x])){
+                            if (allFolders[x].parentDir == foldersSorted[i].uid){
+                                foldersSorted.add(i+1, allFolders[x])
+                            }
+                        }
+                    }
+                }
+            }
+            return foldersSorted
+        }
+        return null
+    }
+
+    //Checks if String is a potential ContentUri.
+    fun getExternalFolderPath(context: Context,path: String, name: String): String?{
+        if (path.startsWith(context.resources.getString(R.string.content_uri_prefix))) {
+            return path.substringBeforeLast(name)
+        }
+        return null
+    }
+
+    fun getDocumentName(context: Context?, name: String): String{
+        return name + context!!.resources.getString(R.string.suffix_audio_file)
+    }
+
+
+
     //==================================================================================================
     fun moveEntryStorage(context: Context, entryEntity: EntryEntity, folderPath: String): String{
         var newPath = ""
@@ -72,23 +125,12 @@ object StorageHelper {
             val uri = Uri.parse(folderPath)
             val dstFile = DocumentFile.fromTreeUri(context, uri)!!
                 .createFile("aac", getDocumentName(context,entryEntity.recordingName))
-            if (copyToExternalFile(context, srcFile , dstFile!!)){
-                srcFile.delete()
-            }
+            copyToExternalFile(context, srcFile , dstFile!!)
+            srcFile.delete()
+
             newPath = dstFile.uri.toString()
         }
         return newPath
-    }
-    //checks if String is contentUri and returns dir
-    fun getExternalFolderPath(context: Context,path: String, name: String): String?{
-        if (path.startsWith(context.resources.getString(R.string.content_uri_prefix))) {
-            return path.substringBeforeLast(name)
-        }
-        return null
-    }
-
-    fun getDocumentName(context: Context, name: String): String{
-        return name + context.resources.getString(R.string.suffix_audio_file)
     }
 
     // Checks if an external path already has a reference in Database.
@@ -112,21 +154,11 @@ object StorageHelper {
         return repository.insertFolder(newFolderEntity).toInt()
     }
 
-    //returns a usable name from uri.lastPathSegment
-    fun getFolderName(name:String):String{
-        var newName = name.trim()
-        newName = newName.substringAfter(":")
-        if (newName.last() == '/'){
-            newName = newName.dropLast(1)}
-        if(newName.contains("/")){
-            newName = newName.substringAfterLast("/")
-        }
-        return newName
-    }
+
     //creates an external File and copies the content of a File there
     fun createExternalFile(context: Context,tempFile: File,name: String, treeUri: Uri): String{
         val res = context.resources
-        val newName = name + res.getString(R.string.suffix_audio_file)
+        val newName = getDocumentName(context, name)
         val preferredDir = DocumentFile.fromTreeUri(context, treeUri)!!
         val newExternalFile = preferredDir.createFile("aac",newName)!!
         copyToExternalFile(context, tempFile, newExternalFile)
@@ -182,7 +214,7 @@ object StorageHelper {
         return false
     }
 
-    //returns all referenced subfolders for folder
+    //Returns all subfolders of a folder, derived from the parentDir reference.
     fun getAllInternalSubFolders(allFolders: List<FolderEntity>, folderList: MutableList<FolderEntity>): MutableList<FolderEntity>{
         val foldersToBeDeleted = folderList
         foldersToBeDeleted.forEach { parent ->
@@ -198,28 +230,4 @@ object StorageHelper {
         return foldersToBeDeleted
     }
 
-    fun getInternalFolderHierarchy(allFolders: List<FolderEntity>): List<FolderEntity>? {
-
-        if (allFolders.isNotEmpty()) {
-            val foldersSorted: MutableList<FolderEntity> = mutableListOf()
-            allFolders.forEach {
-                if (it.parentDir == null) {
-                    foldersSorted.add(it)
-                }
-            }
-            while (foldersSorted.size != allFolders.size){
-                for (i in 0 until foldersSorted.size){
-                    for(x in 0 until allFolders.size){
-                        if (!foldersSorted.contains(allFolders[x])){
-                            if (allFolders[x].parentDir == foldersSorted[i].uid){
-                                foldersSorted.add(i+1, allFolders[x])
-                            }
-                        }
-                    }
-                }
-            }
-            return foldersSorted
-        }
-        return null
-    }
 }
