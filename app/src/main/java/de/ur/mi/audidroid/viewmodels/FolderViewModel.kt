@@ -197,6 +197,13 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     fun onMoveRecordingToFolder(recording: EntryEntity, destFolder: FolderEntity?){
 
+        println("ENTRTY")
+        println(recording)
+        println("zeil")
+        print(destFolder)
+
+
+
         var newRecordingPath: String? = null
         var folderRef: Int? = null
         var moveSuccessful = true
@@ -206,20 +213,25 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             folderRef = destFolder.uid
         }
 
+        println("FOLDER REF. ")
+        print(folderRef)
+
         if (destFolder != null && destFolder.isExternal){
             //make an operation outside, ie int -> ext, ext ->
+            print("Operation is extern")
             newRecordingPath = StorageHelper.moveEntryStorage(context, recording, destFolder.dirPath!!)
             if (newRecordingPath == null){
                 moveSuccessful = false
             }
         }
         if (moveSuccessful){
+
             updateFolderReference(recording, folderRef , newRecordingPath)
         }
     }
 
     private fun updateFolderReference(entryEntity: EntryEntity, folderUid: Int?, newPath: String?){
-
+        println("update db")
         var recordingPath = entryEntity.recordingPath
         if (newPath != null){ recordingPath = newPath}
 

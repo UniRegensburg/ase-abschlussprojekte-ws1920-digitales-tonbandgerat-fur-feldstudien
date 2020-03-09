@@ -16,9 +16,6 @@ import java.io.IOException
 
 object StorageHelper {
 
-
-
-
     fun setOpenDocumentTreeIntent():Intent{
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
@@ -27,7 +24,6 @@ object StorageHelper {
         return intent
     }
 
-
     fun deleteFile(context: Context, entryEntity: EntryEntity): Boolean{
         var deletedSuccessfully: Boolean
         if(entryEntity.recordingPath.startsWith(context.resources.getString(R.string.content_uri_prefix))){
@@ -35,7 +31,6 @@ object StorageHelper {
         }else{
             deletedSuccessfully = File(entryEntity.recordingPath).delete()
         }
-
         return deletedSuccessfully
     }
 
@@ -50,11 +45,20 @@ object StorageHelper {
         return false
     }
 
+    private fun internalFolderDescr(name: String, descr: String?):String{
+        var folderDescr = name
+        if (descr != null){
+            folderDescr = descr + "/" + name
+        }
+        return folderDescr
+    }
+
     fun createInternalFolderEntity(name: String, parentFolder: FolderEntity?): FolderEntity{
-        var nestingDescr = ""
+        var nestingDescr: String? = null
         var parentFolderRef: Int? = null
+
         if (parentFolder != null){
-            nestingDescr = parentFolder.folderName
+            nestingDescr = internalFolderDescr(parentFolder.folderName, parentFolder.nestingDescr)
             parentFolderRef = parentFolder.uid
         }
         val newFolderEntity = FolderEntity(0, name,null,
@@ -73,7 +77,6 @@ object StorageHelper {
         }
         return newName
     }
-
 
     //Returns a sorted list of FolderEntries, derived from the parentDir reference.
     fun getInternalFolderHierarchy(allFolders: List<FolderEntity>): List<FolderEntity>? {
@@ -112,8 +115,6 @@ object StorageHelper {
     fun getDocumentName(context: Context?, name: String): String{
         return name + context!!.resources.getString(R.string.suffix_audio_file)
     }
-
-
 
     //==================================================================================================
     fun moveEntryStorage(context: Context, entryEntity: EntryEntity, folderPath: String): String?{
