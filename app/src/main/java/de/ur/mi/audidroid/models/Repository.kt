@@ -63,6 +63,12 @@ class Repository(application: Application) : CoroutineScope {
         return temp!!
     }
 
+    fun updateRecording(entryEntity: EntryEntity){
+        CoroutineScope(coroutineContext).launch {
+            entryDao.update(entryEntity)
+        }
+    }
+
     fun insertMark(marker: MarkerTimeRelation) {
         CoroutineScope(coroutineContext).launch {
             markerDao.insertMark(marker)

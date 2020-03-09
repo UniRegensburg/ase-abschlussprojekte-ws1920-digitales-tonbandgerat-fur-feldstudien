@@ -13,5 +13,6 @@ data class MarkerTimeRelation(
     @PrimaryKey(autoGenerate = true) val mid: Int,
     val recordingId: Int,
     val markName: String,
-    val markTime: String
+    val markTime: String,
+    val markTimeInMilli: String
 )

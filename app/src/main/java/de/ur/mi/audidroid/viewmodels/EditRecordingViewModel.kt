@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
@@ -52,6 +53,7 @@ class EditRecordingViewModel(
     var enableCutOuter = MutableLiveData<Boolean>()
     var tempFile = ""
     var errorMessage: String? = null
+    private var editRecordingId: Int = 0
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
@@ -260,6 +262,9 @@ class EditRecordingViewModel(
             initializeRangeBar(rangeBar)
             initializeFrameLayout(frameLayout)
             showSnackBar(R.string.recording_cut)
+
+            saveEditRecordingInDb(convertedFile)
+            //saveinDatenbank getId
         }
 
         override fun onFailure(error: Exception) {
@@ -267,6 +272,30 @@ class EditRecordingViewModel(
             showSnackBar(R.string.error_message_cut)
         }
     }
+
+    private fun saveEditRecordingInDb(convertedFile: File) {
+
+        val recordingDuration = getRecordingDuration(convertedFile)
+        val audio =
+            EntryEntity(
+                uid = 0,
+                recordingName = convertedFile.name,
+                recordingPath = convertedFile.path,
+                date = getDate(),
+                duration = recordingDuration!!
+            )
+        saveRecordInDB(audio)
+    }
+
+    private fun saveRecordInDB(audio: EntryEntity) {
+        editRecordingId = repository.insertRecording(audio).toInt()
+        Log.d("recordingId", "" + editRecordingId)
+        //return marks im richtigen zeitraum
+        /*if (markList.isNotEmpty()) {
+            saveMarksInDB(uid)
+        }*/
+    }
+
 
     private fun getOutputPath(): String {
         return context.filesDir.absolutePath
@@ -348,14 +377,20 @@ class EditRecordingViewModel(
                 date = getDate(),
                 duration = recordingDuration!!
             )
-        saveRecordInDB(audio, labels)
+        updateRecordingInDB(audio, labels)
         File(tempFile).delete()
         errorMessage = null
     }
 
-    private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
-        val uid = repository.insertRecording(audio).toInt()
-        if (labels != null) repository.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
+    private fun updateRecordingInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
+        repository.updateRecording(audio)
+        if (labels != null) repository.insertRecLabels(
+            LabelAssignmentEntity(
+                0,
+                editRecordingId,
+                labels
+            )
+        )
         showSnackBar(R.string.record_saved)
     }
 
@@ -382,7 +417,13 @@ class EditRecordingViewModel(
 
     fun addMark(view: View) {
         val btnId = view.resources.getResourceName(view.id)
-        val mark = MarkerTimeRelation(0, recordingId, btnId, currentDurationString.value!!)
+        val mark = MarkerTimeRelation(
+            0,
+            recordingId,
+            btnId,
+            currentDurationString.value!!,
+            _currentDuration.value.toString()
+        )
         repository.insertMark(mark)
         showSnackBar(R.string.mark_made)
     }
