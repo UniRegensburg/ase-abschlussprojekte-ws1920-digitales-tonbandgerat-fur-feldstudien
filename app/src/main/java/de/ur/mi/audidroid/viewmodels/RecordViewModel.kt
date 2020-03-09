@@ -229,7 +229,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
         val uid = dataSource.insertRecording(audio).toInt()
         if (labels != null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
-        if (markList.isNotEmpty()){
+        if (markList.isNotEmpty()) {
             saveMarksInDB(uid)
         }
         showSnackBar(R.string.record_saved)

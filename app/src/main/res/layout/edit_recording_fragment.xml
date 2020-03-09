@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -10,6 +11,10 @@
         <variable
             name="editRecordingViewModel"
             type="de.ur.mi.audidroid.viewmodels.EditRecordingViewModel" />
+
+        <variable
+            name="handlePlayerBar"
+            type="de.ur.mi.audidroid.utils.HandlePlayerBar" />
     </data>
 
     <FrameLayout
@@ -243,6 +248,13 @@
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <include
+            layout="@layout/bottom_player_bar"
+            bind:editRecordingViewModel="@{editRecordingViewModel}"
+            bind:handlePlayerBar="@{handlePlayerBar}"
+            bind:isPlayerViewModel="@{editRecordingViewModel.isPlayerViewModel}"
+            bind:isPlaying="@{editRecordingViewModel.isPlaying()}" />
 
     </FrameLayout>
 

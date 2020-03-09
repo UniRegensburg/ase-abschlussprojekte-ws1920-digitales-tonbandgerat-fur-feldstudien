@@ -20,25 +20,33 @@
     <dimen name="activity_horizontal_margin">@dimen/keyline_4</dimen>
     <dimen name="activity_vertical_margin">@dimen/keyline_4</dimen>
     <dimen name="nav_header_vertical_spacing">@dimen/keyline_2</dimen>
-    <dimen name="nav_header_height">176dp</dimen>
+    <dimen name="nav_header_height">@dimen/keyline_12</dimen>
     <dimen name="fab_margin_big">@dimen/keyline_12</dimen>
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin">@dimen/keyline_4</dimen>
 
-    <dimen name="label_card_view_margin">8dp</dimen>
-    <dimen name="files_card_view_margin">8dp</dimen>
-    <dimen name="marks_card_view_margin">4dp</dimen>
+    <dimen name="card_view_margin">@dimen/keyline_2</dimen>
+    <dimen name="label_card_view_margin">@dimen/keyline_2</dimen>
+    <dimen name="files_card_view_margin">@dimen/keyline_2</dimen>
+    <dimen name="marks_card_view_margin">@dimen/keyline_1</dimen>
+
     <dimen name="constraint_layout_padding">12dp</dimen>
     <dimen name="seek_bar_layout_absolute_x">0dp</dimen>
     <dimen name="layout_width_seek_bar_element">0dp</dimen>
     <dimen name="layout_width_edit_fragment">0dp</dimen>
     <dimen name="layout_height_edit_fragment">0dp</dimen>
 
+    <!--BottomBar-->
+    <dimen name="bar_size_fab">72dp</dimen>
+    <dimen name="bar_size_image">32dp</dimen>
+    <dimen name="bar_margin">70dp</dimen>
+    <dimen name="bar_cradle_margin">6dp</dimen>
+
     <!-- Dialog -->
-    <dimen name="dialog_padding">25dp</dimen>
-    <dimen name="dialog_padding_small">15dp</dimen>
-    <dimen name="dialog_margin_small">15dp</dimen>
+    <dimen name="dialog_padding">@dimen/keyline_5</dimen>
+    <dimen name="dialog_padding_small">@dimen/keyline_4</dimen>
+    <dimen name="dialog_margin_small">@dimen/keyline_4</dimen>
     <dimen name="dialog_margin_medium">35dp</dimen>
-    <dimen name="dialog_margin_big">50dp</dimen>
-    <dimen name="dialog_margin_normal">24dp</dimen>
+    <dimen name="dialog_margin_big">@dimen/keyline_7</dimen>
+    <dimen name="dialog_margin_normal">@dimen/keyline_5</dimen>
 
 </resources>

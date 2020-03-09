@@ -84,7 +84,6 @@
     <string name="label_updated">Label renamed to \'%1$s\'</string>
     <string name="create_label_dialog_header">Create Label</string>
     <string name="label_name_too_long">Use a name with a maximum of 10 characters</string>
-    <string name="label_name_nonexistent">Enter a valid label name</string>
     <string name="delete_label_dialog_header">Delete label \'%1$s\'?</string>
     <string name="dialog_label_invalid_name">The label name should be between one and ten characters long.</string>
 
@@ -114,11 +113,17 @@
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
+    
+    <!-- Player UI -->
+    <string name="player_bar_jump_forwards">Button jump forwards</string>
+    <string name="player_bar_jump_backwards">Button jump backwards</string>
 
 
     <string name="alert_dialog">Alert Dialog</string>
     <string name="confirm_dialog">Confirm Dialog</string>
     <string name="delete">delete</string>
+
+
     <string name="sad_face">Sad face</string>
 
 

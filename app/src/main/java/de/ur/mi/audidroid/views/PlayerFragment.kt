@@ -7,14 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.MarkItemAdapter
-import androidx.fragment.app.Fragment
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.HandlePlayerBar
 import de.ur.mi.audidroid.viewmodels.PlayerViewModel
 import kotlinx.android.synthetic.main.player_fragment.*
 
@@ -44,6 +45,7 @@ class PlayerFragment : Fragment() {
         playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
         binding.playerViewModel = playerViewModel
+        binding.handlePlayerBar = HandlePlayerBar
         binding.lifecycleOwner = this
 
         return binding.root

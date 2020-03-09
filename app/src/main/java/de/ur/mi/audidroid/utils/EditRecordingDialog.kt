@@ -1,10 +1,8 @@
 package de.ur.mi.audidroid.utils
 
 
-import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
-import android.net.Uri
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
@@ -39,21 +37,22 @@ object EditRecordingDialog {
 
     fun createDialog(
         paramContext: Context,
-        layoutId: Int? = null,
-        viewModel: EditRecordingViewModel? = null,
+        layoutId: Int,
+        viewModel: EditRecordingViewModel,
         errorMessage: String? = null,
-        editRecordingFragment: EditRecordingFragment? = null
+        editRecordingFragment: EditRecordingFragment,
+        dataSource: Repository
     ) {
         context = paramContext
-        if (layoutId != null) this.layoutId = layoutId
-        if (viewModel != null) this.viewModel = viewModel
-        if (editRecordingFragment != null) fragment = editRecordingFragment
+        this.dataSource = dataSource
+        this.layoutId = layoutId
+        this.viewModel = viewModel
+        fragment = editRecordingFragment
         val builder = MaterialAlertDialogBuilder(context)
-        if (layoutId != null) {
-            builder.setView(layoutId)
-            prepareDataSource()
-            setDialogButtons(builder)
-        }
+        builder.setView(layoutId)
+        prepareDataSource()
+        setDialogButtons(builder)
+
         dialog = builder.create()
         dialog.setCancelable(false)
         dialog.show()
@@ -61,7 +60,6 @@ object EditRecordingDialog {
     }
 
     private fun prepareDataSource() {
-        dataSource = Repository((context as Activity).application)
         dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
     }
 

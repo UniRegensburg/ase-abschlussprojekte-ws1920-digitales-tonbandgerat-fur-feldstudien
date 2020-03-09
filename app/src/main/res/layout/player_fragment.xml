@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -10,6 +11,10 @@
         <variable
             name="playerViewModel"
             type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
+
+        <variable
+            name="handlePlayerBar"
+            type="de.ur.mi.audidroid.utils.HandlePlayerBar" />
     </data>
 
     <FrameLayout
@@ -90,8 +95,9 @@
                 android:layout_width="@dimen/layout_width_edit_fragment"
                 android:layout_height="@dimen/layout_height_edit_fragment"
                 android:layout_marginTop="@dimen/keyline_2"
+                android:layout_marginBottom="@dimen/keyline_9"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toTopOf="@id/image_button_layout"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/text_view_marks"
@@ -100,10 +106,11 @@
             <LinearLayout
                 android:layout_width="@dimen/layout_width_edit_fragment"
                 android:layout_height="@dimen/layout_height_edit_fragment"
+                android:layout_marginBottom="@dimen/keyline_9"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="@{playerViewModel.empty ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toTopOf="@id/image_button_layout"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/seekBarLayout">
@@ -116,41 +123,14 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/image_button_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.99">
-
-                <ImageButton
-                    android:id="@+id/button_play"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:contentDescription="@string/play_button"
-                    android:onClick="@{() -> playerViewModel.onStartPlayer()}"
-                    android:src="@mipmap/play_button_foreground"
-                    android:visibility="@{playerViewModel.isPlaying ? View.GONE : View.VISIBLE, default=visible}" />
-
-                <ImageButton
-                    android:id="@+id/button_pause"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:contentDescription="@string/pause_button"
-                    android:onClick="@{() -> playerViewModel.onPausePlayer()}"
-                    android:src="@mipmap/pause_button_foreground"
-                    android:visibility="@{playerViewModel.isPlaying ? View.VISIBLE : View.GONE, default=gone}" />
-
-            </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </FrameLayout>
+        <include
+            layout="@layout/bottom_player_bar"
+            bind:handlePlayerBar="@{handlePlayerBar}"
+            bind:isPlayerViewModel="@{playerViewModel.isPlayerViewModel}"
+            bind:isPlaying="@{playerViewModel.isPlaying()}"
+            bind:playerViewModel="@{playerViewModel}" />
 
+    </FrameLayout>
 </layout>
