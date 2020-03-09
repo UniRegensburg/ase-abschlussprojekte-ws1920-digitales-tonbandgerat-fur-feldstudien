@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import de.ur.mi.audidroid.databinding.MarkItemBinding
+import de.ur.mi.audidroid.databinding.EditMarkItemBinding
 import de.ur.mi.audidroid.models.MarkerTimeRelation
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 
@@ -14,9 +14,13 @@ class EditMarkerItemAdapter(
 ) :
     ListAdapter<MarkerTimeRelation, EditMarkerItemAdapter.ViewHolder>(EditMarkDiffCallback()) {
 
-    val userActionsListener = object : MarkUserActionsListener {
+    val userActionsListener = object : EditMarkUserActionsListener {
         override fun onMarkClicked(markerEntity: MarkerTimeRelation) {
             editRecordingViewModel.onMarkClicked(markerEntity.markTime)
+        }
+
+        override fun onMarkDeleteClicked(markerEntity: MarkerTimeRelation) {
+            editRecordingViewModel.deleteMark(markerEntity.mid)
         }
     }
 
@@ -28,12 +32,12 @@ class EditMarkerItemAdapter(
         return ViewHolder.from(parent) as ViewHolder
     }
 
-    class ViewHolder private constructor(private val binding: MarkItemBinding) :
+    class ViewHolder private constructor(private val binding: EditMarkItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
             item: MarkerTimeRelation,
-            listener: MarkUserActionsListener
+            listener: EditMarkUserActionsListener
         ) {
             binding.mark = item
             binding.listener = listener
@@ -43,7 +47,7 @@ class EditMarkerItemAdapter(
         companion object {
             fun from(parent: ViewGroup): RecyclerView.ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = MarkItemBinding.inflate(layoutInflater, parent, false)
+                val binding = EditMarkItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }

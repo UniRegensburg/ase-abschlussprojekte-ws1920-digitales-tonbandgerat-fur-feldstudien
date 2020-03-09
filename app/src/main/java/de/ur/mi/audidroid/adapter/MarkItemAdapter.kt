@@ -14,13 +14,8 @@ class MarkItemAdapter(
 ) :
     ListAdapter<MarkerTimeRelation, MarkItemAdapter.ViewHolder>(MarkDiffCallback()) {
 
-    val userActionsListener = object : MarkUserActionsListener {
-        override fun onMarkClicked(markerEntity: MarkerTimeRelation) {
-        }
-    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position)!!, userActionsListener)
+        holder.bind(getItem(position)!!)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,11 +26,9 @@ class MarkItemAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: MarkerTimeRelation,
-            listener: MarkUserActionsListener
+            item: MarkerTimeRelation
         ) {
             binding.mark = item
-            binding.listener = listener
             binding.executePendingBindings()
         }
 

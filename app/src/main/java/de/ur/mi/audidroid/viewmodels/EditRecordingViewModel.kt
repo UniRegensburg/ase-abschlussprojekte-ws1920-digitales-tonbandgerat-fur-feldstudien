@@ -7,6 +7,8 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
+import android.util.Log
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.lifecycle.AndroidViewModel
@@ -313,7 +315,16 @@ class EditRecordingViewModel(
     fun onMarkClicked(markTime: String) {
     }
 
-    fun addMark() {
+    fun addMark(view: View) {
+        val btnId = view.resources.getResourceName(view.id)
+        val mark = MarkerTimeRelation(0, recordingId, btnId, currentDurationString.value!!)
+        dataSource.insertMark(mark)
+        showSnackBar(R.string.mark_made)
+    }
+
+    fun deleteMark(mid: Int) {
+        dataSource.deleteMark(mid)
+        showSnackBar(R.string.mark_deleted)
     }
 
     private fun saveRecordInDB(audio: EntryEntity) {

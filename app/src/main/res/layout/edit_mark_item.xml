@@ -10,6 +10,10 @@
             name="mark"
             type="de.ur.mi.audidroid.models.MarkerTimeRelation" />
 
+        <variable
+            name="listener"
+            type="de.ur.mi.audidroid.adapter.EditMarkUserActionsListener" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -17,7 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/marks_card_view_margin"
         android:layout_marginTop="@dimen/marks_card_view_margin"
-        android:layout_marginEnd="@dimen/marks_card_view_margin">
+        android:layout_marginEnd="@dimen/marks_card_view_margin"
+        android:onClick="@{() -> listener.onMarkClicked(mark)}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -47,7 +52,7 @@
                     android:layout_width="@dimen/layout_width_edit_fragment"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="0.50"
+                    android:layout_weight="0.40"
                     android:text="@string/sample_comment"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
 
@@ -56,9 +61,26 @@
                     android:layout_width="@dimen/layout_width_edit_fragment"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.20"
-                    android:gravity="end"
+                    android:gravity="center_horizontal"
                     android:text="@{mark.markTime}"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
+
+                <ImageButton
+                    android:id="@+id/button_popup_menu"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.10"
+                    android:background="@null"
+                    android:contentDescription="@string/popup_menu_option_delete"
+                    android:onClick="@{() -> listener.onMarkDeleteClicked(mark)}"
+                    android:src="@drawable/ic_delete"
+                    android:tint="@color/color_on_surface"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toEndOf="@+id/label_layout"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.016" />
 
             </LinearLayout>
 

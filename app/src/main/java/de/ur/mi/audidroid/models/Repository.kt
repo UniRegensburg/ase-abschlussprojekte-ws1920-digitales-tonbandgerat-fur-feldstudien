@@ -109,6 +109,12 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun deleteMark(mid: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.deleteMark(mid)
+        }
+    }
+
     fun deleteRecLabels(uid: Int) {
         CoroutineScope(coroutineContext).launch {
             labelAssignmentDao.deleteRecLabels(uid)
