@@ -1,4 +1,4 @@
-![Icon_round.svg](requirements/Audidroid/Icon_round.svg)
+<img src="requirements/Audidroid/Icon_round.svg" width=100 />
 
 # Audidroid
 
@@ -29,7 +29,9 @@ Aktuell sind folgende Features in Audidroid implementiert:
 
 - Aufnahme von Audiodateien mit Optimierung von gesprochener Sprache. Während der Aufnahme können relevante Stellen markiert werden.
 
-![Recording](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/tree/editReadmev2/requirements/Screenshots/rec.jpg)
+<!-- ![Recording](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/tree/editReadmev2/requirements/Screenshots/rec.jpg) -->
+
+<div style="text-align:center"><img src="requirements/Screenshots/rec.jpg" width=200 /></div>
 
 - Speichern der Aufnahme an einem beliebigen Speicherort mit bevorzugtem Namen und zugewiesenen Labels
 
