@@ -27,8 +27,10 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
     var allInternalFolders: LiveData<List<FolderEntity>> = repository.getFolderByStorage(false)
     var allExternalFolders: LiveData<List<FolderEntity>> = repository.getFolderByStorage(true)
+
     var allInternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var allExternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
+
     var dialogType: Int = R.string.confirm_dialog
     var errorMessage: String? = null
     var addFolder: Boolean? = null
@@ -65,16 +67,19 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     // The lists with the content for the two Folder RecyclerViews are prepared and curated.
     fun initFolderSorting(){
 
-        if (allInternalFoldersSorted.value == null){
-            allInternalFoldersSorted.addSource(allInternalFolders){
-                allInternalFoldersSorted.value = StorageHelper.getInternalFolderHierarchy(allInternalFolders.value!!)
-            }
+        allInternalFoldersSorted.removeSource(allInternalFolders)
+
+        allInternalFoldersSorted.addSource(allInternalFolders){
+            allInternalFoldersSorted.value = StorageHelper.getInternalFolderHierarchy(allInternalFolders.value!!)
         }
-        if (allExternalFoldersSorted.value == null){
+
+
+        allExternalFoldersSorted.removeSource(allExternalFolders)
+
             allExternalFoldersSorted.addSource(allExternalFolders){
                 allExternalFoldersSorted.value = allExternalFolders.value
             }
-        }
+
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.

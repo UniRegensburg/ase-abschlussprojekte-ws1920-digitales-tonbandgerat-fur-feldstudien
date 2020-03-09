@@ -5,14 +5,17 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 
+/**
+ * FolderDialog manages all userinput regarding the folders (except setting a new external one).
+ * It's called upon at the creation of a new folder, it's deletion and the move of a recording.
+ * @author: Lisa Sanladerer
+ */
 object FolderDialog {
 
     private lateinit var dialog: AlertDialog
@@ -20,20 +23,23 @@ object FolderDialog {
     fun createDialog(
         context: Context,
         type: Int,
-        folderToBeEdited: FolderEntity? = null,
+        folderViewModel: FolderViewModel,
+        filesViewModel: FilesViewModel,
         layoutId: Int? = null,
-        viewModel: FolderViewModel? = null,
-        filesViewModel: FilesViewModel? = null,
+        folderToBeEdited: FolderEntity? = null,
         errorMessage: String? = null,
-        folderToBeCreated: Boolean? = null,
-        entryToBeMoved: EntryEntity? = null,
+        addFolder: Boolean? = null,
+        recordingToBeMoved: EntryEntity? = null,
         listOfAvailableFolders: List<FolderEntity>? = null
-    ){
+        ) {
         val builder = AlertDialog.Builder(context)
+        if (errorMessage != null) {
+            builder.setMessage(errorMessage)
+        }
 
         if (type == R.string.alert_dialog){
-            if (entryToBeMoved == null) {
-                //dialog for creating a new folder
+            //Dialog for the creation of a new internal folder.
+            if (addFolder != null) {
                 val inflater: LayoutInflater = LayoutInflater.from(context)
                 val dialogView: View = inflater.inflate(layoutId!!, null)
                 val editText: EditText = dialogView.findViewById(R.id.dialog_add_folder_edit_text)
@@ -55,49 +61,57 @@ object FolderDialog {
                         )
                     )
                     setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
-                        onCreateFolder(folderToBeEdited,viewModel!!,editText)
+                        val nameInput: String? = editText.text.toString()
+                        folderViewModel.onFolderSaveClicked(nameInput!!, folderToBeEdited)
+                        KeyboardHelper.hideSoftKeyboard(editText)
                     }
                     setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
                         KeyboardHelper.hideSoftKeyboard(editText)
-                        viewModel?.cancelFolderDialog()
+                        folderViewModel.cancelFolderDialog()
                     }
                 }
-            }else{
-                //dialog for recording move to folder
-                var position = -1
-                if(errorMessage != null){
-                    builder.setMessage(errorMessage)
-                }
+            }
 
-                val folderNameArray = getFolderOptions(context, listOfAvailableFolders, entryToBeMoved)
-                if (listOfAvailableFolders!!.isNotEmpty()){
-                    with(builder){
+            //Dialog for the move of a recording to another folder.
+            if (recordingToBeMoved != null){
+                var position = -1
+                val folderNameArray =
+                    getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
+                if (folderNameArray.isNotEmpty()) {
+                    with(builder) {
                         setTitle(R.string.move_file_dialog_header)
-                        builder.setSingleChoiceItems(folderNameArray, position){ dialog, which ->
+                        builder.setSingleChoiceItems(folderNameArray, position) { _, which ->
                             position = which
                         }
-                        setPositiveButton(R.string.move_file){dialog, which ->
-                            onMoveFolder(entryToBeMoved,listOfAvailableFolders,viewModel!!,position)
+                        setPositiveButton(R.string.move_file) { _, _ ->
+                             if (position != -1){
+                                 filesViewModel.recordingMoveValid(recordingToBeMoved, listOfAvailableFolders!![position].uid)
+                                 folderViewModel.onMoveRecordingToFolder(recordingToBeMoved, listOfAvailableFolders[position])
+
+                            }else{
+                                filesViewModel.cancelFolderDialog()
+                            }
                         }
-                        setNegativeButton(R.string.cancel_button){_, _ ->
-                            viewModel?.cancelFolderDialog()
+                        setNegativeButton(R.string.cancel_button) { _, _ ->
+                            filesViewModel.cancelFolderDialog()
                         }
-                        setNeutralButton(R.string.dialog_no_folder){_, _ ->
-                            viewModel!!.onEntryMoveFolderClicked(entryToBeMoved,null, null)
+                        setNeutralButton(R.string.dialog_no_folder) { _, _ ->
+                            filesViewModel.recordingMoveValid(recordingToBeMoved,null)
+                            folderViewModel.onMoveRecordingToFolder(recordingToBeMoved,null)
+
                         }
                     }
-                }else{
-                    //dialog for no Folders
-                    with(builder){
+                } else {
+                    with(builder) {
                         setTitle(R.string.no_folder_available)
-                        setNegativeButton(R.string.permission_button){_, _ ->
-                            viewModel?.cancelFolderDialog()
+                        setNegativeButton(R.string.permission_button) { _, _ ->
+                            folderViewModel.cancelFolderDialog()
                         }
                     }
                 }
-
             }
         }
+
         //dialog for folder deletion
         if (type == R.string.confirm_dialog){
             if (errorMessage != null){
@@ -111,15 +125,16 @@ object FolderDialog {
                     )
                 )
                 setPositiveButton(context.getString(R.string.delete)){ _, _ ->
-                    val folderReferences = viewModel!!.onDeleteFolderAndContent(folderToBeEdited)
-
-                    filesViewModel!!.folderReferenceList = MutableLiveData(folderReferences)
+                    val folderReferences = folderViewModel.onDeleteFolderAndContent(folderToBeEdited)
+                    filesViewModel.deleteEntriesInInternalFolders(folderReferences)
+                    folderViewModel.cancelFolderDialog()
                 }
                 setNegativeButton(context.getString(R.string.dialog_cancel_button_text)){_, _ ->
-                    viewModel?.cancelFolderDialog()
+                    folderViewModel.cancelFolderDialog()
                 }
             }
         }
+
         dialog = builder.create()
         dialog.show()
         dialog.setCancelable(true)
@@ -129,43 +144,6 @@ object FolderDialog {
             }
         }
     }
-
-    //Dialog is partially fragmented for better readability.
-
-    private fun onCreateFolder(folderToBeEdited: FolderEntity?, viewModel: FolderViewModel, editText: EditText){
-        var nameInput: String? = editText.text.toString()
-        if (nameInput == "") nameInput = null
-        viewModel.onFolderSaveClicked(nameInput!!, folderToBeEdited)
-        KeyboardHelper.hideSoftKeyboard(editText)
-    }
-
-    //moves the recording between folders
-    private fun onMoveFolder(entryToBeMoved: EntryEntity, listOfAvailableFolders: List<FolderEntity>?,
-                             viewModel: FolderViewModel, position: Int){
-        if (position != -1){
-            viewModel.onEntryMoveFolderClicked(entryToBeMoved, listOfAvailableFolders!![position].uid,
-                listOfAvailableFolders[position].dirPath)
-        }else{
-            viewModel.cancelFolderDialog()
-        }
-    }
-
-    /*
-    //deletes folder and subfolders along with their content
-    private fun onDeleteFolderAndContent(allFolders: List<FolderEntity>, folderToBeEdited: FolderEntity,viewModel: FolderViewModel,
-                                         filesViewModel: FilesViewModel){
-        if (folderToBeEdited.isExternal == false){
-            //internal
-            val folderAndSubfolders = mutableListOf(folderToBeEdited)
-            StorageHelper.getAllInternalSubFolders(allFolders, folderAndSubfolders)
-            filesViewModel.folderList = MutableLiveData(folderAndSubfolders)
-            filesViewModel.deleteEntriesInInternalFolders()
-            viewModel.deleteFolderFromDB(folderAndSubfolders)
-        }else{
-            println("JO, Folder is External")
-        }
-
-    }*/
 
    // Gets the possible options for a file move. Once a file is stored outside the app, it won't be able to become
    // internalized again.
@@ -186,18 +164,4 @@ object FolderDialog {
         val folderNameArray = arrayOfNulls<String>(folderNameList.size)
         return folderNameList.toArray(folderNameArray)
     }
-
-
-    /*
-    *
-
-        var folderNameList: ArrayList<String> = ArrayList()
-        listOfAvailableFolders!!.forEach {
-            folderNameList.add(it.folderName)
-        }
-        val folderNameArray = arrayOfNulls<String>(folderNameList.size)
-        return folderNameList.toArray(folderNameArray)
-    * */
-
-
 }

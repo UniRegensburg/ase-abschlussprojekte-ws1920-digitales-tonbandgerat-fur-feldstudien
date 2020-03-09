@@ -2,28 +2,23 @@ package de.ur.mi.audidroid.views
 
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.preference.Preference
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.Adapter
 import de.ur.mi.audidroid.adapter.ExternalFolderAdapter
 import de.ur.mi.audidroid.adapter.FolderAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
-import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ConvertDialog
 import de.ur.mi.audidroid.utils.FolderDialog
@@ -64,7 +59,6 @@ class FilesFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
-
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -82,14 +76,16 @@ class FilesFragment : Fragment() {
                 folderViewModel.doneShowingSnackbar()
             }
         })
+        folderViewModel.initFolderSorting()
 
         folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
         folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
-        folderViewModel.allInternalFolders.observe(viewLifecycleOwner, Observer {})
-        folderViewModel.allExternalFolders.observe(viewLifecycleOwner, Observer {container?.invalidate()})
+        //folderViewModel.allInternalFolders.observe(viewLifecycleOwner, Observer {})
+        //folderViewModel.allExternalFolders.observe(viewLifecycleOwner, Observer {container?.invalidate()})
+        folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
+        folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {container?.invalidate()})
         filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {})
-        filesViewModel.folderReferenceList.observe(viewLifecycleOwner, Observer { filesViewModel.deleteEntriesInInternalFolders() })
 
         // Observer on the state variable for navigating when a list-item is clicked.
         filesViewModel.navigateToPlayerFragment.observe(
@@ -130,8 +126,6 @@ class FilesFragment : Fragment() {
             }
         })
 
-
-        //calls dialog for creating a new folder
         folderViewModel.createAlertFolderDialog.observe(this, Observer {
             if (it){
                 FolderDialog.createDialog(
@@ -140,13 +134,13 @@ class FilesFragment : Fragment() {
                     folderViewModel =  folderViewModel,
                     filesViewModel = filesViewModel,
                     errorMessage = folderViewModel.errorMessage,
+                    addFolder = folderViewModel.addFolder,
                     layoutId = R.layout.folder_dialog,
-                    folderToBeEdited = folderViewModel.folderToBeEdited,
-                    folderToBeAdded = folderViewModel.folderToBeAdded)
+                    folderToBeEdited = folderViewModel.folderToBeEdited)
 
             }
         })
-        //calls dialog for deleting a folder
+
         folderViewModel.createConfirmDialog.observe(this, Observer {
             if (it){
                 FolderDialog.createDialog(
@@ -156,7 +150,6 @@ class FilesFragment : Fragment() {
                     filesViewModel = filesViewModel,
                     errorMessage = folderViewModel.errorMessage,
                     folderToBeEdited = folderViewModel.folderToBeEdited,
-                    layoutId = R.layout.folder_dialog,
                     listOfAvailableFolders = folderViewModel.allFolders.value)
             }
         })
@@ -166,7 +159,7 @@ class FilesFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        folderViewModel.initFolderSorting()
+
         setupAdapter()
     }
 
@@ -211,6 +204,9 @@ class FilesFragment : Fragment() {
         }
     }
 
+    /**
+     * Provides the access to an external folder.
+     */
     private fun onClickAddExternalFolder(){
         startActivityForResult(StorageHelper.setOpenDocumentTreeIntent(),
             resources.getInteger(R.integer.activity_request_code_external_folder))
@@ -220,10 +216,7 @@ class FilesFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == resources.getInteger(R.integer.activity_request_code_external_folder) &&
             resultCode == Activity.RESULT_OK){
-
             folderViewModel.handleActivityResult(data!!.dataString!!)
-
-
         }
     }
 
