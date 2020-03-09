@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.adapter.MarkItemAdapter
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.HandlePlayerBar
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.player_fragment.*
  */
 class PlayerFragment : Fragment() {
 
+    private lateinit var adapter: MarkItemAdapter
     private lateinit var playerViewModel: PlayerViewModel
     private lateinit var binding: PlayerFragmentBinding
 
@@ -38,9 +40,10 @@ class PlayerFragment : Fragment() {
         val dataSource = Repository(application)
 
         val args = PlayerFragmentArgs.fromBundle(arguments!!)
-        val viewModelFactory = PlayerViewModelFactory(dataSource, args.recordingId, application)
+        val viewModelFactory = PlayerViewModelFactory(args.recordingId, dataSource, application)
 
         playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
+
         binding.playerViewModel = playerViewModel
         binding.handlePlayerBar = HandlePlayerBar
         binding.lifecycleOwner = this
@@ -50,11 +53,26 @@ class PlayerFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        playerViewModel.initializeFrameLayout(player_layout)
+
         playerViewModel.recording.observe(viewLifecycleOwner, Observer {
             it?.let {
-                playerViewModel.initializeMediaPlayer(it[0].entryEntity.recordingPath)
+                playerViewModel.recordingPath = it.recordingPath
+                playerViewModel.initializeMediaPlayer()
                 playerViewModel.initializeSeekBar(binding.seekBar)
+                playerViewModel.initializeFrameLayout(player_layout)
+            }
+        })
+        setupAdapter()
+    }
+
+    private fun setupAdapter() {
+
+        adapter = MarkItemAdapter()
+        binding.markerList.adapter = adapter
+
+        playerViewModel.allMarks.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                adapter.submitList(it)
             }
         })
     }
@@ -63,14 +81,14 @@ class PlayerFragment : Fragment() {
      * Provides the Repository, recordingId and context to the PlayerViewModel.
      */
     class PlayerViewModelFactory(
-        private val dataSource: Repository,
         private val recordingId: Int,
+        private val dataSource: Repository,
         private val application: Application
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
-                return PlayerViewModel(dataSource, recordingId, application) as T
+                return PlayerViewModel(recordingId, dataSource, application) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

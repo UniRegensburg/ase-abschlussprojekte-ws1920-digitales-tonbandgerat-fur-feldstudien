@@ -67,7 +67,7 @@ class RecordFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel.initializeTimer(chronometer)
         viewModel.initializeLayout(frameLayout)
-        viewModel.createDialog.observe(this, Observer {
+        viewModel.createDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 de.ur.mi.audidroid.utils.Dialog.createDialog(
                     paramContext = context!!,

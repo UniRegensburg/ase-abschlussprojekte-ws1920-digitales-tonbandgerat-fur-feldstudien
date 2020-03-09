@@ -1,9 +1,7 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
-import android.view.View
 import android.widget.FrameLayout
-import android.widget.PopupMenu
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -24,22 +22,21 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
-    private val _createAlertDialog = MutableLiveData<Boolean>()
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
     var recording: EntryEntity? = null
-    private var recordingToBeExported: EntryEntity? = null
+    var recordingToBeExported: EntryEntity? = null
 
     private val _createConfirmDialog = MutableLiveData<Boolean>()
-    private var _showSnackbarEvent = MutableLiveData<Boolean>()
-
     val createConfirmDialog: LiveData<Boolean>
         get() = _createConfirmDialog
 
+    val _createAlertDialog = MutableLiveData<Boolean>()
     val createAlertDialog: MutableLiveData<Boolean>
         get() = _createAlertDialog
 
+    private var _showSnackbarEvent = MutableLiveData<Boolean>()
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
 
@@ -52,30 +49,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         it.isEmpty()
     }
 
-    // When the ImageButton is clicked, a PopupMenu opens.
-    fun onButtonClicked(entryEntity: EntryEntity, view: View) {
-        val popupMenu = PopupMenu(context, view)
-        popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_delete_recording ->
-                    delete(entryEntity)
-                R.id.action_share_recording -> {
-                    recordingToBeExported = entryEntity
-                    _createAlertDialog.value = true
-                }
-            }
-            true
-        }
-        popupMenu.show()
-    }
-
     fun shareRecording(format: String) {
         ShareHelper.shareAudio(recordingToBeExported!!, format, context)
         _createAlertDialog.value = false
     }
 
-    private fun delete(entryEntity: EntryEntity) {
+    fun delete(entryEntity: EntryEntity) {
         recording = entryEntity
         _createConfirmDialog.value = true
     }

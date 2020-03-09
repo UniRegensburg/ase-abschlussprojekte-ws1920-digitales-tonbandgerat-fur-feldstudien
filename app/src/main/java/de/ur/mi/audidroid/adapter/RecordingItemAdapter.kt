@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.databinding.RecordingItemBinding
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
+import de.ur.mi.audidroid.views.FilesFragment
 
 /**
  * Adapter for the [RecyclerView] in [FilesFragment].
@@ -16,7 +17,11 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
  * can be displayed in a ViewHolder.
  * @author: Theresa Strohmeier
  */
-class RecordingItemAdapter(private val filesViewModel: FilesViewModel) :
+
+class RecordingItemAdapter(
+    private val filesFragment: FilesFragment,
+    private val filesViewModel: FilesViewModel
+) :
     ListAdapter<EntryEntity, RecordingItemAdapter.ViewHolder>(RecordingDiffCallback()) {
 
     val userActionsListener = object : RecordingUserActionsListener {
@@ -25,7 +30,7 @@ class RecordingItemAdapter(private val filesViewModel: FilesViewModel) :
         }
 
         override fun onButtonClicked(entryEntity: EntryEntity, view: View) {
-            filesViewModel.onButtonClicked(entryEntity, view)
+            filesFragment.openPopupMenu(entryEntity, view)
         }
     }
 
