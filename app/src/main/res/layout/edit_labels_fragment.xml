@@ -44,11 +44,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:src="@drawable/ic_add"
-            android:onClick="@{() -> editLabelsViewModel.requestLabelDialog()}"
+            android:layout_margin="16dp"
             android:contentDescription="@string/add_label_button_text"
-            app:tint="@color/color_on_secondary"
-            android:layout_margin="16dp"/>
+            android:onClick="@{() -> editLabelsViewModel.requestLabelDialog()}"
+            android:src="@drawable/ic_add"
+            app:tint="@color/color_on_secondary" />
 
 
     </FrameLayout>

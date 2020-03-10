@@ -33,6 +33,7 @@ class RecordFragment : Fragment() {
     private lateinit var viewModel: RecordViewModel
     private lateinit var adapter: MarkerButtonAdapter
     private lateinit var binding: RecordFragmentBinding
+    private lateinit var dataSource: Repository
 
     companion object {
         fun newInstance() = RecordFragment()
@@ -46,7 +47,6 @@ class RecordFragment : Fragment() {
         val application = this.activity!!.application
         val dataSource = Repository(application)
         binding = DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
-
         val viewModelFactory = RecordViewModelFactory(dataSource, application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(RecordViewModel::class.java)
         binding.recordViewModel = viewModel
@@ -76,10 +76,12 @@ class RecordFragment : Fragment() {
         viewModel.createDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 de.ur.mi.audidroid.utils.Dialog.createDialog(
-                    context = context!!,
-                    layoutId = R.layout.dialog_save_recording,
+                    paramContext = context!!,
+                    layoutId = R.layout.save_dialog,
                     viewModel = viewModel,
-                    errorMessage = viewModel.errorMessage
+                    errorMessage = viewModel.errorMessage,
+                    recordFragment = this,
+                    dataSource = dataSource
                 )
             }
         })

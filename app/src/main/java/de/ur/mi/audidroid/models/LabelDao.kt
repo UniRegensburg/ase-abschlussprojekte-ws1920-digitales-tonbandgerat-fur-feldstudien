@@ -34,5 +34,4 @@ interface LabelDao {
 
     @Query("DELETE FROM labelsTable")
     suspend fun clearTable()
-
 }

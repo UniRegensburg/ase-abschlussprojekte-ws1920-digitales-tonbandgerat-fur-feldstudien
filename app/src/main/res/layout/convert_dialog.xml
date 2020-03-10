@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/dialog_margin"
+    android:layout_margin="@dimen/dialog_margin_big"
     android:padding="@dimen/dialog_padding"
     android:layout_gravity="center">
 

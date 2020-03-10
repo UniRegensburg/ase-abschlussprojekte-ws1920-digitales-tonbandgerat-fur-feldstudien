@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View.OnClickListener" />
+
+        <variable
+            name="mark"
+            type="de.ur.mi.audidroid.models.MarkerTimeRelation" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/marks_card_view_margin"
+        android:layout_marginTop="@dimen/marks_card_view_margin"
+        android:layout_marginEnd="@dimen/marks_card_view_margin">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/constraint_layout_padding">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/mark_name"
+                    android:layout_width="@dimen/layout_width_edit_fragment"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.30"
+                    android:text="@string/sample_mark"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body1" />
+
+                <TextView
+                    android:id="@+id/comment"
+                    android:layout_width="@dimen/layout_width_edit_fragment"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.50"
+                    android:text="@string/sample_comment"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
+
+                <TextView
+                    android:id="@+id/mark_time"
+                    android:layout_width="@dimen/layout_width_edit_fragment"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.20"
+                    android:gravity="end"
+                    android:text="@{mark.markTime}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

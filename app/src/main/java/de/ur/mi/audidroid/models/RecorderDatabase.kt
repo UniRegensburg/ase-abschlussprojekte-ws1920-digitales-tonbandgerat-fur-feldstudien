@@ -10,19 +10,26 @@ import java.lang.Runnable
 import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
-
+import androidx.room.TypeConverters
+import de.ur.mi.audidroid.utils.Converters
 
 /**
  * The abstract class contains the database holder and serves as the main access point for the connection to the persisted data
  * @authors: Sabine Roth, Jonas Puchinger
  */
 
+@Database(
+    entities = [EntryEntity::class, MarkerTimeRelation::class, MarkerEntity::class, LabelEntity::class, LabelAssignmentEntity::class],
+    version = 1,
+    exportSchema = false
+)
+@TypeConverters(Converters::class)
 
-@Database(entities = [EntryEntity::class, MarkerTimeRelation::class, MarkerEntity::class, LabelEntity::class], version = 1, exportSchema = false)
 abstract class RecorderDatabase : RoomDatabase() {
 
     abstract fun entryDao(): EntryDao
     abstract fun labelDao(): LabelDao
+    abstract fun labelAssignmentDao(): LabelAssignmentDao
     abstract fun markerDao(): MarkerDao
 
     companion object {

@@ -1,9 +1,9 @@
 package de.ur.mi.audidroid.views
 
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -11,14 +11,13 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.*
 import androidx.preference.PreferenceManager
-import cafe.adriel.androidaudioconverter.AndroidAudioConverter
-import cafe.adriel.androidaudioconverter.callback.ILoadCallback
 import com.google.android.material.navigation.NavigationView
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.utils.Dialog
+import de.ur.mi.audidroid.utils.Pathfinder
 import de.ur.mi.audidroid.utils.PermissionHelper
 import de.ur.mi.audidroid.utils.ThemeHelper
 import kotlinx.android.synthetic.main.app_bar_main.*
-import java.lang.Exception
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -87,9 +86,20 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
-        return true
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == resources.getInteger(R.integer.activity_request_code_preference_storage) &&
+            resultCode == Activity.RESULT_OK
+        ) {
+            if (Pathfinder.preference != null) {
+                PreferenceFragment().resultPathfinder(
+                    Pathfinder.preference!!,
+                    applicationContext,
+                    data,
+                    this.window.decorView
+                )
+            } else Dialog.resultPathfinder(data!!.data!!)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
