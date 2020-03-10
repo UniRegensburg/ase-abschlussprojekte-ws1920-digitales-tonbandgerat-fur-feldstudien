@@ -18,10 +18,7 @@ interface EntryDao {
     fun getAllRecordings(): LiveData<List<EntryEntity>>
 
     @Query("SELECT * FROM recordingsTable WHERE uid = :key")
-    fun getRecordingWithId(key: Int): LiveData<EntryEntity>
-
-    @Query("SELECT * FROM recordingsTable WHERE recordingName IN (:name)")
-    fun getRecordingByName(name: String): EntryEntity
+    fun getRecordingById(key: Int): LiveData<EntryEntity>
 
     @Query("SELECT * FROM recordingsTable WHERE folder = :folderUid")
     fun getRecordingByFolder(folderUid: Int?):  LiveData<List<EntryEntity>>

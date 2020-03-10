@@ -7,24 +7,30 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.databinding.EntryItemBinding
+import de.ur.mi.audidroid.databinding.RecordingItemBinding
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
+import de.ur.mi.audidroid.views.FilesFragment
 
 /**
+ * Adapter for the [RecyclerView] in [FilesFragment].
  * The adapter connects the data to the RecyclerView. It adapts the data so that it
  * can be displayed in a ViewHolder.
  * @author: Theresa Strohmeier
  */
-class Adapter(private val filesViewModel: FilesViewModel) :
-    ListAdapter<EntryEntity, Adapter.ViewHolder>(RecordingDiffCallback()) {
+
+class RecordingItemAdapter(
+    private val filesFragment: FilesFragment,
+    private val filesViewModel: FilesViewModel
+) :
+    ListAdapter<EntryEntity, RecordingItemAdapter.ViewHolder>(RecordingDiffCallback()) {
 
     val userActionsListener = object : RecordingUserActionsListener {
         override fun onRecordingClicked(entryEntity: EntryEntity) {
-            filesViewModel.onRecordingClicked(entryEntity.recordingPath)
+            filesViewModel.onRecordingClicked(entryEntity.uid)
         }
 
         override fun onButtonClicked(entryEntity: EntryEntity, view: View) {
-            filesViewModel.onButtonClicked(entryEntity, view)
+            filesFragment.openPopupMenu(entryEntity, view)
         }
     }
 
@@ -36,7 +42,7 @@ class Adapter(private val filesViewModel: FilesViewModel) :
         return ViewHolder.from(parent) as ViewHolder
     }
 
-    class ViewHolder private constructor(private val binding: EntryItemBinding) :
+    class ViewHolder private constructor(private val binding: RecordingItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
@@ -51,7 +57,7 @@ class Adapter(private val filesViewModel: FilesViewModel) :
         companion object {
             fun from(parent: ViewGroup): RecyclerView.ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = EntryItemBinding.inflate(layoutInflater, parent, false)
+                val binding = RecordingItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }

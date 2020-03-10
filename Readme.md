@@ -1,3 +1,5 @@
+<img src="requirements/Audidroid/Icon_round.svg" width=100 />
+
 # Audidroid
 
 Audidroid dient ForscherInnen und WissenschaftlerInnen als digitales Tonbandgerät für Feldstudien. 
@@ -25,28 +27,46 @@ Aktuell sind folgende Features in Audidroid implementiert:
 
 **Kernfeatures**
 
-- Aufnahme von Audiodateien mit Optimierung von gesprochener Sprache
+- Aufnahme von Audiodateien mit Optimierung von gesprochener Sprache. Während der Aufnahme können relevante Stellen markiert werden.
 
-![Startscreen](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Startscreen.png)
+<div style="text-align:center"><img src="requirements/Screenshots/rec.jpg" width=200 /></div>
 
-![Recording](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Recording.png)
+- Speichern der Aufnahme an einem beliebigen Speicherort mit bevorzugtem Namen und zugewiesenen Labels
+
+<div style="text-align:center"><img src="requirements/Screenshots/save.jpg" width=200 /></div>
 
 - Auswählen der Aufnahme aus der Liste der eigenen Audiodateien
 
-![Files](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Files.png)
+<div style="text-align:center"><img src="requirements/Screenshots/list.jpg" width=200 /></div>
 
 - Abspielen der aufgenommenen Audiodateien
 
-![Playing](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Playing.png)
+<div style="text-align:center"><img src="requirements/Screenshots/play.jpg" width=200 /></div>
 
-- Wechsel zwischen den Screens mithilfe eines Navigation Drawers
+- Export der Aufnahmen mit der Möglichkeit, in andere Dateiformate zu konvertieren
 
-![NavigationDrawer](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/NavigationDrawer.png)
+<div style="text-align:center"><img src="requirements/Screenshots/export.jpg" width=200 /></div>
+
+- Bearbeitung der Aufnahmen mit Möglichkeiten zum Zuschneiden der Audiodateien, sowie Editieren von Labels und Markierungen.
+
+<div style="text-align:center"><img src="requirements/Screenshots/edit.jpg" width=200 /></div>
+
+- Navigation in der App mit Hilfe eines Navigation Drawers
+
+<div style="text-align:center"><img src="requirements/Screenshots/nav.jpg" width=200 /></div>
 
 
 
 **Einstellungen**
 
+- Definition von Labels, die später den Aufnahmen zugewiesen werden können
+
+<div style="text-align:center"><img src="requirements/Screenshots/labels.jpg" width=200 /></div>
+
+- Definition des gewünschten Standarddateinamens
+
+- Auswahl des präferierten Speicherorts auf dem Gerät
+
 - Auswahl des präferierten Farbschemas (verfügbar: hell und dunkel)
 
-![Settings](https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/blob/master/requirements/Screenshots/Settings.png)
+<div style="text-align:center"><img src="requirements/Screenshots/settings.jpg" width=200 /></div>

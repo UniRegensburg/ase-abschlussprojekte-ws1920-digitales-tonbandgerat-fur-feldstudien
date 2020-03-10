@@ -47,4 +47,9 @@
 
     <style name="AudidroidTheme.DayNight.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="Widget.AudidroidTheme.Seekbar" parent="Widget.AppCompat.SeekBar">
+        <item name="android:progressTint">?colorPrimary</item>
+        <item name="android:thumbTint">?colorPrimary</item>
+    </style>
+
 </resources>
