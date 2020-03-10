@@ -384,9 +384,9 @@ class EditRecordingViewModel(
     }
 
     fun addMark(view: View) {
-        val btnId = view.resources.getResourceName(view.id)
-        val mark = MarkerTimeRelation(0, recordingId, btnId, currentDurationString.value!!)
-        repository.insertMark(mark)
+//        val btnId = view.resources.getResourceName(view.id)
+//        val mark = MarkerTimeRelation(0, recordingId, btnId, currentDurationString.value!!)
+//        repository.insertMark(mark)
         showSnackBar(R.string.mark_made)
     }
 

@@ -133,7 +133,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             ).show()
             return
         }
-        preference.summary = realPath!!
+        preference.summary = realPath
         with(preferences.edit()) {
             putString(context.resources.getString(R.string.storage_preference_key), realPath)
             commit()

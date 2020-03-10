@@ -273,13 +273,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         markList = mutableListOf()
     }
 
-    fun makeMark(view: View) {
-        val btnId = view.resources.getResourceName(view.id)
-        val markEntry = Pair(btnId, timer.text.toString())
-        markList.add(markEntry)
-        showSnackBarShort(R.string.mark_made)
-    }
-
     /**
      * Returns the current date
      * Adapted from: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html

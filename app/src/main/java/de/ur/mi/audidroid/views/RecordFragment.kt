@@ -45,10 +45,12 @@ class RecordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val application = this.activity!!.application
-        val dataSource = Repository(application)
+        dataSource = Repository(application)
         binding = DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
+
         val viewModelFactory = RecordViewModelFactory(dataSource, application)
         viewModel = ViewModelProvider(this, viewModelFactory).get(RecordViewModel::class.java)
+
         binding.recordViewModel = viewModel
         binding.lifecycleOwner = this
         return binding.root
