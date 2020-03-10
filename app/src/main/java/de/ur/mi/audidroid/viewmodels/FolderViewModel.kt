@@ -68,18 +68,14 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     fun initFolderSorting(){
 
         allInternalFoldersSorted.removeSource(allInternalFolders)
-
         allInternalFoldersSorted.addSource(allInternalFolders){
             allInternalFoldersSorted.value = StorageHelper.getInternalFolderHierarchy(allInternalFolders.value!!)
         }
 
-
         allExternalFoldersSorted.removeSource(allExternalFolders)
-
-            allExternalFoldersSorted.addSource(allExternalFolders){
-                allExternalFoldersSorted.value = allExternalFolders.value
-            }
-
+        allExternalFoldersSorted.addSource(allExternalFolders){
+            allExternalFoldersSorted.value = allExternalFolders.value
+        }
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.
@@ -136,18 +132,15 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             }
             deleteFolderFromDB(allFoldersToBeDeleted)
         }else{
-            println("HIER WERDEN EXTERNE BEARBEITET")
             deleteFolderFromDB(listOf(folder))
-
         }
         folderToBeEdited = null
         return folderReferences
     }
 
     //==============================================================================
-
-
-    fun onAddFolderBase(){
+    // Allows Databinding for the primary Add-Folder-Button
+    fun onAddInternalFolderClicked(){
         onAddFolderClicked(null)
     }
 
@@ -220,7 +213,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         if (destFolder != null && destFolder.isExternal){
             //make an operation outside, ie int -> ext, ext ->
 
-            newRecordingPath = StorageHelper.moveEntryStorage(context, recording, destFolder.dirPath!!)
+            newRecordingPath = StorageHelper.moveRecordingExternaly(context, recording, destFolder.dirPath!!)
             if (newRecordingPath == null){
                 moveSuccessful = false
             }
@@ -232,7 +225,6 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun updateFolderReference(entryEntity: EntryEntity, folderUid: Int?, newPath: String?){
-        println("update db")
         var recordingPath = entryEntity.recordingPath
         if (newPath != null){ recordingPath = newPath}
 

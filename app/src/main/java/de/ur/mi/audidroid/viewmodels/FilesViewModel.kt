@@ -97,10 +97,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
      *  the attempt of moving an external file to the internal storage (via 'remove from folder').
      */
     fun recordingMoveValid(entryEntity: EntryEntity, destFolder: Int?){
-        println("RECORDING: ")
-        print(entryEntity)
-        println("Ziel")
-        print(destFolder)
         _createAlertFolderDialog.value = false
         if (destFolder == null) {
             if (entryEntity.recordingPath.startsWith(context.getString(R.string.content_uri_prefix))) {

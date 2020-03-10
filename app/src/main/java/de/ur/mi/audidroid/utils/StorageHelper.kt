@@ -10,13 +10,12 @@ import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
-import java.util.ArrayList
-
 
 /**
  * StorageHelper provides central functions for the handling of files and folders.
  * @author: Lisa Sanladerer
  */
+
 object StorageHelper {
     fun handleFolderReferece(path: String, allFolders: List<FolderEntity>, repository: Repository):Int{
         allFolders.forEach {
@@ -127,11 +126,9 @@ object StorageHelper {
         return name + context!!.resources.getString(R.string.suffix_audio_file)
     }
 
-    //==================================================================================================
-    fun moveEntryStorage(context: Context, entryEntity: EntryEntity, folderPath: String): String?{
+    fun moveRecordingExternaly(context: Context, entryEntity: EntryEntity, folderPath: String): String?{
         var newPath: String? = null
         if(folderPath.contains(context.getString(R.string.content_uri_prefix))){
-            println(entryEntity.recordingPath)
 
             val srcFile = File(entryEntity.recordingPath)
             val uri = Uri.parse(folderPath)
@@ -162,14 +159,11 @@ object StorageHelper {
         var name = getFolderName(uri.lastPathSegment.toString())
         val newFolderEntity = FolderEntity(0, name,
             path, true, null, uri.lastPathSegment.toString())
-        println(newFolderEntity)
         return repository.insertFolder(newFolderEntity).toInt()
     }
 
-
     //creates an external File and copies the content of a File there
     fun createExternalFile(context: Context,tempFile: File,name: String, treeUri: Uri): String{
-        val res = context.resources
         val newName = getDocumentName(context, name)
         val preferredDir = DocumentFile.fromTreeUri(context, treeUri)!!
         val newExternalFile = preferredDir.createFile("aac",newName)!!
@@ -177,7 +171,6 @@ object StorageHelper {
         return newExternalFile.uri.toString()
     }
 
-    //copies content of a File to DocumentFile
     fun copyToExternalFile (context: Context, src: File, dst: DocumentFile): Boolean{
         try {
             val inputStream = src.inputStream()
@@ -190,8 +183,6 @@ object StorageHelper {
             return false
         }
     }
-
-
 
     // deletes list of recordings in folder; if folder is empty afterwards delete it too
     fun deleteExternalFolderAndContent(context: Context, path: String, names: List<String>): Boolean{

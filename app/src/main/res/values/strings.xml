@@ -52,6 +52,7 @@
     <string name="no_recordings">No recordings saved</string>
     <string name="folder_created">Folder created</string>
     <string name="folder_deleted">Folder deleted</string>
+    <string name="recordings_unfiled">Recordings:</string>
     <string name="dialog_folder_invalid_name">The folder name should be between one and ten characters long.</string>
     <string name="dialog_folder_name_occurance">There is already a folder with this name.</string>
     <string name="dialog_external_to_internal">External files not to be moved to internal storage.</string>

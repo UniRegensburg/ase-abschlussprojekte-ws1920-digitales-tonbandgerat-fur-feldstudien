@@ -149,7 +149,6 @@ object FolderDialog {
    // internalized again.
     private fun getFolderOptions(context: Context, listOfAvailableFolders: List<FolderEntity>?, entryToBeMoved: EntryEntity): Array<String>{
         val folderNameList: ArrayList<String> = ArrayList()
-        println(entryToBeMoved.recordingPath)
         if (entryToBeMoved.recordingPath.startsWith(context.getString(R.string.content_uri_prefix))){
             listOfAvailableFolders!!.forEach {
                 if (it.isExternal){

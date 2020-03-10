@@ -75,7 +75,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private fun getStoragePreference(): Uri{
         val preferences = context!!.getSharedPreferences(res.getString(R.string.storage_preference_key), Context.MODE_PRIVATE)
         val value = preferences.getString(res.getString(R.string.storage_preference_key),context.getString(R.string.storage_location_default))
-        println(value)
         return Uri.parse(value)
     }
 
@@ -258,13 +257,12 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             File(tempFile).copyTo(newFile)
         }else{
             path = StorageHelper.createExternalFile(context,
-                File(tempFile), name, getStoragePreference
-            ())
+                File(tempFile), name, getStoragePreference())
             newFile.delete()
         }
-        println("_____________")
+
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
-        println(path)
+
         var folderRef: Int? = null
         if (!fileIsInternal){
             val folderPath = StorageHelper.getExternalFolderPath(context, path, name)
@@ -273,7 +271,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
         val audio =
             EntryEntity(0, name, path, getDate(), recordingDuration, folderRef)
-        println(audio)
+
         saveRecordInDB(audio)
         File(tempFile).delete()
         resetView()
@@ -317,22 +315,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         markList.add(markEntry)
         showSnackBarShort(R.string.mark_made)
     }
-/*
-    private fun handleFolderReferece(path: String):Int{
 
-        val folders = allFolders.value
-        val allFolderPaths: ArrayList<String> = arrayListOf()
-        folders!!.forEach { allFolderPaths.add(it.dirPath!!) }
-
-        val dbReference = StorageHelper.checkExternalFolderReference(allFolderPaths, path)
-
-        if (dbReference != null){
-           return dbReference
-        }else{
-          return StorageHelper.createFolderFromUri(repository, path)
-        }
-    }
-*/
     /**
      * Returns the current date
      * Adapted from: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
