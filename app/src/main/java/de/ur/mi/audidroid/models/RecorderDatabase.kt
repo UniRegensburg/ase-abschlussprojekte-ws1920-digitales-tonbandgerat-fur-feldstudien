@@ -6,10 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.*
-import java.lang.Runnable
 import java.util.concurrent.Executors
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.coroutineContext
 import androidx.room.TypeConverters
 import de.ur.mi.audidroid.utils.Converters
 
@@ -19,7 +16,7 @@ import de.ur.mi.audidroid.utils.Converters
  */
 
 @Database(
-    entities = [EntryEntity::class, MarkerTimeRelation::class, MarkerEntity::class, LabelEntity::class, LabelAssignmentEntity::class],
+    entities = [EntryEntity::class, MarkTimestamp::class, MarkerEntity::class, LabelEntity::class, LabelAssignmentEntity::class],
     version = 1,
     exportSchema = false
 )

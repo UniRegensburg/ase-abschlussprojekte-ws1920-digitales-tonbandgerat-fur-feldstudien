@@ -6,7 +6,6 @@ import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.text.format.DateUtils
-import android.view.View
 import android.widget.Chronometer
 import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
@@ -17,7 +16,7 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.models.LabelAssignmentEntity
-import de.ur.mi.audidroid.models.MarkerTimeRelation
+import de.ur.mi.audidroid.models.MarkTimestamp
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
@@ -267,7 +266,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
-            val mark = MarkerTimeRelation(0, recordingId, it.first, it.second)
+            val mark = MarkTimestamp(0, recordingId, it.first.uid, it.second)
             dataSource.insertMark(mark)
         }
         markList = mutableListOf()

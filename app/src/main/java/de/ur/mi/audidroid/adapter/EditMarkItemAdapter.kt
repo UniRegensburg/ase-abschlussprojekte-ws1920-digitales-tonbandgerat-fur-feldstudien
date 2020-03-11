@@ -6,20 +6,20 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.EditMarkItemBinding
-import de.ur.mi.audidroid.models.MarkerTimeRelation
+import de.ur.mi.audidroid.models.MarkTimestamp
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 
 class EditMarkerItemAdapter(
     private val editRecordingViewModel: EditRecordingViewModel
 ) :
-    ListAdapter<MarkerTimeRelation, EditMarkerItemAdapter.ViewHolder>(EditMarkDiffCallback()) {
+    ListAdapter<MarkTimestamp, EditMarkerItemAdapter.ViewHolder>(EditMarkDiffCallback()) {
 
     val userActionsListener = object : EditMarkUserActionsListener {
-        override fun onMarkClicked(markerEntity: MarkerTimeRelation) {
+        override fun onMarkClicked(markerEntity: MarkTimestamp) {
             editRecordingViewModel.onMarkClicked(markerEntity.markTime)
         }
 
-        override fun onMarkDeleteClicked(markerEntity: MarkerTimeRelation) {
+        override fun onMarkDeleteClicked(markerEntity: MarkTimestamp) {
             editRecordingViewModel.deleteMark(markerEntity.mid)
         }
     }
@@ -36,7 +36,7 @@ class EditMarkerItemAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: MarkerTimeRelation,
+            item: MarkTimestamp,
             listener: EditMarkUserActionsListener
         ) {
             binding.mark = item
@@ -54,18 +54,18 @@ class EditMarkerItemAdapter(
     }
 }
 
-class EditMarkDiffCallback : DiffUtil.ItemCallback<MarkerTimeRelation>() {
+class EditMarkDiffCallback : DiffUtil.ItemCallback<MarkTimestamp>() {
 
     override fun areItemsTheSame(
-        oldItem: MarkerTimeRelation,
-        newItem: MarkerTimeRelation
+        oldItem: MarkTimestamp,
+        newItem: MarkTimestamp
     ): Boolean {
         return oldItem.mid == newItem.mid
     }
 
     override fun areContentsTheSame(
-        oldItem: MarkerTimeRelation,
-        newItem: MarkerTimeRelation
+        oldItem: MarkTimestamp,
+        newItem: MarkTimestamp
     ): Boolean {
         return oldItem == newItem
     }

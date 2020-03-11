@@ -29,14 +29,18 @@ interface MarkerDao {
     suspend fun deleteMarker(markerEntity: MarkerEntity)
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertMark(marker: MarkerTimeRelation)
+    suspend fun insertMark(marker: MarkTimestamp)
+
+    @Transaction
+    @Query("SELECT * FROM markerTable")
+    fun getMarkAndTimestamp(): LiveData<List<MarkAndTimestamp>>
 
     @Transaction
     @Query("SELECT * FROM recordingsTable WHERE uid = :key IN (SELECT DISTINCT(mid) FROM markerTimeTable)")
     fun getRecordingFromIdInclMarks(key: Int): LiveData<List<RecordingAndMarker>>
 
     @Query("SELECT * FROM markerTimeTable WHERE recordingId = :key")
-    fun allMarks(key: Int): LiveData<List<MarkerTimeRelation>>
+    fun allMarks(key: Int): LiveData<List<MarkTimestamp>>
 
     @Query("DELETE FROM markerTimeTable WHERE recordingId = :key")
     suspend fun deleteRecMarks(key: Int)

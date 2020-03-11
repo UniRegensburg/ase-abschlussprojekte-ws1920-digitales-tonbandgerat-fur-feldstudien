@@ -44,7 +44,7 @@ class EditRecordingViewModel(
     private val res = context.resources
     val recording: LiveData<EntryEntity> =
         repository.getRecordingById(recordingId)
-    val allMarks: LiveData<List<MarkerTimeRelation>> = repository.getAllMarks(recordingId)
+    val allMarks: LiveData<List<MarkTimestamp>> = repository.getAllMarks(recordingId)
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
     var audioInProgress = MutableLiveData<Boolean>()

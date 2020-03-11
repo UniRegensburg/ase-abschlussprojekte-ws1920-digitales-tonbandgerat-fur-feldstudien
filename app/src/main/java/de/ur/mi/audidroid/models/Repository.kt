@@ -89,7 +89,7 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun insertMark(marker: MarkerTimeRelation) {
+    fun insertMark(marker: MarkTimestamp) {
         CoroutineScope(coroutineContext).launch {
             markerDao.insertMark(marker)
         }
@@ -117,7 +117,7 @@ class Repository(application: Application) : CoroutineScope {
         return markerDao.getRecordingFromIdInclMarks(uid)
     }
 
-    fun getAllMarks(uid: Int): LiveData<List<MarkerTimeRelation>> {
+    fun getAllMarks(uid: Int): LiveData<List<MarkTimestamp>> {
         return markerDao.allMarks(uid)
     }
 

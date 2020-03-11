@@ -8,7 +8,7 @@
 
         <variable
             name="mark"
-            type="de.ur.mi.audidroid.models.MarkerTimeRelation" />
+            type="de.ur.mi.audidroid.models.MarkTimestamp" />
 
     </data>
 

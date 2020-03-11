@@ -16,7 +16,7 @@ import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.MarkerTimeRelation
+import de.ur.mi.audidroid.models.MarkTimestamp
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
@@ -39,7 +39,7 @@ class PlayerViewModel(
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     val recording: LiveData<EntryEntity> =
         repository.getRecordingById(recordingId)
-    val allMarks: LiveData<List<MarkerTimeRelation>> = repository.getAllMarks(recordingId)
+    val allMarks: LiveData<List<MarkTimestamp>> = repository.getAllMarks(recordingId)
     var isPlaying = MutableLiveData<Boolean>()
     var isPlayerViewModel = MutableLiveData<Boolean>()
     var recordingPath = ""
