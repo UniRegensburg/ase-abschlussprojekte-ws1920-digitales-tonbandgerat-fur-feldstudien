@@ -5,6 +5,7 @@ import android.media.AudioAttributes
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.text.format.DateUtils
 import android.view.View
@@ -409,5 +410,29 @@ class EditRecordingViewModel(
 
     private fun getDate(): String {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
+    }
+
+    fun skipPlaying() {
+        val moveTime =
+            mediaPlayer.currentPosition + res.getInteger(R.integer.jump_amount).toLong()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
+            moveTime,
+            MediaPlayer.SEEK_NEXT_SYNC
+        ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
+        mediaPlayer.setOnSeekCompleteListener {
+            showSnackBar(R.string.player_moved_forward)
+        }
+    }
+
+    fun returnPlaying() {
+        val moveTime =
+            mediaPlayer.currentPosition - res.getInteger(R.integer.jump_amount).toLong()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
+            moveTime,
+            MediaPlayer.SEEK_PREVIOUS_SYNC
+        ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
+        mediaPlayer.setOnSeekCompleteListener {
+            showSnackBar(R.string.player_moved_backward)
+        }
     }
 }

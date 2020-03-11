@@ -49,8 +49,6 @@ class PlayerViewModel(
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
 
-    val jumpTime = 5000
-
     private val _totalDuration = MutableLiveData<Long>()
     private val totalDuration: LiveData<Long>
         get() = _totalDuration
@@ -169,9 +167,9 @@ class PlayerViewModel(
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 
-    fun jumpForward() {
+    fun skipPlaying() {
         val moveTime =
-            mediaPlayer.currentPosition + jumpTime.toLong()
+            mediaPlayer.currentPosition + res.getInteger(R.integer.jump_amount).toLong()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
             moveTime,
             MediaPlayer.SEEK_NEXT_SYNC
@@ -183,9 +181,9 @@ class PlayerViewModel(
 
     }
 
-    fun jumpBackward() {
+    fun returnPlaying() {
         val moveTime =
-            mediaPlayer.currentPosition - jumpTime.toLong()
+            mediaPlayer.currentPosition - res.getInteger(R.integer.jump_amount).toLong()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
             moveTime,
             MediaPlayer.SEEK_PREVIOUS_SYNC

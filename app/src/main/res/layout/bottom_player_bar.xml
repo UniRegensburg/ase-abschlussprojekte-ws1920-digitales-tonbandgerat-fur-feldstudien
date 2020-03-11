@@ -51,7 +51,8 @@
             android:layout_marginBottom="@dimen/keyline_4"
             android:background="@drawable/ic_replay_5"
             android:backgroundTint="@color/color_on_surface"
-            android:contentDescription="@string/player_bar_jump_backwards" />
+            android:contentDescription="@string/player_bar_jump_backwards"
+            android:onClick="@{() -> isPlayerViewModel ? handlePlayerBar.returnOnPlayerView(playerViewModel) : handlePlayerBar.returnOnEditView(editRecordingViewModel)}"/>
 
         <ImageButton
             android:id="@+id/bar_jump_forwards"
@@ -62,7 +63,8 @@
             android:layout_marginBottom="@dimen/keyline_4"
             android:background="@drawable/ic_forward_5"
             android:backgroundTint="@color/color_on_surface"
-            android:contentDescription="@string/player_bar_jump_forwards" />
+            android:contentDescription="@string/player_bar_jump_forwards"
+            android:onClick="@{() -> isPlayerViewModel ? handlePlayerBar.skipOnPlayerView(playerViewModel) : handlePlayerBar.skipOnEditView(editRecordingViewModel)}"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"

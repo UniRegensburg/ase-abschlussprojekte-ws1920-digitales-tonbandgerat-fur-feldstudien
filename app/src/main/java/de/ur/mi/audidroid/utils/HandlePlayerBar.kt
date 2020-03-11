@@ -21,4 +21,20 @@ object HandlePlayerBar {
     fun pauseOnEditView(editViewModel: EditRecordingViewModel) {
         editViewModel.onPausePlayer()
     }
+
+    fun skipOnPlayerView(playerViewModel: PlayerViewModel){
+        playerViewModel.skipPlaying()
+    }
+
+    fun skipOnEditView(editViewModel: EditRecordingViewModel){
+        editViewModel.skipPlaying()
+    }
+
+    fun returnOnPlayerView(playerViewModel: PlayerViewModel){
+        playerViewModel.returnPlaying()
+    }
+
+    fun returnOnEditView(editViewModel: EditRecordingViewModel){
+        editViewModel.returnPlaying()
+    }
 }
