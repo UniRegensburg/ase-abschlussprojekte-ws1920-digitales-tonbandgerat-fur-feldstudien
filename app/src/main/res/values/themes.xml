@@ -43,7 +43,7 @@
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.AudidroidTheme.LargeComponent</item>
 
         <!--Component styles-->
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.MaterialComponents.Dialog.Alert</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.AudidroidTheme.Dialog.Alert</item>
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.AudidroidTheme.BottomSheetDialog</item>
         <item name="navigationViewStyle">@style/Widget.AudidroidTheme.NavigationView</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>

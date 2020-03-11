@@ -4,57 +4,81 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <import type="android.view.View" />
+
+        <variable
+            name="handlePlayerBar"
+            type="de.ur.mi.audidroid.utils.HandlePlayerBar" />
+
+        <variable
+            name="isPlayerViewModel"
+            type="Boolean" />
+
+        <variable
+            name="isPlaying"
+            type="Boolean" />
+
         <variable
             name="playerViewModel"
             type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
+
+        <variable
+            name="editRecordingViewModel"
+            type="de.ur.mi.audidroid.viewmodels.EditRecordingViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--TODO: Use dimens and change button position to less fix coordinates-->
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottom_app_bar"
-            style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:backgroundTint="@color/color_surface"
             app:fabAlignmentMode="center"
-            app:fabCradleMargin="8dp"
-            app:hideOnScroll="false"
-            app:fabCradleVerticalOffset="16dp"/>
+            app:fabCradleMargin="@dimen/bar_cradle_margin"
+            app:hideOnScroll="false" />
 
         <ImageButton
+            android:id="@+id/bar_jump_backwards"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="@dimen/bar_margin"
+            android:layout_marginBottom="@dimen/keyline_4"
             android:background="@drawable/ic_replay_5"
-            android:layout_marginStart="80dp"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="bottom"
-            android:tint="@color/color_on_secondary"
-            android:onClick="@{() -> playerViewModel.jumpBackward()}"/>
+            android:backgroundTint="@color/color_on_surface"
+            android:contentDescription="@string/player_bar_jump_backwards" />
 
         <ImageButton
+            android:id="@+id/bar_jump_forwards"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="@dimen/bar_margin"
+            android:layout_marginBottom="@dimen/keyline_4"
             android:background="@drawable/ic_forward_5"
-            android:layout_marginStart="300dp"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="bottom"
-            android:tint="@color/color_on_secondary"
-            android:onClick="@{() -> playerViewModel.jumpForward()}"/>
+            android:backgroundTint="@color/color_on_surface"
+            android:contentDescription="@string/player_bar_jump_forwards" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:background="@null"
             android:backgroundTint="@color/color_primary"
-            android:onClick="@{() -> playerViewModel.isPlaying ? playerViewModel.onPausePlayer() :  playerViewModel.onStartPlayer()}"
-            android:src="@{playerViewModel.isPlaying ? @drawable/ic_pause : @drawable/ic_play_arrow, default = @drawable/ic_play_arrow}"
-            app:layout_anchor="@id/bottom_app_bar" />
+            android:onClick="@{() -> isPlayerViewModel ? (isPlaying ? handlePlayerBar.pauseOnPlayerView(playerViewModel) : handlePlayerBar.playOnPlayerView(playerViewModel)) : (isPlaying ? handlePlayerBar.pauseOnEditView(editRecordingViewModel) : handlePlayerBar.playOnEditView(editRecordingViewModel))}"
+            android:scaleType="center"
+            android:src="@{isPlaying ? @drawable/ic_pause : @drawable/ic_play_arrow, default = @drawable/ic_play_arrow}"
+            app:fabCustomSize="@dimen/bar_size_fab"
+            app:fabSize="auto"
+            app:layout_anchor="@id/bottom_app_bar"
+            app:maxImageSize="@dimen/bar_size_image"
+            app:tint="@color/color_on_primary" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

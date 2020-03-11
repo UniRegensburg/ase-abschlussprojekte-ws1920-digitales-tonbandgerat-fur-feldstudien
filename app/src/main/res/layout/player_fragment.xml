@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <import type="android.view.View" />
+
         <variable
             name="playerViewModel"
             type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
+
+        <variable
+            name="handlePlayerBar"
+            type="de.ur.mi.audidroid.utils.HandlePlayerBar" />
     </data>
 
     <FrameLayout
@@ -26,13 +31,15 @@
                 android:id="@+id/text_file_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/recording_file_name"
-                android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline4"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{playerViewModel.recording.recordingName}"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline5"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.263" />
+                app:layout_constraintVertical_bias="0.10" />
 
             <LinearLayout
                 android:id="@+id/seekBarLayout"
@@ -42,7 +49,7 @@
                 android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.70"
+                app:layout_constraintVertical_bias="0.30"
                 tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
 
                 <TextView
@@ -51,10 +58,11 @@
                     android:layout_weight="0.2"
                     android:gravity="center"
                     android:text="@{playerViewModel.currentDurationString}"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
 
                 <SeekBar
                     android:id="@+id/seekBar"
+                    style="@style/Widget.AudidroidTheme.Seekbar"
                     android:layout_width="@dimen/layout_width_seek_bar_element"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.6" />
@@ -65,7 +73,53 @@
                     android:layout_weight="0.2"
                     android:gravity="center"
                     android:text="@{playerViewModel.totalDurationString}"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_view_marks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/marks_text_view"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.042"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.42" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/marker_list"
+                android:layout_width="@dimen/layout_width_edit_fragment"
+                android:layout_height="@dimen/layout_height_edit_fragment"
+                android:layout_marginTop="@dimen/keyline_2"
+                android:layout_marginBottom="@dimen/keyline_9"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_view_marks"
+                tools:listitem="@layout/mark_item" />
+
+            <LinearLayout
+                android:layout_width="@dimen/layout_width_edit_fragment"
+                android:layout_height="@dimen/layout_height_edit_fragment"
+                android:layout_marginBottom="@dimen/keyline_9"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="@{playerViewModel.empty ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/seekBarLayout">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_marks"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
 
             </LinearLayout>
 
@@ -73,7 +127,10 @@
 
         <include
             layout="@layout/bottom_player_bar"
-            bind:playerViewModel="@{playerViewModel}"/>
+            bind:handlePlayerBar="@{handlePlayerBar}"
+            bind:isPlayerViewModel="@{playerViewModel.isPlayerViewModel}"
+            bind:isPlaying="@{playerViewModel.isPlaying()}"
+            bind:playerViewModel="@{playerViewModel}" />
 
     </FrameLayout>
 </layout>

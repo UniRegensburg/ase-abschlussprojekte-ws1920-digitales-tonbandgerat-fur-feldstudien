@@ -21,6 +21,10 @@
         <item name="shapeAppearanceOverlay">?shapeAppearanceLargeComponent</item>
     </style>
 
+    <style name="ThemeOverlay.AudidroidTheme.Dialog.Alert" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="shapeAppearance">?shapeAppearanceMediumComponent</item>
+    </style>
+
     <!--Navigation Drawer-->
     <style name="Widget.AudidroidTheme.NavigationView" parent="Widget.MaterialComponents.NavigationView">
         <item name="itemTextAppearance">?textAppearanceBody2</item>
@@ -43,6 +47,9 @@
 
     <style name="AudidroidTheme.DayNight.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light"/>
+    <style name="Widget.AudidroidTheme.Seekbar" parent="Widget.AppCompat.SeekBar">
+        <item name="android:progressTint">?colorPrimary</item>
+        <item name="android:thumbTint">?colorPrimary</item>
+    </style>
 
 </resources>
