@@ -6,6 +6,7 @@ import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.text.format.DateUtils
+import android.util.Log
 import android.widget.Chronometer
 import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel

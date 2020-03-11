@@ -14,7 +14,7 @@ class EditMarkerItemAdapter(
 ) :
     ListAdapter<MarkTimestamp, EditMarkerItemAdapter.ViewHolder>(EditMarkDiffCallback()) {
 
-    val userActionsListener = object : EditMarkUserActionsListener {
+    private val userActionsListener = object : EditMarkUserActionsListener {
         override fun onMarkClicked(markerEntity: MarkTimestamp) {
             editRecordingViewModel.onMarkClicked(markerEntity.markTime)
         }

@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
@@ -44,7 +45,7 @@ class EditRecordingViewModel(
     private val res = context.resources
     val recording: LiveData<EntryEntity> =
         repository.getRecordingById(recordingId)
-    val allMarks: LiveData<List<MarkTimestamp>> = repository.getAllMarks(recordingId)
+    val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
     var audioInProgress = MutableLiveData<Boolean>()

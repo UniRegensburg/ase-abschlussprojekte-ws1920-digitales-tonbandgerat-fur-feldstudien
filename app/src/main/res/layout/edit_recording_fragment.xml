@@ -189,7 +189,7 @@
                 android:layout_width="@dimen/layout_width_edit_fragment"
                 android:layout_height="@dimen/layout_height_edit_fragment"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toTopOf="@id/image_button_layout"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/button_add_mark"
@@ -201,7 +201,7 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="@{editRecordingViewModel.empty ? View.VISIBLE : View.GONE}"
-                app:layout_constraintBottom_toTopOf="@id/image_button_layout"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/button_add_mark">
@@ -211,39 +211,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/no_marks"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/image_button_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.99">
-
-                <ImageButton
-                    android:id="@+id/button_play"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:contentDescription="@string/play_button"
-                    android:onClick="@{() -> editRecordingViewModel.onStartPlayer()}"
-                    android:src="@mipmap/play_button_foreground"
-                    android:visibility="@{editRecordingViewModel.isPlaying ? View.GONE : View.VISIBLE, default=visible}" />
-
-                <ImageButton
-                    android:id="@+id/button_pause"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:contentDescription="@string/pause_button"
-                    android:onClick="@{() -> editRecordingViewModel.onPausePlayer()}"
-                    android:src="@mipmap/pause_button_foreground"
-                    android:visibility="@{editRecordingViewModel.isPlaying ? View.VISIBLE : View.GONE, default=gone}" />
 
             </LinearLayout>
 
