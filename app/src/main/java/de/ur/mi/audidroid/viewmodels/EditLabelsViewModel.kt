@@ -77,6 +77,11 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) :
         if(nameInput==null){
             return false
         }
+        if (!labelNameAlreadyTaken(nameInput)) {
+            errorMessage = res.getString(R.string.dialog_label_already_exists)
+            _createAlertDialog.value = true
+            return false
+        }
         if (!validName(nameInput)) {
             errorMessage = res.getString(R.string.dialog_invalid_name)
             _createAlertDialog.value = true
@@ -92,6 +97,10 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) :
 
     private fun validName(labelName: String): Boolean {
         return Pattern.compile("^[a-zA-Z0-9_{}-]+$").matcher(labelName).matches()
+    }
+
+    private fun labelNameAlreadyTaken(labelName: String): Boolean {
+        return repository.getLabelByName(labelName).value != null
     }
 
     private fun insertLabelIntoDB(labelName: String) {

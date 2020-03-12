@@ -162,5 +162,7 @@
     <string name="filename_not_saved">Name not saved; contained special characters</string>
     <string name="markers_preference_key">markers_preference</string>
     <string name="max_markers_created">You cannot create more than 6 markers</string>
+    <string name="dialog_label_already_exists">Label already exists</string>
+    <string name="dialog_marker_already_exists">Marker already exists</string>
 
 </resources>

@@ -59,6 +59,14 @@ class EditMarkersViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onMarkerSaveClicked(nameInput: String?) {
+        if(nameInput==null){
+            return
+        }
+        if (!markerNameAlreadyTaken(nameInput)) {
+            errorMessage = res.getString(R.string.dialog_marker_already_exists)
+            _createAlertDialog.value = true
+            return
+        }
         if (!validName(nameInput)) {
             errorMessage = res.getString(R.string.dialog_label_invalid_name)
             _createAlertDialog.value = true
@@ -81,6 +89,10 @@ class EditMarkersViewModel(dataSource: Repository, application: Application) :
     fun validName(name: String?): Boolean {
         val labelName = name ?: ""
         return Pattern.compile("^[a-zA-Z0-9_-]{1,10}$").matcher(labelName).matches()
+    }
+
+    private fun markerNameAlreadyTaken(markerName: String): Boolean {
+        return repository.getMarkerByName(markerName).value != null
     }
 
     fun insertMarkerIntoDB(markerName: String) {
