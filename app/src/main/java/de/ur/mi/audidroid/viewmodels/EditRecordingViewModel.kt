@@ -423,7 +423,7 @@ class EditRecordingViewModel(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
             moveTime,
             MediaPlayer.SEEK_NEXT_SYNC
-        ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
+        ) else mediaPlayer.seekTo(moveTime.toInt())
 
         showSnackBarShort(R.string.player_moved_forward)
 
@@ -435,7 +435,7 @@ class EditRecordingViewModel(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
             moveTime,
             MediaPlayer.SEEK_PREVIOUS_SYNC
-        ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
+        ) else mediaPlayer.seekTo(moveTime.toInt())
 
         showSnackBarShort(R.string.player_moved_backward)
 

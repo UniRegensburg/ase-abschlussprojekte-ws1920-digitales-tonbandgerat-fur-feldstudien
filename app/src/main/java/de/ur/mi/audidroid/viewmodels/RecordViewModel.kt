@@ -45,14 +45,14 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     val res: Resources = context.resources
     private val _createDialog = MutableLiveData<Boolean>()
     var errorMessage: String? = null
+    val createDialog: MutableLiveData<Boolean>
+        get() = _createDialog
 
     init {
         isRecording.value = false
         buttonsVisible.value = false
+        createDialog.value = false
     }
-
-    val createDialog: MutableLiveData<Boolean>
-        get() = _createDialog
 
     fun initializeTimer(chronometer: Chronometer) {
         timer = chronometer

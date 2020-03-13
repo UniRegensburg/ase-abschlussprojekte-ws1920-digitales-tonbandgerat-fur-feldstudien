@@ -44,6 +44,7 @@ class PlayerViewModel(
     val allMarks: LiveData<List<MarkerTimeRelation>> = repository.getAllMarks(recordingId)
     var isPlaying = MutableLiveData<Boolean>()
     var recordingPath = ""
+    private lateinit var seekBar: SeekBar
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
@@ -95,6 +96,7 @@ class PlayerViewModel(
     }
 
     fun initializeSeekBar(seekBar: SeekBar) {
+        this.seekBar = seekBar
         seekBar.max = mediaPlayer.duration
         _currentDuration.value =
             mediaPlayer.currentPosition / oneSecond
@@ -152,6 +154,7 @@ class PlayerViewModel(
         handler.removeCallbacks(runnable)
         isPlaying.value = mediaPlayer.isPlaying
         initializeMediaPlayer()
+        initializeSeekBar(seekBar)
     }
 
     override fun onCleared() {
@@ -176,7 +179,7 @@ class PlayerViewModel(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
                 moveTime,
                 MediaPlayer.SEEK_NEXT_SYNC
-            ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
+            ) else mediaPlayer.seekTo(moveTime.toInt())
 
             showSnackBarShort(R.string.player_moved_forward)
         }
@@ -189,7 +192,7 @@ class PlayerViewModel(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
                 moveTime,
                 MediaPlayer.SEEK_PREVIOUS_SYNC
-            ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
+            ) else mediaPlayer.seekTo(moveTime.toInt())
             showSnackBarShort(R.string.player_moved_backward)
         }
     }
