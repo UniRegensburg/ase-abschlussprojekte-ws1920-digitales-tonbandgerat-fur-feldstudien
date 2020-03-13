@@ -117,8 +117,8 @@
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
     
     <!-- Player UI -->
-    <string name="player_bar_jump_forwards">Button jump forwards</string>
-    <string name="player_bar_jump_backwards">Button jump backwards</string>
+    <string name="player_bar_skip_playing">Button skip playing</string>
+    <string name="player_bar_return_playing">Button return playing</string>
 
 
     <string name="alert_dialog">Alert Dialog</string>

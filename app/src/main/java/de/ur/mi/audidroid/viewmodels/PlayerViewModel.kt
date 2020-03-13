@@ -43,7 +43,6 @@ class PlayerViewModel(
         repository.getRecordingById(recordingId)
     val allMarks: LiveData<List<MarkerTimeRelation>> = repository.getAllMarks(recordingId)
     var isPlaying = MutableLiveData<Boolean>()
-    var isPlayerViewModel = MutableLiveData<Boolean>()
     var recordingPath = ""
 
     private lateinit var runnable: Runnable
@@ -73,7 +72,6 @@ class PlayerViewModel(
 
     fun initializeMediaPlayer() {
         isPlaying.value = false
-        isPlayerViewModel.value = true
         val uri: Uri = Uri.fromFile(File(recordingPath))
         mediaPlayer = MediaPlayer().apply {
             try {
@@ -167,29 +165,32 @@ class PlayerViewModel(
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 
+    private fun showSnackBarShort(text: Int) {
+        Snackbar.make(frameLayout, text, res.getInteger(R.integer.snackbar_quite_short)).show()
+    }
+
     fun skipPlaying() {
-        val moveTime =
-            mediaPlayer.currentPosition + res.getInteger(R.integer.jump_amount).toLong()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
-            moveTime,
-            MediaPlayer.SEEK_NEXT_SYNC
-        ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
-        mediaPlayer.setOnSeekCompleteListener {
-            showSnackBar(R.string.player_moved_forward)
+        if (mediaPlayer.currentPosition < mediaPlayer.duration) {
+            val moveTime =
+                mediaPlayer.currentPosition + res.getInteger(R.integer.jump_amount).toLong()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
+                moveTime,
+                MediaPlayer.SEEK_NEXT_SYNC
+            ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
+
+            showSnackBarShort(R.string.player_moved_forward)
         }
-
-
     }
 
     fun returnPlaying() {
-        val moveTime =
-            mediaPlayer.currentPosition - res.getInteger(R.integer.jump_amount).toLong()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
-            moveTime,
-            MediaPlayer.SEEK_PREVIOUS_SYNC
-        ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
-        mediaPlayer.setOnSeekCompleteListener {
-            showSnackBar(R.string.player_moved_backward)
+        if (mediaPlayer.currentPosition > 0) {
+            val moveTime =
+                mediaPlayer.currentPosition - res.getInteger(R.integer.jump_amount).toLong()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
+                moveTime,
+                MediaPlayer.SEEK_PREVIOUS_SYNC
+            ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
+            showSnackBarShort(R.string.player_moved_backward)
         }
     }
 }

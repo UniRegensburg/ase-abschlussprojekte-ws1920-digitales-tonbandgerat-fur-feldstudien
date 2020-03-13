@@ -8,4 +8,5 @@
     <integer name="max_name_length">30</integer>
     <integer name="max_label_length">10</integer>
     <integer name="jump_amount">5000</integer>
+    <integer name="snackbar_quite_short">800</integer>
 </resources>

@@ -44,8 +44,9 @@ class PlayerFragment : Fragment() {
 
         playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
+
         binding.playerViewModel = playerViewModel
-        binding.handlePlayerBar = HandlePlayerBar
+        binding.handlePlayerBar = initHandler()
         binding.lifecycleOwner = this
 
         return binding.root
@@ -63,6 +64,26 @@ class PlayerFragment : Fragment() {
             }
         })
         setupAdapter()
+    }
+
+    private fun initHandler(): HandlePlayerBar {
+        return object : HandlePlayerBar {
+            override fun pause() {
+                playerViewModel.onPausePlayer()
+            }
+
+            override fun play() {
+                playerViewModel.onStartPlayer()
+            }
+
+            override fun skipPlaying() {
+                playerViewModel.skipPlaying()
+            }
+
+            override fun returnPlaying() {
+                playerViewModel.returnPlaying()
+            }
+        }
     }
 
     private fun setupAdapter() {

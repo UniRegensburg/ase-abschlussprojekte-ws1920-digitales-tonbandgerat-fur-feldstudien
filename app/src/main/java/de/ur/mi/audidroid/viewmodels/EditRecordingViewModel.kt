@@ -16,10 +16,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
+import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.LabelAssignmentEntity
+import de.ur.mi.audidroid.models.MarkerTimeRelation
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
-import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.*
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
 import io.apptik.widget.MultiSlider.Thumb
@@ -51,7 +54,6 @@ class EditRecordingViewModel(
     var audioInProgress = MutableLiveData<Boolean>()
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
-    var isPlayerViewModel = MutableLiveData<Boolean>()
     var tempFile = ""
     var errorMessage: String? = null
 
@@ -102,7 +104,6 @@ class EditRecordingViewModel(
 
     fun initializeMediaPlayer() {
         isPlaying.value = false
-        isPlayerViewModel.value = false
         val uri: Uri = Uri.fromFile(File(tempFile))
         mediaPlayer = MediaPlayer().apply {
             try {
@@ -194,6 +195,10 @@ class EditRecordingViewModel(
 
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun showSnackBarShort(text: Int) {
+        Snackbar.make(frameLayout, text, res.getInteger(R.integer.snackbar_quite_short)).show()
     }
 
     fun initializeRangeBar(rangeBar: MultiSlider) {
@@ -419,9 +424,9 @@ class EditRecordingViewModel(
             moveTime,
             MediaPlayer.SEEK_NEXT_SYNC
         ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
-        mediaPlayer.setOnSeekCompleteListener {
-            showSnackBar(R.string.player_moved_forward)
-        }
+
+        showSnackBarShort(R.string.player_moved_forward)
+
     }
 
     fun returnPlaying() {
@@ -431,8 +436,8 @@ class EditRecordingViewModel(
             moveTime,
             MediaPlayer.SEEK_PREVIOUS_SYNC
         ) else mediaPlayer.seekTo(MediaPlayer.SEEK_NEXT_SYNC)
-        mediaPlayer.setOnSeekCompleteListener {
-            showSnackBar(R.string.player_moved_backward)
-        }
+
+        showSnackBarShort(R.string.player_moved_backward)
+
     }
 }

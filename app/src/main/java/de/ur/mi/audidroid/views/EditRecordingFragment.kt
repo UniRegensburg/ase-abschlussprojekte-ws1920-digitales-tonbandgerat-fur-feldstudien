@@ -42,8 +42,8 @@ class EditRecordingFragment : Fragment() {
             ViewModelProvider(this, viewModelFactory).get(EditRecordingViewModel::class.java)
 
         binding.editRecordingViewModel = editRecordingViewModel
-        binding.handlePlayerBar = HandlePlayerBar
-        binding.setLifecycleOwner(this)
+        binding.handlePlayerBar = initHandler()
+        binding.lifecycleOwner = this
         setHasOptionsMenu(true)
 
         return binding.root
@@ -62,9 +62,28 @@ class EditRecordingFragment : Fragment() {
                 editRecordingViewModel.initializeRangeBar(binding.rangeBar)
             }
         })
-
         createEditRecordingDialog()
         setupAdapter()
+    }
+
+    private fun initHandler(): HandlePlayerBar {
+        return object : HandlePlayerBar {
+            override fun pause() {
+                editRecordingViewModel.onPausePlayer()
+            }
+
+            override fun play() {
+                editRecordingViewModel.onStartPlayer()
+            }
+
+            override fun skipPlaying() {
+                editRecordingViewModel.skipPlaying()
+            }
+
+            override fun returnPlaying() {
+                editRecordingViewModel.returnPlaying()
+            }
+        }
     }
 
     private fun createEditRecordingDialog() {

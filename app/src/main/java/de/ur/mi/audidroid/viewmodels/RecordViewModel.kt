@@ -285,7 +285,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun showSnackBarShort(text: Int) {
-        Snackbar.make(frameLayout, text, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(frameLayout, text, res.getInteger(R.integer.snackbar_quite_short)).show()
     }
 
     /** Returns the last stopped time as an Integer value */
