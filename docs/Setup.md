@@ -29,3 +29,9 @@ Die App benötigt folgende Permissions:
 - jraska/livedata-testing für Unittests der Datenbank mit LiveData Rückgabewerten
 
 - Ktlint für statische Codeanalyse
+
+- arthenica/mobile-ffmpeg-full zur Bereitstellung von FFMPEG-Funktionaliäten für Konvertieren und Bearbeiten der Audiodateien
+
+- adrielcafe/AndroidAudioConverter zum Konvertieren der Audiodateien
+
+- apptik.widget/multislider für die Darstellung von Seekbars mit mehreren Zeigern, um die Audiodateien zuzuschneiden

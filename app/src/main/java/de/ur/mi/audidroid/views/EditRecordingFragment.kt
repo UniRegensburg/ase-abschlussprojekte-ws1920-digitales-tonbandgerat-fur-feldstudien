@@ -12,6 +12,7 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.EditMarkerItemAdapter
 import de.ur.mi.audidroid.databinding.EditRecordingFragmentBinding
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.HandlePlayerBar
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 import kotlinx.android.synthetic.main.player_fragment.*
 
@@ -20,6 +21,7 @@ class EditRecordingFragment : Fragment() {
     private lateinit var adapter: EditMarkerItemAdapter
     private lateinit var editRecordingViewModel: EditRecordingViewModel
     private lateinit var binding: EditRecordingFragmentBinding
+    private lateinit var dataSource: Repository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,14 +35,14 @@ class EditRecordingFragment : Fragment() {
         val application = this.activity!!.application
         val args = EditRecordingFragmentArgs.fromBundle(arguments!!)
 
-        val dataSource = Repository(application)
+        dataSource = Repository(application)
         val viewModelFactory = EditViewModelFactory(args.recordingId, dataSource, application)
 
         editRecordingViewModel =
             ViewModelProvider(this, viewModelFactory).get(EditRecordingViewModel::class.java)
 
         binding.editRecordingViewModel = editRecordingViewModel
-
+        binding.handlePlayerBar = HandlePlayerBar
         binding.setLifecycleOwner(this)
         setHasOptionsMenu(true)
 
@@ -73,7 +75,8 @@ class EditRecordingFragment : Fragment() {
                     layoutId = R.layout.save_dialog,
                     viewModel = editRecordingViewModel,
                     errorMessage = editRecordingViewModel.errorMessage,
-                    editRecordingFragment = this
+                    editRecordingFragment = this,
+                    dataSource = dataSource
                 )
             }
         })

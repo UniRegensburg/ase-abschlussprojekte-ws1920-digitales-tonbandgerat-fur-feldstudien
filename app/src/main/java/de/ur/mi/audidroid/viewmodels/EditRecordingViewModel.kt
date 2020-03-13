@@ -49,6 +49,7 @@ class EditRecordingViewModel(
     var audioInProgress = MutableLiveData<Boolean>()
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
+    var isPlayerViewModel = MutableLiveData<Boolean>()
     var tempFile = ""
     var errorMessage: String? = null
     private var editRecordingId: Int = 0
@@ -99,6 +100,8 @@ class EditRecordingViewModel(
     }
 
     fun initializeMediaPlayer() {
+        isPlaying.value = false
+        isPlayerViewModel.value = false
         val uri: Uri = Uri.fromFile(File(tempFile))
         mediaPlayer = MediaPlayer().apply {
             try {

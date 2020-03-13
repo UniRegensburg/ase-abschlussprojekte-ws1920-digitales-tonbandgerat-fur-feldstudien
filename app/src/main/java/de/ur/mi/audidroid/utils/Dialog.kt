@@ -1,10 +1,8 @@
 package de.ur.mi.audidroid.utils
 
-import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
 import android.net.Uri
-import android.opengl.Visibility
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
@@ -42,7 +40,7 @@ object Dialog {
     private lateinit var labelEntities: List<LabelEntity>
     private lateinit var viewModel: RecordViewModel
     private var layoutId: Int? = null
-    private lateinit var errorTextView : TextView
+    private lateinit var errorTextView: TextView
 
     fun createDialog(
         paramContext: Context,
@@ -50,12 +48,14 @@ object Dialog {
         textId: Int? = null,
         viewModel: RecordViewModel? = null,
         errorMessage: String? = null,
-        recordFragment: RecordFragment? = null
+        recordFragment: RecordFragment? = null,
+        dataSource: Repository? = null
     ) {
         context = paramContext
         if (layoutId != null) this.layoutId = layoutId
         if (viewModel != null) this.viewModel = viewModel
         if (recordFragment != null) fragment = recordFragment
+        if (dataSource != null) this.dataSource = dataSource
         val builder = MaterialAlertDialogBuilder(context)
         if (layoutId != null) {
             builder.setView(layoutId)
@@ -72,7 +72,6 @@ object Dialog {
     }
 
     private fun prepareDataSource() {
-        dataSource = Repository((context as Activity).application)
         dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
     }
 
@@ -83,10 +82,11 @@ object Dialog {
             pathButtonClicked()
         }
         getNamePreference()
-        if(errorMessage!=null){
-                errorTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_error_textview)!!
-                errorTextView.text = errorMessage
-                errorTextView.visibility = View.VISIBLE
+        if (errorMessage != null) {
+            errorTextView =
+                dialog.findViewById<TextView>(R.id.dialog_save_recording_error_textview)!!
+            errorTextView.text = errorMessage
+            errorTextView.visibility = View.VISIBLE
         }
     }
 

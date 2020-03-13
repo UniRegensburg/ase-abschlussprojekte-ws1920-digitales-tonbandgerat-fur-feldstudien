@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.record_fragment.*
 class RecordFragment : Fragment() {
 
     private lateinit var viewModel: RecordViewModel
+    private lateinit var dataSource: Repository
 
     companion object {
         fun newInstance() = RecordFragment()
@@ -36,7 +37,7 @@ class RecordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val application = this.activity!!.application
-        val dataSource = Repository(application)
+        dataSource = Repository(application)
         val binding: RecordFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
 
@@ -72,7 +73,8 @@ class RecordFragment : Fragment() {
                     layoutId = R.layout.save_dialog,
                     viewModel = viewModel,
                     errorMessage = viewModel.errorMessage,
-                    recordFragment = this
+                    recordFragment = this,
+                    dataSource = dataSource
                 )
             }
         })
