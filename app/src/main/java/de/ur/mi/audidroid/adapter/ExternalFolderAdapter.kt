@@ -13,12 +13,16 @@ import de.ur.mi.audidroid.databinding.FolderItemBinding
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
+import de.ur.mi.audidroid.views.FilesFragment
 
-class ExternalFolderAdapter(private val filesViewModel: FilesViewModel, private val folderViewModel: FolderViewModel) :
+class ExternalFolderAdapter(
+    private val filesFragment: FilesFragment,
+    private val filesViewModel: FilesViewModel,
+    private val folderViewModel: FolderViewModel) :
     ListAdapter<FolderEntity, ExternalFolderAdapter.ViewHolder>(ExternalFolderDiffCallback()) {
 
     lateinit var holderContext: Context
-    lateinit var recordingAdapter: Adapter
+    lateinit var recordingAdapter: RecordingItemAdapter
     lateinit var folderItem: FolderEntity //FolderEntry der gerade bearbeitet wird
 
     val folderUserActionsListener = object : FolderUserActionsListener{
@@ -46,7 +50,7 @@ class ExternalFolderAdapter(private val filesViewModel: FilesViewModel, private 
 
         fun bind(
             item: FolderEntity,
-            adapter: Adapter,
+            adapter: RecordingItemAdapter,
             listener: FolderUserActionsListener
         ) {
             binding.folder = item
@@ -69,7 +73,7 @@ class ExternalFolderAdapter(private val filesViewModel: FilesViewModel, private 
         val filesViewModel = filesViewModel
         val recordings = filesViewModel.getAllRecordingsByFolder(folderItem)
 
-        recordingAdapter = Adapter(filesViewModel)
+        recordingAdapter = RecordingItemAdapter(filesFragment, filesViewModel)
         recordings.observe( holder.itemView.context as LifecycleOwner, Observer {
             it?.let {
                 recordingAdapter.submitList(it)

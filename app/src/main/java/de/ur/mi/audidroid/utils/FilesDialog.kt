@@ -10,7 +10,7 @@ object FilesDialog {
 
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
 
-    fun createDialog(
+    fun createFilesDialog(
         context: Context,
         type: Int,
         recording: EntryEntity? = null,

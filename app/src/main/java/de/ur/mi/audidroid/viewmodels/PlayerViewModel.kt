@@ -77,7 +77,7 @@ class PlayerViewModel(
     fun initializeMediaPlayer() {
         isPlaying.value = false
         isPlayerViewModel.value = true
-        val uri: Uri = Uri.fromFile(File(recordingPath))
+        //val uri: Uri = Uri.fromFile(File(recordingPath))
         mediaPlayer = MediaPlayer().apply {
             try {
                 reset()
@@ -86,12 +86,17 @@ class PlayerViewModel(
                         .setContentType(CONTENT_TYPE_SPEECH)
                         .build()
                 )
-                if (path.startsWith(res.getString(R.string.content_uri_prefix))){
-                    val uri = Uri.parse(path)
+                /* MASTER:
+                    setDataSource(context, uri)
+                * */
+
+
+                if (recordingPath.startsWith(res.getString(R.string.content_uri_prefix))){
+                    val uri = Uri.parse(recordingPath)
                     val fd = context.contentResolver.openFileDescriptor(uri, "rw")!!.fileDescriptor
                     setDataSource(fd)
                 }else{
-                    val uri = Uri.fromFile(File(path))
+                    val uri = Uri.fromFile(File(recordingPath))
                     setDataSource(context, uri)
                 }
                 setOnCompletionListener {

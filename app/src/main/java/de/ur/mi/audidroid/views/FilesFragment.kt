@@ -117,11 +117,14 @@ class FilesFragment : Fragment() {
                     filesViewModel.delete(entryEntity)
                 R.id.action_edit_recording ->
                     navigateToEditFragment(entryEntity)
+                R.id.action_move_recording -> {
+                    filesViewModel.recordingToBeMoved = entryEntity
+                    filesViewModel.createAlertFolderDialog.value = true
+                }
                 R.id.action_share_recording -> {
                     filesViewModel.recordingToBeExported = entryEntity
                    // filesViewModel._createAlertDialog.value = true
                     filesViewModel.createAlertConvertDialog.value = true
-
                 }
             }
             true
@@ -129,6 +132,12 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
+
+    /* R.id.action_move_recording ->{
+                        recordingToBeMoved = entryEntity
+                        _createAlertFolderDialog.value = true
+                    }
+    * */
     private fun navigateToEditFragment(entryEntity: EntryEntity) {
         this.findNavController().navigate(
             FilesFragmentDirections.actionFilesToEdit(entryEntity.uid)
@@ -148,8 +157,8 @@ class FilesFragment : Fragment() {
 
         if (filesViewModel != null && folderViewModel != null) {
             recordingAdapter = RecordingItemAdapter(this, filesViewModel)
-            folderAdapter = FolderAdapter(filesViewModel, folderViewModel)
-            externalFolderAdapter = ExternalFolderAdapter(filesViewModel, folderViewModel)
+            folderAdapter = FolderAdapter(this, filesViewModel, folderViewModel)
+            externalFolderAdapter = ExternalFolderAdapter(this, filesViewModel, folderViewModel)
 
             //binding of adapters to Views
             binding.recordingListNoFolder.adapter = recordingAdapter
@@ -203,7 +212,7 @@ class FilesFragment : Fragment() {
         //master -> Dialog fürs löschen von Einträgen
         filesViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
-                FilesDialog.createDialog(
+                FilesDialog.createFilesDialog(
                     context = context!!,
                     type = R.string.confirm_dialog,
                     recording = filesViewModel.recording,

@@ -15,7 +15,7 @@
             type="de.ur.mi.audidroid.viewmodels.FolderViewModel" />
         <variable
             name="recordingAdapter"
-            type="de.ur.mi.audidroid.adapter.Adapter" />
+            type="de.ur.mi.audidroid.adapter.RecordingItemAdapter" />
         <variable
             name="folderListener"
             type="de.ur.mi.audidroid.adapter.FolderUserActionsListener" />
@@ -28,36 +28,12 @@
         tools:context=".views.FilesFragment">
         <ScrollView
             android:layout_width="match_parent"
-<<<<<<< HEAD
+
             android:layout_height="wrap_content">
             <LinearLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
-=======
-            android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/recording_item" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:visibility="@{filesViewModel.empty ? View.VISIBLE : View.GONE}">
-
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/keyline_5"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/sad_face"
-                android:scaleType="center"
-                android:src="@drawable/ic_sentiment_dissatisfied"
-                android:tint="@color/color_on_surface" />
-
-            <TextView
-                android:layout_width="wrap_content"
->>>>>>> master
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -77,7 +53,7 @@
                     android:layout_height="300dp"
                     android:paddingTop="@dimen/constraint_layout_padding"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/entry_item" />
+                    tools:listitem="@layout/recording_item" />
 
                 <LinearLayout
                     android:layout_width="match_parent"

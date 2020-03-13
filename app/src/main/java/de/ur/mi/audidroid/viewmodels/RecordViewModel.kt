@@ -18,11 +18,8 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
-<<<<<<< HEAD
 import de.ur.mi.audidroid.models.FolderEntity
-=======
 import de.ur.mi.audidroid.models.LabelAssignmentEntity
->>>>>>> master
 import de.ur.mi.audidroid.models.MarkerTimeRelation
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.StorageHelper
@@ -194,7 +191,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         mediaRecorder.resume()
     }
 
-<<<<<<< HEAD
+
     //Checks the uniqueness of a name at the given location; works for internal and external storage
     private fun checkExternalNameUniqueness(targetDir: Uri, name: String): Boolean{
         val f = DocumentFile.fromTreeUri(context!!, targetDir)!!
@@ -226,14 +223,14 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
     }
 
-    fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
-=======
+    //fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
+
     fun getNewFileFromUserInput(
         nameInput: String?,
         pathInput: String?,
         labels: ArrayList<Int>?
     ) {
->>>>>>> master
+
         _createDialog.value = false
         val name = nameInput ?: java.lang.String.format(
             "%s_%s",
@@ -266,8 +263,9 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
 
         endRecordSession()
-<<<<<<< HEAD
 
+
+        //<<<<<<< MEINZ
         val fileIsInternal = storagePref.toString().equals(res.getString(R.string.storage_location_default))
         if (fileIsInternal){
             File(tempFile).copyTo(newFile)
@@ -276,9 +274,11 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
                 File(tempFile), name, getStoragePreference())
             newFile.delete()
         }
-=======
-        File(tempFile).copyTo(newFile)
->>>>>>> master
+
+        //>>>>>>> master
+        //File(tempFile).copyTo(newFile)
+
+
 
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
 
@@ -289,36 +289,25 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
 
         val audio =
-<<<<<<< HEAD
-            EntryEntity(0, name, path, getDate(), recordingDuration, folderRef)
-
-        saveRecordInDB(audio)
-=======
             EntryEntity(
                 uid = 0,
                 recordingName = name,
                 recordingPath = path,
                 date = getDate(),
-                duration = recordingDuration
+                duration = recordingDuration,
+                folder = folderRef
             )
         saveRecordInDB(audio, labels)
->>>>>>> master
         File(tempFile).delete()
         resetView()
         errorMessage = null
     }
 
-<<<<<<< HEAD
 
-    private fun saveRecordInDB(audio: EntryEntity) {
-        val uid = repository.insert(audio).toInt()
-        if (markList.isNotEmpty()){
-=======
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
         val uid = dataSource.insertRecording(audio).toInt()
         if (labels != null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
         if (markList.isNotEmpty()) {
->>>>>>> master
             saveMarksInDB(uid)
         }
         showSnackBar(R.string.record_saved)
