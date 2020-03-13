@@ -1,18 +1,19 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
-import android.view.View
-import android.widget.PopupMenu
+import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
 import de.ur.mi.audidroid.utils.StorageHelper
+import java.io.File
 
 /**
  * ViewModel for FilesFragment.
@@ -23,24 +24,37 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
-    private var recordingToBeExported: EntryEntity? = null
+    private lateinit var frameLayout: FrameLayout
+    var recordingToBeExported: EntryEntity? = null
     var recordingToBeMoved: EntryEntity? = null
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
     var errorMessage: String? = null
+    var recording: EntryEntity? = null
 
+
+    //meinz
+    private val _createAlertConvertDialog = MutableLiveData<Boolean>()
+    val createAlertConvertDialog: MutableLiveData<Boolean>
+        get() = _createAlertConvertDialog
+    //meinz
     private val _createAlertFolderDialog = MutableLiveData<Boolean>()
-
     val createAlertFolderDialog: MutableLiveData<Boolean>
         get() = _createAlertFolderDialog
 
-    private val _createAlertConvertDialog = MutableLiveData<Boolean>()
 
-    val createAlertConvertDialog: MutableLiveData<Boolean>
-        get() = _createAlertConvertDialog
+    //master -> wird beim löschen von Einträgen aufgerufen
+    private val _createConfirmDialog = MutableLiveData<Boolean>()
+    val createConfirmDialog: LiveData<Boolean>
+        get() = _createConfirmDialog
+    //master
+    //val _createAlertDialog = MutableLiveData<Boolean>()
+    //val createAlertDialog: MutableLiveData<Boolean>
+    //    get() = _createAlertDialog
+
+
 
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
-
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
 
@@ -57,6 +71,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         it.isEmpty()
     }
 
+
+
+    /*HEAD
     // When the ImageButton is clicked, a PopupMenu opens.
     fun onButtonClicked(entryEntity: EntryEntity, view: View) {
         val popupMenu = PopupMenu(context, view)
@@ -77,19 +94,71 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             true
         }
         popupMenu.show()
-    }
+    }*/
 
     fun shareRecording(format: String) {
         ShareHelper.shareAudio(recordingToBeExported!!, format, context)
         _createAlertConvertDialog.value = false
     }
 
+
+
+    /*<<<<<< HEAD
     private fun delete(entryEntity: EntryEntity) {
         val deletedSuccessful = StorageHelper.deleteFile(context, entryEntity)
         if (deletedSuccessful) {
             repository.delete(entryEntity)
-            _showSnackbarEvent.value = true
+            _showSnackbarEvent.value = true*/
+    fun delete(entryEntity: EntryEntity) {
+        recording = entryEntity
+        _createConfirmDialog.value = true
+    }
+
+    fun deleteRecording(entryEntity: EntryEntity) {
+        val file = File(entryEntity.recordingPath)
+        if (file.delete()) {
+            repository.deleteRecording(entryEntity)
+            showSnackBar(
+                String.format(
+                    context.getString(R.string.recording_deleted),
+                    entryEntity.recordingName
+                )
+            )
+            recording = null
+        } else {
+            showSnackBar(R.string.error_message_file_cannot_be_deleted.toString())
         }
+    }
+
+    fun cancelSaving() {
+        errorMessage = null
+        recording = null
+        _createConfirmDialog.value = false
+    }
+
+    fun initializeFrameLayout(frameLayout: FrameLayout) {
+        this.frameLayout = frameLayout
+    }
+
+    private fun showSnackBar(text: String) {
+        Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
+    }
+
+    fun checkExistence(
+        it: List<EntryEntity>,
+        array: ArrayList<EntryEntity>
+    ): ArrayList<EntryEntity> {
+        for (i in it.indices) {
+            val file = File(it[i].recordingPath)
+            if (file.exists()) {
+                array.add(it[i])
+            } else {
+                repository.deleteRecording(it[i])
+                repository.deleteRecMarks(it[i].uid)
+                repository.deleteRecLabels(it[i].uid)
+            }
+        }
+        return array
     }
 
 
@@ -115,7 +184,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             folderRefs.forEach {ref ->
                 allRecordings.value!!.forEach {
                     if (it.folder == ref) {
-                        delete(it)
+                        deleteRecording(it)
                     }
                 }
             }
@@ -127,12 +196,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     // Navigation to the PlayerFragment
-    private val _navigateToPlayerFragment = MutableLiveData<String>()
+    private val _navigateToPlayerFragment = MutableLiveData<Int>()
     val navigateToPlayerFragment
         get() = _navigateToPlayerFragment
 
-    fun onRecordingClicked(recordingPath: String) {
-        _navigateToPlayerFragment.value = recordingPath
+    fun onRecordingClicked(recordingId: Int) {
+        _navigateToPlayerFragment.value = recordingId
     }
 
     fun onPlayerFragmentNavigated() {

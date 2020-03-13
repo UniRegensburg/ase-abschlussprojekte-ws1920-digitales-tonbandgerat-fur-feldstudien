@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,16 +16,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.adapter.Adapter
 import de.ur.mi.audidroid.adapter.ExternalFolderAdapter
 import de.ur.mi.audidroid.adapter.FolderAdapter
+import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
+import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
 import de.ur.mi.audidroid.utils.FolderDialog
 import de.ur.mi.audidroid.utils.StorageHelper
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
+import kotlinx.android.synthetic.main.files_fragment.*
 
 /**
  * The fragment displays all recordings and folders.
@@ -34,7 +38,7 @@ class FilesFragment : Fragment() {
 
 
     private lateinit var folderAdapter: FolderAdapter
-    private lateinit var recordingAdapter: Adapter
+    private lateinit var recordingAdapter: RecordingItemAdapter
     private lateinit var externalFolderAdapter: ExternalFolderAdapter
     private lateinit var binding: FilesFragmentBinding
     private lateinit var folderViewModel: FolderViewModel
@@ -90,77 +94,52 @@ class FilesFragment : Fragment() {
         // Observer on the state variable for navigating when a list-item is clicked.
         filesViewModel.navigateToPlayerFragment.observe(
             viewLifecycleOwner,
-            Observer { recordingPath ->
-                recordingPath?.let {
+            Observer { recordingId ->
+                recordingId?.let {
                     this.findNavController().navigate(
                         FilesFragmentDirections
-                            .actionFilesToPlayer(recordingPath)
+                            .actionFilesToPlayer(recordingId)
                     )
                     filesViewModel.onPlayerFragmentNavigated()
                 }
             })
-        //Dialog for conversion.
-        filesViewModel.createAlertConvertDialog.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                ConvertDialog.createDialog(
-                    context = context!!,
-                    layoutId = R.layout.convert_dialog,
-                    viewModel = filesViewModel
-                )
-            }
-        })
-
-        // alerts the dialog, that a recording should be moved
-        filesViewModel.createAlertFolderDialog.observe(viewLifecycleOwner, Observer {
-            if (it){
-               FolderDialog.createDialog(
-                   context = context!!,
-                   type = R.string.alert_dialog,
-                   folderViewModel =  folderViewModel,
-                   filesViewModel = filesViewModel,
-                   errorMessage = filesViewModel.errorMessage,
-                   layoutId = R.layout.folder_dialog,
-                   recordingToBeMoved = filesViewModel.recordingToBeMoved,
-                   listOfAvailableFolders = folderViewModel.allFolders.value
-               )
-            }
-        })
-
-        folderViewModel.createAlertFolderDialog.observe(this, Observer {
-            if (it){
-                FolderDialog.createDialog(
-                    context = context!!,
-                    type = R.string.alert_dialog,
-                    folderViewModel =  folderViewModel,
-                    filesViewModel = filesViewModel,
-                    errorMessage = folderViewModel.errorMessage,
-                    addFolder = folderViewModel.addFolder,
-                    layoutId = R.layout.folder_dialog,
-                    folderToBeEdited = folderViewModel.folderToBeEdited)
-
-            }
-        })
-
-        folderViewModel.createConfirmDialog.observe(this, Observer {
-            if (it){
-                FolderDialog.createDialog(
-                    context = context!!,
-                    type = R.string.confirm_dialog,
-                    folderViewModel = folderViewModel,
-                    filesViewModel = filesViewModel,
-                    errorMessage = folderViewModel.errorMessage,
-                    folderToBeEdited = folderViewModel.folderToBeEdited,
-                    listOfAvailableFolders = folderViewModel.allFolders.value)
-            }
-        })
 
         return binding.root
     }
 
+    // When the ImageButton is clicked, a PopupMenu opens.
+    fun openPopupMenu(entryEntity: EntryEntity, view: View) {
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_delete_recording ->
+                    filesViewModel.delete(entryEntity)
+                R.id.action_edit_recording ->
+                    navigateToEditFragment(entryEntity)
+                R.id.action_share_recording -> {
+                    filesViewModel.recordingToBeExported = entryEntity
+                   // filesViewModel._createAlertDialog.value = true
+                    filesViewModel.createAlertConvertDialog.value = true
+
+                }
+            }
+            true
+        }
+        popupMenu.show()
+    }
+
+    private fun navigateToEditFragment(entryEntity: EntryEntity) {
+        this.findNavController().navigate(
+            FilesFragmentDirections.actionFilesToEdit(entryEntity.uid)
+        )
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        filesViewModel.initializeFrameLayout(files_layout)
         setupAdapter()
+        createConfirmDialog()
     }
 
     private fun setupAdapter() {
@@ -168,8 +147,8 @@ class FilesFragment : Fragment() {
         val folderViewModel = binding.folderViewModel
 
         if (filesViewModel != null && folderViewModel != null) {
+            recordingAdapter = RecordingItemAdapter(this, filesViewModel)
             folderAdapter = FolderAdapter(filesViewModel, folderViewModel)
-            recordingAdapter = Adapter(filesViewModel)
             externalFolderAdapter = ExternalFolderAdapter(filesViewModel, folderViewModel)
 
             //binding of adapters to Views
@@ -181,7 +160,9 @@ class FilesFragment : Fragment() {
             //Sets Adapter to RecyclingView for Recordings with no folder association
             filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {
                 it?.let {
-                    recordingAdapter.submitList(it)
+                    var array = arrayListOf<EntryEntity>()
+                    array = filesViewModel.checkExistence(it, array)
+                    recordingAdapter.submitList(array)
 
                 }
             })
@@ -202,6 +183,100 @@ class FilesFragment : Fragment() {
                 }
             })
         }
+        /*   >>>>>>> master: alter adapter für recording list
+        adapter = RecordingItemAdapter(this, filesViewModel)
+        binding.recordingList.adapter = adapter
+
+        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                var array = arrayListOf<EntryEntity>()
+                array = filesViewModel.checkExistence(it, array)
+                adapter.submitList(array)
+            }
+        })*/
+    }
+
+
+
+    private fun createConfirmDialog() {
+
+        //master -> Dialog fürs löschen von Einträgen
+        filesViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                FilesDialog.createDialog(
+                    context = context!!,
+                    type = R.string.confirm_dialog,
+                    recording = filesViewModel.recording,
+                    viewModel = filesViewModel,
+                    errorMessage = filesViewModel.errorMessage
+                )
+            }
+        })
+
+
+
+        //meinz
+
+        // ersetzt createAlertDialog -> Dialog fürs konvertieren
+        filesViewModel.createAlertConvertDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                ConvertDialog.createDialog(
+                    context = context!!,
+                    layoutId = R.layout.convert_dialog,
+                    viewModel = filesViewModel
+                )
+            }
+        })
+
+        // Dialog fürs verschieben von Einträgen
+        filesViewModel.createAlertFolderDialog.observe(viewLifecycleOwner, Observer {
+            if (it){
+                FolderDialog.createDialog(
+                    context = context!!,
+                    type = R.string.alert_dialog,
+                    folderViewModel =  folderViewModel,
+                    filesViewModel = filesViewModel,
+                    errorMessage = filesViewModel.errorMessage,
+                    layoutId = R.layout.folder_dialog,
+                    recordingToBeMoved = filesViewModel.recordingToBeMoved,
+                    listOfAvailableFolders = folderViewModel.allFolders.value
+                )
+            }
+        })
+
+        // dialog fürs erstellen von Ordnern
+        folderViewModel.createAlertFolderDialog.observe(this, Observer {
+            if (it){
+                FolderDialog.createDialog(
+                    context = context!!,
+                    type = R.string.alert_dialog,
+                    folderViewModel =  folderViewModel,
+                    filesViewModel = filesViewModel,
+                    errorMessage = folderViewModel.errorMessage,
+                    addFolder = folderViewModel.addFolder,
+                    layoutId = R.layout.folder_dialog,
+                    folderToBeEdited = folderViewModel.folderToBeEdited)
+
+            }
+        })
+
+        // dialog fürs löschen von Ordnern inklusive inhalt
+        folderViewModel.createConfirmDialog.observe(this, Observer {
+            if (it){
+                FolderDialog.createDialog(
+                    context = context!!,
+                    type = R.string.confirm_dialog,
+                    folderViewModel = folderViewModel,
+                    filesViewModel = filesViewModel,
+                    errorMessage = folderViewModel.errorMessage,
+                    folderToBeEdited = folderViewModel.folderToBeEdited,
+                    listOfAvailableFolders = folderViewModel.allFolders.value)
+            }
+        })
+
+
+
+
     }
 
     /**

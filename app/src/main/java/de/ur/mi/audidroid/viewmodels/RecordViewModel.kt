@@ -18,7 +18,11 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
+<<<<<<< HEAD
 import de.ur.mi.audidroid.models.FolderEntity
+=======
+import de.ur.mi.audidroid.models.LabelAssignmentEntity
+>>>>>>> master
 import de.ur.mi.audidroid.models.MarkerTimeRelation
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.StorageHelper
@@ -136,7 +140,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     fun cancelRecord() {
-        if (recorderInitialized) {
+        if (recorderInitialized && createDialog.value == false) {
             showSnackBar(R.string.record_removed)
             File(tempFile).delete()
             endRecordSession()
@@ -190,6 +194,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         mediaRecorder.resume()
     }
 
+<<<<<<< HEAD
     //Checks the uniqueness of a name at the given location; works for internal and external storage
     private fun checkExternalNameUniqueness(targetDir: Uri, name: String): Boolean{
         val f = DocumentFile.fromTreeUri(context!!, targetDir)!!
@@ -222,18 +227,28 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
+=======
+    fun getNewFileFromUserInput(
+        nameInput: String?,
+        pathInput: String?,
+        labels: ArrayList<Int>?
+    ) {
+>>>>>>> master
         _createDialog.value = false
         val name = nameInput ?: java.lang.String.format(
             "%s_%s",
             res.getString(R.string.standard_name_recording),
             android.text.format.DateFormat.format(
-                "yyyy-MM-dd_hh-mm",
+                "yyyy-MM-dd_HH-mm",
                 Calendar.getInstance(Locale.getDefault())
             )
         )
         if (!validNameInput(name)) {
-            errorMessage = res.getString(R.string.dialog_invalid_name)
-            _createDialog.value = true
+            errorDialog(res.getString(R.string.dialog_invalid_name))
+            return
+        }
+        if (name.length > res.getInteger(R.integer.max_name_length)) {
+            errorDialog(res.getString(R.string.dialog_name_length))
             return
         }
 
@@ -251,6 +266,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
 
         endRecordSession()
+<<<<<<< HEAD
 
         val fileIsInternal = storagePref.toString().equals(res.getString(R.string.storage_location_default))
         if (fileIsInternal){
@@ -260,6 +276,9 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
                 File(tempFile), name, getStoragePreference())
             newFile.delete()
         }
+=======
+        File(tempFile).copyTo(newFile)
+>>>>>>> master
 
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
 
@@ -270,32 +289,56 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
 
         val audio =
+<<<<<<< HEAD
             EntryEntity(0, name, path, getDate(), recordingDuration, folderRef)
 
         saveRecordInDB(audio)
+=======
+            EntryEntity(
+                uid = 0,
+                recordingName = name,
+                recordingPath = path,
+                date = getDate(),
+                duration = recordingDuration
+            )
+        saveRecordInDB(audio, labels)
+>>>>>>> master
         File(tempFile).delete()
         resetView()
         errorMessage = null
     }
 
+<<<<<<< HEAD
 
     private fun saveRecordInDB(audio: EntryEntity) {
         val uid = repository.insert(audio).toInt()
         if (markList.isNotEmpty()){
+=======
+    private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
+        val uid = dataSource.insertRecording(audio).toInt()
+        if (labels != null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
+        if (markList.isNotEmpty()) {
+>>>>>>> master
             saveMarksInDB(uid)
         }
         showSnackBar(R.string.record_saved)
     }
 
     private fun validNameInput(name: String): Boolean {
-        return Pattern.compile("^[a-zA-Z0-9_-]+$").matcher(name).matches()
+        return Pattern.compile("^[a-zA-Z0-9_{}-]+$").matcher(name).matches()
+    }
+
+    private fun errorDialog(mes: String) {
+        errorMessage = mes
+        _createDialog.value = true
     }
 
     private fun getRecordingDuration(): String? {
         val metaRetriever = MediaMetadataRetriever()
         metaRetriever.setDataSource(tempFile)
         return DateUtils.formatElapsedTime(
-            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() / (res.getInteger(
+            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                .toLong() / (res.getInteger(
                 R.integer.one_second
             ).toLong())
         )
@@ -309,7 +352,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         markList = mutableListOf()
     }
 
-    fun makeMark(view : View) {
+    fun makeMark(view: View) {
         val btnId = view.resources.getResourceName(view.id)
         val markEntry = Pair(btnId, timer.text.toString())
         markList.add(markEntry)

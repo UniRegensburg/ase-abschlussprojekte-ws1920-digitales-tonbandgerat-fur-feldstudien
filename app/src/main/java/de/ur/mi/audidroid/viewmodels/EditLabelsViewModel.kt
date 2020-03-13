@@ -60,37 +60,47 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onLabelSaveClicked(nameInput: String?) {
-        if (!validName(nameInput)) {
-            errorMessage = res.getString(R.string.dialog_label_invalid_name)
-            _createAlertDialog.value = true
-            return
+        if(checkInput(nameInput)){
+            _createAlertDialog.value = false
+            insertLabelIntoDB(nameInput!!)
         }
-        _createAlertDialog.value = false
-        insertLabelIntoDB(nameInput!!)
     }
 
     fun onLabelUpdateClicked(nameInput: String?, labelEntity: LabelEntity) {
         _createAlertDialog.value = false
-        if (!validName(nameInput)) {
-            errorMessage = res.getString(R.string.dialog_label_invalid_name)
-            _createAlertDialog.value = true
-            return
+        if(checkInput(nameInput)){
+            updateLabelInDB(nameInput!!, labelEntity)
         }
-        updateLabelInDB(nameInput!!, labelEntity)
     }
 
-    fun validName(name: String?): Boolean {
-        val labelName = name ?: ""
-        return Pattern.compile("^[a-zA-Z0-9_-]{1,10}$").matcher(labelName).matches()
+    private fun checkInput(nameInput: String?): Boolean{
+        if(nameInput==null){
+            return false
+        }
+        if (!validName(nameInput)) {
+            errorMessage = res.getString(R.string.dialog_invalid_name)
+            _createAlertDialog.value = true
+            return false
+        }
+        if(nameInput.length>res.getInteger(R.integer.max_label_length)){
+            errorMessage = res.getString(R.string.label_name_too_long)
+            _createAlertDialog.value = true
+            return false
+        }
+        return true
     }
 
-    fun insertLabelIntoDB(labelName: String) {
+    private fun validName(labelName: String): Boolean {
+        return Pattern.compile("^[a-zA-Z0-9_{}-]+$").matcher(labelName).matches()
+    }
+
+    private fun insertLabelIntoDB(labelName: String) {
         val newLabel = LabelEntity(0, labelName)
         repository.insertLabel(newLabel)
         showSnackBar(String.format(context.getString(R.string.label_inserted), newLabel.labelName))
     }
 
-    fun updateLabelInDB(labelName: String, labelEntity: LabelEntity) {
+    private fun updateLabelInDB(labelName: String, labelEntity: LabelEntity) {
         val updatedLabel = LabelEntity(labelEntity.uid, labelName)
         repository.updateLabel(updatedLabel)
         labelToBeEdited = null
