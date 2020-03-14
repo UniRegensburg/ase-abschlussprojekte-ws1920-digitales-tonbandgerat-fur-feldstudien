@@ -40,13 +40,14 @@ class PlayerFragment : Fragment() {
         val dataSource = Repository(application)
 
         val args = PlayerFragmentArgs.fromBundle(arguments!!)
-        val viewModelFactory = PlayerViewModelFactory(args.recordingId, dataSource, application)
+        val handlePlayerBar = initHandler()
+        val viewModelFactory =
+            PlayerViewModelFactory(args.recordingId, dataSource, application, handlePlayerBar)
 
         playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
-
         binding.playerViewModel = playerViewModel
-        binding.handlePlayerBar = initHandler()
+        binding.handlePlayerBar = handlePlayerBar
         binding.lifecycleOwner = this
 
         return binding.root
@@ -104,12 +105,13 @@ class PlayerFragment : Fragment() {
     class PlayerViewModelFactory(
         private val recordingId: Int,
         private val dataSource: Repository,
-        private val application: Application
+        private val application: Application,
+        private val handlePlayerBar: HandlePlayerBar
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
-                return PlayerViewModel(recordingId, dataSource, application) as T
+                return PlayerViewModel(recordingId, dataSource, application, handlePlayerBar) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

@@ -5,7 +5,6 @@ import android.media.AudioAttributes
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.net.Uri
-import android.os.Build
 import android.os.Handler
 import android.text.format.DateUtils
 import android.view.View
@@ -23,6 +22,7 @@ import de.ur.mi.audidroid.models.MarkerTimeRelation
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
+import de.ur.mi.audidroid.utils.HandlePlayerBar
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
 import io.apptik.widget.MultiSlider.Thumb
@@ -35,7 +35,8 @@ import java.util.regex.Pattern
 class EditRecordingViewModel(
     private val recordingId: Int,
     dataSource: Repository,
-    application: Application
+    application: Application,
+    val handlePlayerBar: HandlePlayerBar
 ) :
     AndroidViewModel(application) {
 
@@ -184,6 +185,7 @@ class EditRecordingViewModel(
         handler.removeCallbacks(runnable)
         isPlaying.value = mediaPlayer.isPlaying
         initializeMediaPlayer()
+        initializeSeekBar(seekBar)
     }
 
     override fun onCleared() {
@@ -195,10 +197,6 @@ class EditRecordingViewModel(
 
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
-    }
-
-    private fun showSnackBarShort(text: Int) {
-        Snackbar.make(frameLayout, text, res.getInteger(R.integer.snackbar_quite_short)).show()
     }
 
     fun initializeRangeBar(rangeBar: MultiSlider) {
@@ -418,26 +416,10 @@ class EditRecordingViewModel(
     }
 
     fun skipPlaying() {
-        val moveTime =
-            mediaPlayer.currentPosition + res.getInteger(R.integer.jump_amount).toLong()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
-            moveTime,
-            MediaPlayer.SEEK_NEXT_SYNC
-        ) else mediaPlayer.seekTo(moveTime.toInt())
-
-        showSnackBarShort(R.string.player_moved_forward)
-
+        handlePlayerBar.doSkippingPlaying(mediaPlayer, context)
     }
 
     fun returnPlaying() {
-        val moveTime =
-            mediaPlayer.currentPosition - res.getInteger(R.integer.jump_amount).toLong()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
-            moveTime,
-            MediaPlayer.SEEK_PREVIOUS_SYNC
-        ) else mediaPlayer.seekTo(moveTime.toInt())
-
-        showSnackBarShort(R.string.player_moved_backward)
-
+        handlePlayerBar.doReturnPlaying(mediaPlayer, context)
     }
 }
