@@ -1,6 +1,7 @@
 package de.ur.mi.audidroid.views
 
 import android.app.Application
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -41,7 +42,7 @@ class RecordFragment : Fragment() {
         val binding: RecordFragmentBinding =
             DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
 
-        val viewModelFactory = RecordViewModelFactory(dataSource, application)
+        val viewModelFactory = RecordViewModelFactory(dataSource, application, context!!)
         viewModel = ViewModelProvider(this, viewModelFactory).get(RecordViewModel::class.java)
         binding.recordViewModel = viewModel
         binding.lifecycleOwner = this
@@ -50,12 +51,13 @@ class RecordFragment : Fragment() {
 
     class RecordViewModelFactory(
         private val dataSource: Repository,
-        private val application: Application
+        private val application: Application,
+        private val context: Context
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return if (modelClass.isAssignableFrom(RecordViewModel::class.java)) {
-                RecordViewModel(dataSource, application) as T
+                RecordViewModel(dataSource, application, context) as T
             } else {
                 throw IllegalArgumentException("ViewModel Not Found")
             }
@@ -68,13 +70,14 @@ class RecordFragment : Fragment() {
         viewModel.initializeLayout(frameLayout)
         viewModel.createDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
-                de.ur.mi.audidroid.utils.Dialog.createDialog(
+                de.ur.mi.audidroid.utils.SaveRecordingDialog.createDialog(
                     paramContext = context!!,
                     layoutId = R.layout.save_dialog,
-                    viewModel = viewModel,
                     errorMessage = viewModel.errorMessage,
-                    recordFragment = this,
-                    dataSource = dataSource
+                    dataSource = dataSource,
+                    recordViewModel = viewModel,
+                    recordFragment = this
+
                 )
             }
         })
@@ -82,6 +85,6 @@ class RecordFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.cancelRecord()
+        viewModel.fragmentOnPause()
     }
 }

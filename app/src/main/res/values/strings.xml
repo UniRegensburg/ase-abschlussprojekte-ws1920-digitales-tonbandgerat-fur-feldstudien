@@ -113,6 +113,7 @@
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
+    <string name="quit_recording">Do you really want to delete the recording?</string>
     
     <!-- Player UI -->
     <string name="player_bar_jump_forwards">Button jump forwards</string>
@@ -121,7 +122,7 @@
 
     <string name="alert_dialog">Alert Dialog</string>
     <string name="confirm_dialog">Confirm Dialog</string>
-    <string name="delete">delete</string>
+    <string name="delete">Delete</string>
 
 
     <string name="sad_face">Sad face</string>
