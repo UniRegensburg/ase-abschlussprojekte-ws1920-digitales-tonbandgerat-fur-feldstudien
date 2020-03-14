@@ -122,8 +122,14 @@ class Repository(application: Application) : CoroutineScope {
         return markerDao.getMarksById(uid)
     }
 
-    fun getMarkerByName(name: String): LiveData<MarkerEntity> {
-        return markerDao.getMarkerByName(name)
+    fun getMarkerByName(name: String): List<MarkerEntity> {
+        var list: List<MarkerEntity>? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                list = markerDao.getMarkerByName(name)
+            }
+        }
+        return list!!
     }
 
     fun getRecordingById(uid: Int): LiveData<EntryEntity> {
@@ -134,8 +140,14 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getLabelById(uid)
     }
 
-    fun getLabelByName(name: String): LiveData<LabelEntity> {
-        return labelDao.getLabelByName(name)
+    fun getLabelByName(name: String): List<LabelEntity> {
+        var list: List<LabelEntity>? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                list = labelDao.getLabelByName(name)
+            }
+        }
+        return list!!
     }
 
     fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {

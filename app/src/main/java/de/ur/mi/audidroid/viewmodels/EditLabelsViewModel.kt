@@ -74,10 +74,10 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun checkInput(nameInput: String?): Boolean{
-        if(nameInput==null){
+        if (nameInput==null){
             return false
         }
-        if (!labelNameAlreadyTaken(nameInput)) {
+        if (labelNameAlreadyTaken(nameInput)) {
             errorMessage = res.getString(R.string.dialog_label_already_exists)
             _createAlertDialog.value = true
             return false
@@ -87,11 +87,12 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) :
             _createAlertDialog.value = true
             return false
         }
-        if(nameInput.length>res.getInteger(R.integer.max_label_length)){
+        if (nameInput.length > res.getInteger(R.integer.max_label_length)){
             errorMessage = res.getString(R.string.label_name_too_long)
             _createAlertDialog.value = true
             return false
         }
+        errorMessage = null
         return true
     }
 
@@ -100,7 +101,7 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun labelNameAlreadyTaken(labelName: String): Boolean {
-        return repository.getLabelByName(labelName).value != null
+        return repository.getLabelByName(labelName).isNotEmpty()
     }
 
     private fun insertLabelIntoDB(labelName: String) {

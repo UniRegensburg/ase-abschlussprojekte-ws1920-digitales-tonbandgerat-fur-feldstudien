@@ -16,8 +16,8 @@ interface MarkerDao {
     @Query("SELECT * FROM markerTable WHERE uid = :key")
     fun getMarkerById(key: Int): LiveData<MarkerEntity>
 
-    @Query("SELECT * FROM markerTable WHERE markerName IN (:name)")
-    fun getMarkerByName(name: String): LiveData<MarkerEntity>
+    @Query("SELECT * FROM markerTable WHERE markerName = :name")
+    suspend fun getMarkerByName(name: String): List<MarkerEntity>
 
     @Insert(onConflict = REPLACE)
     suspend fun insertMarker(markerEntity: MarkerEntity)

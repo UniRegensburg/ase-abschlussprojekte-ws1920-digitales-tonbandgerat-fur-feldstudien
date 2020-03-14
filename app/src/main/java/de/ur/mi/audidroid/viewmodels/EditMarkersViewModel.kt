@@ -2,6 +2,7 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.content.res.Resources
+import android.util.Log
 import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -62,7 +63,7 @@ class EditMarkersViewModel(dataSource: Repository, application: Application) :
         if(nameInput==null){
             return
         }
-        if (!markerNameAlreadyTaken(nameInput)) {
+        if (markerNameAlreadyTaken(nameInput)) {
             errorMessage = res.getString(R.string.dialog_marker_already_exists)
             _createAlertDialog.value = true
             return
@@ -72,8 +73,9 @@ class EditMarkersViewModel(dataSource: Repository, application: Application) :
             _createAlertDialog.value = true
             return
         }
+        errorMessage = null
         _createAlertDialog.value = false
-        insertMarkerIntoDB(nameInput!!)
+        insertMarkerIntoDB(nameInput)
     }
 
     fun onMarkerUpdateClicked(nameInput: String?, markerEntity: MarkerEntity) {
@@ -92,7 +94,7 @@ class EditMarkersViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun markerNameAlreadyTaken(markerName: String): Boolean {
-        return repository.getMarkerByName(markerName).value != null
+        return repository.getMarkerByName(markerName).isNotEmpty()
     }
 
     fun insertMarkerIntoDB(markerName: String) {

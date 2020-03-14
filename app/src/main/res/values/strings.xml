@@ -97,8 +97,8 @@
     <string name="create_marker">Create Marker</string>
     <string name="update_marker">Update Marker</string>
     <string name="marker_inserted">Marker \'%1$s\' created</string>
-    <string name="marker_updated">Label renamed to \'%1$s\'</string>
-    <string name="create_marker_dialog_header">Create Label</string>
+    <string name="marker_updated">Marker renamed to \'%1$s\'</string>
+    <string name="create_marker_dialog_header">Create Marker</string>
     <string name="marker_name_too_long">Use a name with a maximum of 10 characters</string>
     <string name="marker_name_nonexistent">Enter a valid marker name</string>
     <string name="delete_marker_dialog_header">Delete marker \'%1$s\'?</string>
