@@ -3,14 +3,13 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.MarkItemAdapter
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
@@ -27,6 +26,7 @@ class PlayerFragment : Fragment() {
 
     private lateinit var adapter: MarkItemAdapter
     private lateinit var playerViewModel: PlayerViewModel
+    private lateinit var args: PlayerFragmentArgs
     private lateinit var binding: PlayerFragmentBinding
 
     override fun onCreateView(
@@ -39,7 +39,7 @@ class PlayerFragment : Fragment() {
         val application = this.activity!!.application
         val dataSource = Repository(application)
 
-        val args = PlayerFragmentArgs.fromBundle(arguments!!)
+        args = PlayerFragmentArgs.fromBundle(arguments!!)
         val viewModelFactory = PlayerViewModelFactory(args.recordingId, dataSource, application)
 
         playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
@@ -47,6 +47,7 @@ class PlayerFragment : Fragment() {
         binding.playerViewModel = playerViewModel
         binding.handlePlayerBar = HandlePlayerBar
         binding.lifecycleOwner = this
+        setHasOptionsMenu(true)
 
         return binding.root
     }
@@ -75,6 +76,26 @@ class PlayerFragment : Fragment() {
                 adapter.submitList(it)
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_player, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_edit_rec -> {
+                navigateToEditFragment()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun navigateToEditFragment() {
+        this.findNavController().navigate(
+            PlayerFragmentDirections.actionPlayerToEdit(args.recordingId)
+        )
     }
 
     /**

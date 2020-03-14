@@ -34,6 +34,9 @@
         <argument
             android:name="recordingId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_player_to_edit"
+            app:destination="@id/edit" />
     </fragment>
     <fragment
         android:id="@+id/edit"

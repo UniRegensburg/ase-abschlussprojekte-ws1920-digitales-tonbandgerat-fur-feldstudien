@@ -43,7 +43,7 @@ class EditRecordingFragment : Fragment() {
 
         binding.editRecordingViewModel = editRecordingViewModel
         binding.handlePlayerBar = HandlePlayerBar
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
         setHasOptionsMenu(true)
 
         return binding.root
