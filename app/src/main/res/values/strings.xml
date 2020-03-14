@@ -102,8 +102,7 @@
     <string name="marker_name_too_long">Use a name with a maximum of 10 characters</string>
     <string name="marker_name_nonexistent">Enter a valid marker name</string>
     <string name="delete_marker_dialog_header">Delete marker \'%1$s\'?</string>
-    <string name="dialog_marker_invalid_name">The marker name should be between one and ten characters long.</string>
-
+    <string name="dialog_marker_invalid_name">Just use letters, numbers and _-{}</string>
 
     <!-- User Feedback Recording -->
     <string name="record_saved">Recording saved</string>
