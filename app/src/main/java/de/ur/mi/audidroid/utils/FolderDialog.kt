@@ -12,7 +12,7 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 
 /**
- * FolderDialog manages all userinput regarding the folders (except setting a new external one).
+ * FolderDialog manages all user input regarding the folders (except setting a new external one).
  * It's called upon at the creation of a new folder, it's deletion and the move of a recording.
  * @author: Lisa Sanladerer
  */
@@ -112,7 +112,7 @@ object FolderDialog {
             }
         }
 
-        //dialog for folder deletion
+        //Dialog for folder deletion.
         if (type == R.string.confirm_dialog){
             if (errorMessage != null){
                 builder.setMessage(errorMessage)
@@ -125,9 +125,19 @@ object FolderDialog {
                     )
                 )
                 setPositiveButton(context.getString(R.string.delete)){ _, _ ->
-                    val folderReferences = folderViewModel.onDeleteFolderAndContent(folderToBeEdited)
-                    filesViewModel.deleteEntriesInInternalFolders(folderReferences)
+
+                    if (!folderToBeEdited.isExternal){
+                        val folderReferences = folderViewModel.onDeleteFolderAndContent(folderToBeEdited)
+                        filesViewModel.deleteEntriesInFolders(folderReferences)
+                    }else{
+                        val folderReference = listOf(folderToBeEdited.uid)
+                        filesViewModel.deleteEntriesInFolders(folderReference)
+                        folderViewModel.onDeleteExternalFolder(folderToBeEdited)
+                    }
+
                     folderViewModel.cancelFolderDialog()
+
+
                 }
                 setNegativeButton(context.getString(R.string.dialog_cancel_button_text)){_, _ ->
                     folderViewModel.cancelFolderDialog()

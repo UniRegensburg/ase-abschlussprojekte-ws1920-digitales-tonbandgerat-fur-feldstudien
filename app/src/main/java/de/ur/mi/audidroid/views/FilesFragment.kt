@@ -21,6 +21,7 @@ import de.ur.mi.audidroid.adapter.FolderAdapter
 import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
@@ -63,6 +64,32 @@ class FilesFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
+        folderViewModel.initFolderSorting()
+        folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
+        folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
+        folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
+        folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
+        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {container?.invalidate()})
+        filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {})
+
+        observeSnackBars()
+
+        // Observer on the state variable for navigating when a list-item is clicked.
+        filesViewModel.navigateToPlayerFragment.observe(
+            viewLifecycleOwner,
+            Observer { recordingId ->
+                recordingId?.let {
+                    this.findNavController().navigate(
+                        FilesFragmentDirections
+                            .actionFilesToPlayer(recordingId)
+                    )
+                    filesViewModel.onPlayerFragmentNavigated()
+                }
+            })
+        return binding.root
+    }
+
+    private fun observeSnackBars(){
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -80,35 +107,10 @@ class FilesFragment : Fragment() {
                 folderViewModel.doneShowingSnackbar()
             }
         })
-        folderViewModel.initFolderSorting()
-
-        folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
-        folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
-        //folderViewModel.allInternalFolders.observe(viewLifecycleOwner, Observer {})
-        //folderViewModel.allExternalFolders.observe(viewLifecycleOwner, Observer {container?.invalidate()})
-        folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
-        folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
-        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {container?.invalidate()})
-        filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {})
-
-        // Observer on the state variable for navigating when a list-item is clicked.
-        filesViewModel.navigateToPlayerFragment.observe(
-            viewLifecycleOwner,
-            Observer { recordingId ->
-                recordingId?.let {
-                    this.findNavController().navigate(
-                        FilesFragmentDirections
-                            .actionFilesToPlayer(recordingId)
-                    )
-                    filesViewModel.onPlayerFragmentNavigated()
-                }
-            })
-
-        return binding.root
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.
-    fun openPopupMenu(entryEntity: EntryEntity, view: View) {
+    fun openRecordingPopupMenu(entryEntity: EntryEntity, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
@@ -123,7 +125,6 @@ class FilesFragment : Fragment() {
                 }
                 R.id.action_share_recording -> {
                     filesViewModel.recordingToBeExported = entryEntity
-                   // filesViewModel._createAlertDialog.value = true
                     filesViewModel.createAlertConvertDialog.value = true
                 }
             }
@@ -132,12 +133,23 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
+    // When the ImageButton is clicked, a PopupMenu opens.
+    fun openFolderPopupMenu(folder: FolderEntity, view: View){
+        val popupMenu = PopupMenu(context, view)
+        folderViewModel.folderToBeEdited = folder
+        popupMenu.menuInflater.inflate(R.menu.popup_menu_folder, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId){
+                R.id.action_add_subfolder ->
+                    folderViewModel.onAddFolderClicked(folder)
+                R.id.action_delete_folder ->
+                    folderViewModel.onDeleteFolderClicked(folder, view)
+            }
+            true
+        }
+        popupMenu.show()
+    }
 
-    /* R.id.action_move_recording ->{
-                        recordingToBeMoved = entryEntity
-                        _createAlertFolderDialog.value = true
-                    }
-    * */
     private fun navigateToEditFragment(entryEntity: EntryEntity) {
         this.findNavController().navigate(
             FilesFragmentDirections.actionFilesToEdit(entryEntity.uid)
@@ -160,13 +172,12 @@ class FilesFragment : Fragment() {
             folderAdapter = FolderAdapter(this, filesViewModel, folderViewModel)
             externalFolderAdapter = ExternalFolderAdapter(this, filesViewModel, folderViewModel)
 
-            //binding of adapters to Views
             binding.recordingListNoFolder.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
             binding.externalFolderList.adapter = externalFolderAdapter
             binding.addExternalFolder.setOnClickListener { _ -> onClickAddExternalFolder() }
 
-            //Sets Adapter to RecyclingView for Recordings with no folder association
+            //Sets Adapter to RecyclingView for Recordings with no folder association.
             filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     var array = arrayListOf<EntryEntity>()
@@ -176,7 +187,7 @@ class FilesFragment : Fragment() {
                 }
             })
 
-            //Sets Adapters to RecyclingView containing the known folders and their content
+            //Sets Adapters to RecyclingView containing the known folders and their content.
             folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     folderAdapter.submitList(it)
@@ -192,24 +203,11 @@ class FilesFragment : Fragment() {
                 }
             })
         }
-        /*   >>>>>>> master: alter adapter für recording list
-        adapter = RecordingItemAdapter(this, filesViewModel)
-        binding.recordingList.adapter = adapter
-
-        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                var array = arrayListOf<EntryEntity>()
-                array = filesViewModel.checkExistence(it, array)
-                adapter.submitList(array)
-            }
-        })*/
     }
-
-
 
     private fun createConfirmDialog() {
 
-        //master -> Dialog fürs löschen von Einträgen
+        //Dialog for deletion of recording.
         filesViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 FilesDialog.createFilesDialog(
@@ -221,12 +219,7 @@ class FilesFragment : Fragment() {
                 )
             }
         })
-
-
-
-        //meinz
-
-        // ersetzt createAlertDialog -> Dialog fürs konvertieren
+        //Dialog for conversion of recording.
         filesViewModel.createAlertConvertDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 ConvertDialog.createDialog(
@@ -236,8 +229,7 @@ class FilesFragment : Fragment() {
                 )
             }
         })
-
-        // Dialog fürs verschieben von Einträgen
+        //Dialog for movement of recording.
         filesViewModel.createAlertFolderDialog.observe(viewLifecycleOwner, Observer {
             if (it){
                 FolderDialog.createDialog(
@@ -252,8 +244,7 @@ class FilesFragment : Fragment() {
                 )
             }
         })
-
-        // dialog fürs erstellen von Ordnern
+        //Dialog for creation of folder.
         folderViewModel.createAlertFolderDialog.observe(this, Observer {
             if (it){
                 FolderDialog.createDialog(
@@ -268,8 +259,7 @@ class FilesFragment : Fragment() {
 
             }
         })
-
-        // dialog fürs löschen von Ordnern inklusive inhalt
+        //Dialog for deletion of folder.
         folderViewModel.createConfirmDialog.observe(this, Observer {
             if (it){
                 FolderDialog.createDialog(
@@ -282,15 +272,9 @@ class FilesFragment : Fragment() {
                     listOfAvailableFolders = folderViewModel.allFolders.value)
             }
         })
-
-
-
-
     }
 
-    /**
-     * Provides the access to an external folder.
-     */
+   //Allows the creation of a new external folder.
     private fun onClickAddExternalFolder(){
         startActivityForResult(StorageHelper.setOpenDocumentTreeIntent(),
             resources.getInteger(R.integer.activity_request_code_external_folder))

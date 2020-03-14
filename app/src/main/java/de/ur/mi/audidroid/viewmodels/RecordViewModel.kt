@@ -54,7 +54,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private val _createDialog = MutableLiveData<Boolean>()
     var errorMessage: String? = null
 
-
     init {
         isRecording.value = false
         buttonsVisible.value = false
@@ -191,7 +190,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         mediaRecorder.resume()
     }
 
-
     //Checks the uniqueness of a name at the given location; works for internal and external storage
     private fun checkExternalNameUniqueness(targetDir: Uri, name: String): Boolean{
         val f = DocumentFile.fromTreeUri(context!!, targetDir)!!
@@ -223,14 +221,11 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
     }
 
-    //fun getNewFileFromUserInput(nameInput: String?, pathInput: String?) {
-
     fun getNewFileFromUserInput(
         nameInput: String?,
         pathInput: String?,
         labels: ArrayList<Int>?
     ) {
-
         _createDialog.value = false
         val name = nameInput ?: java.lang.String.format(
             "%s_%s",
@@ -248,7 +243,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             errorDialog(res.getString(R.string.dialog_name_length))
             return
         }
-
         var path = java.lang.String.format(
             "%s/$name%s",
             (pathInput ?: context.filesDir.absolutePath),
@@ -263,9 +257,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         }
 
         endRecordSession()
-
-
-        //<<<<<<< MEINZ
         val fileIsInternal = storagePref.toString().equals(res.getString(R.string.storage_location_default))
         if (fileIsInternal){
             File(tempFile).copyTo(newFile)
@@ -274,18 +265,12 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
                 File(tempFile), name, getStoragePreference())
             newFile.delete()
         }
-
-        //>>>>>>> master
-        //File(tempFile).copyTo(newFile)
-
-
-
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
 
         var folderRef: Int? = null
         if (!fileIsInternal){
             val folderPath = StorageHelper.getExternalFolderPath(context, path, name)
-            folderRef = StorageHelper.handleFolderReferece(folderPath!!, allFolders.value!!, repository)
+            folderRef = StorageHelper.handleFolderReference(folderPath!!, allFolders.value!!, repository)
         }
 
         val audio =
@@ -302,7 +287,6 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         resetView()
         errorMessage = null
     }
-
 
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
         val uid = dataSource.insertRecording(audio).toInt()

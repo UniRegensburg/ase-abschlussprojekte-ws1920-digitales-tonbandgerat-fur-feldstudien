@@ -17,14 +17,6 @@ import java.io.IOException
  */
 
 object StorageHelper {
-    fun handleFolderReferece(path: String, allFolders: List<FolderEntity>, repository: Repository):Int{
-        allFolders.forEach {
-            if (it.dirPath == path){
-               return it.uid
-            }
-        }
-        return createFolderFromUri(repository, path)
-    }
 
     fun setOpenDocumentTreeIntent():Intent{
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
@@ -32,6 +24,15 @@ object StorageHelper {
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         return intent
+    }
+
+    fun handleFolderReference(path: String, allFolders: List<FolderEntity>, repository: Repository):Int{
+        allFolders.forEach {
+            if (it.dirPath == path){
+               return it.uid
+            }
+        }
+        return createFolderFromUri(repository, path)
     }
 
     fun deleteFile(context: Context, entryEntity: EntryEntity): Boolean{
@@ -90,7 +91,6 @@ object StorageHelper {
 
     //Returns a sorted list of FolderEntries, derived from the parentDir reference.
     fun getInternalFolderHierarchy(allFolders: List<FolderEntity>): List<FolderEntity>? {
-
         if (allFolders.isNotEmpty()) {
             val foldersSorted: MutableList<FolderEntity> = mutableListOf()
             allFolders.forEach {
@@ -114,7 +114,7 @@ object StorageHelper {
         return null
     }
 
-    //Checks if String is a potential ContentUri.
+
     fun getExternalFolderPath(context: Context,path: String, name: String): String?{
         if (path.startsWith(context.resources.getString(R.string.content_uri_prefix))) {
             return path.substringBeforeLast(name)
@@ -122,11 +122,11 @@ object StorageHelper {
         return null
     }
 
-    fun getDocumentName(context: Context?, name: String): String{
+    private fun getDocumentName(context: Context?, name: String): String{
         return name + context!!.resources.getString(R.string.suffix_audio_file)
     }
 
-    fun moveRecordingExternaly(context: Context, entryEntity: EntryEntity, folderPath: String): String?{
+    fun moveRecordingExternally(context: Context, entryEntity: EntryEntity, folderPath: String): String?{
         var newPath: String? = null
         if(folderPath.contains(context.getString(R.string.content_uri_prefix))){
 
@@ -156,13 +156,13 @@ object StorageHelper {
 
     fun createFolderFromUri(repository: Repository ,path: String): Int{
         val uri = Uri.parse(path)
-        var name = getFolderName(uri.lastPathSegment.toString())
+        val name = getFolderName(uri.lastPathSegment.toString())
         val newFolderEntity = FolderEntity(0, name,
             path, true, null, uri.lastPathSegment.toString())
         return repository.insertFolder(newFolderEntity).toInt()
     }
 
-    //creates an external File and copies the content of a File there
+    //Creates an external File and copies the content of a File there.
     fun createExternalFile(context: Context,tempFile: File,name: String, treeUri: Uri): String{
         val newName = getDocumentName(context, name)
         val preferredDir = DocumentFile.fromTreeUri(context, treeUri)!!
@@ -171,7 +171,7 @@ object StorageHelper {
         return newExternalFile.uri.toString()
     }
 
-    fun copyToExternalFile (context: Context, src: File, dst: DocumentFile): Boolean{
+    private fun copyToExternalFile (context: Context, src: File, dst: DocumentFile): Boolean{
         try {
             val inputStream = src.inputStream()
             val outputStream = context.contentResolver.openOutputStream(dst.uri)
@@ -184,20 +184,16 @@ object StorageHelper {
         }
     }
 
-    // deletes list of recordings in folder; if folder is empty afterwards delete it too
-    fun deleteExternalFolderAndContent(context: Context, path: String, names: List<String>): Boolean{
+    fun handleExternalFolderDeletion(context: Context, path: String): Boolean{
         var sucessfull = false
-        names.forEach {
-            sucessfull = deleteExternalFile(context, path, it)
-        }
         if (checkExternalFolderEmpty(context,path)){
-            deleteExternalFolder(context,path)
+           sucessfull = deleteExternalFolder(context,path)
         }
         return sucessfull
     }
 
 
-    fun deleteExternalFolder(context: Context, path: String): Boolean{
+    private fun deleteExternalFolder(context: Context, path: String): Boolean{
         val treeUri = Uri.parse(path)
         val dir = DocumentFile.fromTreeUri(context,treeUri)
 
@@ -208,7 +204,7 @@ object StorageHelper {
     }
 
     //checks if external folder is empty
-    fun checkExternalFolderEmpty(context: Context, path: String): Boolean{
+    private fun checkExternalFolderEmpty(context: Context, path: String): Boolean{
         val treeUri = Uri.parse(path)
         val dir = DocumentFile.fromTreeUri(context,treeUri)
         if (dir!!.listFiles().isEmpty()){

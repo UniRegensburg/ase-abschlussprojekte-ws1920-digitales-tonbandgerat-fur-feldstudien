@@ -175,6 +175,5 @@ class Repository(application: Application) : CoroutineScope {
 
     fun getRecordingFromIdInclLabels(uid: Int): List<RecordingAndLabel> {
         return labelAssignmentDao.getRecordingFromIdInclLabels(uid)
-
     }
 }

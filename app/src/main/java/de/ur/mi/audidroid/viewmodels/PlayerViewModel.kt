@@ -9,7 +9,6 @@ import android.os.Handler
 import android.text.format.DateUtils
 import android.widget.FrameLayout
 import android.widget.SeekBar
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -20,7 +19,6 @@ import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.MarkerTimeRelation
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
-import java.io.FileDescriptor
 import java.io.IOException
 
 /**
@@ -39,8 +37,6 @@ class PlayerViewModel(
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
-//<<<<<<< HEAD
-    //private val path = recordingPath
     val recording: LiveData<EntryEntity> =
         repository.getRecordingById(recordingId)
     val allMarks: LiveData<List<MarkerTimeRelation>> = repository.getAllMarks(recordingId)
@@ -86,11 +82,6 @@ class PlayerViewModel(
                         .setContentType(CONTENT_TYPE_SPEECH)
                         .build()
                 )
-                /* MASTER:
-                    setDataSource(context, uri)
-                * */
-
-
                 if (recordingPath.startsWith(res.getString(R.string.content_uri_prefix))){
                     val uri = Uri.parse(recordingPath)
                     val fd = context.contentResolver.openFileDescriptor(uri, "rw")!!.fileDescriptor

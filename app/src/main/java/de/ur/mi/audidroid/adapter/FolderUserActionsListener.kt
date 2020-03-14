@@ -6,6 +6,5 @@ import de.ur.mi.audidroid.models.FolderEntity
 interface FolderUserActionsListener {
     fun onAddFolderClicked(folderEntity: FolderEntity? = null, view: View)
 
-    fun onFolderMenuClicked(folderEntity: FolderEntity, view: View)
-
+    fun openFolderPopupMenu(folderEntity: FolderEntity, view: View)
 }

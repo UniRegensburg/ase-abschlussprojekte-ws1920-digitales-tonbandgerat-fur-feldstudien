@@ -4,7 +4,6 @@ package de.ur.mi.audidroid.viewmodels
 import android.app.Application
 import android.content.res.Resources
 import android.view.View
-import android.widget.PopupMenu
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -35,8 +34,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     var errorMessage: String? = null
     var addFolder: Boolean? = null
     var folderToBeEdited: FolderEntity? = null
-
-
+    private var folderView: View? = null
 
     private var _showSnackbarEvent = MutableLiveData<String>()
 
@@ -57,6 +55,8 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         errorMessage = null
         _createAlertFolderDialog.value = false
         _createConfirmDialog.value = false
+        folderView = null
+
     }
 
     fun isSubfolder(folder: FolderEntity): Boolean{
@@ -66,39 +66,21 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     // The lists with the content for the two Folder RecyclerViews are prepared and curated.
     fun initFolderSorting(){
-
         allInternalFoldersSorted.removeSource(allInternalFolders)
         allInternalFoldersSorted.addSource(allInternalFolders){
             allInternalFoldersSorted.value = StorageHelper.getInternalFolderHierarchy(allInternalFolders.value!!)
         }
-
         allExternalFoldersSorted.removeSource(allExternalFolders)
         allExternalFoldersSorted.addSource(allExternalFolders){
             allExternalFoldersSorted.value = allExternalFolders.value
         }
     }
 
-    // When the ImageButton is clicked, a PopupMenu opens.
-    fun onFolderMenuClicked(folder: FolderEntity, view:View){
-        val popupMenu = PopupMenu(context, view)
-        folderToBeEdited = folder
-        popupMenu.menuInflater.inflate(R.menu.popup_menu_folder, popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId){
-                R.id.action_add_subfolder ->
-                    onAddFolderClicked(folder)
-                R.id.action_delete_folder ->
-                    onDeleteFolderClicked(folder)
-            }
-            true
-        }
-        popupMenu.show()
-    }
-
-    private fun onDeleteFolderClicked( folderEntity: FolderEntity){
+    fun onDeleteFolderClicked( folderEntity: FolderEntity, view: View){
         folderToBeEdited = folderEntity
         dialogType = R.string.confirm_dialog
         _createConfirmDialog.value = true
+        folderView = view
     }
 
     // Handles the reference in the Database for the ActivityForResult result.
@@ -115,30 +97,33 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-    fun deleteFolderFromDB(folderList: List<FolderEntity>) {
+    private fun deleteFolderFromDB(folderList: List<FolderEntity>) {
         folderList.forEach { repository.deleteFolder(it) }
         _showSnackbarEvent.value = res.getString(R.string.delete)
         folderToBeEdited = null
     }
 
-
     fun onDeleteFolderAndContent(folder: FolderEntity): List<Int>{
-
         val folderReferences = mutableListOf<Int>()
         if (!folder.isExternal){
-            val allFoldersToBeDeleted = StorageHelper.getAllInternalSubFolders(allFolders.value!!, mutableListOf(folder))
+           val allFoldersToBeDeleted = StorageHelper.getAllInternalSubFolders(allFolders.value!!, mutableListOf(folder))
             allFoldersToBeDeleted.forEach {
-                folderReferences.add(it.uid)
-            }
+                folderReferences.add(it.uid) }
             deleteFolderFromDB(allFoldersToBeDeleted)
-        }else{
-            deleteFolderFromDB(listOf(folder))
         }
+        folderView!!.invalidate()
+        folderView = null
         folderToBeEdited = null
         return folderReferences
     }
 
-    //==============================================================================
+    fun onDeleteExternalFolder(folder: FolderEntity){
+        StorageHelper.handleExternalFolderDeletion(context, folder.dirPath!!)
+        folderView!!.invalidate()
+        folderView = null
+        folderToBeEdited = null
+    }
+
     // Allows Databinding for the primary Add-Folder-Button
     fun onAddInternalFolderClicked(){
         onAddFolderClicked(null)
@@ -158,7 +143,6 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             _createAlertFolderDialog.value = true
             return
         }
-
         if (!validName(nameInput)) {
             errorMessage = res.getString(R.string.dialog_folder_invalid_name)
             _createAlertFolderDialog.value = true
@@ -170,13 +154,10 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             return
         }
 
-
         folderToBeEdited = null
         addFolder = null
         errorMessage = null
-
         createFolderInDB(nameInput, parentFolder)
-
         _showSnackbarEvent.value = res.getString(R.string.create_folder)
     }
 
@@ -198,11 +179,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         return Pattern.compile("^[a-zA-Z0-9_-]{1,10}$").matcher(folderName).matches()
     }
 
-
-    //==============================================================================
-
     fun onMoveRecordingToFolder(recording: EntryEntity, destFolder: FolderEntity?){
-
         var newRecordingPath: String? = null
         var folderRef: Int? = null
         var moveSuccessful = true
@@ -211,15 +188,12 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             folderRef = destFolder.uid
         }
         if (destFolder != null && destFolder.isExternal){
-            //make an operation outside, ie int -> ext, ext ->
-
-            newRecordingPath = StorageHelper.moveRecordingExternaly(context, recording, destFolder.dirPath!!)
+            newRecordingPath = StorageHelper.moveRecordingExternally(context, recording, destFolder.dirPath!!)
             if (newRecordingPath == null){
                 moveSuccessful = false
             }
         }
         if (moveSuccessful){
-
             updateFolderReference(recording, folderRef , newRecordingPath)
         }
     }

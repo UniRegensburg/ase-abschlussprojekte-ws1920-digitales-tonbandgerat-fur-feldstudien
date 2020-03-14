@@ -21,20 +21,20 @@ class FolderAdapter(
     private val folderViewModel: FolderViewModel) :
     ListAdapter<FolderEntity, FolderAdapter.ViewHolder>(FolderDiffCallback()) {
 
-    lateinit var holderContext: Context
-    lateinit var recordingAdapter: RecordingItemAdapter
-    lateinit var folderItem: FolderEntity //FolderEntry der gerade bearbeitet wird
-    var isSubfolder: Boolean = false
+    private lateinit var holderContext: Context
+    private lateinit var recordingAdapter: RecordingItemAdapter
+    private lateinit var folderItem: FolderEntity //FolderEntry der gerade bearbeitet wird
+    private var isSubfolder: Boolean = false
 
-    val folderUserActionsListener = object : FolderUserActionsListener{
+    private val folderUserActionsListener = object : FolderUserActionsListener{
         override fun onAddFolderClicked(folderEntity: FolderEntity?, view: View) {
             folderViewModel.onAddFolderClicked(folderEntity)
         }
-        override fun onFolderMenuClicked(folderEntity: FolderEntity, view: View) {
-            folderViewModel.onFolderMenuClicked(folderEntity, view)
+
+        override fun openFolderPopupMenu(folderEntity: FolderEntity, view: View) {
+            filesFragment.openFolderPopupMenu(folderEntity, view)
         }
     }
-
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         folderItem = getItem(position)
@@ -73,7 +73,7 @@ class FolderAdapter(
         }
     }
 
-    //adapter, which is provided for the nested recyclerview
+    //Adapter, which is provided for the nested recyclerview
     private fun setUpRecordingAdapter(holder: ViewHolder) {
         val filesViewModel = filesViewModel
         val recordings = filesViewModel.getAllRecordingsByFolder(folderItem)
@@ -89,7 +89,6 @@ class FolderAdapter(
     }
 }
 
-// DiffUtil uses these two methods to figure out how the list and items have changed
 class FolderDiffCallback : DiffUtil.ItemCallback<FolderEntity>() {
 
     override fun areItemsTheSame(oldItem: FolderEntity, newItem: FolderEntity): Boolean {

@@ -30,7 +30,7 @@ class RecordingItemAdapter(
         }
 
         override fun onButtonClicked(entryEntity: EntryEntity, view: View) {
-            filesFragment.openPopupMenu(entryEntity, view)
+            filesFragment.openRecordingPopupMenu(entryEntity, view)
         }
     }
 

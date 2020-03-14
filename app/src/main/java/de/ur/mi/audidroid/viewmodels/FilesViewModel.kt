@@ -32,27 +32,17 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     var errorMessage: String? = null
     var recording: EntryEntity? = null
 
-
-    //meinz
     private val _createAlertConvertDialog = MutableLiveData<Boolean>()
     val createAlertConvertDialog: MutableLiveData<Boolean>
         get() = _createAlertConvertDialog
-    //meinz
+
     private val _createAlertFolderDialog = MutableLiveData<Boolean>()
     val createAlertFolderDialog: MutableLiveData<Boolean>
         get() = _createAlertFolderDialog
 
-
-    //master -> wird beim löschen von Einträgen aufgerufen
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val createConfirmDialog: LiveData<Boolean>
         get() = _createConfirmDialog
-    //master
-    //val _createAlertDialog = MutableLiveData<Boolean>()
-    //val createAlertDialog: MutableLiveData<Boolean>
-    //    get() = _createAlertDialog
-
-
 
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
     val showSnackbarEvent: LiveData<Boolean>
@@ -71,52 +61,19 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         it.isEmpty()
     }
 
-
-
-    /*HEAD
-    // When the ImageButton is clicked, a PopupMenu opens.
-    fun onButtonClicked(entryEntity: EntryEntity, view: View) {
-        val popupMenu = PopupMenu(context, view)
-        popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_delete_recording ->
-                    delete(entryEntity)
-                R.id.action_move_recording ->{
-                    recordingToBeMoved = entryEntity
-                    _createAlertFolderDialog.value = true
-                }
-                R.id.action_share_recording -> {
-                    recordingToBeExported = entryEntity
-                    _createAlertConvertDialog.value = true
-                }
-            }
-            true
-        }
-        popupMenu.show()
-    }*/
-
     fun shareRecording(format: String) {
         ShareHelper.shareAudio(recordingToBeExported!!, format, context)
         _createAlertConvertDialog.value = false
     }
 
-
-
-    /*<<<<<< HEAD
-    private fun delete(entryEntity: EntryEntity) {
-        val deletedSuccessful = StorageHelper.deleteFile(context, entryEntity)
-        if (deletedSuccessful) {
-            repository.delete(entryEntity)
-            _showSnackbarEvent.value = true*/
     fun delete(entryEntity: EntryEntity) {
         recording = entryEntity
         _createConfirmDialog.value = true
     }
 
     fun deleteRecording(entryEntity: EntryEntity) {
-        val file = File(entryEntity.recordingPath)
-        if (file.delete()) {
+        val deletedSuccessful = StorageHelper.deleteFile(context, entryEntity)
+        if (deletedSuccessful) {
             repository.deleteRecording(entryEntity)
             showSnackBar(
                 String.format(
@@ -161,7 +118,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         return array
     }
 
-
     /** Checks if a recording is allowed to be moved to the destination, i. e. catch and deny
      *  the attempt of moving an external file to the internal storage (via 'remove from folder').
      */
@@ -178,8 +134,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         recordingToBeMoved = null
     }
 
-
-    fun deleteEntriesInInternalFolders(folderRefs: List<Int>) {
+    fun deleteEntriesInFolders(folderRefs: List<Int>) {
         if (folderRefs.isNotEmpty()){
             folderRefs.forEach {ref ->
                 allRecordings.value!!.forEach {
