@@ -29,54 +29,79 @@
             android:padding="@dimen/constraint_layout_padding">
 
             <LinearLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="wrap_content"
+                android:id="@+id/layout_card_view"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
+                android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/text_recording_date"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/icon_audio_file"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@{recording.date}"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
+                    android:layout_gravity="center"
+                    android:layout_weight="0.15"
+                    android:contentDescription="@string/content_description_audio_files"
+                    android:tint="@color/color_on_surface"
+                    app:srcCompat="@drawable/ic_menu_audiofiles" />
 
-                <TextView
-                    android:id="@+id/label_name"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:id="@+id/layout_recording"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="@{recording.recordingName}"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body1" />
+                    android:layout_weight="0.75"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/text_recording_time"
-                    android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/text_recording_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{recording.date}"
+                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
+
+                    <TextView
+                        android:id="@+id/label_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@{recording.recordingName}"
+                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Body1" />
+
+                    <TextView
+                        android:id="@+id/text_recording_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{recording.duration}"
+                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
+
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/button_popup_menu"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@{recording.duration}"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
+                    android:layout_gravity="center"
+                    android:layout_weight="0.1"
+                    android:background="@null"
+                    android:contentDescription="@string/popup_menu_button"
+                    android:onClick="@{(view) -> listener.onButtonClicked(recording, view)}"
+                    android:padding="@dimen/keyline_2"
+                    android:src="@drawable/ic_popup_menu"
+                    android:tint="@color/color_on_surface"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
 
             </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/button_popup_menu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:contentDescription="@string/popup_menu_button"
-                android:onClick="@{(view) -> listener.onButtonClicked(recording, view)}"
-                android:padding="@dimen/keyline_2"
-                android:src="@drawable/ic_popup_menu"
-                android:tint="@color/color_on_surface"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

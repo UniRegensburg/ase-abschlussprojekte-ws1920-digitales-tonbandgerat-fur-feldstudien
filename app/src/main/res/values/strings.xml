@@ -49,6 +49,7 @@
     <string name="error_message_file_cannot_be_deleted">File cannot be deleted.</string>
     <string name="error_message_path_does_not_exist">File cannot be deleted. File path does not exist.</string>
     <string name="delete_recording_dialog_header">Delete recording \'%1$s\'?</string>
+    <string name="content_description_audio_files">Audio files icon</string>
 
     <!-- EditRecordingFragment -->
     <string name="cut_inner_button">Cut inner</string>
