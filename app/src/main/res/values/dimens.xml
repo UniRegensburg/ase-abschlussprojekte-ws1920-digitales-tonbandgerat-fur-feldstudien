@@ -38,8 +38,9 @@
     <!--BottomBar-->
     <dimen name="bar_size_fab">72dp</dimen>
     <dimen name="bar_size_image">32dp</dimen>
-    <dimen name="bar_margin">70dp</dimen>
+    <dimen name="bar_margin_start_end">62dp</dimen>
     <dimen name="bar_cradle_margin">6dp</dimen>
+    <dimen name="bar_margin_bottom">13dp</dimen>
 
     <!-- Dialog -->
     <dimen name="dialog_padding">@dimen/keyline_5</dimen>

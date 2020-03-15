@@ -14,10 +14,14 @@ import android.widget.SeekBar
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
+import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.LabelAssignmentEntity
+import de.ur.mi.audidroid.models.MarkerTimeRelation
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
-import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.utils.HandlePlayerBar
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
 import io.apptik.widget.MultiSlider.Thumb
@@ -30,7 +34,8 @@ import java.util.regex.Pattern
 class EditRecordingViewModel(
     private val recordingId: Int,
     dataSource: Repository,
-    application: Application
+    application: Application,
+    val handlePlayerBar: HandlePlayerBar
 ) :
     AndroidViewModel(application) {
 
@@ -49,7 +54,6 @@ class EditRecordingViewModel(
     var audioInProgress = MutableLiveData<Boolean>()
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
-    var isPlayerViewModel = MutableLiveData<Boolean>()
     var tempFile = ""
     var errorMessage: String? = null
     private var editRecordingId: Int = 0
@@ -101,7 +105,6 @@ class EditRecordingViewModel(
 
     fun initializeMediaPlayer() {
         isPlaying.value = false
-        isPlayerViewModel.value = false
         val uri: Uri = Uri.fromFile(File(tempFile))
         mediaPlayer = MediaPlayer().apply {
             try {
@@ -182,6 +185,7 @@ class EditRecordingViewModel(
         handler.removeCallbacks(runnable)
         isPlaying.value = mediaPlayer.isPlaying
         initializeMediaPlayer()
+        initializeSeekBar(seekBar)
     }
 
     override fun onCleared() {
@@ -446,5 +450,13 @@ class EditRecordingViewModel(
 
     private fun getDate(): String {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
+    }
+
+    fun skipPlaying() {
+        handlePlayerBar.doSkippingPlaying(mediaPlayer, context)
+    }
+
+    fun returnPlaying() {
+        handlePlayerBar.doReturnPlaying(mediaPlayer, context)
     }
 }

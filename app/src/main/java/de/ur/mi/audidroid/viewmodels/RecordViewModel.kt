@@ -49,12 +49,13 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     var errorMessage: String? = null
     lateinit var chronometer: TextView
 
-    init {
-        buttonsVisible.value = false
-    }
-
     val createDialog: MutableLiveData<Boolean>
         get() = _createDialog
+
+    init {
+        buttonsVisible.value = false
+        createDialog.value = false
+    }
 
     fun initializeTimer(chronometer: TextView) {
         this.chronometer = chronometer
@@ -288,7 +289,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun showSnackBarShort(text: Int) {
-        Snackbar.make(frameLayout, text, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(frameLayout, text, res.getInteger(R.integer.snackbar_quite_short)).show()
     }
 
     /** Resets timer to 00:00 */
