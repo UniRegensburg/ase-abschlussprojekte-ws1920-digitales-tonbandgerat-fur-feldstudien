@@ -49,14 +49,14 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     val res: Resources = context.resources
     private val _createDialog = MutableLiveData<Boolean>()
     var errorMessage: String? = null
+    val createDialog: MutableLiveData<Boolean>
+        get() = _createDialog
 
     init {
         isRecording.value = false
         buttonsVisible.value = false
+        createDialog.value = false
     }
-
-    val createDialog: MutableLiveData<Boolean>
-        get() = _createDialog
 
     fun initializeTimer(chronometer: Chronometer) {
         timer = chronometer
@@ -288,7 +288,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun showSnackBarShort(text: Int) {
-        Snackbar.make(frameLayout, text, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(frameLayout, text, res.getInteger(R.integer.snackbar_quite_short)).show()
     }
 
     /** Returns the last stopped time as an Integer value */

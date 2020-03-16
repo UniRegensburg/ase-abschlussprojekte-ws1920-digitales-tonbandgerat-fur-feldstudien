@@ -218,9 +218,7 @@
 
         <include
             layout="@layout/bottom_player_bar"
-            bind:editRecordingViewModel="@{editRecordingViewModel}"
             bind:handlePlayerBar="@{handlePlayerBar}"
-            bind:isPlayerViewModel="@{editRecordingViewModel.isPlayerViewModel}"
             bind:isPlaying="@{editRecordingViewModel.isPlaying()}" />
 
     </FrameLayout>
