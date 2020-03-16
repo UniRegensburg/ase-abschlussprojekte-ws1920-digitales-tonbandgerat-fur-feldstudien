@@ -126,7 +126,7 @@ class RecordViewModel(
     }
 
     fun fragmentOnPause() {
-        deleteRecord()
+        if(recorderInitialized && createDialog.value == false && timer.text.toString()!= "00:00") deleteRecord()
     }
 
     fun cancelRecord() {
