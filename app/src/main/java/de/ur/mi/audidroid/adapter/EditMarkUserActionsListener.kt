@@ -1,9 +1,9 @@
 package de.ur.mi.audidroid.adapter
 
-import de.ur.mi.audidroid.models.MarkTimestamp
+import de.ur.mi.audidroid.models.MarkAndTimestamp
 
 interface EditMarkUserActionsListener {
-    fun onMarkClicked(markerEntity: MarkTimestamp)
+    fun onMarkClicked(mark: MarkAndTimestamp)
 
-    fun onMarkDeleteClicked(markerEntity: MarkTimestamp)
+    fun onMarkDeleteClicked(mark: MarkAndTimestamp)
 }

@@ -2,7 +2,9 @@ package de.ur.mi.audidroid.models
 
 import android.app.Application
 import android.util.Log
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

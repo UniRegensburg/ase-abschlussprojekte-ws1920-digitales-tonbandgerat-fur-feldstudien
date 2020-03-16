@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.player_fragment.*
 
 class EditRecordingFragment : Fragment() {
 
-    private lateinit var adapter: MarkItemAdapter
+    private lateinit var adapter: EditMarkerItemAdapter
     private lateinit var editRecordingViewModel: EditRecordingViewModel
     private lateinit var binding: EditRecordingFragmentBinding
     private lateinit var dataSource: Repository
@@ -85,7 +85,7 @@ class EditRecordingFragment : Fragment() {
 
     private fun setupAdapter() {
 
-        adapter = MarkItemAdapter()
+        adapter = EditMarkerItemAdapter(editRecordingViewModel)
         binding.markerList.adapter = adapter
 
         editRecordingViewModel.allMarks.observe(viewLifecycleOwner, Observer {

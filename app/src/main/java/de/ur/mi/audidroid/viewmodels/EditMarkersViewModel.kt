@@ -69,7 +69,7 @@ class EditMarkersViewModel(dataSource: Repository, application: Application) :
             return
         }
         if (!validName(nameInput)) {
-            errorMessage = res.getString(R.string.dialog_label_invalid_name)
+            errorMessage = res.getString(R.string.dialog_marker_invalid_name)
             _createAlertDialog.value = true
             return
         }

@@ -8,7 +8,7 @@ import androidx.room.OnConflictStrategy.REPLACE
 interface MarkerDao {
 
     @Query("SELECT * FROM markerTable")
-    fun getAllMarkers() : LiveData<List<MarkerEntity>>
+    fun getAllMarkers(): LiveData<List<MarkerEntity>>
 
     @Query("SELECT COUNT(uid) FROM markerTable")
     suspend fun getMarkerCount(): Int

@@ -8,7 +8,7 @@
 
         <variable
             name="mark"
-            type="de.ur.mi.audidroid.models.MarkTimestamp" />
+            type="de.ur.mi.audidroid.models.MarkAndTimestamp" />
 
         <variable
             name="listener"
@@ -44,7 +44,7 @@
                     android:layout_width="@dimen/layout_width_edit_fragment"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.30"
-                    android:text="@string/sample_mark"
+                    android:text="@{mark.marker.markerName }"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body1" />
 
                 <TextView
@@ -62,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.20"
                     android:gravity="center_horizontal"
-                    android:text="@{mark.markTime}"
+                    android:text="@{mark.markTimestamp.markTime}"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
 
                 <ImageButton
