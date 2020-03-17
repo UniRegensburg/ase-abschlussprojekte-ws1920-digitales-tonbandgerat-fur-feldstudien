@@ -63,7 +63,6 @@ object SaveRecordingDialog {
         initializeDialog(errorMessage)
     }
 
-
     private fun initializeDialog(errorMessage: String?) {
         pathTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_textview_path)!!
         selectedPath = getStoragePreference()

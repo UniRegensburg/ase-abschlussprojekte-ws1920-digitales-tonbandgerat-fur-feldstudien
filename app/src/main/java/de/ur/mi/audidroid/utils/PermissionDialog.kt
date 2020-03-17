@@ -12,7 +12,7 @@ import de.ur.mi.audidroid.R
 
 object PermissionDialog {
 
-    fun createDialog(context: Context, textId: Int){
+    fun createDialog(context: Context, textId: Int) {
         val dialog: androidx.appcompat.app.AlertDialog
         val builder = MaterialAlertDialogBuilder(context)
         with(builder) {
