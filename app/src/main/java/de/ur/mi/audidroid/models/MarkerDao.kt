@@ -3,7 +3,6 @@ package de.ur.mi.audidroid.models
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MarkerDao {
@@ -33,12 +32,8 @@ interface MarkerDao {
     suspend fun insertMark(marker: MarkTimestamp)
 
     @Transaction
-    @Query("SELECT * FROM markerTable")
-    fun getMarkAndTimestamp(): LiveData<List<MarkAndTimestamp>>
-
-    @Transaction
     @Query("SELECT DISTINCT * FROM markerTable INNER JOIN markerTimeTable ON markerTable.uid = markerTimeTable.markerId WHERE markerTimeTable.recordingId LIKE :key")
-    fun getMarksById(key: Int): LiveData<List<CombinedMarkAndTimestamp>>
+    fun getMarksById(key: Int): LiveData<List<MarkAndTimestamp>>
 
     @Transaction
     @Query("SELECT * FROM recordingsTable WHERE uid = :key IN (SELECT DISTINCT(mid) FROM markerTimeTable)")

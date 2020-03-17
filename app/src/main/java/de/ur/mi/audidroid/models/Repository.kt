@@ -2,9 +2,7 @@ package de.ur.mi.audidroid.models
 
 import android.app.Application
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -119,7 +117,7 @@ class Repository(application: Application) : CoroutineScope {
         return markerDao.getRecordingFromIdInclMarks(uid)
     }
 
-    fun getAllMarks(uid: Int): LiveData<List<CombinedMarkAndTimestamp>> {
+    fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
         return markerDao.getMarksById(uid)
     }
 

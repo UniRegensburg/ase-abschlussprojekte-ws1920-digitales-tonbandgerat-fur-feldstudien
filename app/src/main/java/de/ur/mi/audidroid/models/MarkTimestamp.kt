@@ -3,7 +3,9 @@ package de.ur.mi.audidroid.models
 import androidx.room.*
 
 /** The MarkerEntity represents the table with the marks a user made.
+ *  MarkTimestamp represents a mark made with a given marker, attached to a given recording.
  *  RecordingAndMarker maps the one-to-many relationship between a recording and its marks.
+ *  MarkNadTimestamp represents the relation between a MarkTimestamp and its corresponding MarkerEntity.
  * @author: Jonas Puchinger, Lisa Sanladerer
  */
 
@@ -21,16 +23,16 @@ data class MarkTimestamp(
     @ColumnInfo(name = "markTime") val markTime: String
 )
 
-data class MarkAndTimestamp(
-    @Embedded val marker: MarkerEntity,
+data class RecordingAndMarks(
+    @Embedded val entryEntity: EntryEntity,
     @Relation(
         parentColumn = "uid",
-        entityColumn = "markerId"
+        entityColumn = "recordingId"
     )
-    val markTimestamp: MarkTimestamp
+    val markList: List<MarkTimestamp>
 )
 
-data class CombinedMarkAndTimestamp(
+data class MarkAndTimestamp(
     @Embedded val marker: MarkerEntity,
     @Embedded val markTimestamp: MarkTimestamp
 )

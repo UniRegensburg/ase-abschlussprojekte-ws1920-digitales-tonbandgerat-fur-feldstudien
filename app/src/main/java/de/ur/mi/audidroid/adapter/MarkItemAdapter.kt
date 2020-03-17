@@ -6,12 +6,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.MarkItemBinding
-import de.ur.mi.audidroid.models.CombinedMarkAndTimestamp
 import de.ur.mi.audidroid.models.MarkAndTimestamp
-import de.ur.mi.audidroid.models.MarkTimestamp
 
 class MarkItemAdapter :
-    ListAdapter<CombinedMarkAndTimestamp, MarkItemAdapter.ViewHolder>(MarkAndTimeStampDiffCallback()) {
+    ListAdapter<MarkAndTimestamp, MarkItemAdapter.ViewHolder>(MarkAndTimeStampDiffCallback()) {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position)!!)
@@ -25,7 +23,7 @@ class MarkItemAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: CombinedMarkAndTimestamp
+            item: MarkAndTimestamp
         ) {
             binding.mark = item
             binding.executePendingBindings()
@@ -41,18 +39,18 @@ class MarkItemAdapter :
     }
 }
 
-class MarkAndTimeStampDiffCallback : DiffUtil.ItemCallback<CombinedMarkAndTimestamp>() {
+class MarkAndTimeStampDiffCallback : DiffUtil.ItemCallback<MarkAndTimestamp>() {
 
     override fun areItemsTheSame(
-        oldItem: CombinedMarkAndTimestamp,
-        newItem: CombinedMarkAndTimestamp
+        oldItem: MarkAndTimestamp,
+        newItem: MarkAndTimestamp
     ): Boolean {
         return oldItem.markTimestamp.mid == newItem.markTimestamp.mid
     }
 
     override fun areContentsTheSame(
-        oldItem: CombinedMarkAndTimestamp,
-        newItem: CombinedMarkAndTimestamp
+        oldItem: MarkAndTimestamp,
+        newItem: MarkAndTimestamp
     ): Boolean {
         return oldItem == newItem
     }
