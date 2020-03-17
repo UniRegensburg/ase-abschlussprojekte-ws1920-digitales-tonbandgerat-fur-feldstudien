@@ -21,6 +21,9 @@ object QuitRecordingDialog {
             }
         }
         val dialog: androidx.appcompat.app.AlertDialog = builder.create()
+        dialog.setOnCancelListener {
+            recordViewModel.cancelDialog()
+        }
         dialog.show()
     }
 }

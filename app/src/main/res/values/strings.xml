@@ -71,6 +71,7 @@
     <string name="suffix_audio_file">.aac</string>
     <string name="standard_name_recording">Rec</string>
     <string name="mark_made">Mark saved</string>
+    <string name="start_time">00:00</string>
 
     <!-- LabelsFragment -->
     <string name="no_labels">No labels defined</string>
