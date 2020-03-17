@@ -1,12 +1,11 @@
 package de.ur.mi.audidroid.views
 
 import android.app.Application
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListAdapter
-import androidx.core.view.size
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,8 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.MarkerButtonAdapter
-import de.ur.mi.audidroid.adapter.MarkerItemAdapter
-import de.ur.mi.audidroid.databinding.MarkerButtonBinding
 import de.ur.mi.audidroid.databinding.RecordFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
@@ -48,7 +45,7 @@ class RecordFragment : Fragment() {
         dataSource = Repository(application)
         binding = DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
 
-        val viewModelFactory = RecordViewModelFactory(dataSource, application)
+        val viewModelFactory = RecordViewModelFactory(dataSource, application, context!!)
         viewModel = ViewModelProvider(this, viewModelFactory).get(RecordViewModel::class.java)
 
         binding.recordViewModel = viewModel
@@ -58,12 +55,13 @@ class RecordFragment : Fragment() {
 
     class RecordViewModelFactory(
         private val dataSource: Repository,
-        private val application: Application
+        private val application: Application,
+        private val context: Context
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return if (modelClass.isAssignableFrom(RecordViewModel::class.java)) {
-                RecordViewModel(dataSource, application) as T
+                RecordViewModel(dataSource, application, context) as T
             } else {
                 throw IllegalArgumentException("ViewModel Not Found")
             }
@@ -77,13 +75,14 @@ class RecordFragment : Fragment() {
         setupAdapter()
         viewModel.createDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
-                de.ur.mi.audidroid.utils.Dialog.createDialog(
+                de.ur.mi.audidroid.utils.SaveRecordingDialog.createDialog(
                     paramContext = context!!,
                     layoutId = R.layout.save_dialog,
-                    viewModel = viewModel,
                     errorMessage = viewModel.errorMessage,
-                    recordFragment = this,
-                    dataSource = dataSource
+                    dataSource = dataSource,
+                    recordViewModel = viewModel,
+                    recordFragment = this
+
                 )
             }
         })
@@ -114,6 +113,6 @@ class RecordFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        viewModel.cancelRecord()
+        viewModel.fragmentOnPause()
     }
 }
