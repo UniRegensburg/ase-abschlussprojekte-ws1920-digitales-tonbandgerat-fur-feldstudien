@@ -133,7 +133,6 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
-    // When the ImageButton is clicked, a PopupMenu opens.
     fun openFolderPopupMenu(folder: FolderEntity, view: View){
         val popupMenu = PopupMenu(context, view)
         folderViewModel.folderToBeEdited = folder

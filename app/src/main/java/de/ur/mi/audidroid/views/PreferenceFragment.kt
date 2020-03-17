@@ -92,32 +92,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             }
     }
 
-
-    /*<<<<<<< HEAD
-    private fun initStoragePreference(){
-        val storagePreference = findPreference<Preference>(getString(R.string.storage_preference_key))!!
-        storagePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            startActivityForResult(StorageHelper.setOpenDocumentTreeIntent(), resources.getInteger(R.integer.activity_request_code_preference_storage))
-            true
-        }
-    }
-    private fun setStoragePreferenceSummary(uri: Uri){
-        val storagePreference = findPreference<Preference>(getString(R.string.storage_preference_key))
-        val summary = uri.pathSegments.last().split(":")[1]
-        storagePreference!!.setSummary(summary)
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == resources.getInteger(R.integer.activity_request_code_preference_storage) &&
-                resultCode == Activity.RESULT_OK){
-            val pref = context!!.getSharedPreferences(getString(R.string.storage_preference_key), Context.MODE_PRIVATE)
-            with (pref.edit()){
-                putString(getString(R.string.storage_preference_key), data!!.dataString)
-                commit()
-            }
-            setStoragePreferenceSummary(data!!.data!!)
-        }
-=======>>>>>>> master*/
     private fun initStoragePreference() {
         val storagePreference =
             findPreference<Preference>(getString(R.string.storage_preference_key))!!

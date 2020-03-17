@@ -23,7 +23,7 @@ class FolderAdapter(
 
     private lateinit var holderContext: Context
     private lateinit var recordingAdapter: RecordingItemAdapter
-    private lateinit var folderItem: FolderEntity //FolderEntry der gerade bearbeitet wird
+    private lateinit var folderItem: FolderEntity
     private var isSubfolder: Boolean = false
 
     private val folderUserActionsListener = object : FolderUserActionsListener{
