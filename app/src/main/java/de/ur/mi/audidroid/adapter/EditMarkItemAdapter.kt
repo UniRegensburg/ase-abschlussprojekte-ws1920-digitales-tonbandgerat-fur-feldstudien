@@ -6,21 +6,21 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.EditMarkItemBinding
-import de.ur.mi.audidroid.models.MarkerTimeRelation
+import de.ur.mi.audidroid.models.MarkAndTimestamp
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 
 class EditMarkerItemAdapter(
     private val editRecordingViewModel: EditRecordingViewModel
 ) :
-    ListAdapter<MarkerTimeRelation, EditMarkerItemAdapter.ViewHolder>(EditMarkDiffCallback()) {
+    ListAdapter<MarkAndTimestamp, EditMarkerItemAdapter.ViewHolder>(EditMarkAndTimeStampDiffCallback()) {
 
-    val userActionsListener = object : EditMarkUserActionsListener {
-        override fun onMarkClicked(markerEntity: MarkerTimeRelation) {
-            editRecordingViewModel.onMarkClicked(markerEntity.markTime)
+    private val userActionsListener = object : EditMarkUserActionsListener {
+        override fun onMarkClicked(mark: MarkAndTimestamp) {
+            editRecordingViewModel.onMarkClicked(mark.markTimestamp.markTime)
         }
 
-        override fun onMarkDeleteClicked(markerEntity: MarkerTimeRelation) {
-            editRecordingViewModel.deleteMark(markerEntity.mid)
+        override fun onMarkDeleteClicked(mark: MarkAndTimestamp) {
+            editRecordingViewModel.deleteMark(mark.markTimestamp.mid)
         }
     }
 
@@ -36,7 +36,7 @@ class EditMarkerItemAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: MarkerTimeRelation,
+            item: MarkAndTimestamp,
             listener: EditMarkUserActionsListener
         ) {
             binding.mark = item
@@ -54,18 +54,18 @@ class EditMarkerItemAdapter(
     }
 }
 
-class EditMarkDiffCallback : DiffUtil.ItemCallback<MarkerTimeRelation>() {
+class EditMarkAndTimeStampDiffCallback : DiffUtil.ItemCallback<MarkAndTimestamp>() {
 
     override fun areItemsTheSame(
-        oldItem: MarkerTimeRelation,
-        newItem: MarkerTimeRelation
+        oldItem: MarkAndTimestamp,
+        newItem: MarkAndTimestamp
     ): Boolean {
-        return oldItem.mid == newItem.mid
+        return oldItem.markTimestamp.mid == newItem.markTimestamp.mid
     }
 
     override fun areContentsTheSame(
-        oldItem: MarkerTimeRelation,
-        newItem: MarkerTimeRelation
+        oldItem: MarkAndTimestamp,
+        newItem: MarkAndTimestamp
     ): Boolean {
         return oldItem == newItem
     }

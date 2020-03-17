@@ -1,22 +1,21 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.content.Context
 import android.content.res.Resources
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.SystemClock
 import android.text.format.DateUtils
-import android.view.View
 import android.widget.Chronometer
 import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.LabelAssignmentEntity
-import de.ur.mi.audidroid.models.MarkerTimeRelation
-import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.utils.QuitRecordingDialog
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -28,9 +27,14 @@ import java.util.regex.Pattern
  * @author: Sabine Roth
  */
 
-class RecordViewModel(private val dataSource: Repository, application: Application) :
+class RecordViewModel(
+    private val dataSource: Repository,
+    application: Application,
+    private val activityContext: Context
+) :
     AndroidViewModel(application) {
 
+    private val repository = dataSource
     private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
     private var tempFile = ""
@@ -39,7 +43,8 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private lateinit var frameLayout: FrameLayout
     private var recorderInitialized = false
     private val context = getApplication<Application>().applicationContext
-    private var markList = mutableListOf<Pair<String, String>>()
+    val allMarkers: LiveData<List<MarkerEntity>> = repository.getAllMarkers()
+    private var markList = mutableListOf<Pair<MarkerEntity, String>>()
     var isRecording = MutableLiveData<Boolean>()
     var buttonsVisible = MutableLiveData<Boolean>()
     val res: Resources = context.resources
@@ -119,16 +124,39 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         currentRecordTime = timer.text.toString()
     }
 
+
+    fun fragmentOnPause() {
+        if (recorderInitialized && createDialog.value == false && timer.text.toString() != res.getString(
+                R.string.start_time
+            )
+        ) deleteRecord()
+    }
+
+    fun onMarkerButtonClicked(markerEntity: MarkerEntity) {
+        val markEntry = Pair(markerEntity, timer.text.toString())
+        markList.add(markEntry)
+        showSnackBarShort(R.string.mark_made)
+    }
+
     fun cancelRecord() {
         if (recorderInitialized && createDialog.value == false) {
-            showSnackBar(R.string.record_removed)
-            File(tempFile).delete()
-            endRecordSession()
-            resetView()
+            prepareForPossResume()
+            QuitRecordingDialog.createDialog(
+                activityContext,
+                res.getString(R.string.quit_recording),
+                this
+            )
         }
     }
 
-    fun cancelSaving() {
+    fun deleteRecord() {
+        showSnackBar(R.string.record_removed)
+        File(tempFile).delete()
+        endRecordSession()
+        resetView()
+    }
+
+    fun cancelDialog() {
         errorMessage = null
         _createDialog.value = false
         buttonsVisible.value = true
@@ -204,8 +232,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         )
         val newFile = File(path)
         if (newFile.exists()) {
-            errorMessage = res.getString(R.string.dialog_already_exist)
-            _createDialog.value = true
+            errorDialog(res.getString(R.string.dialog_already_exist))
             return
         }
         endRecordSession()
@@ -257,17 +284,10 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
-            val mark = MarkerTimeRelation(0, recordingId, it.first, it.second)
+            val mark = MarkTimestamp(0, recordingId, it.first.uid, it.second)
             dataSource.insertMark(mark)
         }
         markList = mutableListOf()
-    }
-
-    fun makeMark(view: View) {
-        val btnId = view.resources.getResourceName(view.id)
-        val markEntry = Pair(btnId, timer.text.toString())
-        markList.add(markEntry)
-        showSnackBarShort(R.string.mark_made)
     }
 
     /**

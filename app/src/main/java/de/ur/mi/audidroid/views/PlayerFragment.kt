@@ -3,6 +3,7 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -94,6 +95,7 @@ class PlayerFragment : Fragment() {
 
         playerViewModel.allMarks.observe(viewLifecycleOwner, Observer {
             it?.let {
+                Log.d("allMarks", "$it")
                 adapter.submitList(it)
             }
         })

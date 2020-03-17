@@ -41,6 +41,20 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getAllLabels()
     }
 
+    fun getAllMarkers(): LiveData<List<MarkerEntity>> {
+        return markerDao.getAllMarkers()
+    }
+
+    fun getMarkerCount(): Int {
+        var count: Int? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                count = markerDao.getMarkerCount()
+            }
+        }
+        return count!!
+    }
+
     fun deleteRecording(entryEntity: EntryEntity) {
         CoroutineScope(coroutineContext).launch {
             entryDao.delete(entryEntity)
@@ -50,6 +64,12 @@ class Repository(application: Application) : CoroutineScope {
     fun deleteLabel(labelEntity: LabelEntity) {
         CoroutineScope(coroutineContext).launch {
             labelDao.delete(labelEntity)
+        }
+    }
+
+    fun deleteMarker(markerEntity: MarkerEntity) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.deleteMarker(markerEntity)
         }
     }
 
@@ -63,7 +83,13 @@ class Repository(application: Application) : CoroutineScope {
         return temp!!
     }
 
-    fun insertMark(marker: MarkerTimeRelation) {
+    fun insertMarker(markerEntity: MarkerEntity){
+        CoroutineScope(coroutineContext).launch {
+            markerDao.insertMarker(markerEntity)
+        }
+    }
+
+    fun insertMark(marker: MarkTimestamp) {
         CoroutineScope(coroutineContext).launch {
             markerDao.insertMark(marker)
         }
@@ -81,20 +107,47 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun getRecordingFromIdInclMarks(uid: Int): LiveData<List<RecordingAndMarker>> {
+    fun updateMarker(markerEntity: MarkerEntity) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.updateMarker(markerEntity)
+        }
+    }
+
+    fun getRecordingFromIdInclMarks(uid: Int): LiveData<List<RecordingAndMarks>> {
         return markerDao.getRecordingFromIdInclMarks(uid)
     }
 
-    fun getAllMarks(uid: Int): LiveData<List<MarkerTimeRelation>> {
-        return markerDao.allMarks(uid)
+    fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
+        return markerDao.getMarksById(uid)
+    }
+
+    fun getMarkerByName(name: String): List<MarkerEntity> {
+        var list: List<MarkerEntity>? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                list = markerDao.getMarkerByName(name)
+            }
+        }
+        return list!!
     }
 
     fun getRecordingById(uid: Int): LiveData<EntryEntity> {
         return entryDao.getRecordingById(uid)
     }
 
+
     fun getLabelById(uid: Int): LiveData<LabelEntity> {
         return labelDao.getLabelById(uid)
+    }
+
+    fun getLabelByName(name: String): List<LabelEntity> {
+        var list: List<LabelEntity>? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                list = labelDao.getLabelByName(name)
+            }
+        }
+        return list!!
     }
 
     fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {

@@ -20,8 +20,8 @@ interface LabelDao {
     @Query("SELECT * FROM labelsTable WHERE uid = :key")
     fun getLabelById(key: Int): LiveData<LabelEntity>
 
-    @Query("SELECT * FROM labelsTable WHERE labelName IN (:name)")
-    fun getLabelByName(name: String): LiveData<LabelEntity>
+    @Query("SELECT * FROM labelsTable WHERE labelName = :name")
+    suspend fun getLabelByName(name: String): List<LabelEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(labelEntity: LabelEntity)
