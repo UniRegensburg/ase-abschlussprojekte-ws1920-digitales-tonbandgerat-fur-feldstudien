@@ -8,7 +8,7 @@ import androidx.room.Relation
  * @author: Lisa Sanladerer
  */
 
-data class RecordingAndMarker(
+data class RecordingAndMarks(
     @Embedded val entryEntity: EntryEntity,
     @Relation(
         parentColumn = "uid",

@@ -1,11 +1,10 @@
 package de.ur.mi.audidroid.models
 
 import android.app.Application
-import android.util.Log
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -116,11 +115,11 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun getRecordingFromIdInclMarks(uid: Int): LiveData<List<RecordingAndMarker>> {
+    fun getRecordingFromIdInclMarks(uid: Int): LiveData<List<RecordingAndMarks>> {
         return markerDao.getRecordingFromIdInclMarks(uid)
     }
 
-    fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
+    fun getAllMarks(uid: Int): LiveData<List<CombinedMarkAndTimestamp>> {
         return markerDao.getMarksById(uid)
     }
 
@@ -137,6 +136,7 @@ class Repository(application: Application) : CoroutineScope {
     fun getRecordingById(uid: Int): LiveData<EntryEntity> {
         return entryDao.getRecordingById(uid)
     }
+
 
     fun getLabelById(uid: Int): LiveData<LabelEntity> {
         return labelDao.getLabelById(uid)

@@ -95,6 +95,7 @@ class PlayerFragment : Fragment() {
 
         playerViewModel.allMarks.observe(viewLifecycleOwner, Observer {
             it?.let {
+                Log.d("allMarks", "$it")
                 adapter.submitList(it)
             }
         })

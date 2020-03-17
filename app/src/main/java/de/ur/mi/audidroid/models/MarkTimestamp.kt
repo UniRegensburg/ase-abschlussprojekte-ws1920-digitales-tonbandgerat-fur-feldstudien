@@ -29,3 +29,8 @@ data class MarkAndTimestamp(
     )
     val markTimestamp: MarkTimestamp
 )
+
+data class CombinedMarkAndTimestamp(
+    @Embedded val marker: MarkerEntity,
+    @Embedded val markTimestamp: MarkTimestamp
+)
