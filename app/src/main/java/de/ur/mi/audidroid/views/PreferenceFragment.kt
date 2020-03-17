@@ -24,6 +24,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
         initLabelsPreference()
+        initMarkersPreference()
         initFileNamePreference()
         initThemePreference()
         initStoragePreference()
@@ -35,6 +36,16 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         labelsPreference.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 view!!.findNavController().navigate(R.id.action_global_editLabelsFragment)
+                true
+            }
+    }
+
+    private fun initMarkersPreference() {
+        val markersPreference =
+            findPreference<Preference>(getString(R.string.markers_preference_key))!!
+        markersPreference.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                view!!.findNavController().navigate(R.id.action_global_editMarkersFragment)
                 true
             }
     }
@@ -122,7 +133,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             ).show()
             return
         }
-        preference.summary = realPath!!
+        preference.summary = realPath
         with(preferences.edit()) {
             putString(context.resources.getString(R.string.storage_preference_key), realPath)
             commit()

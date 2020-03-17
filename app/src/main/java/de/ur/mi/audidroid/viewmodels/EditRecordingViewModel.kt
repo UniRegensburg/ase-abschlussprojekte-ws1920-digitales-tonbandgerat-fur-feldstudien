@@ -15,10 +15,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
-import de.ur.mi.audidroid.utils.AudioEditor
-import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.utils.AudioEditor
+import de.ur.mi.audidroid.utils.FFMpegCallback
+import de.ur.mi.audidroid.utils.HandlePlayerBar
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
 import io.apptik.widget.MultiSlider.Thumb
@@ -31,7 +32,8 @@ import java.util.regex.Pattern
 class EditRecordingViewModel(
     private val recordingId: Int,
     dataSource: Repository,
-    application: Application
+    application: Application,
+    val handlePlayerBar: HandlePlayerBar
 ) :
     AndroidViewModel(application) {
 
@@ -44,13 +46,12 @@ class EditRecordingViewModel(
     private val res = context.resources
     val recording: LiveData<EntryEntity> =
         repository.getRecordingById(recordingId)
-    val allMarks: LiveData<List<MarkerTimeRelation>> = repository.getAllMarks(recordingId)
+    val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
     var audioInProgress = MutableLiveData<Boolean>()
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
-    var isPlayerViewModel = MutableLiveData<Boolean>()
     var tempFile = ""
     var errorMessage: String? = null
 
@@ -101,7 +102,6 @@ class EditRecordingViewModel(
 
     fun initializeMediaPlayer() {
         isPlaying.value = false
-        isPlayerViewModel.value = false
         val uri: Uri = Uri.fromFile(File(tempFile))
         mediaPlayer = MediaPlayer().apply {
             try {
@@ -182,6 +182,7 @@ class EditRecordingViewModel(
         handler.removeCallbacks(runnable)
         isPlaying.value = mediaPlayer.isPlaying
         initializeMediaPlayer()
+        initializeSeekBar(seekBar)
     }
 
     override fun onCleared() {
@@ -384,9 +385,9 @@ class EditRecordingViewModel(
     }
 
     fun addMark(view: View) {
-        val btnId = view.resources.getResourceName(view.id)
-        val mark = MarkerTimeRelation(0, recordingId, btnId, currentDurationString.value!!)
-        repository.insertMark(mark)
+//        val btnId = view.resources.getResourceName(view.id)
+//        val mark = MarkerTimeRelation(0, recordingId, btnId, currentDurationString.value!!)
+//        repository.insertMark(mark)
         showSnackBar(R.string.mark_made)
     }
 
@@ -409,5 +410,13 @@ class EditRecordingViewModel(
 
     private fun getDate(): String {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
+    }
+
+    fun skipPlaying() {
+        handlePlayerBar.doSkippingPlaying(mediaPlayer, context)
+    }
+
+    fun returnPlaying() {
+        handlePlayerBar.doReturnPlaying(mediaPlayer, context)
     }
 }

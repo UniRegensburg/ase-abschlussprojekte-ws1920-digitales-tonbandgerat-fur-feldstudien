@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.EditMarkerItemAdapter
+import de.ur.mi.audidroid.adapter.MarkItemAdapter
 import de.ur.mi.audidroid.databinding.EditRecordingFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.HandlePlayerBar
@@ -36,14 +37,16 @@ class EditRecordingFragment : Fragment() {
         val args = EditRecordingFragmentArgs.fromBundle(arguments!!)
 
         dataSource = Repository(application)
-        val viewModelFactory = EditViewModelFactory(args.recordingId, dataSource, application)
+        val handlePlayerBar = initHandler()
+        val viewModelFactory =
+            EditViewModelFactory(args.recordingId, dataSource, application, handlePlayerBar)
 
         editRecordingViewModel =
             ViewModelProvider(this, viewModelFactory).get(EditRecordingViewModel::class.java)
 
         binding.editRecordingViewModel = editRecordingViewModel
-        binding.handlePlayerBar = HandlePlayerBar
-        binding.setLifecycleOwner(this)
+        binding.handlePlayerBar = handlePlayerBar
+        binding.lifecycleOwner = this
         setHasOptionsMenu(true)
 
         return binding.root
@@ -51,7 +54,6 @@ class EditRecordingFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
 
         editRecordingViewModel.recording.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -62,9 +64,28 @@ class EditRecordingFragment : Fragment() {
                 editRecordingViewModel.initializeRangeBar(binding.rangeBar)
             }
         })
-
         createEditRecordingDialog()
         setupAdapter()
+    }
+
+    private fun initHandler(): HandlePlayerBar {
+        return object : HandlePlayerBar {
+            override fun pause() {
+                editRecordingViewModel.onPausePlayer()
+            }
+
+            override fun play() {
+                editRecordingViewModel.onStartPlayer()
+            }
+
+            override fun skipPlaying() {
+                editRecordingViewModel.skipPlaying()
+            }
+
+            override fun returnPlaying() {
+                editRecordingViewModel.returnPlaying()
+            }
+        }
     }
 
     private fun createEditRecordingDialog() {
@@ -114,12 +135,18 @@ class EditRecordingFragment : Fragment() {
     class EditViewModelFactory(
         private val recordingId: Int,
         private val dataSource: Repository,
-        private val application: Application
+        private val application: Application,
+        private val handlePlayerBar: HandlePlayerBar
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(EditRecordingViewModel::class.java)) {
-                return EditRecordingViewModel(recordingId, dataSource, application) as T
+                return EditRecordingViewModel(
+                    recordingId,
+                    dataSource,
+                    application,
+                    handlePlayerBar
+                ) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
