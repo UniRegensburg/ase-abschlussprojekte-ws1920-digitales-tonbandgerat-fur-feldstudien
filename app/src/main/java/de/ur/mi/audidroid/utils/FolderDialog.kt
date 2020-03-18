@@ -78,12 +78,12 @@ object FolderDialog {
                 val folderNameArray =
                     getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
                 if (folderNameArray.isNotEmpty()) {
+                    builder.setTitle(R.string.move_file_dialog_header)
                     with(builder) {
-                        setTitle(R.string.move_file_dialog_header)
                         builder.setSingleChoiceItems(folderNameArray, position) { _, which ->
                             position = which
                         }
-                        setPositiveButton(R.string.move_file) { _, _ ->
+                        setPositiveButton(R.string.popup_menu_option_move_file) { _, _ ->
                              if (position != -1){
                                  filesViewModel.recordingMoveValid(recordingToBeMoved, listOfAvailableFolders!![position].uid)
                                  folderViewModel.onMoveRecordingToFolder(recordingToBeMoved, listOfAvailableFolders[position])
@@ -92,10 +92,10 @@ object FolderDialog {
                                 filesViewModel.cancelFolderDialog()
                             }
                         }
-                        setNegativeButton(R.string.cancel_button) { _, _ ->
+                        setNeutralButton(R.string.popup_menu_cancel) { _, _ ->
                             filesViewModel.cancelFolderDialog()
                         }
-                        setNeutralButton(R.string.dialog_no_folder) { _, _ ->
+                        setNegativeButton( R.string.dialog_no_folder) { _, _ ->
                             filesViewModel.recordingMoveValid(recordingToBeMoved,null)
                             folderViewModel.onMoveRecordingToFolder(recordingToBeMoved,null)
 
@@ -147,10 +147,22 @@ object FolderDialog {
 
         dialog = builder.create()
         dialog.show()
+
+        disableRemoveFromFolder(type, recordingToBeMoved)
+
         dialog.setCancelable(true)
         dialog.setOnDismissListener {
             dialog.findViewById<EditText>(R.id.dialog_add_label_edit_text)?.let { editText ->
                 KeyboardHelper.hideSoftKeyboard(editText)
+            }
+        }
+    }
+
+    private fun disableRemoveFromFolder(type: Int, recordingToBeMoved: EntryEntity?){
+        val removeFromFolderBtn = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+        if (type == R.string.alert_dialog && recordingToBeMoved != null){
+            if (recordingToBeMoved.folder == null){
+                removeFromFolderBtn.isEnabled = false
             }
         }
     }

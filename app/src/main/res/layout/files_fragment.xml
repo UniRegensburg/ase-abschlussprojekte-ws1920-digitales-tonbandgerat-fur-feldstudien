@@ -42,8 +42,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/rubik_medium"
-                    android:text="@string/recordings_unfiled"/>
+                    android:text="@string/recordings_unfiled"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Caption" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recording_list_no_folder"
@@ -87,6 +87,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/rubik_medium"
                         android:text="@string/files_container_internal"
+                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Caption"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
@@ -128,6 +129,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/rubik_medium"
                         android:text="@string/files_container_external"
+                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Caption"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>

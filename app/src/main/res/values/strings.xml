@@ -48,12 +48,12 @@
     <string name="popup_menu_button">Popup Menu</string>
     <string name="popup_menu_option_delete">Delete</string>
     <string name="popup_menu_option_edit">Edit</string>
-
+    <string name="popup_menu_cancel">Cancel</string>
     <string name="popup_menu_option_add_folder">Add Folder</string>
     <string name="popup_menu_option_move_file">Move to Folder</string>
     <string name="folder_created">Folder created</string>
     <string name="folder_deleted">Folder deleted</string>
-    <string name="recordings_unfiled">Recordings:</string>
+    <string name="recordings_unfiled">Recordings</string>
     <string name="dialog_folder_invalid_name">The folder name should be between one and ten characters long.</string>
     <string name="dialog_folder_name_occurance">There is already a folder with this name.</string>
     <string name="dialog_external_to_internal">External files not to be moved to internal storage.</string>
@@ -111,7 +111,7 @@
     <string name="dialog_no_folder">Remove from folder</string>
     <string name="create_folder">Create folder</string>
     <string name="update_folder">Update folder</string>
-    <string name="move_file_dialog_header">Folders:</string>
+    <string name="move_file_dialog_header">Folders</string>
     <string name="dialog_missing_folder_name">The folder must be named.</string>
     <string name="dialog_invalide_enty_move">External files can\'t be moved to the app internal storage.  </string>
 
