@@ -1,7 +1,9 @@
 package de.ur.mi.audidroid.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.BaseObservable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,8 +17,14 @@ class EditMarkerItemAdapter(
     ListAdapter<MarkAndTimestamp, EditMarkerItemAdapter.ViewHolder>(EditMarkAndTimeStampDiffCallback()) {
 
     private val userActionsListener = object : EditMarkUserActionsListener {
-        override fun onMarkClicked(mark: MarkAndTimestamp) {
-            editRecordingViewModel.onMarkClicked(mark.markTimestamp.markTime)
+        override fun onMarkClicked(mark: MarkAndTimestamp, view: View) {
+            if (mark.markTimestamp.markComment != null) {
+                editRecordingViewModel.onMarkClicked(view)
+            }
+        }
+
+        override fun onNewCommentClicked(mark: MarkAndTimestamp) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onMarkDeleteClicked(mark: MarkAndTimestamp) {

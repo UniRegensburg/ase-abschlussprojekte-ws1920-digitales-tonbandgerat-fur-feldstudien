@@ -5,6 +5,7 @@
     <data>
 
         <import type="android.view.View.OnClickListener" />
+        <import type="android.view.View" />
 
         <variable
             name="mark"
@@ -16,13 +17,14 @@
 
     </data>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.AudidroidTheme.CardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/marks_card_view_margin"
         android:layout_marginTop="@dimen/marks_card_view_margin"
         android:layout_marginEnd="@dimen/marks_card_view_margin"
-        android:onClick="@{() -> listener.onMarkClicked(mark)}">
+        android:onClick="@{(view) -> listener.onMarkClicked(mark, view)}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -37,7 +39,8 @@
                 android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.016" >
 
                 <TextView
                     android:id="@+id/mark_name"
@@ -53,8 +56,29 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.40"
-                    android:text="@string/sample_comment"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
+                    android:text="@{mark.markTimestamp.markComment}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline"
+                    android:visibility="@{mark.markTimestamp.markComment != null ? View.VISIBLE : View.GONE}"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.40"
+                    android:visibility="@{mark.markTimestamp.markComment == null ? View.VISIBLE : View.GONE}" >
+
+                    <ImageButton
+                        android:id="@+id/button_new_comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:contentDescription="@string/button_new_comment"
+                        android:onClick="@{}"
+                        android:scaleType="fitStart"
+                        android:src="@drawable/ic_comment"
+                        android:tint="@color/color_on_surface" />
+
+                </LinearLayout>
+
 
                 <TextView
                     android:id="@+id/mark_time"
@@ -84,8 +108,47 @@
 
             </LinearLayout>
 
+            <View
+                android:id="@+id/mark_card_divider"
+                style="@style/Divider"
+                app:layout_constraintTop_toBottomOf="@id/linearLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/comment_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/mark_card_divider"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:weightSum="1"
+                android:orientation="horizontal"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/expanded_comment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.90"
+                    android:text="@{mark.markTimestamp.markComment}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
+
+                <ImageButton
+                    android:id="@+id/button_edit_comment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.10"
+                    android:background="@null"
+                    android:contentDescription="@string/button_edit_comment"
+                    android:onClick="@{}"
+                    android:src="@drawable/ic_mode_edit"
+                    android:tint="@color/color_on_surface" />
+
+            </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

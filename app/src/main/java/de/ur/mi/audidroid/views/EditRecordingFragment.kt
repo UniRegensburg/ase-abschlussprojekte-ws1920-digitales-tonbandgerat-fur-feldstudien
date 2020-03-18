@@ -103,7 +103,6 @@ class EditRecordingFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-
         adapter = EditMarkerItemAdapter(editRecordingViewModel)
         binding.markerList.adapter = adapter
 

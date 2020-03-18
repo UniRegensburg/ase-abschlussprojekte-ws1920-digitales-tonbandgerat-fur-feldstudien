@@ -20,6 +20,7 @@ import de.ur.mi.audidroid.models.*
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
+import de.ur.mi.audidroid.utils.VisibilityHelper
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
 import io.apptik.widget.MultiSlider.Thumb
@@ -381,7 +382,13 @@ class EditRecordingViewModel(
         _createDialog.value = true
     }
 
-    fun onMarkClicked(markTime: String) {
+    fun onMarkClicked(view: View) {
+        val divider: View = view.findViewById<View>(R.id.mark_card_divider)
+        val commentView: View = view.findViewById<View>(R.id.comment_view)
+        val isExpanded = (commentView.visibility == View.VISIBLE)
+        VisibilityHelper.toggleVisibility(divider)
+        VisibilityHelper.toggleVisibility(commentView)
+        VisibilityHelper.toggleExpanded(commentView, isExpanded)
     }
 
     fun addMark(view: View) {

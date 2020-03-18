@@ -10,14 +10,20 @@
             name="mark"
             type="de.ur.mi.audidroid.models.MarkAndTimestamp" />
 
+        <variable
+            name="listener"
+            type="de.ur.mi.audidroid.adapter.MarkUserActionsListener" />
+
     </data>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.AudidroidTheme.CardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/marks_card_view_margin"
         android:layout_marginTop="@dimen/marks_card_view_margin"
-        android:layout_marginEnd="@dimen/marks_card_view_margin">
+        android:layout_marginEnd="@dimen/marks_card_view_margin"
+        android:onClick="@{(view) -> listener.onMarkClicked(mark, view)}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -48,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.50"
-                    android:text="@string/sample_comment"
+                    android:text="@{mark.markTimestamp.markComment}"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
 
                 <TextView
@@ -62,8 +68,36 @@
 
             </LinearLayout>
 
+            <View
+                android:id="@+id/mark_card_divider"
+                style="@style/Divider"
+                app:layout_constraintTop_toBottomOf="@id/linearLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/comment_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/mark_card_divider"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:weightSum="1"
+                android:orientation="horizontal"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/expanded_comment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.90"
+                    android:text="@{mark.markTimestamp.markComment}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
+
+            </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

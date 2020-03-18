@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.lifecycle.AndroidViewModel
@@ -19,6 +20,7 @@ import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.MarkAndTimestamp
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.HandlePlayerBar
+import de.ur.mi.audidroid.utils.VisibilityHelper
 import java.io.File
 import java.io.IOException
 
@@ -163,6 +165,15 @@ class PlayerViewModel(
         handler.removeCallbacks(runnable)
         mediaPlayer.reset()
         mediaPlayer.release()
+    }
+
+    fun onMarkClicked(view: View) {
+        val divider: View = view.findViewById<View>(R.id.mark_card_divider)
+        val commentView: View = view.findViewById<View>(R.id.comment_view)
+        val isExpanded = (commentView.visibility == View.VISIBLE)
+        VisibilityHelper.toggleVisibility(divider)
+        VisibilityHelper.toggleVisibility(commentView)
+        VisibilityHelper.toggleExpanded(commentView, isExpanded)
     }
 
     private fun showSnackBar(text: Int) {
