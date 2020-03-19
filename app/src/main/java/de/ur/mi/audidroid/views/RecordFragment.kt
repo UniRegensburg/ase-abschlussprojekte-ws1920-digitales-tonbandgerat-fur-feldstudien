@@ -45,7 +45,7 @@ class RecordFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        addRotationListener(activity!!)
+        addRotationListener()
         val application = this.activity!!.application
         dataSource = Repository(application)
         binding = DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
@@ -116,14 +116,14 @@ class RecordFragment : Fragment() {
         }
     }
 
-    private fun addRotationListener(activity: Activity) {
+    private fun addRotationListener() {
         if (getRotationPreference()) {
-            this.activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+            activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
             orientationEventListener = object : OrientationEventListener(activity) {
                 override fun onOrientationChanged(orientation: Int) {
-                    if (orientation in 70..290) activity.requestedOrientation =
+                    if (orientation in 70..290) activity!!.requestedOrientation =
                         ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-                    else activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    else if (orientation in 291..360 || (orientation in 0..69)) activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 }
             }
             orientationEventListener!!.enable()
@@ -150,5 +150,10 @@ class RecordFragment : Fragment() {
         super.onStop()
         orientationEventListener?.disable()
         activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
+
+    override fun onResume() {
+        super.onResume()
+        addRotationListener()
     }
 }
