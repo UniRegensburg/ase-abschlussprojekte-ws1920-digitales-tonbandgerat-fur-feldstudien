@@ -13,7 +13,7 @@ import androidx.navigation.ui.*
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.utils.Dialog
+import de.ur.mi.audidroid.utils.SaveRecordingDialog
 import de.ur.mi.audidroid.utils.Pathfinder
 import de.ur.mi.audidroid.utils.PermissionHelper
 import de.ur.mi.audidroid.utils.ThemeHelper
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     data,
                     this.window.decorView
                 )
-            } else Dialog.resultPathfinder(data!!.data!!)
+            } else SaveRecordingDialog.resultPathfinder(data!!.data!!)
         }
     }
 

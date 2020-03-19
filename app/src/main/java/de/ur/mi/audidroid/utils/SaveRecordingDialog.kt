@@ -28,7 +28,7 @@ import kotlin.collections.ArrayList
  * @author: Sabine Roth
  */
 
-object Dialog {
+object SaveRecordingDialog {
 
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
     private lateinit var pathTextView: TextView
@@ -36,43 +36,31 @@ object Dialog {
     private var selectedLabels = ArrayList<String>()
     private var selectedPath: String? = null
     private lateinit var fragment: RecordFragment
-    private lateinit var dataSource: Repository
     private lateinit var labelEntities: List<LabelEntity>
-    private lateinit var viewModel: RecordViewModel
-    private var layoutId: Int? = null
     private lateinit var errorTextView: TextView
+    private lateinit var viewModel: RecordViewModel
 
     fun createDialog(
         paramContext: Context,
-        layoutId: Int? = null,
-        textId: Int? = null,
-        viewModel: RecordViewModel? = null,
+        layoutId: Int,
         errorMessage: String? = null,
-        recordFragment: RecordFragment? = null,
-        dataSource: Repository? = null
+        dataSource: Repository,
+        recordViewModel: RecordViewModel,
+        recordFragment: RecordFragment
     ) {
         context = paramContext
-        if (layoutId != null) this.layoutId = layoutId
-        if (viewModel != null) this.viewModel = viewModel
-        if (recordFragment != null) fragment = recordFragment
-        if (dataSource != null) this.dataSource = dataSource
+        this.viewModel = recordViewModel
+        fragment = recordFragment
         val builder = MaterialAlertDialogBuilder(context)
-        if (layoutId != null) {
-            builder.setView(layoutId)
-            prepareDataSource()
-            setDialogButtons(builder)
-        }
-        if (textId != null) {
-            createPermissionDialog(builder, textId)
-        }
+            .setView(layoutId)
+        setDialogButtons(builder)
+        dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
         dialog = builder.create()
-        dialog.setCancelable(false)
+        dialog.setOnCancelListener {
+            recordViewModel.cancelDialog()
+        }
         dialog.show()
         initializeDialog(errorMessage)
-    }
-
-    private fun prepareDataSource() {
-        dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
     }
 
     private fun initializeDialog(errorMessage: String?) {
@@ -96,7 +84,7 @@ object Dialog {
                 saveButtonClicked()
             }
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                viewModel.cancelSaving()
+                viewModel.cancelDialog()
             }
         }
     }
@@ -112,18 +100,6 @@ object Dialog {
             getLabelIdFromName()
         )
         selectedLabels.clear()
-    }
-
-    private fun createPermissionDialog(builder: MaterialAlertDialogBuilder, textId: Int) {
-        with(builder) {
-            setTitle(R.string.permission_title)
-            setMessage(textId)
-            setPositiveButton(
-                R.string.permission_button
-            ) { _, _ ->
-                PermissionHelper.makeRequest(context)
-            }
-        }
     }
 
     private fun getStoragePreference(): String? {
@@ -180,7 +156,12 @@ object Dialog {
         with(chip) {
             text = name
             chipBackgroundColor =
-                ColorStateList.valueOf(ContextCompat.getColor(Dialog.context, R.color.grayed_out))
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        SaveRecordingDialog.context,
+                        R.color.grayed_out
+                    )
+                )
             setOnClickListener { labelClicked(chip) }
         }
         return chip

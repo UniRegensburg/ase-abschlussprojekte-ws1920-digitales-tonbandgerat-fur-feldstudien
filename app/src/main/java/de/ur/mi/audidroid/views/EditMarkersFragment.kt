@@ -12,23 +12,24 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.adapter.LabelItemAdapter
-import de.ur.mi.audidroid.databinding.EditLabelsFragmentBinding
+import de.ur.mi.audidroid.adapter.MarkerItemAdapter
 import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.utils.LabelsDialog
-import de.ur.mi.audidroid.viewmodels.EditLabelsViewModel
-import kotlinx.android.synthetic.main.edit_labels_fragment.*
+import de.ur.mi.audidroid.utils.MarkersDialog
+import de.ur.mi.audidroid.databinding.EditMarkersFragmentBinding
+import de.ur.mi.audidroid.viewmodels.EditMarkersViewModel
+import kotlinx.android.synthetic.main.edit_markers_fragment.*
 import java.lang.IllegalArgumentException
 
-class EditLabelsFragment : Fragment() {
+class EditMarkersFragment : Fragment() {
 
-    private lateinit var viewModel: EditLabelsViewModel
-    private lateinit var adapter: LabelItemAdapter
-    private lateinit var binding: EditLabelsFragmentBinding
+    private lateinit var viewModel: EditMarkersViewModel
+    private lateinit var adapter: MarkerItemAdapter
+    private lateinit var binding: EditMarkersFragmentBinding
 
     companion object {
-        fun newInstance() = EditLabelsFragment()
+        fun newInstance() = EditMarkersFragment()
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,11 +37,12 @@ class EditLabelsFragment : Fragment() {
     ): View? {
         val application = this.activity!!.application
         val dataSource = Repository(application)
-        binding = DataBindingUtil.inflate(inflater, R.layout.edit_labels_fragment, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.edit_markers_fragment, container, false)
 
-        val viewModelFactory = EditLabelsViewModelFactory(dataSource, application)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(EditLabelsViewModel::class.java)
-        binding.editLabelsViewModel = viewModel
+        val viewModelFactory =
+            EditMarkersViewModelFactory(dataSource, application)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(EditMarkersViewModel::class.java)
+        binding.editMarkersViewModel = viewModel
         binding.lifecycleOwner = this
 
         viewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
@@ -56,14 +58,14 @@ class EditLabelsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setupAdapter()
-        viewModel.initializeLayout(edit_labels_frame_layout)
+        viewModel.initializeLayout(edit_markers_frame_layout)
         viewModel.createAlertDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
-                LabelsDialog.createDialog(
+                MarkersDialog.createDialog(
                     context = context!!,
                     type = R.string.alert_dialog,
-                    labelToBeEdited = viewModel.labelToBeEdited,
-                    layoutId = R.layout.labels_dialog,
+                    markerToBeEdited = viewModel.markerToBeEdited,
+                    layoutId = R.layout.markers_dialog,
                     viewModel = viewModel,
                     errorMessage = viewModel.errorMessage
                 )
@@ -71,10 +73,10 @@ class EditLabelsFragment : Fragment() {
         })
         viewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
-                LabelsDialog.createDialog(
+                MarkersDialog.createDialog(
                     context = context!!,
                     type = R.string.confirm_dialog,
-                    labelToBeEdited = viewModel.labelToBeEdited,
+                    markerToBeEdited = viewModel.markerToBeEdited,
                     layoutId = null,
                     viewModel = viewModel,
                     errorMessage = viewModel.errorMessage
@@ -84,24 +86,24 @@ class EditLabelsFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = LabelItemAdapter(viewModel)
-        binding.labelsList.adapter = adapter
+        adapter = MarkerItemAdapter(viewModel)
+        binding.markersList.adapter = adapter
 
-        viewModel.allLabels.observe(viewLifecycleOwner, Observer {
+        viewModel.allMarkers.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.submitList(it)
             }
         })
     }
 
-    class EditLabelsViewModelFactory(
+    class EditMarkersViewModelFactory(
         private val dataSource: Repository,
         private val application: Application
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return if (modelClass.isAssignableFrom(EditLabelsViewModel::class.java)) {
-                EditLabelsViewModel(dataSource, application) as T
+            return if (modelClass.isAssignableFrom(EditMarkersViewModel::class.java)) {
+                EditMarkersViewModel(dataSource, application) as T
             } else {
                 throw IllegalArgumentException("ViewModel Not Found")
             }

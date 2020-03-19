@@ -63,6 +63,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         val file = File(entryEntity.recordingPath)
         if (file.delete()) {
             repository.deleteRecording(entryEntity)
+            repository.deleteRecMarks(entryEntity.uid)
             showSnackBar(
                 String.format(
                     context.getString(R.string.recording_deleted),
