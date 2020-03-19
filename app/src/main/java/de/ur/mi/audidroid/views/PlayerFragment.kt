@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.chip.Chip
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.MarkItemAdapter
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
@@ -69,7 +70,24 @@ class PlayerFragment : Fragment() {
                 playerViewModel.initializeFrameLayout(player_layout)
             }
         })
+
+        playerViewModel.allLabels.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                for (i in it.indices) {
+                    binding.labelChipGroup.addView(createChip(it[i].labelName))
+                }
+            }
+        })
         setupAdapter()
+    }
+
+    private fun createChip(name: String): Chip {
+        val chip = Chip(context)
+        with(chip) {
+            text = name
+            isClickable = false
+        }
+        return chip
     }
 
     private fun initHandler(): HandlePlayerBar {
