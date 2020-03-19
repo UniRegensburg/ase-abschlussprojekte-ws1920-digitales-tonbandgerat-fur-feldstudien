@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <SwitchPreference
+        app:key="@string/rotation_preference_key"
+        app:title="Rotating recording screen"
+        app:defaultValue="true">
+    </SwitchPreference>
+
     <PreferenceCategory
         app:key="labels_and_marks_category"
         app:title="Labels and Marks">
