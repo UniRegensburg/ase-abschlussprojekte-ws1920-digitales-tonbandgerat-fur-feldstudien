@@ -168,9 +168,11 @@ class PlayerViewModel(
     }
 
     fun onMarkClicked(view: View) {
+        val comment: View = view.findViewById<View>(R.id.comment)
         val divider: View = view.findViewById<View>(R.id.mark_card_divider)
         val commentView: View = view.findViewById<View>(R.id.comment_view)
         val isExpanded = (commentView.visibility == View.VISIBLE)
+        VisibilityHelper.toggleVisibility(comment)
         VisibilityHelper.toggleVisibility(divider)
         VisibilityHelper.toggleVisibility(commentView)
         VisibilityHelper.toggleExpanded(commentView, isExpanded)

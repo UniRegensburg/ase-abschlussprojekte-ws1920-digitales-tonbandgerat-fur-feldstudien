@@ -131,6 +131,12 @@ class Repository(application: Application) : CoroutineScope {
         return list!!
     }
 
+    fun updateMarkTimestamp(markTimestamp: MarkTimestamp) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.updateMarkTimestamp(markTimestamp)
+        }
+    }
+
     fun getRecordingById(uid: Int): LiveData<EntryEntity> {
         return entryDao.getRecordingById(uid)
     }

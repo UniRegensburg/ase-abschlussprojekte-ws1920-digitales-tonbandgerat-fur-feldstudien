@@ -50,20 +50,29 @@
                     android:text="@{mark.marker.markerName }"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body1" />
 
-                <TextView
-                    android:id="@+id/comment"
-                    android:layout_width="@dimen/layout_width_edit_fragment"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:layout_weight="0.40"
-                    android:text="@{mark.markTimestamp.markComment}"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline"
-                    android:visibility="@{mark.markTimestamp.markComment != null ? View.VISIBLE : View.GONE}"/>
+                    android:layout_gravity="center_vertical"
+                    android:visibility="@{mark.markTimestamp.markComment != null ? View.VISIBLE : View.GONE}" >
+
+                    <TextView
+                        android:id="@+id/comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@{mark.markTimestamp.markComment}"
+                        android:singleLine="true"
+                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.40"
+                    android:layout_gravity="center_vertical"
                     android:visibility="@{mark.markTimestamp.markComment == null ? View.VISIBLE : View.GONE}" >
 
                     <ImageButton
@@ -72,13 +81,12 @@
                         android:layout_height="wrap_content"
                         android:background="@null"
                         android:contentDescription="@string/button_new_comment"
-                        android:onClick="@{}"
+                        android:onClick="@{() -> listener.onEditCommentClicked(mark)}"
                         android:scaleType="fitStart"
                         android:src="@drawable/ic_comment"
                         android:tint="@color/color_on_surface" />
 
                 </LinearLayout>
-
 
                 <TextView
                     android:id="@+id/mark_time"
@@ -141,7 +149,7 @@
                     android:layout_weight="0.10"
                     android:background="@null"
                     android:contentDescription="@string/button_edit_comment"
-                    android:onClick="@{}"
+                    android:onClick="@{() -> listener.onEditCommentClicked(mark)}"
                     android:src="@drawable/ic_mode_edit"
                     android:tint="@color/color_on_surface" />
 

@@ -45,8 +45,7 @@ class EditRecordingViewModel(
     private lateinit var rangeBar: MultiSlider
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    val recording: LiveData<EntryEntity> =
-        repository.getRecordingById(recordingId)
+    val recording: LiveData<EntryEntity> = repository.getRecordingById(recordingId)
     val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
@@ -54,14 +53,20 @@ class EditRecordingViewModel(
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
     var tempFile = ""
-    var errorMessage: String? = null
+    var saveErrorMessage: String? = null
+    var commentErrorMessage: String? = null
+    var markTimestampToBeEdited: MarkTimestamp? = null
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
 
-    private val _createDialog = MutableLiveData<Boolean>()
-    val createDialog: LiveData<Boolean>
-        get() = _createDialog
+    private val _createSaveDialog = MutableLiveData<Boolean>()
+    val createSaveDialog: LiveData<Boolean>
+        get() = _createSaveDialog
+
+    private val _createCommentDialog = MutableLiveData<Boolean>()
+    val createCommentDialog: LiveData<Boolean>
+        get() = _createCommentDialog
 
     private val _totalDuration = MutableLiveData<Long>()
     private val totalDuration: LiveData<Long>
@@ -312,7 +317,7 @@ class EditRecordingViewModel(
         pathInput: String?,
         labels: ArrayList<Int>?
     ) {
-        _createDialog.value = false
+        _createSaveDialog.value = false
         val name = nameInput ?: java.lang.String.format(
             "%s_%s",
             res.getString(R.string.standard_name_recording),
@@ -337,8 +342,8 @@ class EditRecordingViewModel(
         )
         val newFile = File(path)
         if (newFile.exists()) {
-            errorMessage = res.getString(R.string.dialog_already_exist)
-            _createDialog.value = true
+            saveErrorMessage = res.getString(R.string.dialog_already_exist)
+            _createSaveDialog.value = true
             return
         }
 
@@ -355,7 +360,7 @@ class EditRecordingViewModel(
             )
         saveRecordInDB(audio, labels)
         File(tempFile).delete()
-        errorMessage = null
+        saveErrorMessage = null
     }
 
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
@@ -365,12 +370,27 @@ class EditRecordingViewModel(
     }
 
     fun saveRecording() {
-        _createDialog.value = true
+        _createSaveDialog.value = true
     }
 
     fun cancelSaving() {
-        errorMessage = null
-        _createDialog.value = false
+        saveErrorMessage = null
+        _createSaveDialog.value = false
+    }
+
+    fun onEditCommentClicked(markTimestamp: MarkTimestamp) {
+        markTimestampToBeEdited = markTimestamp
+        _createCommentDialog.value = true
+    }
+
+    fun onMarkTimestampUpdateClicked(newComment: String?, markTimestamp: MarkTimestamp) {
+        _createCommentDialog.value = false
+        updateMarkAndTimestampInDB(newComment, markTimestamp)
+    }
+
+    fun cancelCommentSaving() {
+        commentErrorMessage = null
+        _createCommentDialog.value = false
     }
 
     private fun validNameInput(name: String): Boolean {
@@ -378,14 +398,16 @@ class EditRecordingViewModel(
     }
 
     private fun errorDialog(mes: String) {
-        errorMessage = mes
-        _createDialog.value = true
+        saveErrorMessage = mes
+        _createSaveDialog.value = true
     }
 
     fun onMarkClicked(view: View) {
+        val comment: View = view.findViewById<View>(R.id.comment)
         val divider: View = view.findViewById<View>(R.id.mark_card_divider)
         val commentView: View = view.findViewById<View>(R.id.comment_view)
         val isExpanded = (commentView.visibility == View.VISIBLE)
+        VisibilityHelper.toggleVisibility(comment)
         VisibilityHelper.toggleVisibility(divider)
         VisibilityHelper.toggleVisibility(commentView)
         VisibilityHelper.toggleExpanded(commentView, isExpanded)
@@ -396,6 +418,19 @@ class EditRecordingViewModel(
 //        val mark = MarkerTimeRelation(0, recordingId, btnId, currentDurationString.value!!)
 //        repository.insertMark(mark)
         showSnackBar(R.string.mark_made)
+    }
+
+    fun updateMarkAndTimestampInDB(newComment: String?, markTimestamp: MarkTimestamp) {
+        val updatedMarkTimestamp = MarkTimestamp(
+            markTimestamp.mid,
+            markTimestamp.recordingId,
+            markTimestamp.markerId,
+            newComment,
+            markTimestamp.markTime
+        )
+        repository.updateMarkTimestamp(updatedMarkTimestamp)
+        markTimestampToBeEdited = null
+        showSnackBar(R.string.comment_updated)
     }
 
     fun deleteMark(mid: Int) {

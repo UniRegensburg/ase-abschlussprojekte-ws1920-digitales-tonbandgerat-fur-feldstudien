@@ -5,6 +5,7 @@
     <data>
 
         <import type="android.view.View.OnClickListener" />
+        <import type="android.view.View" />
 
         <variable
             name="mark"
@@ -38,7 +39,8 @@
                 android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.016">
 
                 <TextView
                     android:id="@+id/mark_name"
@@ -48,14 +50,22 @@
                     android:text="@{mark.marker.markerName}"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body1" />
 
-                <TextView
-                    android:id="@+id/comment"
-                    android:layout_width="@dimen/layout_width_edit_fragment"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
                     android:layout_weight="0.50"
-                    android:text="@{mark.markTimestamp.markComment}"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
+                    android:layout_gravity="center_vertical"
+                    android:visibility="@{mark.markTimestamp.markComment != null ? View.VISIBLE : View.GONE}" >
+
+                    <TextView
+                        android:id="@+id/comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="@{mark.markTimestamp.markComment}"
+                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/mark_time"

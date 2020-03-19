@@ -64,6 +64,7 @@ class EditRecordingFragment : Fragment() {
             }
         })
         createEditRecordingDialog()
+        createCommentDialog()
         setupAdapter()
     }
 
@@ -88,15 +89,29 @@ class EditRecordingFragment : Fragment() {
     }
 
     private fun createEditRecordingDialog() {
-        editRecordingViewModel.createDialog.observe(viewLifecycleOwner, Observer {
+        editRecordingViewModel.createSaveDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 de.ur.mi.audidroid.utils.EditRecordingDialog.createDialog(
                     paramContext = context!!,
                     layoutId = R.layout.save_dialog,
                     viewModel = editRecordingViewModel,
-                    errorMessage = editRecordingViewModel.errorMessage,
+                    errorMessage = editRecordingViewModel.saveErrorMessage,
                     editRecordingFragment = this,
                     dataSource = dataSource
+                )
+            }
+        })
+    }
+
+    private fun createCommentDialog() {
+        editRecordingViewModel.createCommentDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                de.ur.mi.audidroid.utils.CommentDialog.createDialog(
+                    context = context!!,
+                    markTimestampToBeEdited = editRecordingViewModel.markTimestampToBeEdited,
+                    layoutId = R.layout.comment_dialog,
+                    viewModel = editRecordingViewModel,
+                    errorMessage = editRecordingViewModel.commentErrorMessage
                 )
             }
         })

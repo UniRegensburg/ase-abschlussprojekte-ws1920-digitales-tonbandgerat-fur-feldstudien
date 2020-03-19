@@ -23,8 +23,8 @@ class EditMarkerItemAdapter(
             }
         }
 
-        override fun onNewCommentClicked(mark: MarkAndTimestamp) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        override fun onEditCommentClicked(mark: MarkAndTimestamp) {
+            editRecordingViewModel.onEditCommentClicked(mark.markTimestamp)
         }
 
         override fun onMarkDeleteClicked(mark: MarkAndTimestamp) {
