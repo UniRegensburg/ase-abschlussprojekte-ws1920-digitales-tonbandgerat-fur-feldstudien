@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import androidx.core.content.edit
 import androidx.navigation.findNavController
@@ -42,6 +43,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                     putBoolean(getString(R.string.rotation_preference_key), newValue as Boolean)
                     commit()
                 }
+                MainActivity().adjustRotationListener(context!!)
                 true
             }
     }

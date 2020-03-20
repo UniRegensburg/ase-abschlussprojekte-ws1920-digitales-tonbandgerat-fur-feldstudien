@@ -1,12 +1,9 @@
 package de.ur.mi.audidroid.views
 
-import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.OrientationEventListener
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -34,7 +31,6 @@ class RecordFragment : Fragment() {
     private lateinit var adapter: MarkerButtonAdapter
     private lateinit var binding: RecordFragmentBinding
     private lateinit var dataSource: Repository
-    var orientationEventListener: OrientationEventListener? = null
 
     companion object {
         fun newInstance() = RecordFragment()
@@ -45,7 +41,6 @@ class RecordFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        addRotationListener()
         val application = this.activity!!.application
         dataSource = Repository(application)
         binding = DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
@@ -116,44 +111,9 @@ class RecordFragment : Fragment() {
         }
     }
 
-    private fun addRotationListener() {
-        if (getRotationPreference()) {
-            activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-            orientationEventListener = object : OrientationEventListener(activity) {
-                override fun onOrientationChanged(orientation: Int) {
-                    if (orientation in 70..290) activity!!.requestedOrientation =
-                        ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-                    else if (orientation in 291..360 || (orientation in 0..69)) activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                }
-            }
-            orientationEventListener!!.enable()
-        } else {
-            this.activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            orientationEventListener?.disable()
-        }
-    }
-
-    private fun getRotationPreference(): Boolean {
-        return context!!.getSharedPreferences(
-            activity!!.resources.getString(R.string.rotation_preference_key),
-            Context.MODE_PRIVATE
-        ).getBoolean(activity!!.resources.getString(R.string.rotation_preference_key), true)
-    }
-
     override fun onPause() {
         super.onPause()
         viewModel.fragmentOnPause()
 
-    }
-
-    override fun onStop() {
-        super.onStop()
-        orientationEventListener?.disable()
-        activity!!.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-    }
-
-    override fun onResume() {
-        super.onResume()
-        addRotationListener()
     }
 }
