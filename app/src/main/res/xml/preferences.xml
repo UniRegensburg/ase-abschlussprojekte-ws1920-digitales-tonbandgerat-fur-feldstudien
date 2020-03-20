@@ -3,7 +3,7 @@
 
     <SwitchPreference
         app:key="@string/rotation_preference_key"
-        app:title="Rotating recording screen"
+        app:title="Upside-down view is possible to improve recording quality"
         app:defaultValue="true">
     </SwitchPreference>
 
