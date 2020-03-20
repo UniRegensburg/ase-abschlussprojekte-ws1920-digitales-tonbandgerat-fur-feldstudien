@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.50"
                     android:layout_gravity="center_vertical"
-                    android:visibility="@{mark.markTimestamp.markComment != null ? View.VISIBLE : View.GONE}" >
+                    android:visibility="@{mark.markTimestamp.markComment != null ? View.VISIBLE : View.INVISIBLE}" >
 
                     <TextView
                         android:id="@+id/comment"
