@@ -1,13 +1,10 @@
 package de.ur.mi.audidroid.views
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.OrientationEventListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -16,10 +13,7 @@ import androidx.navigation.ui.*
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.utils.Pathfinder
-import de.ur.mi.audidroid.utils.PermissionHelper
-import de.ur.mi.audidroid.utils.SaveRecordingDialog
-import de.ur.mi.audidroid.utils.ThemeHelper
+import de.ur.mi.audidroid.utils.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
@@ -32,7 +26,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         )
     }
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private var orientationEventListener: OrientationEventListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +45,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         initTheme()
         checkPermissions()
-        adjustRotationListener(this)
+        OrientationListener.adjustRotationListener(this)
     }
 
     /** Applies the app theme selected by the user.
@@ -121,35 +114,5 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
-
-    /**
-     * Bind a listener for rotation changes of the device
-     * @author: Sabine Roth
-     */
-    fun adjustRotationListener(context: Context) {
-        val activity = context as Activity
-        if (getRotationPreference(context)) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-            orientationEventListener = object : OrientationEventListener(context) {
-                override fun onOrientationChanged(orientation: Int) {
-                    if (orientation in 70..290) activity.requestedOrientation =
-                        ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-                    else if (orientation in 291..360 || (orientation in 0..69)) activity.requestedOrientation =
-                        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                }
-            }
-            orientationEventListener?.enable()
-        } else {
-            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            orientationEventListener?.disable()
-        }
-    }
-
-    private fun getRotationPreference(context: Context): Boolean {
-        return context.getSharedPreferences(
-            context.resources.getString(R.string.rotation_preference_key),
-            Context.MODE_PRIVATE
-        ).getBoolean(context.resources.getString(R.string.rotation_preference_key), true)
     }
 }

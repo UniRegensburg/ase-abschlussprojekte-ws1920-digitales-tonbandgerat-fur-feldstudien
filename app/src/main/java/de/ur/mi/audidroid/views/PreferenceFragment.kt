@@ -5,13 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import androidx.core.content.edit
 import androidx.navigation.findNavController
 import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.utils.OrientationListener
 import de.ur.mi.audidroid.utils.Pathfinder
 import de.ur.mi.audidroid.utils.ThemeHelper
 import java.util.regex.Pattern
@@ -43,7 +43,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                     putBoolean(getString(R.string.rotation_preference_key), newValue as Boolean)
                     commit()
                 }
-                MainActivity().adjustRotationListener(context!!)
+                OrientationListener.adjustRotationListener(context!!)
                 true
             }
     }
