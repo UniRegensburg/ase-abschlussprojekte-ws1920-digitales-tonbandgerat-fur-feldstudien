@@ -17,8 +17,17 @@ interface LabelDao {
     @Query("SELECT * FROM labelsTable")
     fun getAllLabels(): LiveData<List<LabelEntity>>
 
-    @Query("SELECT * FROM labelsTable WHERE uid = :key")
-    fun getLabelById(key: Int): LiveData<LabelEntity>
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R JOIN labelAssignmentTable A ON R.uid = A.recordingId JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid")
+    fun getAllRecordingsWithLabels(): LiveData<List<RecordingAndLabels>>
+
+    data class RecordingAndLabels(
+        val uid: Int?,
+        val recordingName: String?,
+        val recordingPath: String?,
+        val date: String?,
+        val duration: String?,
+        val labels: String?
+    )
 
     @Query("SELECT * FROM labelsTable WHERE labelName = :name")
     suspend fun getLabelByName(name: String): List<LabelEntity>

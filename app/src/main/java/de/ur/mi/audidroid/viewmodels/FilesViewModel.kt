@@ -9,6 +9,7 @@ import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.LabelDao
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
@@ -23,10 +24,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
+    val allRecordingsWithLabels: LiveData<List<LabelDao.RecordingAndLabels>> =
+        repository.getAllRecordingsWithLabels()
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
-    var recording: EntryEntity? = null
-    var recordingToBeExported: EntryEntity? = null
+    var recording: LabelDao.RecordingAndLabels? = null
+    var recordingToBeExported: LabelDao.RecordingAndLabels? = null
 
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val createConfirmDialog: LiveData<Boolean>
@@ -54,20 +57,20 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _createAlertDialog.value = false
     }
 
-    fun delete(entryEntity: EntryEntity) {
-        recording = entryEntity
+    fun delete(recordingAndLabels: LabelDao.RecordingAndLabels) {
+        recording = recordingAndLabels
         _createConfirmDialog.value = true
     }
 
-    fun deleteRecording(entryEntity: EntryEntity) {
-        val file = File(entryEntity.recordingPath)
+    fun deleteRecording(recordingAndLabels: LabelDao.RecordingAndLabels) {
+        val file = File(recordingAndLabels.recordingPath!!)
         if (file.delete()) {
-            repository.deleteRecording(entryEntity)
-            repository.deleteRecMarks(entryEntity.uid)
+            repository.deleteRecording(recordingAndLabels.uid!!)
+            repository.deleteRecMarks(recordingAndLabels.uid)
             showSnackBar(
                 String.format(
                     context.getString(R.string.recording_deleted),
-                    entryEntity.recordingName
+                    recordingAndLabels.recordingName
                 )
             )
             recording = null
@@ -99,7 +102,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             if (file.exists()) {
                 array.add(it[i])
             } else {
-                repository.deleteRecording(it[i])
+                repository.deleteRecording(it[i].uid)
                 repository.deleteRecMarks(it[i].uid)
                 repository.deleteRecLabels(it[i].uid)
             }

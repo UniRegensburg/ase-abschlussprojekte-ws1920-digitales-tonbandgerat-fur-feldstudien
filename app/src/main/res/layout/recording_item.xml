@@ -8,7 +8,7 @@
 
         <variable
             name="recording"
-            type="de.ur.mi.audidroid.models.EntryEntity" />
+            type="de.ur.mi.audidroid.models.LabelDao.RecordingAndLabels" />
 
         <variable
             name="listener"
