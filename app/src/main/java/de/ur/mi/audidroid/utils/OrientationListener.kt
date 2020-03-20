@@ -39,8 +39,8 @@ object OrientationListener {
 
     private fun getRotationPreference(context: Context): Boolean {
         return context.getSharedPreferences(
-            context.resources.getString(R.string.rotation_preference_key),
+            context.resources.getString(R.string.rotate_preference_key),
             Context.MODE_PRIVATE
-        ).getBoolean(context.resources.getString(R.string.rotation_preference_key), true)
+        ).getBoolean(context.resources.getString(R.string.rotate_preference_key), true)
     }
 }

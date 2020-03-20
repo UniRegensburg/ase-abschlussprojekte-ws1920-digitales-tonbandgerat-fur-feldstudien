@@ -14,20 +14,35 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
 
+    <!-- Categories Preferences-->
+    <string name="preference_labels_marks_key">labels_and_marks_category</string>
+    <string name="preference_labels_marks_title">Labels and Marks</string>
+    <string name="preference_file_key">file_category</string>
+    <string name="preference_file_title">File Organisation</string>
+    <string name="preference_display_key">display_category</string>
+    <string name="preference_display_title">Display</string>
+
     <!-- Preferences -->
-    <string name="rotation_preference_key">rotation_preference</string>
-    <string name="markers_preference_key">markers_preference</string>
-    <string name="theme_preference_key">theme_preference</string>
     <string name="labels_preference_key">labels_preference</string>
-    <string name="storage_preference_key">storage_preference</string>
-    <string name="storage_location_summary">internal</string>
+    <string name="labels_preference_title">Edit labels</string>
+    <string name="markers_preference_key">markers_preference</string>
+    <string name="markers_preference_title">Edit markers</string>
     <string name="filename_preference_key">filename_preference</string>
+    <string name="filename_preference_title">Set default filename</string>
     <string name="filename_preference_dialog_message">
         Available variables:\n
         {date} - inserts current data\n
         {time} - inserts current timestamp
     </string>
     <string name="filename_preference_default_value">rec_{date}_{time}</string>
+    <string name="storage_preference_key">storage_preference</string>
+    <string name="storage_preference_title">Set default save location</string>
+    <string name="storage_location_summary">internal</string>
+    <string name="theme_preference_key">theme_preference</string>
+    <string name="theme_preference_title">Choose theme</string>
+    <string name="rotate_preference_key">rotate_preference</string>to use
+    <string name="rotate_preference_title">Upside-down view is enabled to improve recording quality</string>
+    <string name="rotate_preference_summary">\'Auto-rotate\' has to be activated in the settings of the device</string>
 
     <!-- Navigation -->
     <string name="record_label">Record</string>
@@ -140,7 +155,7 @@
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
     <string name="quit_recording">Do you really want to delete the recording?</string>
-    
+
     <!-- Player UI -->
     <string name="player_bar_skip_playing">Button skip playing</string>
     <string name="player_bar_return_playing">Button return playing</string>

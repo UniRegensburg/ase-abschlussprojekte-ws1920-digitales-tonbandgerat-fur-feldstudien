@@ -32,15 +32,15 @@ class PreferenceFragment : PreferenceFragmentCompat() {
 
     private fun initRotatePreference() {
         val rotatePreference =
-            findPreference<SwitchPreference>(getString(R.string.rotation_preference_key))!!
+            findPreference<SwitchPreference>(getString(R.string.rotate_preference_key))!!
         val preferences = context!!.getSharedPreferences(
-            getString(R.string.rotation_preference_key),
+            getString(R.string.rotate_preference_key),
             Context.MODE_PRIVATE
         )
         rotatePreference.onPreferenceChangeListener =
             Preference.OnPreferenceChangeListener { _, newValue ->
                 preferences.edit {
-                    putBoolean(getString(R.string.rotation_preference_key), newValue as Boolean)
+                    putBoolean(getString(R.string.rotate_preference_key), newValue as Boolean)
                     commit()
                 }
                 OrientationListener.adjustRotationListener(context!!)
