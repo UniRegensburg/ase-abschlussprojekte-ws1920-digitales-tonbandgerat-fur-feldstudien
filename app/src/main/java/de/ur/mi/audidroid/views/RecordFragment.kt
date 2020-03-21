@@ -114,5 +114,6 @@ class RecordFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         viewModel.fragmentOnPause()
+
     }
 }

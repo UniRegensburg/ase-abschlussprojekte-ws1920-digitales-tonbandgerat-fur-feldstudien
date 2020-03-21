@@ -6,7 +6,7 @@
     <integer name="one_second">1000</integer>
     <integer name="activity_request_code_preference_storage">80</integer>
     <integer name="max_name_length">30</integer>
-    <integer name="max_label_length">10</integer>
+    <integer name="max_label_mark_length">10</integer>
     <integer name="jump_amount">5000</integer>
     <integer name="snackbar_quite_short">700</integer>
 </resources>
