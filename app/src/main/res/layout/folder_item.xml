@@ -38,10 +38,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/card_view_margin"
                 android:layout_marginTop="@dimen/card_view_margin"
-                android:layout_marginEnd="@dimen/card_view_margin">
+                android:layout_marginEnd="@dimen/keyline_1">
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="@dimen/keyline_2"
                     android:orientation="vertical">
                     <TextView
                         android:layout_width="match_parent"
@@ -60,11 +61,12 @@
                     android:background="@null"
                     android:contentDescription="@string/popup_menu_button"
                     android:onClick="@{(view) -> listener.openFolderPopupMenu(folder, view)}"
-                    android:padding="@dimen/keyline_2"
                     android:src="@drawable/ic_popup_menu"
+                    android:tint="@color/color_on_surface"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:padding="@dimen/keyline_2"
                     android:paddingEnd="@dimen/keyline_5"
                     android:layout_gravity="right"
                     app:layout_constraintVertical_bias="0.016" />
@@ -74,33 +76,9 @@
                 android:id="@+id/recording_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingTop="@dimen/constraint_layout_padding"
                 android:adapter="@{recordingAdapter}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/recording_item" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:visibility="@{filesViewModel.empty ? View.VISIBLE : View.GONE}">
-
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/sad_face"
-                android:scaleType="center"
-                android:src="@drawable/ic_sentiment_dissatisfied"
-                android:layout_marginBottom="@dimen/keyline_5"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_recordings"
-                android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
-
         </LinearLayout>
     </FrameLayout>
 </layout>

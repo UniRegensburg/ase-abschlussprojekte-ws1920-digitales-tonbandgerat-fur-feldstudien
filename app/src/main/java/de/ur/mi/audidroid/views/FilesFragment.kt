@@ -171,7 +171,7 @@ class FilesFragment : Fragment() {
             folderAdapter = FolderAdapter(this, filesViewModel, folderViewModel)
             externalFolderAdapter = ExternalFolderAdapter(this, filesViewModel, folderViewModel)
 
-            binding.recordingListNoFolder.adapter = recordingAdapter
+            binding.recordingListDisplay.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
             binding.externalFolderList.adapter = externalFolderAdapter
             binding.addExternalFolder.setOnClickListener { _ -> onClickAddExternalFolder() }
