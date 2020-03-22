@@ -2,7 +2,6 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.content.res.Resources
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -87,7 +86,7 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) :
             _createAlertDialog.value = true
             return false
         }
-        if (nameInput.length > res.getInteger(R.integer.max_label_length)){
+        if (nameInput.length > res.getInteger(R.integer.max_label_mark_length)){
             errorMessage = res.getString(R.string.label_name_too_long)
             _createAlertDialog.value = true
             return false
