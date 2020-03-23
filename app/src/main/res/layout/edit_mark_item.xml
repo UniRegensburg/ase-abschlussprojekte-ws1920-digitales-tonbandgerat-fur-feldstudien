@@ -5,11 +5,12 @@
     <data>
 
         <import type="android.view.View.OnClickListener" />
+
         <import type="android.view.View" />
 
         <variable
             name="mark"
-            type="de.ur.mi.audidroid.models.MarkAndTimestamp" />
+            type="de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp" />
 
         <variable
             name="listener"
@@ -41,40 +42,41 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.016" >
+                app:layout_constraintVertical_bias="0.016">
 
                 <TextView
                     android:id="@+id/mark_name"
                     android:layout_width="@dimen/layout_width_edit_fragment"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.30"
-                    android:text="@{mark.marker.markerName }"
+                    android:text="@{mark.markAndTimestamp.marker.markerName }"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body1" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.40"
                     android:layout_gravity="center_vertical"
-                    android:visibility="@{mark.markTimestamp.markComment != null ? View.VISIBLE : View.GONE}" >
+                    android:layout_weight="0.40"
+                    android:visibility="@{mark.markAndTimestamp.markTimestamp.markComment != null ? View.VISIBLE : View.GONE}">
 
                     <TextView
                         android:id="@+id/comment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:text="@{mark.markTimestamp.markComment}"
                         android:singleLine="true"
-                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
+                        android:text="@{mark.markAndTimestamp.markTimestamp.markComment}"
+                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline"
+                        android:visibility="@{mark.expanded ? View.GONE : View.VISIBLE}" />
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.40"
                     android:layout_gravity="center_vertical"
-                    android:visibility="@{mark.markTimestamp.markComment == null ? View.VISIBLE : View.GONE}" >
+                    android:layout_weight="0.40"
+                    android:visibility="@{mark.markAndTimestamp.markTimestamp.markComment == null ? View.VISIBLE : View.GONE}">
 
                     <ImageButton
                         android:id="@+id/button_new_comment"
@@ -95,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.20"
                     android:gravity="center_horizontal"
-                    android:text="@{mark.markTimestamp.markTime}"
+                    android:text="@{mark.markAndTimestamp.markTimestamp.markTime}"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
 
                 <ImageButton
@@ -105,7 +107,7 @@
                     android:layout_weight="0.10"
                     android:background="@null"
                     android:contentDescription="@string/popup_menu_option_delete"
-                    android:onClick="@{() -> listener.onMarkDeleteClicked(mark)}"
+                    android:onClick="@{() -> listener.onMarkDeleteClicked(mark.markAndTimestamp)}"
                     android:src="@drawable/ic_delete"
                     android:tint="@color/color_on_surface"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -120,27 +122,27 @@
             <View
                 android:id="@+id/mark_card_divider"
                 style="@style/Divider"
-                app:layout_constraintTop_toBottomOf="@id/linearLayout"
-                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:visibility="gone" />
+                android:visibility="@{mark.expanded ? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/linearLayout" />
 
             <LinearLayout
                 android:id="@+id/comment_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/mark_card_divider"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:weightSum="1"
                 android:orientation="horizontal"
-                android:visibility="gone" >
+                android:visibility="@{mark.expanded ? View.VISIBLE : View.GONE}"
+                android:weightSum="1"
+                app:layout_constraintTop_toBottomOf="@id/mark_card_divider">
 
                 <TextView
                     android:id="@+id/expanded_comment"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.90"
-                    android:text="@{mark.markTimestamp.markComment}"
+                    android:text="@{mark.markAndTimestamp.markTimestamp.markComment}"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline" />
 
                 <ImageButton

@@ -14,14 +14,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.*
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
-import de.ur.mi.audidroid.utils.VisibilityHelper
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
 import io.apptik.widget.MultiSlider.Thumb
@@ -30,6 +28,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
+import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 
 class EditRecordingViewModel(
     private val recordingId: Int,
@@ -56,7 +55,7 @@ class EditRecordingViewModel(
     var tempFile = ""
     var saveErrorMessage: String? = null
     var commentErrorMessage: String? = null
-    var markTimestampToBeEdited: MarkTimestamp? = null
+    var markTimestampToBeEdited: ExpandableMarkAndTimestamp? = null
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
@@ -379,14 +378,15 @@ class EditRecordingViewModel(
         _createSaveDialog.value = false
     }
 
-    fun onEditCommentClicked(markTimestamp: MarkTimestamp) {
-        markTimestampToBeEdited = markTimestamp
+    fun onEditCommentClicked(mark: ExpandableMarkAndTimestamp) {
+        markTimestampToBeEdited = mark
         _createCommentDialog.value = true
     }
 
-    fun onMarkTimestampUpdateClicked(newComment: String?, markTimestamp: MarkTimestamp) {
+    fun onMarkTimestampUpdateClicked(newComment: String?, mark: ExpandableMarkAndTimestamp) {
         _createCommentDialog.value = false
-        updateMarkAndTimestampInDB(newComment, markTimestamp)
+        mark.isExpanded = false
+        updateMarkAndTimestampInDB(newComment, mark.markAndTimestamp.markTimestamp)
     }
 
     fun cancelCommentSaving() {
@@ -403,17 +403,6 @@ class EditRecordingViewModel(
         _createSaveDialog.value = true
     }
 
-    fun onMarkClicked(view: View) {
-        val comment: View = view.findViewById<View>(R.id.comment)
-        val divider: View = view.findViewById<View>(R.id.mark_card_divider)
-        val commentView: View = view.findViewById<View>(R.id.comment_view)
-        val isExpanded: Boolean = (commentView.visibility == View.VISIBLE)
-        VisibilityHelper.toggleVisibility(comment)
-        VisibilityHelper.toggleVisibility(divider)
-        VisibilityHelper.toggleVisibility(commentView)
-        VisibilityHelper.toggleExpanded(commentView, isExpanded)
-    }
-
     fun addMark(view: View) {
 //        val btnId = view.resources.getResourceName(view.id)
 //        val mark = MarkerTimeRelation(0, recordingId, btnId, currentDurationString.value!!)
@@ -421,7 +410,7 @@ class EditRecordingViewModel(
         showSnackBar(R.string.mark_made)
     }
 
-    fun updateMarkAndTimestampInDB(newComment: String?, markTimestamp: MarkTimestamp) {
+    private fun updateMarkAndTimestampInDB(newComment: String?, markTimestamp: MarkTimestamp) {
         val updatedMarkTimestamp = MarkTimestamp(
             markTimestamp.mid,
             markTimestamp.recordingId,

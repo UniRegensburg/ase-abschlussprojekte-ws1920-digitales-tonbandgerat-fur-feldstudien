@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.EditMarkItemBinding
+import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 import de.ur.mi.audidroid.models.MarkAndTimestamp
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 
@@ -16,18 +17,14 @@ class EditMarkerItemAdapter(
     ListAdapter<MarkAndTimestamp, EditMarkerItemAdapter.ViewHolder>(EditMarkAndTimeStampDiffCallback()) {
 
     private val userActionsListener = object : EditMarkUserActionsListener {
-        override fun onMarkClicked(mark: MarkAndTimestamp, view: View) {
-            view.setOnTouchListener { v, event ->
-                v.parent.requestDisallowInterceptTouchEvent(true)
-                false
-            }
-            if (mark.markTimestamp.markComment != null) {
-                editRecordingViewModel.onMarkClicked(view)
+        override fun onMarkClicked(mark: ExpandableMarkAndTimestamp, view: View) {
+            if (mark.markAndTimestamp.markTimestamp.markComment != null) {
+                mark.isExpanded = !mark.isExpanded
             }
         }
 
-        override fun onEditCommentClicked(mark: MarkAndTimestamp, view: View) {
-            editRecordingViewModel.onEditCommentClicked(mark.markTimestamp)
+        override fun onEditCommentClicked(mark: ExpandableMarkAndTimestamp, view: View) {
+            editRecordingViewModel.onEditCommentClicked(mark)
         }
 
         override fun onMarkDeleteClicked(mark: MarkAndTimestamp) {
@@ -50,15 +47,15 @@ class EditMarkerItemAdapter(
             item: MarkAndTimestamp,
             listener: EditMarkUserActionsListener
         ) {
-            binding.mark = item
+            binding.mark = ExpandableMarkAndTimestamp(item)
             binding.listener = listener
             binding.executePendingBindings()
         }
 
         companion object {
             fun from(parent: ViewGroup): RecyclerView.ViewHolder {
-                val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = EditMarkItemBinding.inflate(layoutInflater, parent, false)
+                val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
+                val binding: EditMarkItemBinding = EditMarkItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }

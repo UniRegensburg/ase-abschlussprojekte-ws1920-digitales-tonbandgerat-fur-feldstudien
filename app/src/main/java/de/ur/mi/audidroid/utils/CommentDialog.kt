@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.EditText
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.MarkTimestamp
+import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 
 object CommentDialog {
@@ -15,7 +15,7 @@ object CommentDialog {
 
     fun createDialog(
         context: Context,
-        markTimestampToBeEdited: MarkTimestamp? = null,
+        markTimestampToBeEdited: ExpandableMarkAndTimestamp? = null,
         layoutId: Int? = null,
         viewModel: EditRecordingViewModel? = null,
         errorMessage: String? = null
@@ -25,7 +25,7 @@ object CommentDialog {
         val dialogView: View = inflater.inflate(layoutId!!, null)
         val editText: EditText = dialogView.findViewById(R.id.dialog_add_comment_edit_text)
         if (markTimestampToBeEdited != null) {
-            editText.setText(markTimestampToBeEdited.markComment)
+            editText.setText(markTimestampToBeEdited.markAndTimestamp.markTimestamp.markComment)
         }
         val pos: Int = editText.text.length
         editText.requestFocus()
@@ -37,7 +37,7 @@ object CommentDialog {
         }
         with(builder) {
             setTitle(
-                if (markTimestampToBeEdited!!.markComment == null)
+                if (markTimestampToBeEdited!!.markAndTimestamp.markTimestamp.markComment == null)
                     context.getString(R.string.add_comment_dialog_header)
                 else
                     context.getString(R.string.edit_comment_dialog_header)
@@ -60,7 +60,7 @@ object CommentDialog {
         dialog.show()
         dialog.setCancelable(true)
         dialog.setOnCancelListener {
-            viewModel!!.cancelSaving()
+            viewModel!!.cancelCommentSaving()
             dialog.findViewById<EditText>(R.id.dialog_add_comment_edit_text)?.let { editText ->
                 KeyboardHelper.hideSoftKeyboard(editText)
             }
