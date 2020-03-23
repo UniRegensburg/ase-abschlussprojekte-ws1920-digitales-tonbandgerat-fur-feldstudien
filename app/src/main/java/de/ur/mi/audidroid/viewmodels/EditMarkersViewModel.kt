@@ -2,7 +2,6 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.content.res.Resources
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -60,50 +59,62 @@ class EditMarkersViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onMarkerSaveClicked(nameInput: String?) {
-        if(nameInput==null){
-            return
+        if (checkInput(nameInput)) {
+            _createAlertDialog.value = false
+            insertMarkerIntoDB(nameInput!!)
         }
-        if (markerNameAlreadyTaken(nameInput)) {
-            errorMessage = res.getString(R.string.dialog_marker_already_exists)
-            _createAlertDialog.value = true
-            return
-        }
-        if (!validName(nameInput)) {
-            errorMessage = res.getString(R.string.dialog_marker_invalid_name)
-            _createAlertDialog.value = true
-            return
-        }
-        errorMessage = null
-        _createAlertDialog.value = false
-        insertMarkerIntoDB(nameInput)
     }
 
     fun onMarkerUpdateClicked(nameInput: String?, markerEntity: MarkerEntity) {
         _createAlertDialog.value = false
-        if (!validName(nameInput)) {
-            errorMessage = res.getString(R.string.dialog_marker_invalid_name)
-            _createAlertDialog.value = true
-            return
+        if (checkInput(nameInput)) {
+            updateMarkerInDB(nameInput!!, markerEntity)
         }
-        updateMarkerInDB(nameInput!!, markerEntity)
     }
 
-    fun validName(name: String?): Boolean {
-        val labelName = name ?: ""
-        return Pattern.compile("^[a-zA-Z0-9_-]{1,10}$").matcher(labelName).matches()
+    private fun checkInput(nameInput: String?): Boolean {
+        if (nameInput == null) {
+            return false
+        }
+        if (markerNameAlreadyTaken(nameInput)) {
+            errorMessage = res.getString(R.string.dialog_marker_already_exists)
+            _createAlertDialog.value = true
+            return false
+        }
+        if (!validName(nameInput)) {
+            errorMessage = res.getString(R.string.dialog_invalid_name)
+            _createAlertDialog.value = true
+            return false
+        }
+        if (nameInput.length > res.getInteger(R.integer.max_label_mark_length)) {
+            errorMessage = res.getString(R.string.marker_name_too_long)
+            _createAlertDialog.value = true
+            return false
+        }
+        errorMessage = null
+        return true
+    }
+
+    private fun validName(name: String): Boolean {
+        return Pattern.compile("^[a-zA-Z0-9_{}-]+$").matcher(name).matches()
     }
 
     private fun markerNameAlreadyTaken(markerName: String): Boolean {
         return repository.getMarkerByName(markerName).isNotEmpty()
     }
 
-    fun insertMarkerIntoDB(markerName: String) {
+    private fun insertMarkerIntoDB(markerName: String) {
         val newMarker = MarkerEntity(0, markerName)
         repository.insertMarker(newMarker)
-        showSnackBar(String.format(context.getString(R.string.marker_inserted), newMarker.markerName))
+        showSnackBar(
+            String.format(
+                context.getString(R.string.marker_inserted),
+                newMarker.markerName
+            )
+        )
     }
 
-    fun updateMarkerInDB(markerName: String, markerEntity: MarkerEntity) {
+    private fun updateMarkerInDB(markerName: String, markerEntity: MarkerEntity) {
         val updatedMarker = MarkerEntity(markerEntity.uid, markerName)
         repository.updateMarker(updatedMarker)
         markerToBeEdited = null

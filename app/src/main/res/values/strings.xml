@@ -5,25 +5,44 @@
     <string name="action_settings">Settings</string>
     <string name="action_save_edited_rec">Save</string>
 
+    <!--Menu-->
     <string name="menu_record">Record</string>
     <string name="menu_files">Files</string>
     <string name="menu_settings">Settings</string>
 
+    <!--SplashActivity-->
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
 
+    <!-- Categories Preferences-->
+    <string name="preference_labels_marks_key">labels_and_marks_category</string>
+    <string name="preference_labels_marks_title">Labels and Marks</string>
+    <string name="preference_file_key">file_category</string>
+    <string name="preference_file_title">File Organisation</string>
+    <string name="preference_display_key">display_category</string>
+    <string name="preference_display_title">Display</string>
+
     <!-- Preferences -->
-    <string name="theme_preference_key">theme_preference</string>
     <string name="labels_preference_key">labels_preference</string>
-    <string name="storage_preference_key">storage_preference</string>
-    <string name="storage_location_summary">internal</string>
+    <string name="labels_preference_title">Edit labels</string>
+    <string name="markers_preference_key">markers_preference</string>
+    <string name="markers_preference_title">Edit markers</string>
     <string name="filename_preference_key">filename_preference</string>
+    <string name="filename_preference_title">Set default filename</string>
     <string name="filename_preference_dialog_message">
         Available variables:\n
         {date} - inserts current data\n
         {time} - inserts current timestamp
     </string>
     <string name="filename_preference_default_value">rec_{date}_{time}</string>
+    <string name="storage_preference_key">storage_preference</string>
+    <string name="storage_preference_title">Set default save location</string>
+    <string name="storage_location_summary">internal</string>
+    <string name="theme_preference_key">theme_preference</string>
+    <string name="theme_preference_title">Choose theme</string>
+    <string name="rotate_preference_key">rotate_preference</string>to use
+    <string name="rotate_preference_title">Upside-down view is enabled to improve recording quality</string>
+    <string name="rotate_preference_summary">\'Auto-rotate\' has to be activated in the settings of the device</string>
 
     <!-- Navigation -->
     <string name="record_label">Record</string>
@@ -76,7 +95,7 @@
     <string name="mark_made">Mark saved</string>
     <string name="start_time">00:00</string>
 
-    <!-- LabelsFragment -->
+    <!-- Labels -->
     <string name="no_labels">No labels defined</string>
     <string name="add_label_button_text">Add</string>
     <string name="add_label_text_hint">Enter label</string>
@@ -90,8 +109,9 @@
     <string name="label_name_too_long">Use a name with a maximum of 10 characters</string>
     <string name="delete_label_dialog_header">Delete label \'%1$s\'?</string>
     <string name="dialog_label_invalid_name">The label name should be between one and ten characters long.</string>
+    <string name="dialog_label_already_exists">Label already exists</string>
 
-    <!-- MarkersFragment -->
+    <!-- Markers -->
     <string name="no_markers">No markers defined</string>
     <string name="add_marker_button_text">Add</string>
     <string name="add_marker_text_hint">Enter marker</string>
@@ -105,7 +125,8 @@
     <string name="marker_name_too_long">Use a name with a maximum of 10 characters</string>
     <string name="marker_name_nonexistent">Enter a valid marker name</string>
     <string name="delete_marker_dialog_header">Delete marker \'%1$s\'?</string>
-    <string name="dialog_marker_invalid_name">Just use letters, numbers and _-{}</string>
+    <string name="max_markers_created">You cannot create more than 6 markers</string>
+    <string name="dialog_marker_already_exists">Marker already exists</string>
 
     <!-- User Feedback Recording -->
     <string name="record_saved">Recording saved</string>
@@ -134,24 +155,23 @@
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
     <string name="error_message_recorder_file">There is a problem with the file location. Try changing the directory in the settings.</string>
     <string name="quit_recording">Do you really want to delete the recording?</string>
-    
+
     <!-- Player UI -->
     <string name="player_bar_skip_playing">Button skip playing</string>
     <string name="player_bar_return_playing">Button return playing</string>
 
-
+    <!--Dialogs-->
     <string name="alert_dialog">Alert Dialog</string>
     <string name="confirm_dialog">Confirm Dialog</string>
     <string name="delete">Delete</string>
-
-
-    <string name="sad_face">Sad face</string>
-
+    <string name="filename_not_saved">Name not saved; contained special characters</string>
 
     <!--Storage Location -->
     <string name="default_storage_location">internal</string>
     <string name="error_storage_location">Choose an other location</string>
     <string name="external_sd_card_error">Saving on an external sd card is not possible</string>
+
+    <!--Sharing-->
     <string name="popup_menu_option_share">Share</string>
     <string name="share_recording">Share Recoding</string>
     <string name="choose_file_format">Choose File Format for Export</string>
@@ -162,16 +182,14 @@
     <string name="audio_format_wma">WMA</string>
     <string name="audio_format_wav">WAV</string>
     <string name="audio_format_flac">FLAC</string>
-    <string name="filename_not_saved">Name not saved; contained special characters</string>
-    <string name="markers_preference_key">markers_preference</string>
-    <string name="max_markers_created">You cannot create more than 6 markers</string>
-    <string name="dialog_label_already_exists">Label already exists</string>
-    <string name="dialog_marker_already_exists">Marker already exists</string>
     <string name="button_new_comment">New comment</string>
     <string name="button_edit_comment">Edit comment</string>
     <string name="add_comment_text_hint">Enter comment</string>
     <string name="edit_comment_dialog_header">Edit comment</string>
     <string name="add_comment_dialog_header">Add comment</string>
     <string name="comment_updated">Comment edited</string>
+
+    <string name="sad_face">Sad face</string>
+
 
 </resources>

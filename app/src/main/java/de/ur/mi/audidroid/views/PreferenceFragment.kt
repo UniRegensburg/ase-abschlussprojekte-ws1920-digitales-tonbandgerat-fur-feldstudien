@@ -6,13 +6,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.edit
 import androidx.navigation.findNavController
-import androidx.preference.EditTextPreference
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.utils.OrientationListener
 import de.ur.mi.audidroid.utils.Pathfinder
 import de.ur.mi.audidroid.utils.ThemeHelper
 import java.util.regex.Pattern
@@ -23,11 +22,30 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
+        initRotatePreference()
         initLabelsPreference()
         initMarkersPreference()
         initFileNamePreference()
         initThemePreference()
         initStoragePreference()
+    }
+
+    private fun initRotatePreference() {
+        val rotatePreference =
+            findPreference<SwitchPreference>(getString(R.string.rotate_preference_key))!!
+        val preferences = context!!.getSharedPreferences(
+            getString(R.string.rotate_preference_key),
+            Context.MODE_PRIVATE
+        )
+        rotatePreference.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                preferences.edit {
+                    putBoolean(getString(R.string.rotate_preference_key), newValue as Boolean)
+                    commit()
+                }
+                OrientationListener.adjustRotationListener(context!!)
+                true
+            }
     }
 
     private fun initLabelsPreference() {
