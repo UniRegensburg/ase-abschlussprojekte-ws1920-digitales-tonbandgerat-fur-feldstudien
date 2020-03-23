@@ -3,7 +3,6 @@ package de.ur.mi.audidroid.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.BaseObservable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -18,12 +17,16 @@ class EditMarkerItemAdapter(
 
     private val userActionsListener = object : EditMarkUserActionsListener {
         override fun onMarkClicked(mark: MarkAndTimestamp, view: View) {
+            view.setOnTouchListener { v, event ->
+                v.parent.requestDisallowInterceptTouchEvent(true)
+                false
+            }
             if (mark.markTimestamp.markComment != null) {
                 editRecordingViewModel.onMarkClicked(view)
             }
         }
 
-        override fun onEditCommentClicked(mark: MarkAndTimestamp) {
+        override fun onEditCommentClicked(mark: MarkAndTimestamp, view: View) {
             editRecordingViewModel.onEditCommentClicked(mark.markTimestamp)
         }
 

@@ -14,6 +14,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.*
@@ -406,7 +407,7 @@ class EditRecordingViewModel(
         val comment: View = view.findViewById<View>(R.id.comment)
         val divider: View = view.findViewById<View>(R.id.mark_card_divider)
         val commentView: View = view.findViewById<View>(R.id.comment_view)
-        val isExpanded = (commentView.visibility == View.VISIBLE)
+        val isExpanded: Boolean = (commentView.visibility == View.VISIBLE)
         VisibilityHelper.toggleVisibility(comment)
         VisibilityHelper.toggleVisibility(divider)
         VisibilityHelper.toggleVisibility(commentView)

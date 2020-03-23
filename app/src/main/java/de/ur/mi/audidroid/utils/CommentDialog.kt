@@ -37,15 +37,18 @@ object CommentDialog {
         }
         with(builder) {
             setTitle(
-                if (markTimestampToBeEdited != null)
-                    context.getString(R.string.edit_comment_dialog_header)
-                else
+                if (markTimestampToBeEdited!!.markComment == null)
                     context.getString(R.string.add_comment_dialog_header)
+                else
+                    context.getString(R.string.edit_comment_dialog_header)
             )
             setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
                 var commentInput: String? = editText.text.toString()
                 if (commentInput == "") commentInput = null
-                viewModel?.onMarkTimestampUpdateClicked(commentInput, markTimestampToBeEdited!!)
+                viewModel?.onMarkTimestampUpdateClicked(
+                    commentInput,
+                    markTimestampToBeEdited
+                )
                 KeyboardHelper.hideSoftKeyboard(editText)
             }
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
