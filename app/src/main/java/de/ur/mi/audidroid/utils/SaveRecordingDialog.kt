@@ -178,9 +178,15 @@ object SaveRecordingDialog {
     }
 
     private fun addClickedLabel(clickedLabel: Chip) {
-        clickedLabel.chipBackgroundColor =
-            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
-        selectedLabels.add((clickedLabel).text.toString())
+        if (selectedLabels.size < context.resources.getInteger(R.integer.max_label_size)) {
+            clickedLabel.chipBackgroundColor =
+                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
+            selectedLabels.add((clickedLabel).text.toString())
+        } else Snackbar.make(
+            fragment.requireView(),
+            context.resources.getString(R.string.dialog_just_three_labels),
+            Snackbar.LENGTH_LONG
+        ).show()
     }
 
     private fun removeClickedLabel(clickedLabel: Chip) {

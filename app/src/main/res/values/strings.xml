@@ -152,6 +152,7 @@
     <string name="dialog_invalid_name">Just use letters, numbers and _-{}.</string>
     <string name="dialog_already_exist">Duplication error. Change the name or the path.</string>
     <string name="dialog_name_length">Enter a maximum of thirty characters.</string>
+    <string name="dialog_just_three_labels">Select a maximum of three labels.</string>
 
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
