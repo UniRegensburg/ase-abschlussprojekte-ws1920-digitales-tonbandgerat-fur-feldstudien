@@ -28,7 +28,7 @@ class EditMarkerItemAdapter(
         }
 
         override fun onMarkDeleteClicked(mark: MarkAndTimestamp) {
-            editRecordingViewModel.deleteMark(mark.markTimestamp.mid)
+            editRecordingViewModel.onMarkDeleteClicked(mark)
         }
     }
 

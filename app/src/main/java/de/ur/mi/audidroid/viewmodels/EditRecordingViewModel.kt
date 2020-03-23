@@ -56,6 +56,7 @@ class EditRecordingViewModel(
     var saveErrorMessage: String? = null
     var commentErrorMessage: String? = null
     var markTimestampToBeEdited: ExpandableMarkAndTimestamp? = null
+    var markToBeDeleted: MarkAndTimestamp? = null
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
@@ -67,6 +68,10 @@ class EditRecordingViewModel(
     private val _createCommentDialog = MutableLiveData<Boolean>()
     val createCommentDialog: LiveData<Boolean>
         get() = _createCommentDialog
+
+    private val _createConfirmDialog = MutableLiveData<Boolean>()
+    val createConfirmDialog: MutableLiveData<Boolean>
+        get() = _createConfirmDialog
 
     private val _totalDuration = MutableLiveData<Long>()
     private val totalDuration: LiveData<Long>
@@ -423,8 +428,14 @@ class EditRecordingViewModel(
         showSnackBar(R.string.comment_updated)
     }
 
+    fun onMarkDeleteClicked(markAndTimestamp: MarkAndTimestamp) {
+        markToBeDeleted = markAndTimestamp
+        _createConfirmDialog.value = true
+    }
+
     fun deleteMark(mid: Int) {
         repository.deleteMark(mid)
+        _createConfirmDialog.value = false
         showSnackBar(R.string.mark_deleted)
     }
 
@@ -450,5 +461,9 @@ class EditRecordingViewModel(
 
     fun returnPlaying() {
         handlePlayerBar.doReturnPlaying(mediaPlayer, context)
+    }
+
+    fun cancelDelete() {
+        _createConfirmDialog.value = false
     }
 }

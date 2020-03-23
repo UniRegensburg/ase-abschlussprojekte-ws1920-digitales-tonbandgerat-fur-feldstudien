@@ -65,6 +65,7 @@ class EditRecordingFragment : Fragment() {
         })
         createEditRecordingDialog()
         createCommentDialog()
+        createConfirmDialog()
         setupAdapter()
     }
 
@@ -112,6 +113,18 @@ class EditRecordingFragment : Fragment() {
                     layoutId = R.layout.comment_dialog,
                     viewModel = editRecordingViewModel,
                     errorMessage = editRecordingViewModel.commentErrorMessage
+                )
+            }
+        })
+    }
+
+    private fun createConfirmDialog() {
+        editRecordingViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                de.ur.mi.audidroid.utils.DeleteMarkDialog.createDialog(
+                    context = context!!,
+                    markToBeEdited = editRecordingViewModel.markToBeDeleted,
+                    viewModel = editRecordingViewModel
                 )
             }
         })
