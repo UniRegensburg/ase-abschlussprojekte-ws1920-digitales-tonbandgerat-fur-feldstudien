@@ -29,6 +29,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     var recordingToBeMoved: EntryEntity? = null
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
+
+    val allRecNoFolderSortByName: LiveData<List<EntryEntity>> = repository.getRecNoFolderSortByName()
+    val allRecNoFolderSortByDate: LiveData<List<EntryEntity>> = repository.getRecNoFolderSortByDate()
+    val allRecNoFolderSortByDur: LiveData<List<EntryEntity>> = repository.getRecNoFolderSortByDur()
+
     var errorMessage: String? = null
     var recording: EntryEntity? = null
 
@@ -58,12 +63,44 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     //1: allrecs
     //2: noFolders
 
-
+    fun initListener(){
+        sortByListener.value = res.getInteger(R.integer.sort_by_date)
+    }
     fun initDisplay (){
-        println("INIT DISPLAY ")
-
-        println(sortByListener)
         when (sortByListener.value){
+            res.getInteger(R.integer.sort_by_date) -> {
+
+                displayRecordings.removeSource(allRecordings)
+                displayRecordings.removeSource(allRecordingsWithNoFolder)
+                displayRecordings.removeSource(allRecNoFolderSortByName)
+                displayRecordings.removeSource(allRecNoFolderSortByDur)
+                displayRecordings.addSource(allRecNoFolderSortByDate){
+                    displayRecordings.value = allRecNoFolderSortByDate.value
+                }
+            }
+            res.getInteger(R.integer.sort_by_name) -> {
+                displayRecordings.removeSource(allRecordings)
+                displayRecordings.removeSource(allRecordingsWithNoFolder)
+                displayRecordings.removeSource(allRecNoFolderSortByDate)
+                displayRecordings.removeSource(allRecNoFolderSortByDur)
+                displayRecordings.addSource(allRecNoFolderSortByName) {
+                    displayRecordings.value = allRecNoFolderSortByName.value
+                }
+            }
+            res.getInteger(R.integer.sort_by_duration) -> {
+                displayRecordings.removeSource(allRecordings)
+                displayRecordings.removeSource(allRecordingsWithNoFolder)
+                displayRecordings.removeSource(allRecNoFolderSortByName)
+                displayRecordings.removeSource(allRecNoFolderSortByDate)
+                displayRecordings.addSource(allRecNoFolderSortByDur) {
+                    displayRecordings.value = allRecNoFolderSortByDur.value
+                }
+            }
+        }
+
+
+        /*
+         when (sortByListener.value){
             res.getInteger(R.integer.sort_by_date) -> {
                 println("jo")
                 displayRecordings.removeSource(allRecordings)
@@ -87,19 +124,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 }
             }
         }
-
-
-        /*
-        displayRecordings.addSource(allRecordings){ result ->
-            if (currentOrder == 1){
-                result?.let { displayRecordings.value = it }
-            }
-
-        }
-        displayRecordings.addSource(allRecordingsWithNoFolder){ result ->
-            if (currentOrder == 2){
-                result?.let { displayRecordings.value = it }
-            }
         }*/
     }
     fun openSortByPopupMenu(view: View){
@@ -108,12 +132,24 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId){
                 R.id.action_sort_by_date ->
+                {
                     sortByListener.value = res.getInteger(R.integer.sort_by_date)
+                    initDisplay()
+                }
+
 
                 R.id.action_sort_by_name ->
-                   sortByListener.value = res.getInteger(R.integer.sort_by_name)
+                {
+                    sortByListener.value = res.getInteger(R.integer.sort_by_name)
+                    initDisplay()
+                }
+
                 R.id.action_sort_by_duration ->
+                {
                     sortByListener.value = res.getInteger(R.integer.sort_by_duration)
+                    initDisplay()
+                }
+
             }
             true
         }

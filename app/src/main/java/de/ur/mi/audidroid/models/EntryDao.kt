@@ -26,7 +26,7 @@ interface EntryDao {
     @Query("SELECT * FROM recordingsTable WHERE folder = :folderUid ORDER BY date ASC")
     fun getRecByFolderSortedDate(folderUid: Int?):  LiveData<List<EntryEntity>>
 
-    @Query("SELECT * FROM recordingsTable WHERE folder = :folderUid ORDER BY recordingName DESC")
+    @Query("SELECT * FROM recordingsTable WHERE folder = :folderUid ORDER BY recordingName ASC")
     fun getRecByFolderSortedName(folderUid: Int?):  LiveData<List<EntryEntity>>
 
     @Query("SELECT * FROM recordingsTable WHERE folder = :folderUid ORDER BY duration DESC")
@@ -34,6 +34,15 @@ interface EntryDao {
 
     @Query("SELECT * FROM recordingsTable WHERE folder IS NULL")
     fun getRecordingWithNoFolder():  LiveData<List<EntryEntity>>
+
+    @Query("SELECT * FROM recordingsTable WHERE folder IS NULL ORDER BY date ASC")
+    fun getRecNoFolderSortByDate():  LiveData<List<EntryEntity>>
+
+    @Query("SELECT * FROM recordingsTable WHERE folder IS NULL ORDER BY recordingName DESC")
+    fun getRecNoFolderSortByName():  LiveData<List<EntryEntity>>
+
+    @Query("SELECT * FROM recordingsTable WHERE folder IS NULL ORDER BY duration DESC")
+    fun getRecNoFolderSortByDur():  LiveData<List<EntryEntity>>
 
     @Insert(onConflict = REPLACE)
     suspend fun insert(entryEntity: EntryEntity): Long

@@ -171,6 +171,15 @@ class Repository(application: Application) : CoroutineScope {
         return entryDao.getRecordingWithNoFolder()
     }
 
+    fun getRecNoFolderSortByName(): LiveData<List<EntryEntity>>{
+        return entryDao.getRecNoFolderSortByName()
+    }
+    fun getRecNoFolderSortByDate(): LiveData<List<EntryEntity>>{
+        return entryDao.getRecNoFolderSortByDate()
+    }
+    fun getRecNoFolderSortByDur(): LiveData<List<EntryEntity>>{
+        return entryDao.getRecNoFolderSortByDur()
+    }
     fun getFolderByPath(path: String): LiveData<FolderEntity>{
         return folderDao.getFolderByPath(path)
     }

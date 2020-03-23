@@ -64,6 +64,7 @@ class FilesFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
+        filesViewModel.initListener()
         filesViewModel.initDisplay()
         folderViewModel.initFolderSorting()
 
@@ -73,6 +74,7 @@ class FilesFragment : Fragment() {
         folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {container?.invalidate()})
         filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {})
+        filesViewModel.sortByListener.observe(viewLifecycleOwner, Observer {  })
 
         observeSnackBars()
 
@@ -151,24 +153,6 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
-    /*
-    fun openSortByPopupMenu(view: View){
-        val popupMenu = PopupMenu(context, view)
-
-        popupMenu.menuInflater.inflate(R.menu.popup_menu_sort_by, popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId){
-                R.id.action_sort_by_date ->
-                    println("BY DATE")
-                R.id.action_sort_by_name ->
-                    println("BY NAME")
-                R.id.action_sort_by_duration ->
-                    println("BY DURATION")
-            }
-            true
-        }
-        popupMenu.show()
-    }*/
 
     private fun navigateToEditFragment(entryEntity: EntryEntity) {
         this.findNavController().navigate(
@@ -200,7 +184,9 @@ class FilesFragment : Fragment() {
             //Sets Adapter to RecyclingView for Recordings with no folder association.
            filesViewModel.displayRecordings.observe(viewLifecycleOwner, Observer {
                it?.let {
-                   recordingAdapter.submitList(it)
+                   var array = arrayListOf<EntryEntity>()
+                   array = filesViewModel.checkExistence(it, array)
+                   recordingAdapter.submitList(array)
                    view!!.invalidate()
                }
            })
