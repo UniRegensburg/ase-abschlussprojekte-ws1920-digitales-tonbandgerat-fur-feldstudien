@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.MarkItemBinding
+import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 import de.ur.mi.audidroid.models.MarkAndTimestamp
 import de.ur.mi.audidroid.viewmodels.PlayerViewModel
 
@@ -17,9 +18,9 @@ class MarkItemAdapter(
 
     private val userActionsListener = object : MarkUserActionsListener {
 
-        override fun onMarkClicked(mark: MarkAndTimestamp, view: View) {
-            if (mark.markTimestamp.markComment != null) {
-                playerViewModel.onMarkClicked(view)
+        override fun onMarkClicked(mark: ExpandableMarkAndTimestamp, view: View) {
+            if (mark.markAndTimestamp.markTimestamp.markComment != null) {
+                mark.isExpanded = !mark.isExpanded
             }
         }
 
@@ -40,7 +41,7 @@ class MarkItemAdapter(
             item: MarkAndTimestamp,
             listener: MarkUserActionsListener
         ) {
-            binding.mark = item
+            binding.mark = ExpandableMarkAndTimestamp(item)
             binding.listener = listener
             binding.executePendingBindings()
         }
