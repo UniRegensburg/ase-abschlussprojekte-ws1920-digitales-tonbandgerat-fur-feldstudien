@@ -155,6 +155,18 @@ class Repository(application: Application) : CoroutineScope {
         return entryDao.getRecordingByFolder(uid)
     }
 
+    fun getRecByFolderSortedDate(uid: Int?): LiveData<List<EntryEntity>>{
+        return entryDao.getRecByFolderSortedDate(uid)
+    }
+
+    fun getRecByFolderSortedName(uid: Int?): LiveData<List<EntryEntity>>{
+        return entryDao.getRecByFolderSortedName(uid)
+    }
+
+    fun getRecByFolderSortedDuration(uid: Int?): LiveData<List<EntryEntity>>{
+        return entryDao.getRecByFolderSortedDur(uid)
+    }
+
     fun getRecordingWithNoFolder(): LiveData<List<EntryEntity>>{
         return entryDao.getRecordingWithNoFolder()
     }

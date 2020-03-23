@@ -45,6 +45,13 @@
                     android:padding="@dimen/keyline_1"
                     android:text="@string/recordings_unfiled"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Caption" />
+                <!-- android:onClick="@{() -> filesViewModel.updateDisplay()}" -->
+                <Button
+                    android:id="@+id/Sort_By"
+                    android:onClick="@{(view) -> filesViewModel.openSortByPopupMenu(view)}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/popup_menu_sort_by_title"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recording_list_display"

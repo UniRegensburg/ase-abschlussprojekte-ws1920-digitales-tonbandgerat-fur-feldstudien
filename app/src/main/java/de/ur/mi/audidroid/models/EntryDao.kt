@@ -23,6 +23,15 @@ interface EntryDao {
     @Query("SELECT * FROM recordingsTable WHERE folder = :folderUid")
     fun getRecordingByFolder(folderUid: Int?):  LiveData<List<EntryEntity>>
 
+    @Query("SELECT * FROM recordingsTable WHERE folder = :folderUid ORDER BY date ASC")
+    fun getRecByFolderSortedDate(folderUid: Int?):  LiveData<List<EntryEntity>>
+
+    @Query("SELECT * FROM recordingsTable WHERE folder = :folderUid ORDER BY recordingName DESC")
+    fun getRecByFolderSortedName(folderUid: Int?):  LiveData<List<EntryEntity>>
+
+    @Query("SELECT * FROM recordingsTable WHERE folder = :folderUid ORDER BY duration DESC")
+    fun getRecByFolderSortedDur(folderUid: Int?):  LiveData<List<EntryEntity>>
+
     @Query("SELECT * FROM recordingsTable WHERE folder IS NULL")
     fun getRecordingWithNoFolder():  LiveData<List<EntryEntity>>
 

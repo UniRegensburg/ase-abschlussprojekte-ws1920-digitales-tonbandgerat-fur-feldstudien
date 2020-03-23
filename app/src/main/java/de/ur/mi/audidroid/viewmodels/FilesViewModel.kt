@@ -1,11 +1,10 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.view.View
 import android.widget.FrameLayout
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import android.widget.PopupMenu
+import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
@@ -24,6 +23,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
+    private val res = context.resources
     private lateinit var frameLayout: FrameLayout
     var recordingToBeExported: EntryEntity? = null
     var recordingToBeMoved: EntryEntity? = null
@@ -31,6 +31,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
     var errorMessage: String? = null
     var recording: EntryEntity? = null
+
+    var sortByListener:  MutableLiveData<Int> = MutableLiveData()
+
+
 
     private val _createAlertConvertDialog = MutableLiveData<Boolean>()
     val createAlertConvertDialog: MutableLiveData<Boolean>
@@ -47,6 +51,102 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
+
+    //>>>>>>>>>>>>>
+
+    var displayRecordings = MediatorLiveData<List<EntryEntity>>()
+    //1: allrecs
+    //2: noFolders
+
+
+    fun initDisplay (){
+        println("INIT DISPLAY ")
+
+        println(sortByListener)
+        when (sortByListener.value){
+            res.getInteger(R.integer.sort_by_date) -> {
+                println("jo")
+                displayRecordings.removeSource(allRecordings)
+                displayRecordings.removeSource(allRecordingsWithNoFolder)
+                displayRecordings.addSource(allRecordings){
+                    displayRecordings.value = allRecordings.value
+                }
+            }
+            res.getInteger(R.integer.sort_by_name) -> {
+                displayRecordings.removeSource(allRecordings)
+                displayRecordings.removeSource(allRecordingsWithNoFolder)
+                displayRecordings.addSource(allRecordings) {
+                    displayRecordings.value = allRecordingsWithNoFolder.value
+                }
+            }
+            res.getInteger(R.integer.sort_by_duration) -> {
+                displayRecordings.removeSource(allRecordings)
+                displayRecordings.removeSource(allRecordingsWithNoFolder)
+                displayRecordings.addSource(allRecordings) {
+                    displayRecordings.value = allRecordingsWithNoFolder.value
+                }
+            }
+        }
+
+
+        /*
+        displayRecordings.addSource(allRecordings){ result ->
+            if (currentOrder == 1){
+                result?.let { displayRecordings.value = it }
+            }
+
+        }
+        displayRecordings.addSource(allRecordingsWithNoFolder){ result ->
+            if (currentOrder == 2){
+                result?.let { displayRecordings.value = it }
+            }
+        }*/
+    }
+    fun openSortByPopupMenu(view: View){
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.menuInflater.inflate(R.menu.popup_menu_sort_by, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId){
+                R.id.action_sort_by_date ->
+                    sortByListener.value = res.getInteger(R.integer.sort_by_date)
+
+                R.id.action_sort_by_name ->
+                   sortByListener.value = res.getInteger(R.integer.sort_by_name)
+                R.id.action_sort_by_duration ->
+                    sortByListener.value = res.getInteger(R.integer.sort_by_duration)
+            }
+            true
+        }
+        popupMenu.show()
+    }
+
+
+
+    //>>>>>>>>>>>>>
+
+    fun getAllRecordingsByFolder(folder : FolderEntity): LiveData<List<EntryEntity>>{
+        println("GET ALL RECording")
+
+        when (sortByListener.value) {
+            res.getInteger(R.integer.sort_by_date) -> {
+                print("date")
+                return repository.getRecByFolderSortedDate(folder.uid)
+            }
+            res.getInteger(R.integer.sort_by_name) -> {
+                print("name")
+                return repository.getRecByFolderSortedName(folder.uid)
+            }
+            res.getInteger(R.integer.sort_by_duration) -> {
+                print("duration")
+                return repository.getRecByFolderSortedDuration(folder.uid)
+            }
+            else -> {  print("else")
+                return repository.getRecordingByFolder(folder.uid)
+            }
+        }
+    }
+
+
 
     fun doneShowingSnackbar() {
         _showSnackbarEvent.value = null
@@ -146,9 +246,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-    fun getAllRecordingsByFolder(folder : FolderEntity): LiveData<List<EntryEntity>>{
-        return repository.getRecordingByFolder(folder.uid)
-    }
+
 
     // Navigation to the PlayerFragment
     private val _navigateToPlayerFragment = MutableLiveData<Int>()
