@@ -58,6 +58,8 @@
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/keyline_3"
+                android:layout_marginEnd="@dimen/keyline_3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -68,9 +70,7 @@
                     android:id="@+id/labelChipGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/keyline_1"
                     android:layout_marginTop="@dimen/dialog_margin_small"
-                    android:layout_marginEnd="@dimen/keyline_1"
                     android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1"
                     android:textColor="@color/color_on_surface"
                     app:singleLine="true" />
