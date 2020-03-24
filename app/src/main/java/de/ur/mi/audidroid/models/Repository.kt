@@ -127,6 +127,10 @@ class Repository(application: Application) : CoroutineScope {
         return list!!
     }
 
+    fun getRecLabelsById(uid: Int): LiveData<List<LabelEntity>> {
+        return labelDao.getRecLabelsById(uid)
+    }
+
     fun getRecordingById(uid: Int): LiveData<EntryEntity> {
         return entryDao.getRecordingById(uid)
     }
@@ -168,5 +172,4 @@ class Repository(application: Application) : CoroutineScope {
             labelAssignmentDao.deleteRecLabels(uid)
         }
     }
-
 }

@@ -29,6 +29,9 @@ interface LabelDao {
         val labels: String?
     )
 
+    @Query("SELECT * FROM labelsTable WHERE uid IN (SELECT DISTINCT(labelId) FROM labelAssignmentTable WHERE recordingId = :key)")
+    fun getRecLabelsById(key: Int): LiveData<List<LabelEntity>>
+
     @Query("SELECT * FROM labelsTable WHERE labelName = :name")
     suspend fun getLabelByName(name: String): List<LabelEntity>
 
