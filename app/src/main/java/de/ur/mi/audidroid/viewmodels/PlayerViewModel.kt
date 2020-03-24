@@ -7,7 +7,6 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.lifecycle.AndroidViewModel
@@ -20,7 +19,6 @@ import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.MarkAndTimestamp
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.HandlePlayerBar
-import de.ur.mi.audidroid.utils.VisibilityHelper
 import java.io.File
 import java.io.IOException
 
