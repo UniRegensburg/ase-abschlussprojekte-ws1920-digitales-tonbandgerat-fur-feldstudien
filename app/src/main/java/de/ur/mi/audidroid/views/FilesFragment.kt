@@ -162,7 +162,7 @@ class FilesFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         filesViewModel.initializeFrameLayout(files_layout)
         setupAdapter()
-        createConfirmDialog()
+        createDialogs()
     }
 
     private fun setupAdapter() {
@@ -207,7 +207,13 @@ class FilesFragment : Fragment() {
         }
     }
 
-    private fun createConfirmDialog() {
+    private fun createDialogs() {
+
+        filesViewModel.createSearchDialog.observe(viewLifecycleOwner, Observer {
+            if (it){
+                
+            }
+        })
 
         //Dialog for deletion of recording.
         filesViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {

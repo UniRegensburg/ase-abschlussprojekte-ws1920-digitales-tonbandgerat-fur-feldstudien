@@ -34,12 +34,17 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val allRecNoFolderSortByDate: LiveData<List<EntryEntity>> = repository.getRecNoFolderSortByDate()
     val allRecNoFolderSortByDur: LiveData<List<EntryEntity>> = repository.getRecNoFolderSortByDur()
 
+
     var errorMessage: String? = null
     var recording: EntryEntity? = null
 
     var sortedFolderContent = MediatorLiveData<List<EntryEntity>>()
     var displayRecordings = MediatorLiveData<List<EntryEntity>>()
     var sortByListener:  MutableLiveData<Int> = MutableLiveData()
+
+    private val _createSearchDialog = MutableLiveData<Boolean>()
+    val createSearchDialog: MutableLiveData<Boolean>
+        get() = _createSearchDialog
 
     private val _createAlertConvertDialog = MutableLiveData<Boolean>()
     val createAlertConvertDialog: MutableLiveData<Boolean>
@@ -59,6 +64,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun initListener(){
         sortByListener.value = res.getInteger(R.integer.sort_by_date)
+    }
+
+    fun onSearchClicked(){
+
     }
 
     fun setRecordingDisplay (){
