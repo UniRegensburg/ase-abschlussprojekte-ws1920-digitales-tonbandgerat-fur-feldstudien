@@ -67,7 +67,17 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onSearchClicked(){
+        println("onSearchClicked")
+        createSearchDialog.value = true
+    }
 
+    fun cancelSearchDialog(){
+        createSearchDialog.value = false
+    }
+
+    fun searchRecording(searchInput: String){
+        println("ES WIRT GESUCHT ")
+        println(searchInput)
     }
 
     fun setRecordingDisplay (){

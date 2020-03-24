@@ -23,10 +23,7 @@ import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.utils.FilesDialog
-import de.ur.mi.audidroid.utils.ConvertDialog
-import de.ur.mi.audidroid.utils.FolderDialog
-import de.ur.mi.audidroid.utils.StorageHelper
+import de.ur.mi.audidroid.utils.*
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
@@ -211,7 +208,11 @@ class FilesFragment : Fragment() {
 
         filesViewModel.createSearchDialog.observe(viewLifecycleOwner, Observer {
             if (it){
-                
+                SearchDialog.createDialog(
+                    context = context!!,
+                    layoutId = R.layout.search_dialog,
+                    viewModel = filesViewModel
+                )
             }
         })
 

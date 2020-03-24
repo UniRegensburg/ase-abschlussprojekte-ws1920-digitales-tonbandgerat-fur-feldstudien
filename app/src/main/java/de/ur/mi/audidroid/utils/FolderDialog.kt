@@ -152,6 +152,7 @@ object FolderDialog {
 
         dialog.setCancelable(true)
         dialog.setOnDismissListener {
+            folderViewModel.cancelFolderDialog()
             dialog.findViewById<EditText>(R.id.dialog_add_label_edit_text)?.let { editText ->
                 KeyboardHelper.hideSoftKeyboard(editText)
             }

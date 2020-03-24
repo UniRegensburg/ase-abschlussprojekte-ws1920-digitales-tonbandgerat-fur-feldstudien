@@ -68,6 +68,8 @@
     <string name="popup_menu_sort_by_date">Date</string>
     <string name="popup_menu_sort_by_duration">Duration</string>
     <string name="search_button">Search Entry</string>
+    <string name="dialog_search">Search</string>
+    <string name="dialog_search_name">Search by Name</string>
 
     <!-- EditRecordingFragment -->
     <string name="cut_inner_button">Cut inner</string>
