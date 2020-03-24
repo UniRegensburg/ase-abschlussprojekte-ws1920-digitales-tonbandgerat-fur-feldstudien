@@ -34,13 +34,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val allRecNoFolderSortByDate: LiveData<List<EntryEntity>> = repository.getRecNoFolderSortByDate()
     val allRecNoFolderSortByDur: LiveData<List<EntryEntity>> = repository.getRecNoFolderSortByDur()
 
-
-    var errorMessage: String? = null
-    var recording: EntryEntity? = null
-
     var sortedFolderContent = MediatorLiveData<List<EntryEntity>>()
     var displayRecordings = MediatorLiveData<List<EntryEntity>>()
     var sortByListener:  MutableLiveData<Int> = MutableLiveData()
+    var errorMessage: String? = null
+    var recording: EntryEntity? = null
 
     private val _createSearchDialog = MutableLiveData<Boolean>()
     val createSearchDialog: MutableLiveData<Boolean>
@@ -67,7 +65,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onSearchClicked(){
-        println("onSearchClicked")
         createSearchDialog.value = true
     }
 
@@ -75,30 +72,44 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         createSearchDialog.value = false
     }
 
-    fun searchRecording(searchInput: String){
-        println("ES WIRT GESUCHT ")
-        println(searchInput)
+    fun prepareDisplayRecordings(){
+        displayRecordings.removeSource(allRecordings)
+        displayRecordings.removeSource(allRecNoFolderSortByName)
+        displayRecordings.removeSource(allRecNoFolderSortByDate)
+        displayRecordings.removeSource(allRecNoFolderSortByDur)
     }
 
-    fun setRecordingDisplay (){
+    fun searchRecording(searchInput: String){
+        val resultList = mutableListOf<EntryEntity>()
+        allRecordings.value!!.forEach {
+            if (it.recordingName.contains(searchInput, true)){
+                resultList.add(it)
+            }
+        }
+
+       prepareDisplayRecordings()
+        displayRecordings.addSource(allRecordings){
+            displayRecordings.value = resultList
+        }
+        cancelSearchDialog()
+    }
+
+    fun sortRecordingDisplay (){
         when (sortByListener.value){
             res.getInteger(R.integer.sort_by_date) -> {
-                displayRecordings.removeSource(allRecNoFolderSortByName)
-                displayRecordings.removeSource(allRecNoFolderSortByDur)
+                prepareDisplayRecordings()
                 displayRecordings.addSource(allRecNoFolderSortByDate){
                     displayRecordings.value = allRecNoFolderSortByDate.value
                 }
             }
             res.getInteger(R.integer.sort_by_name) -> {
-                displayRecordings.removeSource(allRecNoFolderSortByDate)
-                displayRecordings.removeSource(allRecNoFolderSortByDur)
+                prepareDisplayRecordings()
                 displayRecordings.addSource(allRecNoFolderSortByName) {
                     displayRecordings.value = allRecNoFolderSortByName.value
                 }
             }
             res.getInteger(R.integer.sort_by_duration) -> {
-                displayRecordings.removeSource(allRecNoFolderSortByName)
-                displayRecordings.removeSource(allRecNoFolderSortByDate)
+                prepareDisplayRecordings()
                 displayRecordings.addSource(allRecNoFolderSortByDur) {
                     displayRecordings.value = allRecNoFolderSortByDur.value
                 }
@@ -113,17 +124,17 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             when (item.itemId){
                 R.id.action_sort_by_date ->
                 {sortByListener.value = res.getInteger(R.integer.sort_by_date)
-                    setRecordingDisplay()
+                    sortRecordingDisplay()
                 }
 
                 R.id.action_sort_by_name ->
                 {sortByListener.value = res.getInteger(R.integer.sort_by_name)
-                    setRecordingDisplay()
+                    sortRecordingDisplay()
                 }
 
                 R.id.action_sort_by_duration ->
                 { sortByListener.value = res.getInteger(R.integer.sort_by_duration)
-                    setRecordingDisplay()
+                    sortRecordingDisplay()
                 }
             }
             true
