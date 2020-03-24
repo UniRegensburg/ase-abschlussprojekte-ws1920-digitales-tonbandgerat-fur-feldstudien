@@ -85,6 +85,12 @@ class FolderAdapter(
             }
         })
 
+        filesViewModel.sortByListener.observe(holder.itemView.context as LifecycleOwner, Observer {
+            val newOrder = filesViewModel.getAllRecordingsByFolder(folderItem)
+            newOrder.value?.let {
+                recordingAdapter.submitList(it)
+            }
+        })
 
     }
 }
