@@ -65,7 +65,7 @@ class FilesFragment : Fragment() {
         binding.lifecycleOwner = this
 
         filesViewModel.initListener()
-        filesViewModel.initDisplay()
+        filesViewModel.setRecordingDisplay()
         folderViewModel.initFolderSorting()
 
         folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
@@ -73,7 +73,6 @@ class FilesFragment : Fragment() {
         folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
         folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {container?.invalidate()})
-        filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {})
         filesViewModel.sortByListener.observe(viewLifecycleOwner, Observer {  })
 
         observeSnackBars()
@@ -153,7 +152,6 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
-
     private fun navigateToEditFragment(entryEntity: EntryEntity) {
         this.findNavController().navigate(
             FilesFragmentDirections.actionFilesToEdit(entryEntity.uid)
@@ -190,15 +188,6 @@ class FilesFragment : Fragment() {
                    view!!.invalidate()
                }
            })
-            /*
-            filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {
-                it?.let {
-                    var array = arrayListOf<EntryEntity>()
-                    array = filesViewModel.checkExistence(it, array)
-                    recordingAdapter.submitList(array)
-
-                }
-            })*/
 
             //Sets Adapters to RecyclingView containing the known folders and their content.
             folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {
