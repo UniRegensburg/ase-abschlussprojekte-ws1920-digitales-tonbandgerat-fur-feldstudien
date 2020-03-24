@@ -44,7 +44,9 @@ class EditRecordingFragment : Fragment() {
             ViewModelProvider(this, viewModelFactory).get(EditRecordingViewModel::class.java)
 
         binding.editRecordingViewModel = editRecordingViewModel
+
         binding.handlePlayerBar = handlePlayerBar
+
         binding.lifecycleOwner = this
         setHasOptionsMenu(true)
 

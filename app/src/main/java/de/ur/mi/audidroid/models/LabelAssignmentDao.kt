@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import androidx.room.Transaction
 
 /**
  * DAO for the LabelAssignmentEntity
@@ -18,10 +17,6 @@ interface LabelAssignmentDao {
 
     @Insert(onConflict = REPLACE)
     suspend fun insertRecLabels(labelAssignmentEntity: LabelAssignmentEntity)
-
-    @Transaction
-    @Query("SELECT * FROM recordingsTable WHERE uid = :key")
-    fun getRecordingFromIdInclLabels(key: Int): List<RecordingAndLabel>
 
     @Query("DELETE FROM labelAssignmentTable WHERE recordingId = :key")
     suspend fun deleteRecLabels(key: Int)

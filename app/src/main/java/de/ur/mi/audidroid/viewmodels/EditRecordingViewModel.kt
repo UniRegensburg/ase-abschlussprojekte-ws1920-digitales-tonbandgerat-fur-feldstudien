@@ -30,7 +30,7 @@ import java.util.*
 import java.util.regex.Pattern
 
 class EditRecordingViewModel(
-    private val recordingId: Int,
+    recordingId: Int,
     dataSource: Repository,
     application: Application,
     val handlePlayerBar: HandlePlayerBar
@@ -359,7 +359,11 @@ class EditRecordingViewModel(
 
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
         val uid = repository.insertRecording(audio).toInt()
-        if (labels != null) repository.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
+        if (labels != null) {
+            for (i in labels.indices) {
+                repository.insertRecLabels(LabelAssignmentEntity(0, uid, labels[i]))
+            }
+        }
         showSnackBar(R.string.record_saved)
     }
 

@@ -83,7 +83,7 @@ class Repository(application: Application) : CoroutineScope {
         return temp!!
     }
 
-    fun insertMarker(markerEntity: MarkerEntity){
+    fun insertMarker(markerEntity: MarkerEntity) {
         CoroutineScope(coroutineContext).launch {
             markerDao.insertMarker(markerEntity)
         }
@@ -113,10 +113,6 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun getRecordingFromIdInclMarks(uid: Int): LiveData<List<RecordingAndMarks>> {
-        return markerDao.getRecordingFromIdInclMarks(uid)
-    }
-
     fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
         return markerDao.getMarksById(uid)
     }
@@ -131,13 +127,12 @@ class Repository(application: Application) : CoroutineScope {
         return list!!
     }
 
-    fun getRecordingById(uid: Int): LiveData<EntryEntity> {
-        return entryDao.getRecordingById(uid)
+    fun getRecLabelsById(uid: Int): LiveData<List<LabelEntity>> {
+        return labelDao.getRecLabelsById(uid)
     }
 
-
-    fun getLabelById(uid: Int): LiveData<LabelEntity> {
-        return labelDao.getLabelById(uid)
+    fun getRecordingById(uid: Int): LiveData<EntryEntity> {
+        return entryDao.getRecordingById(uid)
     }
 
     fun getLabelByName(name: String): List<LabelEntity> {
@@ -172,9 +167,5 @@ class Repository(application: Application) : CoroutineScope {
         CoroutineScope(coroutineContext).launch {
             labelAssignmentDao.deleteRecLabels(uid)
         }
-    }
-
-    fun getRecordingFromIdInclLabels(uid: Int): List<RecordingAndLabel> {
-        return labelAssignmentDao.getRecordingFromIdInclLabels(uid)
     }
 }
