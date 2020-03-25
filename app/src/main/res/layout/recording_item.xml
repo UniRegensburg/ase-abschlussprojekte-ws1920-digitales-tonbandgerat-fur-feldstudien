@@ -8,7 +8,7 @@
 
         <variable
             name="recording"
-            type="de.ur.mi.audidroid.models.LabelDao.RecordingAndLabels" />
+            type="de.ur.mi.audidroid.models.RecordingAndLabels" />
 
         <variable
             name="listener"
@@ -26,7 +26,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="@{() -> listener.onRecordingClicked(recording)}"
-            android:padding="@dimen/constraint_layout_padding">
+            android:paddingStart="0dp"
+            android:paddingTop="@dimen/constraint_layout_padding"
+            android:paddingEnd="@dimen/constraint_layout_padding"
+            android:paddingBottom="@dimen/constraint_layout_padding">
 
             <LinearLayout
                 android:id="@+id/layout_card_view"
@@ -42,9 +45,10 @@
                     android:id="@+id/icon_audio_file"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_horizontal"
                     android:layout_weight="0.15"
                     android:contentDescription="@string/content_description_audio_files"
+                    android:paddingTop="@dimen/keyline_4"
                     android:tint="@color/color_on_surface"
                     app:srcCompat="@drawable/ic_menu_audiofiles" />
 
@@ -69,6 +73,7 @@
                         android:id="@+id/label_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/keyline_0"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="@{recording.recordingName}"
@@ -78,16 +83,40 @@
                         android:id="@+id/text_recording_time"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/keyline_0"
                         android:text="@{recording.duration}"
                         android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
 
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/labelChipGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1"
+                        android:textColor="@color/color_on_surface">
+
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:label1="@{recording}" />
+
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:label2="@{recording}" />
+
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:label3="@{recording}" />
+
+                    </com.google.android.material.chip.ChipGroup>
                 </LinearLayout>
 
                 <ImageButton
                     android:id="@+id/button_popup_menu"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_gravity="center_horizontal"
                     android:layout_weight="0.1"
                     android:background="@null"
                     android:contentDescription="@string/popup_menu_button"

@@ -8,7 +8,7 @@ import androidx.core.content.FileProvider
 import cafe.adriel.androidaudioconverter.callback.IConvertCallback
 import cafe.adriel.androidaudioconverter.model.AudioFormat
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.LabelDao
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import java.io.File
 import java.lang.Exception
 import java.lang.IllegalArgumentException
@@ -16,11 +16,11 @@ import java.lang.IllegalArgumentException
 object ShareHelper {
 
     fun shareAudio(
-        recording: LabelDao.RecordingAndLabels,
+        recording: RecordingAndLabels,
         convertFormat: String,
         context: Context
     ) {
-        convertFile(recording.recordingPath!!, convertFormat, context)
+        convertFile(recording.recordingPath, convertFormat, context)
     }
 
     fun convertFile(filename: String, convertFormat: String, context: Context) {

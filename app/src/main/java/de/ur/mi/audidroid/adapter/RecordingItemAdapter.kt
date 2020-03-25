@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.RecordingItemBinding
-import de.ur.mi.audidroid.models.LabelDao
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.views.FilesFragment
 
@@ -22,14 +22,14 @@ class RecordingItemAdapter(
     private val filesFragment: FilesFragment,
     private val filesViewModel: FilesViewModel
 ) :
-    ListAdapter<LabelDao.RecordingAndLabels, RecordingItemAdapter.ViewHolder>(RecordingDiffCallback()) {
+    ListAdapter<RecordingAndLabels, RecordingItemAdapter.ViewHolder>(RecordingDiffCallback()) {
 
     val userActionsListener = object : RecordingUserActionsListener {
-        override fun onRecordingClicked(recordingAndLabels: LabelDao.RecordingAndLabels) {
-            filesViewModel.onRecordingClicked(recordingAndLabels.uid!!)
+        override fun onRecordingClicked(recordingAndLabels: RecordingAndLabels) {
+            filesViewModel.onRecordingClicked(recordingAndLabels.uid)
         }
 
-        override fun onButtonClicked(recordingAndLabels: LabelDao.RecordingAndLabels, view: View) {
+        override fun onButtonClicked(recordingAndLabels: RecordingAndLabels, view: View) {
             filesFragment.openPopupMenu(recordingAndLabels, view)
         }
     }
@@ -46,7 +46,7 @@ class RecordingItemAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: LabelDao.RecordingAndLabels,
+            item: RecordingAndLabels,
             listener: RecordingUserActionsListener
         ) {
             binding.recording = item
@@ -65,18 +65,18 @@ class RecordingItemAdapter(
 }
 
 // DiffUtil uses these two methods to figure out how the list and items have changed
-class RecordingDiffCallback : DiffUtil.ItemCallback<LabelDao.RecordingAndLabels>() {
+class RecordingDiffCallback : DiffUtil.ItemCallback<RecordingAndLabels>() {
 
     override fun areItemsTheSame(
-        oldItem: LabelDao.RecordingAndLabels,
-        newItem: LabelDao.RecordingAndLabels
+        oldItem: RecordingAndLabels,
+        newItem: RecordingAndLabels
     ): Boolean {
         return oldItem.uid == newItem.uid
     }
 
     override fun areContentsTheSame(
-        oldItem: LabelDao.RecordingAndLabels,
-        newItem: LabelDao.RecordingAndLabels
+        oldItem: RecordingAndLabels,
+        newItem: RecordingAndLabels
     ): Boolean {
         return oldItem == newItem
     }

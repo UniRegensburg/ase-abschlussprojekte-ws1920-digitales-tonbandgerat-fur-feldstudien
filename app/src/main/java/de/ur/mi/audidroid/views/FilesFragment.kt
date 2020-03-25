@@ -2,7 +2,6 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
-import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.LabelDao
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
@@ -86,7 +84,7 @@ class FilesFragment : Fragment() {
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.
-    fun openPopupMenu(recordingAndLabels: LabelDao.RecordingAndLabels, view: View) {
+    fun openPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
@@ -105,9 +103,9 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
-    private fun navigateToEditFragment(recordingAndLabels: LabelDao.RecordingAndLabels) {
+    private fun navigateToEditFragment(recordingAndLabels: RecordingAndLabels) {
         this.findNavController().navigate(
-            FilesFragmentDirections.actionFilesToEdit(recordingAndLabels.uid!!)
+            FilesFragmentDirections.actionFilesToEdit(recordingAndLabels.uid)
         )
     }
 
@@ -115,29 +113,19 @@ class FilesFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         filesViewModel.initializeFrameLayout(files_layout)
 
-        adapter = RecordingItemAdapter(this, filesViewModel)
-        binding.recordingList.adapter = adapter
-        filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                Log.d("allRecordingsWithLabels", "" + it)
-                adapter.submitList(it)
-            }
-        })
         setupAdapter()
         createConfirmDialog()
     }
-
 
     private fun setupAdapter() {
         adapter = RecordingItemAdapter(this, filesViewModel)
         binding.recordingList.adapter = adapter
 
-        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
+        filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
             it?.let {
-                Log.d("allRecordings", "" + it)
-                var array = arrayListOf<EntryEntity>()
+                var array = arrayListOf<RecordingAndLabels>()
                 array = filesViewModel.checkExistence(it, array)
-                //adapter.submitList(array)
+                adapter.submitList(array)
             }
         })
     }

@@ -145,7 +145,7 @@ class Repository(application: Application) : CoroutineScope {
         return list!!
     }
 
-    fun getAllRecordingsWithLabels(): LiveData<List<LabelDao.RecordingAndLabels>> {
+    fun getAllRecordingsWithLabels(): LiveData<List<RecordingAndLabels>> {
         return labelDao.getAllRecordingsWithLabels()
     }
 
