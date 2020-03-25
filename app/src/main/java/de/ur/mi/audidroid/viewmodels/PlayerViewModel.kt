@@ -15,9 +15,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.MarkAndTimestamp
-import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.*
 import de.ur.mi.audidroid.utils.HandlePlayerBar
 import java.io.File
 import java.io.IOException
@@ -43,6 +41,7 @@ class PlayerViewModel(
     val recording: LiveData<EntryEntity> =
         repository.getRecordingById(recordingId)
     val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
+    val allLabels: LiveData<List<LabelEntity>> = repository.getRecLabelsById(recordingId)
     var isPlaying = MutableLiveData<Boolean>()
     var recordingPath = ""
     private lateinit var seekBar: SeekBar
@@ -67,8 +66,12 @@ class PlayerViewModel(
         DateUtils.formatElapsedTime(duration)
     }
 
-    // If there are no recordings in the database, a TextView is displayed.
-    val empty: LiveData<Boolean> = Transformations.map(allMarks) {
+    // If there are no marks in the database, a TextView is displayed.
+    val noMarks: LiveData<Boolean> = Transformations.map(allMarks) {
+        it.isEmpty()
+    }
+
+    val noLabels: LiveData<Boolean> = Transformations.map(allLabels) {
         it.isEmpty()
     }
 

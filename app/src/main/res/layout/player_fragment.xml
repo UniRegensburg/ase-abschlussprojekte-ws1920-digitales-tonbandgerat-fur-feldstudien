@@ -39,7 +39,42 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.10" />
+                app:layout_constraintVertical_bias="0.08" />
+
+            <TextView
+                android:id="@+id/text_view_labels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/labels_text_view"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Overline"
+                android:visibility="@{playerViewModel.noLabels ? View.GONE : View.VISIBLE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.042"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.185" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/keyline_3"
+                android:layout_marginEnd="@dimen/keyline_3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.20">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/labelChipGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dialog_margin_small"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1"
+                    android:textColor="@color/color_on_surface"
+                    app:singleLine="true" />
+            </HorizontalScrollView>
 
             <LinearLayout
                 android:id="@+id/seekBarLayout"
@@ -49,7 +84,7 @@
                 android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.30"
+                app:layout_constraintVertical_bias="0.35"
                 tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
 
                 <TextView
@@ -88,7 +123,7 @@
                 app:layout_constraintHorizontal_bias="0.042"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.42" />
+                app:layout_constraintVertical_bias="0.45" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/marker_list"
@@ -109,7 +144,7 @@
                 android:layout_marginBottom="@dimen/keyline_9"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="@{playerViewModel.empty ? View.VISIBLE : View.GONE}"
+                android:visibility="@{playerViewModel.noMarks ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
