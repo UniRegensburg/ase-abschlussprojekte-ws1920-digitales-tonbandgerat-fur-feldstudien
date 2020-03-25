@@ -15,7 +15,7 @@
             type="de.ur.mi.audidroid.adapter.RecordingUserActionsListener" />
     </data>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/files_card_view_margin"
@@ -67,7 +67,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@{recording.date}"
-                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Button" />
+                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
 
                     <TextView
                         android:id="@+id/label_name"
@@ -77,7 +77,7 @@
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:text="@{recording.recordingName}"
-                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Body1" />
+                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle2" />
 
                     <TextView
                         android:id="@+id/text_recording_time"
@@ -97,16 +97,19 @@
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:clickable="false"
                             app:label1="@{recording}" />
 
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:clickable="false"
                             app:label2="@{recording}" />
 
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:clickable="false"
                             app:label3="@{recording}" />
 
                     </com.google.android.material.chip.ChipGroup>
@@ -134,6 +137,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>
