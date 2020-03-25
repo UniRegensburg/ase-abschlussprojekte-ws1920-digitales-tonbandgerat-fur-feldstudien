@@ -288,7 +288,7 @@ class RecordViewModel(
 
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
-            val mark = MarkTimestamp(0, recordingId, it.first.uid, it.second)
+            val mark = MarkTimestamp(0, recordingId, it.first.uid, null, it.second)
             dataSource.insertMark(mark)
         }
         markList = mutableListOf()

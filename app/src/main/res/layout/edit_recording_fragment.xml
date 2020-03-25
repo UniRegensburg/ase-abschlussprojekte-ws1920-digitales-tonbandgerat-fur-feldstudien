@@ -188,6 +188,7 @@
                 android:id="@+id/marker_list"
                 android:layout_width="@dimen/layout_width_edit_fragment"
                 android:layout_height="@dimen/layout_height_edit_fragment"
+                android:layout_marginBottom="@dimen/keyline_9"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
