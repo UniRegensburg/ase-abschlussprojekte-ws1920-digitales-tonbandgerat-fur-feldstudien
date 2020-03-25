@@ -31,6 +31,9 @@ interface MarkerDao {
     @Insert(onConflict = REPLACE)
     suspend fun insertMark(marker: MarkTimestamp)
 
+    @Update
+    suspend fun updateMarkTimestamp(markTimestamp: MarkTimestamp)
+
     @Transaction
     @Query("SELECT DISTINCT * FROM markerTable INNER JOIN markerTimeTable ON markerTable.uid = markerTimeTable.markerId WHERE markerTimeTable.recordingId LIKE :key")
     fun getMarksById(key: Int): LiveData<List<MarkAndTimestamp>>

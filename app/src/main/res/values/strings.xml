@@ -185,8 +185,15 @@
     <string name="audio_format_wma">WMA</string>
     <string name="audio_format_wav">WAV</string>
     <string name="audio_format_flac">FLAC</string>
-
+    <string name="button_new_comment">New comment</string>
+    <string name="button_edit_comment">Edit comment</string>
+    <string name="add_comment_text_hint">Enter comment</string>
+    <string name="edit_comment_dialog_header">Edit comment</string>
+    <string name="add_comment_dialog_header">Add comment</string>
+    <string name="comment_updated">Comment edited</string>
 
     <string name="sad_face">Sad face</string>
+    <string name="delete_mark_dialog_header">Delete mark?</string>
+
 
 </resources>

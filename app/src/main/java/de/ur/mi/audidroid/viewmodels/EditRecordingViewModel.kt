@@ -28,6 +28,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
+import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 
 class EditRecordingViewModel(
     recordingId: Int,
@@ -44,8 +45,7 @@ class EditRecordingViewModel(
     private lateinit var rangeBar: MultiSlider
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    val recording: LiveData<EntryEntity> =
-        repository.getRecordingById(recordingId)
+    val recording: LiveData<EntryEntity> = repository.getRecordingById(recordingId)
     val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
@@ -53,14 +53,25 @@ class EditRecordingViewModel(
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
     var tempFile = ""
-    var errorMessage: String? = null
+    var saveErrorMessage: String? = null
+    var commentErrorMessage: String? = null
+    var markTimestampToBeEdited: ExpandableMarkAndTimestamp? = null
+    var markToBeDeleted: MarkAndTimestamp? = null
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
 
-    private val _createDialog = MutableLiveData<Boolean>()
-    val createDialog: LiveData<Boolean>
-        get() = _createDialog
+    private val _createSaveDialog = MutableLiveData<Boolean>()
+    val createSaveDialog: LiveData<Boolean>
+        get() = _createSaveDialog
+
+    private val _createCommentDialog = MutableLiveData<Boolean>()
+    val createCommentDialog: LiveData<Boolean>
+        get() = _createCommentDialog
+
+    private val _createConfirmDialog = MutableLiveData<Boolean>()
+    val createConfirmDialog: MutableLiveData<Boolean>
+        get() = _createConfirmDialog
 
     private val _totalDuration = MutableLiveData<Long>()
     private val totalDuration: LiveData<Long>
@@ -311,7 +322,7 @@ class EditRecordingViewModel(
         pathInput: String?,
         labels: ArrayList<Int>?
     ) {
-        _createDialog.value = false
+        _createSaveDialog.value = false
         val name = nameInput ?: java.lang.String.format(
             "%s_%s",
             res.getString(R.string.standard_name_recording),
@@ -336,8 +347,8 @@ class EditRecordingViewModel(
         )
         val newFile = File(path)
         if (newFile.exists()) {
-            errorMessage = res.getString(R.string.dialog_already_exist)
-            _createDialog.value = true
+            saveErrorMessage = res.getString(R.string.dialog_already_exist)
+            _createSaveDialog.value = true
             return
         }
 
@@ -354,7 +365,7 @@ class EditRecordingViewModel(
             )
         saveRecordInDB(audio, labels)
         File(tempFile).delete()
-        errorMessage = null
+        saveErrorMessage = null
     }
 
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
@@ -368,12 +379,28 @@ class EditRecordingViewModel(
     }
 
     fun saveRecording() {
-        _createDialog.value = true
+        _createSaveDialog.value = true
     }
 
     fun cancelSaving() {
-        errorMessage = null
-        _createDialog.value = false
+        saveErrorMessage = null
+        _createSaveDialog.value = false
+    }
+
+    fun onEditCommentClicked(mark: ExpandableMarkAndTimestamp) {
+        markTimestampToBeEdited = mark
+        _createCommentDialog.value = true
+    }
+
+    fun onMarkTimestampUpdateClicked(newComment: String?, mark: ExpandableMarkAndTimestamp) {
+        _createCommentDialog.value = false
+        mark.isExpanded = false
+        updateMarkAndTimestampInDB(newComment, mark.markAndTimestamp.markTimestamp)
+    }
+
+    fun cancelCommentSaving() {
+        commentErrorMessage = null
+        _createCommentDialog.value = false
     }
 
     private fun validNameInput(name: String): Boolean {
@@ -381,11 +408,8 @@ class EditRecordingViewModel(
     }
 
     private fun errorDialog(mes: String) {
-        errorMessage = mes
-        _createDialog.value = true
-    }
-
-    fun onMarkClicked(markTime: String) {
+        saveErrorMessage = mes
+        _createSaveDialog.value = true
     }
 
     fun addMark(view: View) {
@@ -395,8 +419,27 @@ class EditRecordingViewModel(
         showSnackBar(R.string.mark_made)
     }
 
+    private fun updateMarkAndTimestampInDB(newComment: String?, markTimestamp: MarkTimestamp) {
+        val updatedMarkTimestamp = MarkTimestamp(
+            markTimestamp.mid,
+            markTimestamp.recordingId,
+            markTimestamp.markerId,
+            newComment,
+            markTimestamp.markTime
+        )
+        repository.updateMarkTimestamp(updatedMarkTimestamp)
+        markTimestampToBeEdited = null
+        showSnackBar(R.string.comment_updated)
+    }
+
+    fun onMarkDeleteClicked(markAndTimestamp: MarkAndTimestamp) {
+        markToBeDeleted = markAndTimestamp
+        _createConfirmDialog.value = true
+    }
+
     fun deleteMark(mid: Int) {
         repository.deleteMark(mid)
+        _createConfirmDialog.value = false
         showSnackBar(R.string.mark_deleted)
     }
 
@@ -422,5 +465,9 @@ class EditRecordingViewModel(
 
     fun returnPlaying() {
         handlePlayerBar.doReturnPlaying(mediaPlayer, context)
+    }
+
+    fun cancelDelete() {
+        _createConfirmDialog.value = false
     }
 }

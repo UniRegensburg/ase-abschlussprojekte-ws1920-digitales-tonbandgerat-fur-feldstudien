@@ -30,7 +30,6 @@ class EditMarkersFragment : Fragment() {
         fun newInstance() = EditMarkersFragment()
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

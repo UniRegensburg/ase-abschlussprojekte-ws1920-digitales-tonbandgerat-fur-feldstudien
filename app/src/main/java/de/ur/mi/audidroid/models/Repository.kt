@@ -127,9 +127,14 @@ class Repository(application: Application) : CoroutineScope {
         return list!!
     }
 
+    fun updateMarkTimestamp(markTimestamp: MarkTimestamp) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.updateMarkTimestamp(markTimestamp)
+        }
+    }
+
     fun getRecLabelsById(uid: Int): LiveData<List<LabelEntity>> {
         return labelDao.getRecLabelsById(uid)
-    }
 
     fun getRecordingById(uid: Int): LiveData<EntryEntity> {
         return entryDao.getRecordingById(uid)
