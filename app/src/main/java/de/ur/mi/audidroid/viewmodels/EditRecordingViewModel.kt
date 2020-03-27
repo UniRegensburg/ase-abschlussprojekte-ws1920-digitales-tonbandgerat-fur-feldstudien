@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
@@ -31,7 +32,7 @@ import java.util.regex.Pattern
 import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 
 class EditRecordingViewModel(
-    recordingId: Int,
+    val recordingId: Int,
     dataSource: Repository,
     application: Application,
     val handlePlayerBar: HandlePlayerBar
@@ -47,11 +48,13 @@ class EditRecordingViewModel(
     private val res = context.resources
     val recording: LiveData<EntryEntity> = repository.getRecordingById(recordingId)
     val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
+    val allMarkers: LiveData<List<MarkerEntity>> = repository.getAllMarkers()
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
     var audioInProgress = MutableLiveData<Boolean>()
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
+    var buttonsVisible = MutableLiveData<Boolean>()
     var tempFile = ""
     var saveErrorMessage: String? = null
     var commentErrorMessage: String? = null
@@ -117,6 +120,10 @@ class EditRecordingViewModel(
     // If there are no recordings in the database, a TextView is displayed.
     val empty: LiveData<Boolean> = Transformations.map(allMarks) {
         it.isEmpty()
+    }
+
+    init {
+        buttonsVisible.value = false
     }
 
     fun initializeMediaPlayer() {
@@ -420,10 +427,14 @@ class EditRecordingViewModel(
         _createSaveDialog.value = true
     }
 
-    fun addMark(view: View) {
-//        val btnId = view.resources.getResourceName(view.id)
-//        val mark = MarkerTimeRelation(0, recordingId, btnId, currentDurationString.value!!)
-//        repository.insertMark(mark)
+    fun addMark() {
+        buttonsVisible.value = buttonsVisible.value != true
+    }
+
+    fun onMarkerButtonClicked(markerEntity: MarkerEntity) {
+        val mark =
+            MarkTimestamp(0, recordingId, markerEntity.uid, null, currentDurationString.value!!)
+        repository.insertMark(mark)
         showSnackBar(R.string.mark_made)
     }
 

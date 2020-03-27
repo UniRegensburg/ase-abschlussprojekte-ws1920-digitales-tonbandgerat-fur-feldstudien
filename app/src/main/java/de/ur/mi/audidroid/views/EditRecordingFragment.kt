@@ -10,17 +10,21 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.EditMarkerItemAdapter
+import de.ur.mi.audidroid.adapter.MarkerButtonEditRecAdapter
 import de.ur.mi.audidroid.databinding.EditRecordingFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.HandlePlayerBar
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
-import kotlinx.android.synthetic.main.player_fragment.*
+import kotlinx.android.synthetic.main.edit_recording_fragment.*
+import kotlinx.android.synthetic.main.player_fragment.player_layout
 
 class EditRecordingFragment : Fragment() {
 
-    private lateinit var adapter: EditMarkerItemAdapter
+    private lateinit var editMarksAdapter: EditMarkerItemAdapter
+    private lateinit var markerButtonAdapter: MarkerButtonEditRecAdapter
     private lateinit var editRecordingViewModel: EditRecordingViewModel
     private lateinit var binding: EditRecordingFragmentBinding
     private lateinit var dataSource: Repository
@@ -74,7 +78,8 @@ class EditRecordingFragment : Fragment() {
         createCommentDialog()
         createConfirmDialog()
         createCancelEditingDialog()
-        setupAdapter()
+        setupEditMarksAdapter()
+        setupMarkerButtonAdapter()
     }
 
     private fun initHandler(): HandlePlayerBar {
@@ -165,15 +170,38 @@ class EditRecordingFragment : Fragment() {
         })
     }
 
-    private fun setupAdapter() {
-        adapter = EditMarkerItemAdapter(editRecordingViewModel)
-        binding.markerList.adapter = adapter
+    private fun setupEditMarksAdapter() {
+        editMarksAdapter = EditMarkerItemAdapter(editRecordingViewModel)
+        binding.markerList.adapter = editMarksAdapter
 
         editRecordingViewModel.allMarks.observe(viewLifecycleOwner, Observer {
             it?.let {
-                adapter.submitList(it)
+                editMarksAdapter.submitList(it)
             }
         })
+    }
+
+    private fun setupMarkerButtonAdapter() {
+        markerButtonAdapter = MarkerButtonEditRecAdapter(editRecordingViewModel)
+        binding.markerButtonList1.adapter = markerButtonAdapter
+
+        val layoutManager = GridLayoutManager(context, 3)
+        marker_button_list1.layoutManager = layoutManager
+
+        editRecordingViewModel.allMarkers.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                markerButtonAdapter.submitList(it)
+                layoutManager.spanCount = getSpanCount(it.size)
+            }
+        })
+    }
+
+    private fun getSpanCount(numberOfItems: Int): Int {
+        return when (numberOfItems) {
+            1 -> 1
+            2 -> 2
+            else -> 3
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
