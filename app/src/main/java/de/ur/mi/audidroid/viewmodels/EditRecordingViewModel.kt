@@ -1,6 +1,7 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.content.ContentResolver
 import android.media.AudioAttributes
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
@@ -14,12 +15,17 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.arthenica.mobileffmpeg.Config.getPackageName
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.LabelAssignmentEntity
+import de.ur.mi.audidroid.models.MarkAndTimestamp
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
+import de.ur.mi.audidroid.utils.SoundBar
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
 import io.apptik.widget.MultiSlider.Thumb
@@ -54,6 +60,8 @@ class EditRecordingViewModel(
     var enableCutOuter = MutableLiveData<Boolean>()
     var tempFile = ""
     var errorMessage: String? = null
+    private lateinit var soundBar: SoundBar
+
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
@@ -140,6 +148,7 @@ class EditRecordingViewModel(
                     if (fromUser) {
                         mediaPlayer.seekTo(progress)
                     }
+                    soundBar.updatePlayerPercent(mediaPlayer.currentPosition / mediaPlayer.duration.toFloat())
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -164,6 +173,82 @@ class EditRecordingViewModel(
         this.frameLayout = frameLayout
     }
 
+    fun initializeVisualizer(bar: SoundBar) {
+        soundBar = bar
+        val bytes = File(tempFile).readBytes()
+
+        val percentage = mediaPlayer.currentPosition / mediaPlayer.duration.toFloat()
+
+
+
+        val temp : Uri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + File.pathSeparator + File.separator + "de.ur.mi.audidroid/raw/" + "audio_sample.mp3")
+
+        val tmep1 : Uri = Uri.parse("android.resource://de.ur.mi.audidroid/" + R.raw.audio_sample)
+        val raw = "android.resource://de.ur.mi.audidroid/raw/audio_sample"
+
+        val uri: Uri = Uri.parse(raw)
+
+        //val file = File(temp)
+        //val tempBytes = file.readBytes()
+
+        val urii = Uri.fromFile(File(tempFile))
+        soundBar.updateVisualizer(urii)
+        //soundBar.updateVisualizer(bytes)
+        soundBar.updatePlayerPercent(percentage)
+
+
+        //val playerVisualizerView = PlayerVisualizerView(context)
+
+
+        /*   val bufferData = DoubleArray(bytes.size)
+           val bytesPerSample : Int = 2
+           val amplification : Double= 100.0
+           for(index in 0..bytes.size){
+               var sample : Double = 0.0
+               for(b in 0..bytesPerSample){
+                   var v : Int = bufferData[index].toInt()
+                   if(b<bytesPerSample -1 || bytesPerSample == 1){
+                       v = v and 0xFF
+                   }
+                   sample += (v shl (b*8))
+               }
+               val sample32 = amplification * (sample / 32768.0)
+               bufferData[index] = sample32
+           }
+   */
+/*
+        val visualizer= Visualizer(mediaPlayer.audioSessionId)
+
+        visualizer.enabled = true
+
+        val boolean: Boolean = visualizer.enabled
+
+        val success = visualizer.getWaveForm(bytes)
+
+        if(success==0){
+
+        }*/
+
+        /* if (audioId != -1) {
+             visualizer.setAudioSessionId(audioId)
+         }*/
+        /*  val audioAttributes = AudioAttributes.Builder()
+              .setUsage(AudioAttributes.USAGE_MEDIA)
+              .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+              .build()
+          val audioFormat = AudioFormat.Builder()
+              .setEncoding(AudioFormat.ENCODING_AAC_XHE)
+              .setSampleRate(1000)
+              .build()
+
+          val track = AudioTrack.Builder()
+              .setAudioAttributes(audioAttributes)
+              .setAudioFormat(audioFormat)
+              .setBufferSizeInBytes(1000)
+              .setTransferMode(AudioTrack.MODE_STATIC)
+              .build()*/
+    }
+
     fun onStartPlayer() {
         mediaPlayer.start()
         handler.postDelayed(runnable, 0)
@@ -183,6 +268,7 @@ class EditRecordingViewModel(
         isPlaying.value = mediaPlayer.isPlaying
         initializeMediaPlayer()
         initializeSeekBar(seekBar)
+        initializeVisualizer(soundBar)
     }
 
     override fun onCleared() {

@@ -57,10 +57,11 @@ class EditRecordingFragment : Fragment() {
         editRecordingViewModel.recording.observe(viewLifecycleOwner, Observer {
             it?.let {
                 editRecordingViewModel.tempFile = it.recordingPath
+                editRecordingViewModel.initializeFrameLayout(player_layout)
                 editRecordingViewModel.initializeMediaPlayer()
                 editRecordingViewModel.initializeSeekBar(binding.seekBar)
-                editRecordingViewModel.initializeFrameLayout(player_layout)
                 editRecordingViewModel.initializeRangeBar(binding.rangeBar)
+                editRecordingViewModel.initializeVisualizer(binding.soundBar)
             }
         })
         createEditRecordingDialog()
@@ -149,5 +150,9 @@ class EditRecordingFragment : Fragment() {
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }
