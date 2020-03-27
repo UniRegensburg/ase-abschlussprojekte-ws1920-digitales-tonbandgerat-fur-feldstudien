@@ -73,6 +73,14 @@ class EditRecordingViewModel(
     val createConfirmDialog: MutableLiveData<Boolean>
         get() = _createConfirmDialog
 
+    private val _createCancelEditingDialog = MutableLiveData<Boolean>()
+    val createCancelEditingDialog: LiveData<Boolean>
+        get() = _createCancelEditingDialog
+
+    private val _navigateToPreviousFragment = MutableLiveData<Boolean>()
+    val navigateToPreviousFragment: MutableLiveData<Boolean>
+        get() = _navigateToPreviousFragment
+
     private val _totalDuration = MutableLiveData<Long>()
     private val totalDuration: LiveData<Long>
         get() = _totalDuration
@@ -441,6 +449,19 @@ class EditRecordingViewModel(
         repository.deleteMark(mid)
         _createConfirmDialog.value = false
         showSnackBar(R.string.mark_deleted)
+    }
+
+    fun onBackPressed() {
+        _createCancelEditingDialog.value = true
+    }
+
+    fun deleteEditedRecording() {
+        _navigateToPreviousFragment.value = true
+        _createCancelEditingDialog.value = false
+    }
+
+    fun cancelDialog() {
+        _createCancelEditingDialog.value = false
     }
 
     private fun getRecordingDuration(file: File): String? {

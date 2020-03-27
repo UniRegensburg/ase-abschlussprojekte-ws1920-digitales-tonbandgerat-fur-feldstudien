@@ -3,11 +3,13 @@ package de.ur.mi.audidroid.views
 import android.app.Application
 import android.os.Bundle
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.EditMarkerItemAdapter
 import de.ur.mi.audidroid.databinding.EditRecordingFragmentBinding
@@ -65,9 +67,13 @@ class EditRecordingFragment : Fragment() {
                 editRecordingViewModel.initializeRangeBar(binding.rangeBar)
             }
         })
+
+        onBackButtonPressed()
+        navigateToPreviousFragment()
         createEditRecordingDialog()
         createCommentDialog()
         createConfirmDialog()
+        createCancelEditingDialog()
         setupAdapter()
     }
 
@@ -89,6 +95,22 @@ class EditRecordingFragment : Fragment() {
                 editRecordingViewModel.returnPlaying()
             }
         }
+    }
+
+    private fun onBackButtonPressed() {
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                editRecordingViewModel.onBackPressed()
+            }
+        })
+    }
+
+    private fun navigateToPreviousFragment() {
+        editRecordingViewModel.navigateToPreviousFragment.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                findNavController().popBackStack()
+            }
+        })
     }
 
     private fun createEditRecordingDialog() {
@@ -132,6 +154,17 @@ class EditRecordingFragment : Fragment() {
         })
     }
 
+    private fun createCancelEditingDialog() {
+        editRecordingViewModel.createCancelEditingDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                de.ur.mi.audidroid.utils.CancelEditingDialog.createDialog(
+                    context = context!!,
+                    viewModel = editRecordingViewModel
+                )
+            }
+        })
+    }
+
     private fun setupAdapter() {
         adapter = EditMarkerItemAdapter(editRecordingViewModel)
         binding.markerList.adapter = adapter
@@ -151,6 +184,10 @@ class EditRecordingFragment : Fragment() {
         return when (item.itemId) {
             R.id.action_save_edited_rec -> {
                 editRecordingViewModel.saveRecording()
+                true
+            }
+            android.R.id.home -> {
+                activity!!.onBackPressed()
                 true
             }
             else -> super.onOptionsItemSelected(item)
