@@ -3,7 +3,7 @@ package de.ur.mi.audidroid.utils
 import android.content.Context
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
 object FilesDialog {
@@ -13,7 +13,7 @@ object FilesDialog {
     fun createDialog(
         context: Context,
         type: Int,
-        recording: EntryEntity? = null,
+        recording: RecordingAndLabels? = null,
         viewModel: FilesViewModel? = null,
         errorMessage: String? = null
     ) {

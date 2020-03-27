@@ -55,9 +55,9 @@ class Repository(application: Application) : CoroutineScope {
         return count!!
     }
 
-    fun deleteRecording(entryEntity: EntryEntity) {
+    fun deleteRecording(uid: Int) {
         CoroutineScope(coroutineContext).launch {
-            entryDao.delete(entryEntity)
+            entryDao.delete(uid)
         }
     }
 
@@ -149,6 +149,10 @@ class Repository(application: Application) : CoroutineScope {
             }
         }
         return list!!
+    }
+
+    fun getAllRecordingsWithLabels(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabels()
     }
 
     fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {

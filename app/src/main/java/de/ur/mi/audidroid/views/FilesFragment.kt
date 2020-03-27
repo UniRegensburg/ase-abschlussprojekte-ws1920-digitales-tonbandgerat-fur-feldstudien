@@ -16,7 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
-import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
@@ -84,17 +84,17 @@ class FilesFragment : Fragment() {
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.
-    fun openPopupMenu(entryEntity: EntryEntity, view: View) {
+    fun openPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_delete_recording ->
-                    filesViewModel.delete(entryEntity)
+                    filesViewModel.delete(recordingAndLabels)
                 R.id.action_edit_recording ->
-                    navigateToEditFragment(entryEntity)
+                    navigateToEditFragment(recordingAndLabels)
                 R.id.action_share_recording -> {
-                    filesViewModel.recordingToBeExported = entryEntity
+                    filesViewModel.recordingToBeExported = recordingAndLabels
                     filesViewModel._createAlertDialog.value = true
                 }
             }
@@ -103,15 +103,16 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
-    private fun navigateToEditFragment(entryEntity: EntryEntity) {
+    private fun navigateToEditFragment(recordingAndLabels: RecordingAndLabels) {
         this.findNavController().navigate(
-            FilesFragmentDirections.actionFilesToEdit(entryEntity.uid)
+            FilesFragmentDirections.actionFilesToEdit(recordingAndLabels.uid)
         )
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         filesViewModel.initializeFrameLayout(files_layout)
+
         setupAdapter()
         createConfirmDialog()
     }
@@ -120,9 +121,9 @@ class FilesFragment : Fragment() {
         adapter = RecordingItemAdapter(this, filesViewModel)
         binding.recordingList.adapter = adapter
 
-        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {
+        filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
             it?.let {
-                var array = arrayListOf<EntryEntity>()
+                var array = arrayListOf<RecordingAndLabels>()
                 array = filesViewModel.checkExistence(it, array)
                 adapter.submitList(array)
             }
