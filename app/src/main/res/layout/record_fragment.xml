@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Chronometer
+            <TextView
                 android:id="@+id/chronometer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,14 +108,14 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="@{recordViewModel.buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.95"
-                android:gravity="center_horizontal"
-                android:visibility="@{recordViewModel.buttonsVisible ? View.VISIBLE : View.INVISIBLE, default=invisible}"
-                android:orientation="vertical">
+                app:layout_constraintVertical_bias="0.95">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/marker_button_list"

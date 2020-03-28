@@ -452,7 +452,8 @@ class EditRecordingViewModel(
                 copiedRecording.toInt(),
                 markerEntity.uid,
                 null,
-                currentDurationString.value!!
+                currentDurationString.value!!,
+                mediaPlayer.currentPosition.toString()
             )
         repository.insertMark(mark)
         showSnackBar(R.string.mark_made)
@@ -464,7 +465,8 @@ class EditRecordingViewModel(
             copiedRecording.toInt(),
             markTimestamp.markerId,
             newComment,
-            markTimestamp.markTime
+            markTimestamp.markTime,
+            markTimestamp.markTimeInMilli
         )
         repository.updateMarkTimestamp(updatedMarkTimestamp)
         markTimestampToBeEdited = null

@@ -34,7 +34,7 @@ interface MarkerDao {
     @Update
     suspend fun updateMarkTimestamp(markTimestamp: MarkTimestamp)
 
-    @Query("INSERT INTO markerTimeTable (mid, recordingId, markerId, markComment, markTime) SELECT null, :copiedRecordingId, markerId, markComment, markTime FROM markerTimeTable WHERE recordingId = :key")
+    @Query("INSERT INTO markerTimeTable (mid, recordingId, markerId, markComment, markTime, markTimeInMilli) SELECT null, :copiedRecordingId, markerId, markComment, markTime, markTimeInMilli FROM markerTimeTable WHERE recordingId = :key")
     suspend fun copyMarks(key: Int, copiedRecordingId: Int)
 
     @Transaction
