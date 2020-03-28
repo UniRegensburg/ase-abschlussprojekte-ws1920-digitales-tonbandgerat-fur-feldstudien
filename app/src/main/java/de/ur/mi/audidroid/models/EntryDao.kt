@@ -23,6 +23,15 @@ interface EntryDao {
     @Insert(onConflict = REPLACE)
     suspend fun insert(entryEntity: EntryEntity): Long
 
+    @Query("INSERT INTO recordingsTable (uid, recordingName, recordingPath, date, duration) SELECT null, recordingName, recordingPath, date, duration FROM recordingsTable WHERE uid = :key")
+    suspend fun getCopiedRecordingById(key: Int): Long
+
+    @Update
+    suspend fun updateRecording(entryEntity: EntryEntity)
+
+    @Query("UPDATE recordingsTable SET recordingName = :name, recordingPath = :path WHERE uid = :key")
+    suspend fun updateNameAndPath(key: Int, name: String, path: String)
+
     @Query("DELETE FROM recordingsTable WHERE uid = :key")
     suspend fun delete(key: Int)
 

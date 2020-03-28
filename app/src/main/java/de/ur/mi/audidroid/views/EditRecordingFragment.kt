@@ -74,6 +74,7 @@ class EditRecordingFragment : Fragment() {
 
         onBackButtonPressed()
         navigateToPreviousFragment()
+        navigateToFilesFragment()
         createEditRecordingDialog()
         createCommentDialog()
         createConfirmDialog()
@@ -114,6 +115,17 @@ class EditRecordingFragment : Fragment() {
         editRecordingViewModel.navigateToPreviousFragment.observe(viewLifecycleOwner, Observer {
             if (it) {
                 findNavController().popBackStack()
+            }
+        })
+    }
+
+    private fun navigateToFilesFragment() {
+        editRecordingViewModel.navigateToFilesFragment.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                this.findNavController().navigate(
+                    EditRecordingFragmentDirections.actionEditToFiles()
+                )
+                editRecordingViewModel.onFilesFragmentNavigated()
             }
         })
     }
@@ -173,6 +185,8 @@ class EditRecordingFragment : Fragment() {
     private fun setupEditMarksAdapter() {
         editMarksAdapter = EditMarkerItemAdapter(editRecordingViewModel)
         binding.markerList.adapter = editMarksAdapter
+
+        editRecordingViewModel.copyMarks()
 
         editRecordingViewModel.allMarks.observe(viewLifecycleOwner, Observer {
             it?.let {

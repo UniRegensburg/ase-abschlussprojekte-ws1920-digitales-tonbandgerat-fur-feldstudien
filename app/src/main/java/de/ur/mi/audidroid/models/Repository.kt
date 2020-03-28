@@ -83,6 +83,22 @@ class Repository(application: Application) : CoroutineScope {
         return temp!!
     }
 
+    fun getCopiedRecordingById(recordingId: Int): Long {
+        var temp: Long? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                temp = entryDao.getCopiedRecordingById(recordingId)
+            }
+        }
+        return temp!!
+    }
+
+    fun copyMarks(recordingId: Int, copiedRecordingId: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.copyMarks(recordingId, copiedRecordingId)
+        }
+    }
+
     fun insertMarker(markerEntity: MarkerEntity) {
         CoroutineScope(coroutineContext).launch {
             markerDao.insertMarker(markerEntity)
@@ -113,6 +129,18 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun updateRecording(recording: EntryEntity) {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.updateRecording(recording)
+        }
+    }
+
+    fun updateNameAndPath(uid: Int, name: String, path: String) {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.updateNameAndPath(uid, name, path)
+        }
+    }
+
     fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
         return markerDao.getMarksById(uid)
     }
@@ -140,6 +168,7 @@ class Repository(application: Application) : CoroutineScope {
     fun getRecordingById(uid: Int): LiveData<EntryEntity> {
         return entryDao.getRecordingById(uid)
     }
+
 
     fun getLabelByName(name: String): List<LabelEntity> {
         var list: List<LabelEntity>? = null

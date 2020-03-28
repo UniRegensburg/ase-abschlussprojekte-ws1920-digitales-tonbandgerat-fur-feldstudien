@@ -34,6 +34,9 @@ interface MarkerDao {
     @Update
     suspend fun updateMarkTimestamp(markTimestamp: MarkTimestamp)
 
+    @Query("INSERT INTO markerTimeTable (mid, recordingId, markerId, markComment, markTime) SELECT null, :copiedRecordingId, markerId, markComment, markTime FROM markerTimeTable WHERE recordingId = :key")
+    suspend fun copyMarks(key: Int, copiedRecordingId: Int)
+
     @Transaction
     @Query("SELECT DISTINCT * FROM markerTable INNER JOIN markerTimeTable ON markerTable.uid = markerTimeTable.markerId WHERE markerTimeTable.recordingId LIKE :key")
     fun getMarksById(key: Int): LiveData<List<MarkAndTimestamp>>

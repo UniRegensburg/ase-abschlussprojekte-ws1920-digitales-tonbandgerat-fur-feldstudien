@@ -46,6 +46,9 @@
         <argument
             android:name="recordingId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_edit_to_files"
+            app:destination="@id/files" />
     </fragment>
     <fragment
         android:id="@+id/editLabelsFragment"

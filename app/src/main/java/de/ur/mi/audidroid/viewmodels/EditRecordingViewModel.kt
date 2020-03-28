@@ -7,8 +7,6 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
-import android.util.Log
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import androidx.lifecycle.AndroidViewModel
@@ -46,8 +44,9 @@ class EditRecordingViewModel(
     private lateinit var rangeBar: MultiSlider
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    val recording: LiveData<EntryEntity> = repository.getRecordingById(recordingId)
-    val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
+    private val copiedRecording: Long = repository.getCopiedRecordingById(recordingId)
+    val recording: LiveData<EntryEntity> = repository.getRecordingById(copiedRecording.toInt())
+    val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(copiedRecording.toInt())
     val allMarkers: LiveData<List<MarkerEntity>> = repository.getAllMarkers()
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
@@ -83,6 +82,10 @@ class EditRecordingViewModel(
     private val _navigateToPreviousFragment = MutableLiveData<Boolean>()
     val navigateToPreviousFragment: MutableLiveData<Boolean>
         get() = _navigateToPreviousFragment
+
+    private val _navigateToFilesFragment = MutableLiveData<Boolean>()
+    val navigateToFilesFragment: MutableLiveData<Boolean>
+        get() = _navigateToFilesFragment
 
     private val _totalDuration = MutableLiveData<Long>()
     private val totalDuration: LiveData<Long>
@@ -124,6 +127,10 @@ class EditRecordingViewModel(
 
     init {
         buttonsVisible.value = false
+    }
+
+    fun copyMarks() {
+        repository.copyMarks(recordingId, copiedRecording.toInt())
     }
 
     fun initializeMediaPlayer() {
@@ -285,6 +292,16 @@ class EditRecordingViewModel(
         override fun onSuccess(convertedFile: File) {
             audioInProgress.value = false
             tempFile = convertedFile.path
+            val recordingDuration = getRecordingDuration(convertedFile)
+            val audio =
+                EntryEntity(
+                    uid = copiedRecording.toInt(),
+                    recordingName = convertedFile.name,
+                    recordingPath = convertedFile.path,
+                    date = getDate(),
+                    duration = recordingDuration!!
+                )
+            repository.updateRecording(audio)
             initializeMediaPlayer()
             initializeSeekBar(seekBar)
             initializeRangeBar(rangeBar)
@@ -366,31 +383,28 @@ class EditRecordingViewModel(
             _createSaveDialog.value = true
             return
         }
-
         File(tempFile).copyTo(newFile)
 
-        val recordingDuration = getRecordingDuration(File(tempFile))
-        val audio =
-            EntryEntity(
-                uid = 0,
-                recordingName = name,
-                recordingPath = path,
-                date = getDate(),
-                duration = recordingDuration!!
-            )
-        saveRecordInDB(audio, labels)
-        File(tempFile).delete()
+        repository.updateNameAndPath(copiedRecording.toInt(), name, path)
+        if (labels != null) {
+            for (i in labels.indices) {
+                repository.insertRecLabels(
+                    LabelAssignmentEntity(
+                        0,
+                        copiedRecording.toInt(),
+                        labels[i]
+                    )
+                )
+            }
+        }
+
+        _navigateToFilesFragment.value = true
+        showSnackBar(R.string.record_saved)
         saveErrorMessage = null
     }
 
-    private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
-        val uid = repository.insertRecording(audio).toInt()
-        if (labels != null) {
-            for (i in labels.indices) {
-                repository.insertRecLabels(LabelAssignmentEntity(0, uid, labels[i]))
-            }
-        }
-        showSnackBar(R.string.record_saved)
+    fun onFilesFragmentNavigated() {
+        _navigateToFilesFragment.value = false
     }
 
     fun saveRecording() {
@@ -433,7 +447,13 @@ class EditRecordingViewModel(
 
     fun onMarkerButtonClicked(markerEntity: MarkerEntity) {
         val mark =
-            MarkTimestamp(0, recordingId, markerEntity.uid, null, currentDurationString.value!!)
+            MarkTimestamp(
+                0,
+                copiedRecording.toInt(),
+                markerEntity.uid,
+                null,
+                currentDurationString.value!!
+            )
         repository.insertMark(mark)
         showSnackBar(R.string.mark_made)
     }
@@ -441,7 +461,7 @@ class EditRecordingViewModel(
     private fun updateMarkAndTimestampInDB(newComment: String?, markTimestamp: MarkTimestamp) {
         val updatedMarkTimestamp = MarkTimestamp(
             markTimestamp.mid,
-            markTimestamp.recordingId,
+            copiedRecording.toInt(),
             markTimestamp.markerId,
             newComment,
             markTimestamp.markTime
@@ -467,6 +487,8 @@ class EditRecordingViewModel(
     }
 
     fun deleteEditedRecording() {
+        repository.deleteRecording(copiedRecording.toInt())
+        repository.deleteRecMarks(copiedRecording.toInt())
         _navigateToPreviousFragment.value = true
         _createCancelEditingDialog.value = false
     }
