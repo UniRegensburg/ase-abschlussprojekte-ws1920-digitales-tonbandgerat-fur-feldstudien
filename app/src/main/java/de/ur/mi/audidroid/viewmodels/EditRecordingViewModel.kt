@@ -9,10 +9,7 @@ import android.os.Handler
 import android.text.format.DateUtils
 import android.widget.FrameLayout
 import android.widget.SeekBar
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.*
@@ -112,6 +109,10 @@ class EditRecordingViewModel(
         DateUtils.formatElapsedTime(posThumb1)
     }
 
+    private val _curPosThumb1InMilli = MutableLiveData<Int>()
+    private val curPosThumb1InMilli: LiveData<Int>
+        get() = _curPosThumb1InMilli
+
     private val _curPosThumb2 = MutableLiveData<Long>()
     private val curPosThumb2: LiveData<Long>
         get() = _curPosThumb2
@@ -119,6 +120,10 @@ class EditRecordingViewModel(
     val curPosThumb2String = Transformations.map(curPosThumb2) { posThumb2 ->
         DateUtils.formatElapsedTime(posThumb2)
     }
+
+    private val _curPosThumb2InMilli = MutableLiveData<Int>()
+    private val curPosThumb2InMilli: LiveData<Int>
+        get() = _curPosThumb2InMilli
 
     // If there are no recordings in the database, a TextView is displayed.
     val empty: LiveData<Boolean> = Transformations.map(allMarks) {
@@ -248,8 +253,10 @@ class EditRecordingViewModel(
 
                 if (thumbIndex == 0) {
                     _curPosThumb1.value = value / oneSecond
+                    _curPosThumb1InMilli.value = value
                 } else {
                     _curPosThumb2.value = value / oneSecond
+                    _curPosThumb2InMilli.value = value
                 }
 
                 enableButtons()
@@ -262,12 +269,14 @@ class EditRecordingViewModel(
         val thumb1 = rangeBar.getThumb(0)
         thumb1.value = 0
         _curPosThumb1.value = thumb1.value / oneSecond
+        _curPosThumb1InMilli.value = thumb1.value
     }
 
     private fun configureThumb2(rangeBar: MultiSlider) {
         val thumb2 = rangeBar.getThumb(1)
         thumb2.value = mediaPlayer.duration
         _curPosThumb2.value = thumb2.value / oneSecond
+        _curPosThumb2InMilli.value = thumb2.value
     }
 
     private fun enableButtons() {
@@ -289,19 +298,16 @@ class EditRecordingViewModel(
     }
 
     val callback = object : FFMpegCallback {
-        override fun onSuccess(convertedFile: File) {
+        override fun onSuccess(
+            convertedFile: File,
+            type: String,
+            startTimeInMilli: Int,
+            endTimeInMilli: Int
+        ) {
             audioInProgress.value = false
             tempFile = convertedFile.path
-            val recordingDuration = getRecordingDuration(convertedFile)
-            val audio =
-                EntryEntity(
-                    uid = copiedRecording.toInt(),
-                    recordingName = convertedFile.name,
-                    recordingPath = convertedFile.path,
-                    date = getDate(),
-                    duration = recordingDuration!!
-                )
-            repository.updateRecording(audio)
+            updateRecording(convertedFile)
+            updateMarks(type, startTimeInMilli, endTimeInMilli)
             initializeMediaPlayer()
             initializeSeekBar(seekBar)
             initializeRangeBar(rangeBar)
@@ -315,6 +321,30 @@ class EditRecordingViewModel(
         }
     }
 
+    private fun updateRecording(convertedFile: File) {
+        val recordingDuration = getRecordingDuration(convertedFile)
+        val audio =
+            EntryEntity(
+                uid = copiedRecording.toInt(),
+                recordingName = convertedFile.name,
+                recordingPath = convertedFile.path,
+                date = getDate(),
+                duration = recordingDuration!!
+            )
+        repository.updateRecording(audio)
+    }
+
+    private fun updateMarks(type: String, startTimeInMilli: Int, endTimeInMilli: Int) {
+        if (type == "cutInner") {
+            repository.deleteOuterMarks(copiedRecording.toInt(), startTimeInMilli, endTimeInMilli)
+            repository.updateInnerMarks(copiedRecording.toInt(), startTimeInMilli)
+        }
+        if (type == "cutOuter") {
+            repository.deleteInnerMarks(copiedRecording.toInt(), startTimeInMilli, endTimeInMilli)
+            repository.updateOuterMarks(copiedRecording.toInt(), endTimeInMilli - startTimeInMilli)
+        }
+    }
+
     private fun getOutputPath(): String {
         return context.filesDir.absolutePath
     }
@@ -324,8 +354,8 @@ class EditRecordingViewModel(
         val editor = AudioEditor()
         with(editor) {
             setFile(File(tempFile))
-            setStartTime(curPosThumb1String.value!!)
-            setEndTime(curPosThumb2String.value!!)
+            setStartTime(curPosThumb1String.value!!, curPosThumb1InMilli.value!!)
+            setEndTime(curPosThumb2String.value!!, curPosThumb2InMilli.value!!)
             setOutputPath(getOutputPath())
             setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
             setCallback(callback)
@@ -339,8 +369,8 @@ class EditRecordingViewModel(
         val editor = AudioEditor()
         with(editor) {
             setFile(File(tempFile))
-            setStartTime(curPosThumb1.value.toString())
-            setEndTime(curPosThumb2.value.toString())
+            setStartTime(curPosThumb1.value.toString(), curPosThumb1InMilli.value!!)
+            setEndTime(curPosThumb2.value.toString(), curPosThumb2InMilli.value!!)
             setDuration(duration.toString())
             setOutputPath(getOutputPath())
             setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
@@ -452,8 +482,7 @@ class EditRecordingViewModel(
                 copiedRecording.toInt(),
                 markerEntity.uid,
                 null,
-                currentDurationString.value!!,
-                mediaPlayer.currentPosition.toString()
+                mediaPlayer.currentPosition
             )
         repository.insertMark(mark)
         showSnackBar(R.string.mark_made)
@@ -465,7 +494,6 @@ class EditRecordingViewModel(
             copiedRecording.toInt(),
             markTimestamp.markerId,
             newComment,
-            markTimestamp.markTime,
             markTimestamp.markTimeInMilli
         )
         repository.updateMarkTimestamp(updatedMarkTimestamp)

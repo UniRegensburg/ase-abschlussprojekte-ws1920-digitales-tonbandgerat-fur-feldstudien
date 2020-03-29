@@ -141,6 +141,30 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun deleteOuterMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.deleteOuterMarks(copiedRecordingId, startTimeInMilli, endTimeInMilli)
+        }
+    }
+
+    fun updateInnerMarks(copiedRecordingId: Int, startTimeInMilli: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.updateInnerMarks(copiedRecordingId, startTimeInMilli)
+        }
+    }
+
+    fun deleteInnerMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.deleteInnerMarks(copiedRecordingId, startTimeInMilli, endTimeInMilli)
+        }
+    }
+
+    fun updateOuterMarks(copiedRecordingId: Int, durationInMilli: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.updateOuterMarks(copiedRecordingId, durationInMilli)
+        }
+    }
+
     fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
         return markerDao.getMarksById(uid)
     }

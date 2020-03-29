@@ -34,7 +34,19 @@ interface MarkerDao {
     @Update
     suspend fun updateMarkTimestamp(markTimestamp: MarkTimestamp)
 
-    @Query("INSERT INTO markerTimeTable (mid, recordingId, markerId, markComment, markTime, markTimeInMilli) SELECT null, :copiedRecordingId, markerId, markComment, markTime, markTimeInMilli FROM markerTimeTable WHERE recordingId = :key")
+    @Query("DELETE FROM markerTimeTable WHERE recordingId = :copiedRecordingId AND markTimeInMilli NOT BETWEEN :startTimeInMilli AND :endTimeInMilli")
+    suspend fun deleteOuterMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int)
+
+    @Query("UPDATE markerTimeTable SET markTimeInMilli = markTimeInMilli - :startTimeInMilli WHERE recordingId = :copiedRecordingId")
+    suspend fun updateInnerMarks(copiedRecordingId: Int, startTimeInMilli: Int)
+
+    @Query("DELETE FROM markerTimeTable WHERE recordingId = :copiedRecordingId AND markTimeInMilli BETWEEN :startTimeInMilli AND :endTimeInMilli")
+    suspend fun deleteInnerMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int)
+
+    @Query("UPDATE markerTimeTable SET markTimeInMilli = markTimeInMilli - :durationInMilli WHERE recordingId = :copiedRecordingId AND markTimeInMilli > :durationInMilli")
+    suspend fun updateOuterMarks(copiedRecordingId: Int, durationInMilli: Int)
+
+    @Query("INSERT INTO markerTimeTable (mid, recordingId, markerId, markComment, markTimeInMilli) SELECT null, :copiedRecordingId, markerId, markComment, markTimeInMilli FROM markerTimeTable WHERE recordingId = :key")
     suspend fun copyMarks(key: Int, copiedRecordingId: Int)
 
     @Transaction

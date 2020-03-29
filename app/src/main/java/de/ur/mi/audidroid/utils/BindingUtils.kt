@@ -1,6 +1,8 @@
 package de.ur.mi.audidroid.utils
 
+import android.text.format.DateUtils
 import android.view.View
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.google.android.material.chip.Chip
 import de.ur.mi.audidroid.models.RecordingAndLabels
@@ -56,3 +58,12 @@ fun Chip.setLabel3(recording: RecordingAndLabels) {
         }
     }
 }
+
+@BindingAdapter("markTime")
+fun TextView.setMarkTime(markTimeInMilli: Int) {
+    markTimeInMilli.let {
+        val markTimeInSec = markTimeInMilli / 1000
+        text = DateUtils.formatElapsedTime(markTimeInSec.toLong())
+    }
+}
+

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.media.MediaRecorder
 import android.text.format.DateUtils
+import android.util.Log
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.lifecycle.AndroidViewModel
@@ -142,14 +143,8 @@ class RecordViewModel(
 
     fun onMarkerButtonClicked(markerEntity: MarkerEntity) {
         val elapsedTimeInMilli = stopwatch.elapsedTime
-        val elapsedTimeInSec = DateUtils.formatElapsedTime(
-            elapsedTimeInMilli / (res.getInteger(
-                R.integer.one_second
-            )).toLong()
-        )
         val markEntry = ArrayList<String>()
         markEntry.add(markerEntity.uid.toString())
-        markEntry.add(elapsedTimeInSec)
         markEntry.add(elapsedTimeInMilli.toString())
         markList.add(markEntry)
         showSnackBarShort(R.string.mark_made)
@@ -302,7 +297,7 @@ class RecordViewModel(
 
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
-            val mark = MarkTimestamp(0, recordingId, it[0].toInt(), null, it[1], it[2])
+            val mark = MarkTimestamp(0, recordingId, it[0].toInt(), null, it[1].toInt())
             dataSource.insertMark(mark)
         }
         markList.clear()
