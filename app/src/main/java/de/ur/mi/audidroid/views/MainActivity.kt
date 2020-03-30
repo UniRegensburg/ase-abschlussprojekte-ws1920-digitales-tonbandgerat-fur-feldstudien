@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        initTheme()
         showOnboarding()
     }
 
@@ -102,8 +103,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
             )
             setupActionBarWithNavController(navController, appBarConfiguration)
             navigationView.setupWithNavController(navController)
-
-            initTheme()
+            
             OrientationListener.adjustRotationListener(this)
             checkPermissions()
         }

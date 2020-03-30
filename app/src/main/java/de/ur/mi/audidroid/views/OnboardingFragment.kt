@@ -1,13 +1,16 @@
 package de.ur.mi.audidroid.views
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.leanback.app.OnboardingSupportFragment
 import androidx.preference.PreferenceManager
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.utils.EditRecordingDialog
 
 
 class OnboardingFragment : OnboardingSupportFragment() {
@@ -30,19 +33,13 @@ class OnboardingFragment : OnboardingSupportFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         logoResourceId = R.drawable.ic_launcher_round
+        titleViewTextColor = ContextCompat.getColor(context!!, R.color.color_on_surface)
+        descriptionViewTextColor = ContextCompat.getColor(context!!, R.color.color_on_surface)
     }
 
     override fun onCreateContentView(inflater: LayoutInflater?, container: ViewGroup?): View? {
+        //TODO: IMAGES
         return null
-    }
-
-    override fun onFinishFragment() {
-        super.onFinishFragment()
-        PreferenceManager.getDefaultSharedPreferences(context).edit().apply {
-            putBoolean(getString(R.string.onboarding_preference_key), true)
-            apply()
-        }
-        activity!!.finish()
     }
 
     override fun getPageCount(): Int {
@@ -62,8 +59,17 @@ class OnboardingFragment : OnboardingSupportFragment() {
     }
 
     override fun onCreateBackgroundView(inflater: LayoutInflater?, container: ViewGroup?): View? {
-        val bgView = View(activity)
-        bgView.setBackgroundColor(resources.getColor(R.color.color_background))
-        return bgView
+        val background = View(activity)
+        background.setBackgroundColor(ContextCompat.getColor(context!!, R.color.color_background))
+        return background
+    }
+
+    override fun onFinishFragment() {
+        super.onFinishFragment()
+        PreferenceManager.getDefaultSharedPreferences(context).edit().apply {
+            putBoolean(getString(R.string.onboarding_preference_key), true)
+            apply()
+        }
+        activity!!.finish()
     }
 }
