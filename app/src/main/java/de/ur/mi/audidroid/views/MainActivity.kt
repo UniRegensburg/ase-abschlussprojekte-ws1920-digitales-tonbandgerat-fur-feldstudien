@@ -30,23 +30,20 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
-
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.record,
-                R.id.files,
-                R.id.settings
-            ), drawerLayout
-        )
-
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navigationView.setupWithNavController(navController)
-
-        initTheme()
-        checkPermissions()
-        OrientationListener.adjustRotationListener(this)
+        showOnboarding()
     }
+
+    private fun showOnboarding() {
+        PreferenceManager.getDefaultSharedPreferences(this).apply {
+            if (!getBoolean(getString(R.string.onboarding_preference_key), false)) {
+                startActivityForResult(
+                    Intent(this@MainActivity, OnboardingActivity::class.java),
+                    resources.getInteger(R.integer.activity_request_code_onboarding)
+                )
+            }
+        }
+    }
+
 
     /** Applies the app theme selected by the user.
      *
@@ -89,11 +86,28 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     /**
-     * Is triggered if the user has selected a path via DocumentTree
+     * Is triggered after the onboarding and if the user selected a path via DocumentTree
      * @author: Sabine Roth
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == resources.getInteger(R.integer.activity_request_code_onboarding)) {
+            setSupportActionBar(toolbar)
+            appBarConfiguration = AppBarConfiguration(
+                setOf(
+                    R.id.record,
+                    R.id.files,
+                    R.id.settings
+                ), drawerLayout
+            )
+            setupActionBarWithNavController(navController, appBarConfiguration)
+            navigationView.setupWithNavController(navController)
+
+            initTheme()
+            OrientationListener.adjustRotationListener(this)
+            checkPermissions()
+        }
+
         if (requestCode == resources.getInteger(R.integer.activity_request_code_preference_storage) &&
             resultCode == Activity.RESULT_OK
         ) {

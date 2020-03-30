@@ -25,9 +25,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <activity
-            android:name=".views.SplashActivity"
-            android:theme="@style/AudidroidTheme.Splash">
+            android:name=".views.MainActivity"
+            android:screenOrientation="userPortrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,8 +37,12 @@
         </activity>
 
         <activity
-            android:name=".views.MainActivity"
-            android:screenOrientation="userPortrait" />
+            android:name=".views.OnboardingActivity"
+            android:screenOrientation="portrait"
+            android:enabled="true"
+            android:exported="true"
+            android:theme="@style/Theme.Leanback.Onboarding"/>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

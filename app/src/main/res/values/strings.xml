@@ -15,6 +15,22 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
 
+    <!--Onboarding-->
+    <string-array name="onboarding_titles">
+        <item>Recording</item>
+        <item>Saving Files</item>
+        <item>Organization</item>
+        <item>Editing</item>
+        <item>Settings</item>
+    </string-array>
+    <string-array name="onboarding_descriptions">
+        <item>Start, pause and resume recordings. Enable your screen to rotate so the microphone is facing towards the interviewee. Highlight specific positions in recordings with customizable markers. </item>
+        <item>Specify individual file names and storage locations for your recordings. Attach up to three customizable labels to better organize your files. </item>
+        <item>Organize your files by creating folders and subfolders. Sort and filter recordings by labels, name and date. Move files to different folders, or share the directly to other apps. </item>
+        <item>Cut out unneeded parts of your recordings. Add, delete and attach comments to marks to annotate recordings right in the app. </item>
+        <item>Customize labels and markers to fit your needs. Define custom default filenames and storage locations. Adjust the apps look and feel to your liking.</item>
+    </string-array>
+
     <!-- Categories Preferences-->
     <string name="preference_labels_marks_key">labels_and_marks_category</string>
     <string name="preference_labels_marks_title">Labels and Marks</string>
@@ -44,6 +60,7 @@
     <string name="rotate_preference_key">rotate_preference</string>to use
     <string name="rotate_preference_title">Upside-down view is enabled to improve recording quality</string>
     <string name="rotate_preference_summary">\'Auto-rotate\' has to be activated in the settings of the device</string>
+    <string name="onboarding_preference_key">onboarding_preference</string>
 
     <!-- Navigation -->
     <string name="record_label">Record</string>
