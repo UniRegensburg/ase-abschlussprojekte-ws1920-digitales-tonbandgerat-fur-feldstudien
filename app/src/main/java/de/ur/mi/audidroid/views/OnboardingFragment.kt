@@ -1,27 +1,27 @@
 package de.ur.mi.audidroid.views
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
 import android.content.Context
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginTop
 import androidx.leanback.app.OnboardingSupportFragment
 import androidx.preference.PreferenceManager
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.utils.EditRecordingDialog
 
 
 class OnboardingFragment : OnboardingSupportFragment() {
 
-    private val CONTENT_IMAGES = intArrayOf(
-        /* R.drawable.gallery_photo_1,
-         R.drawable.gallery_photo_2,
-         R.drawable.gallery_photo_3*/
-    )
+
     private lateinit var titles: Array<String>
     private lateinit var descriptions: Array<String>
+    private lateinit var contentView: ImageView
 
 
     override fun onAttach(context: Context) {
@@ -37,9 +37,25 @@ class OnboardingFragment : OnboardingSupportFragment() {
         descriptionViewTextColor = ContextCompat.getColor(context!!, R.color.color_on_surface)
     }
 
+    override fun onPageChanged(newPage: Int, previousPage: Int) {
+        super.onPageChanged(newPage, previousPage)
+        when(newPage){
+            //1 -> Glide.with(activity as Activity).load(R.drawable.save).into(onboarding_gif)
+             1 -> contentView.setImageResource(R.drawable.save)
+            2 -> contentView.setImageResource(R.drawable.files)
+            3 -> contentView.setImageResource(R.drawable.cut)
+           // 2 -> Glide.with(activity as Activity).load(R.drawable.files).into(onboarding_gif)
+           // 3 -> Glide.with(activity as Activity).load(R.drawable.cut).into(onboarding_gif)*/
+            //else -> onboarding_gif.visibility = View.GONE
+        }
+    }
+
     override fun onCreateContentView(inflater: LayoutInflater?, container: ViewGroup?): View? {
-        //TODO: IMAGES
-        return null
+        contentView = layoutInflater.inflate(
+            R.layout.onboarding_image, container,
+            false
+        ) as pl.droidsonroids.gif.GifImageView
+        return contentView
     }
 
     override fun getPageCount(): Int {

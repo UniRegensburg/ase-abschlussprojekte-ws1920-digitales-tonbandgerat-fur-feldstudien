@@ -48,7 +48,7 @@
             android:screenOrientation="portrait"
             android:enabled="true"
             android:exported="true"
-            android:theme="@style/Theme.Leanback.Onboarding">
+            android:theme="@style/AudidroidTheme.OnBoarding">
         </activity>
 
         <meta-data

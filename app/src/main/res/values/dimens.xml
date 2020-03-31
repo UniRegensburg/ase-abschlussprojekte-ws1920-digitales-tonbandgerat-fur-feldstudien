@@ -51,4 +51,6 @@
     <dimen name="dialog_margin_big">@dimen/keyline_7</dimen>
     <dimen name="dialog_margin_normal">@dimen/keyline_5</dimen>
 
+    <!--Onboarding-->
+    <dimen name="size_logo">192dp</dimen>
 </resources>

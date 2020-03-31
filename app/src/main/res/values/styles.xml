@@ -64,4 +64,28 @@
         <item name="android:background">?colorOnBackground</item>
     </style>
 
+    <!-- Leanback-->
+    <style name="AudidroidTheme.OnBoarding" parent="Theme.Leanback.Onboarding">
+        <item name="onboardingDescriptionStyle">@style/OptimizedOnboardingDescriptionStyle</item>
+        <item name="onboardingLogoStyle">@style/OptimizedLogoStyle</item>
+        <item name="fontFamily">@font/rubik</item>
+    </style>
+
+    <style name="OptimizedOnboardingDescriptionStyle" parent="Widget.Leanback.OnboardingDescriptionStyle">
+        <item name="android:paddingRight">@dimen/keyline_2</item>
+        <item name="android:paddingLeft">@dimen/keyline_2</item>
+        <item name="android:maxLines">5</item>
+        <item name="android:minLines">4</item>
+    </style>
+
+    <style name="OptimizedLogoStyle" parent="Widget.Leanback.OnboardingLogoStyle">
+        <item name="android:layout_width">@dimen/size_logo</item>
+        <item name="android:layout_height">@dimen/size_logo</item>
+    </style>
+
+    <style name="OptimizedDescriptionTitleStyle" parent="Widget.Leanback.DetailsDescriptionTitleStyle">
+        <item name="android:maxLines">5</item>
+    </style>
+
+
 </resources>
