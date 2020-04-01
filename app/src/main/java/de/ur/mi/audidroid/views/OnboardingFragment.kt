@@ -8,12 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.view.WindowManager
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.view.marginTop
 import androidx.leanback.app.OnboardingSupportFragment
 import androidx.preference.PreferenceManager
 import de.ur.mi.audidroid.R
+import org.jetbrains.anko.doAsync
 
 
 class OnboardingFragment : OnboardingSupportFragment() {
@@ -40,13 +42,10 @@ class OnboardingFragment : OnboardingSupportFragment() {
     override fun onPageChanged(newPage: Int, previousPage: Int) {
         super.onPageChanged(newPage, previousPage)
         when(newPage){
-            //1 -> Glide.with(activity as Activity).load(R.drawable.save).into(onboarding_gif)
-             1 -> contentView.setImageResource(R.drawable.save)
+            1 -> contentView.setImageResource(R.drawable.save)
             2 -> contentView.setImageResource(R.drawable.files)
             3 -> contentView.setImageResource(R.drawable.cut)
-           // 2 -> Glide.with(activity as Activity).load(R.drawable.files).into(onboarding_gif)
-           // 3 -> Glide.with(activity as Activity).load(R.drawable.cut).into(onboarding_gif)*/
-            //else -> onboarding_gif.visibility = View.GONE
+            4 -> contentView.setImageResource(R.drawable.settings)
         }
     }
 
@@ -55,6 +54,7 @@ class OnboardingFragment : OnboardingSupportFragment() {
             R.layout.onboarding_image, container,
             false
         ) as pl.droidsonroids.gif.GifImageView
+        contentView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         return contentView
     }
 

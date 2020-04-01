@@ -31,6 +31,18 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initTheme()
+        setSupportActionBar(toolbar)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.record,
+                R.id.files,
+                R.id.settings
+            ), drawerLayout
+        )
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navigationView.setupWithNavController(navController)
+
+        OrientationListener.adjustRotationListener(this)
         showOnboarding()
     }
 
@@ -93,18 +105,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == resources.getInteger(R.integer.activity_request_code_onboarding)) {
-            setSupportActionBar(toolbar)
-            appBarConfiguration = AppBarConfiguration(
-                setOf(
-                    R.id.record,
-                    R.id.files,
-                    R.id.settings
-                ), drawerLayout
-            )
-            setupActionBarWithNavController(navController, appBarConfiguration)
-            navigationView.setupWithNavController(navController)
-            
-            OrientationListener.adjustRotationListener(this)
+
             checkPermissions()
         }
 

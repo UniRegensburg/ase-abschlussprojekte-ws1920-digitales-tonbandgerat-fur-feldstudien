@@ -48,7 +48,8 @@
             android:screenOrientation="portrait"
             android:enabled="true"
             android:exported="true"
-            android:theme="@style/AudidroidTheme.OnBoarding">
+            android:theme="@style/AudidroidTheme.OnBoarding"
+            android:hardwareAccelerated="true">
         </activity>
 
         <meta-data
