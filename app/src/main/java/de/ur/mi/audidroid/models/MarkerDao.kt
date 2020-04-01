@@ -50,15 +50,8 @@ interface MarkerDao {
     suspend fun copyMarks(key: Int, copiedRecordingId: Int)
 
     @Transaction
-    @Query("SELECT DISTINCT * FROM markerTable INNER JOIN markerTimeTable ON markerTable.uid = markerTimeTable.markerId WHERE markerTimeTable.recordingId LIKE :key")
+    @Query("SELECT DISTINCT * FROM markerTable INNER JOIN markerTimeTable ON markerTable.uid = markerTimeTable.markerId WHERE markerTimeTable.recordingId LIKE :key ORDER BY markTimeInMilli")
     fun getMarksById(key: Int): LiveData<List<MarkAndTimestamp>>
-
-    @Transaction
-    @Query("SELECT * FROM recordingsTable WHERE uid = :key IN (SELECT DISTINCT(mid) FROM markerTimeTable)")
-    fun getRecordingFromIdInclMarks(key: Int): LiveData<List<RecordingAndMarks>>
-
-    @Query("SELECT * FROM markerTimeTable WHERE recordingId = :key")
-    fun allMarks(key: Int): LiveData<List<MarkTimestamp>>
 
     @Query("DELETE FROM markerTimeTable WHERE recordingId = :key")
     suspend fun deleteRecMarks(key: Int)

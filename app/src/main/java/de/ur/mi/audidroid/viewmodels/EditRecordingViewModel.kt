@@ -51,6 +51,7 @@ class EditRecordingViewModel(
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
     var buttonsVisible = MutableLiveData<Boolean>()
+    var recordingEdited = MutableLiveData<Boolean>()
     var tempFile = ""
     var saveErrorMessage: String? = null
     var commentErrorMessage: String? = null
@@ -132,6 +133,7 @@ class EditRecordingViewModel(
 
     init {
         buttonsVisible.value = false
+        recordingEdited.value = false
     }
 
     fun copyMarks() {
@@ -312,6 +314,7 @@ class EditRecordingViewModel(
             initializeSeekBar(seekBar)
             initializeRangeBar(rangeBar)
             initializeFrameLayout(frameLayout)
+            recordingEdited.value = true
             showSnackBar(R.string.recording_cut)
         }
 
@@ -476,6 +479,7 @@ class EditRecordingViewModel(
     }
 
     fun onMarkerButtonClicked(markerEntity: MarkerEntity) {
+        recordingEdited.value = true
         val mark =
             MarkTimestamp(
                 0,
@@ -498,6 +502,7 @@ class EditRecordingViewModel(
         )
         repository.updateMarkTimestamp(updatedMarkTimestamp)
         markTimestampToBeEdited = null
+        recordingEdited.value = true
         showSnackBar(R.string.comment_updated)
     }
 
@@ -508,12 +513,17 @@ class EditRecordingViewModel(
 
     fun deleteMark(mid: Int) {
         repository.deleteMark(mid)
+        recordingEdited.value = true
         _createConfirmDialog.value = false
         showSnackBar(R.string.mark_deleted)
     }
 
     fun onBackPressed() {
-        _createCancelEditingDialog.value = true
+        if (recordingEdited.value!!) {
+            _createCancelEditingDialog.value = true
+        } else {
+            deleteEditedRecording()
+        }
     }
 
     fun deleteEditedRecording() {

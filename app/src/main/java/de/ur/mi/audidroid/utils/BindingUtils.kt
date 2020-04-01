@@ -2,9 +2,11 @@ package de.ur.mi.audidroid.utils
 
 import android.text.format.DateUtils
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.google.android.material.chip.Chip
+import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.RecordingAndLabels
 
 @BindingAdapter("label1")
@@ -67,3 +69,13 @@ fun TextView.setMarkTime(markTimeInMilli: Int) {
     }
 }
 
+@BindingAdapter("buttonText")
+fun Button.setButtonText(isExpanded: Boolean) {
+    isExpanded.let {
+        text = if (it) {
+            context.resources.getString(R.string.show_markers_button)
+        } else {
+            context.resources.getString(R.string.hide_markers_button)
+        }
+    }
+}

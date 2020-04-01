@@ -174,7 +174,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/color_primary"
                 android:onClick="@{() -> editRecordingViewModel.addMark()}"
-                android:text="@string/add_marks_button"
+                app:buttonText="@{editRecordingViewModel.buttonsVisible}"
                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
