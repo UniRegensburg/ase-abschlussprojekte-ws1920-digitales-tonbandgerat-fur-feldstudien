@@ -2,8 +2,8 @@ package de.ur.mi.audidroid.models
 
 import android.app.Application
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.*
 
 /**
  * The Repository isolates the data layer from the rest of the app.

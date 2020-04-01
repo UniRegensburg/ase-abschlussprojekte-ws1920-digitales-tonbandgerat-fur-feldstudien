@@ -1,29 +1,16 @@
 package de.ur.mi.audidroid.models
 
-import android.content.Context
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.jraska.livedata.test
-import org.junit.After
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.IOException
-
 
 /**
 * Unit tests for the room database using jraska/livedata-testing for testing the LiveData return
 * @author: Sabine Roth
 */
 
-
 @RunWith(AndroidJUnit4::class)
 class DatabaseTest {
-//TODO: Update later - wait to finish the code instead of changing it permanently
+// TODO: Update later - wait to finish the code instead of changing it permanently
 
    /*
     private lateinit var testEntity: EntryEntity

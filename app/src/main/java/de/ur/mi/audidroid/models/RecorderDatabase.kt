@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
-import kotlinx.coroutines.*
-import java.util.concurrent.Executors
 import androidx.room.TypeConverters
+import androidx.sqlite.db.SupportSQLiteDatabase
 import de.ur.mi.audidroid.utils.Converters
+import java.util.concurrent.Executors
+import kotlinx.coroutines.*
 
 /**
  * The abstract class contains the database holder and serves as the main access point for the connection to the persisted data
@@ -37,7 +37,7 @@ abstract class RecorderDatabase : RoomDatabase() {
                     INSTANCE = Room.databaseBuilder(
                         context,
                         RecorderDatabase::class.java, "recorder-database"
-                    ).addCallback(object: RoomDatabase.Callback() {
+                    ).addCallback(object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             Executors.newSingleThreadScheduledExecutor().execute {
@@ -49,11 +49,10 @@ abstract class RecorderDatabase : RoomDatabase() {
                             }
                         }
                     })
-                    .build()
+                        .build()
                 }
             }
             return INSTANCE as RecorderDatabase
         }
     }
-
 }

@@ -5,6 +5,8 @@ import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 
 interface MarkUserActionsListener {
 
-    fun onMarkClicked(mark: ExpandableMarkAndTimestamp, view: View)
-
+    fun onMarkClicked(
+        mark: ExpandableMarkAndTimestamp,
+        view: View
+    )
 }

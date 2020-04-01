@@ -10,38 +10,62 @@ import de.ur.mi.audidroid.databinding.EditMarkItemBinding
 import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 import de.ur.mi.audidroid.models.MarkAndTimestamp
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
+import de.ur.mi.audidroid.views.EditRecordingFragment
+
+/**
+ * Adapter for the [RecyclerView] in [EditRecordingFragment].
+ * The adapter connects the data to the RecyclerView.
+ * Single Marks get adapted to be displayed in a ViewHolder.
+ * Implements a listener for click events on single Mark items.
+ * @author: Theresa Strohmeier, Jonas Puchinger
+ */
 
 class EditMarkerItemAdapter(
     private val editRecordingViewModel: EditRecordingViewModel
-) :
-    ListAdapter<MarkAndTimestamp, EditMarkerItemAdapter.ViewHolder>(EditMarkAndTimeStampDiffCallback()) {
+) : ListAdapter<MarkAndTimestamp, EditMarkerItemAdapter.ViewHolder>(EditMarkAndTimeStampDiffCallback()) {
 
-    private val userActionsListener = object : EditMarkUserActionsListener {
-        override fun onMarkClicked(mark: ExpandableMarkAndTimestamp, view: View) {
+    private val editMarksUserActionsListener = object : EditMarkUserActionsListener {
+
+        override fun onMarkClicked(
+            mark: ExpandableMarkAndTimestamp,
+            view: View
+        ) {
             if (mark.markAndTimestamp.markTimestamp.markComment != null) {
                 mark.isExpanded = !mark.isExpanded
             }
         }
 
-        override fun onEditCommentClicked(mark: ExpandableMarkAndTimestamp, view: View) {
+        override fun onEditCommentClicked(
+            mark: ExpandableMarkAndTimestamp,
+            view: View
+        ) {
             editRecordingViewModel.onEditCommentClicked(mark)
         }
 
-        override fun onMarkDeleteClicked(mark: MarkAndTimestamp) {
+        override fun onMarkDeleteClicked(
+            mark: MarkAndTimestamp
+        ) {
             editRecordingViewModel.onMarkDeleteClicked(mark)
         }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position)!!, userActionsListener)
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int
+    ) {
+        holder.bind(getItem(position)!!, editMarksUserActionsListener)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewHolder {
         return ViewHolder.from(parent) as ViewHolder
     }
 
-    class ViewHolder private constructor(private val binding: EditMarkItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder private constructor(
+        private val binding: EditMarkItemBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
             item: MarkAndTimestamp,
@@ -53,9 +77,13 @@ class EditMarkerItemAdapter(
         }
 
         companion object {
-            fun from(parent: ViewGroup): RecyclerView.ViewHolder {
+
+            fun from(
+                parent: ViewGroup
+            ): RecyclerView.ViewHolder {
                 val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
-                val binding: EditMarkItemBinding = EditMarkItemBinding.inflate(layoutInflater, parent, false)
+                val binding: EditMarkItemBinding =
+                    EditMarkItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }

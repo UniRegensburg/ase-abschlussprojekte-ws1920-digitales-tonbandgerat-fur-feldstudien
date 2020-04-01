@@ -124,7 +124,6 @@ class RecordViewModel(
         currentRecordTime = timer.text.toString()
     }
 
-
     fun fragmentOnPause() {
         if (recorderInitialized && createDialog.value == false && timer.text.toString() != res.getString(
                 R.string.start_time

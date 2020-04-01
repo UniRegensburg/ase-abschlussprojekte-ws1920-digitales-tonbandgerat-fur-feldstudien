@@ -14,7 +14,6 @@ import de.ur.mi.audidroid.R
  * @author: Sabine Roth
  */
 
-
 object PermissionHelper {
 
     private const val recordPermission = Manifest.permission.RECORD_AUDIO
@@ -65,7 +64,6 @@ object PermissionHelper {
         }
         return permissionsResult
     }
-
 
     fun showDialog(missingPermission: String, context: Context) {
         when (missingPermission) {

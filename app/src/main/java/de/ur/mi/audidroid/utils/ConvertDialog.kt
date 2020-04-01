@@ -36,5 +36,4 @@ object ConvertDialog {
             viewModel.cancelExporting()
         }
     }
-
 }

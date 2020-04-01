@@ -4,6 +4,7 @@ import de.ur.mi.audidroid.models.MarkerEntity
 
 interface MarkerButtonUserActionsListener {
 
-    fun onMarkerButtonClicked(markerEntity: MarkerEntity)
-
+    fun onMarkerButtonClicked(
+        markerEntity: MarkerEntity
+    )
 }

@@ -22,7 +22,6 @@ import de.ur.mi.audidroid.views.RecordFragment
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 /**
  * The Dialog object creates a dialog depending on the parameters.
  * @author: Sabine Roth

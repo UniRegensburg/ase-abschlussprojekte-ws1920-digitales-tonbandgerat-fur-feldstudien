@@ -1,10 +1,8 @@
 package de.ur.mi.audidroid.views
 
-
 import android.app.Application
 import android.os.Bundle
 import android.view.*
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +33,8 @@ class PlayerFragment : Fragment() {
     private lateinit var binding: PlayerFragmentBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 

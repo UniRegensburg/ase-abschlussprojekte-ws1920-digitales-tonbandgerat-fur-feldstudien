@@ -19,5 +19,4 @@ object KeyboardHelper {
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
         view.clearFocus()
     }
-
 }

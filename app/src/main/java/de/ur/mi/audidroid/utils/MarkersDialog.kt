@@ -94,5 +94,4 @@ object MarkersDialog {
             }
         }
     }
-    
 }

@@ -18,8 +18,8 @@ import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
+import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
 
@@ -49,7 +49,7 @@ class FilesFragment : Fragment() {
         binding.filesViewModel = filesViewModel
         binding.lifecycleOwner = this
 
-        //Observer on the state variable for showing Snackbar message when a list-item is deleted.
+        // Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 Snackbar.make(view!!, R.string.recording_deleted, Snackbar.LENGTH_SHORT).show()

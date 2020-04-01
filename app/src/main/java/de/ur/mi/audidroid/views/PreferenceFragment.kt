@@ -1,6 +1,5 @@
 package de.ur.mi.audidroid.views
 
-
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -17,7 +16,6 @@ import de.ur.mi.audidroid.utils.ThemeHelper
 import java.util.regex.Pattern
 
 class PreferenceFragment : PreferenceFragmentCompat() {
-
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)

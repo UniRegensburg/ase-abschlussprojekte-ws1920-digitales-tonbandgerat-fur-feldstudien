@@ -12,5 +12,4 @@ class ExpandableMarkAndTimestamp(val markAndTimestamp: MarkAndTimestamp) : BaseO
             field = value
             notifyPropertyChanged(BR.expanded)
         }
-
 }

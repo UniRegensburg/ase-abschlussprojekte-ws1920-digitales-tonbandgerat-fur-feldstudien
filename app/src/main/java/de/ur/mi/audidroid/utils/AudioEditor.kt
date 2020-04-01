@@ -71,7 +71,7 @@ class AudioEditor {
             )
         } else if (type == "cutOuter") {
             val filter =
-                "[0:a]atrim=start=0:end=${startTime},asetpts=PTS-STARTPTS[a]; [0:a]atrim=start=${endTime}:end=${duration},asetpts=PTS-STARTPTS[b]; [a][b]concat=n=2:v=0:a=1[out]"
+                "[0:a]atrim=start=0:end=$startTime,asetpts=PTS-STARTPTS[a]; [0:a]atrim=start=$endTime:end=$duration,asetpts=PTS-STARTPTS[b]; [a][b]concat=n=2:v=0:a=1[out]"
             cmd = arrayOf(
                 "-i",
                 audio!!.path,
@@ -95,7 +95,6 @@ class AudioEditor {
         } catch (e: Exception) {
             callback!!.onFailure(e)
         }
-
     }
 
     private fun getConvertedFile(folder: String, fileName: String): File {
@@ -106,5 +105,4 @@ class AudioEditor {
 
         return File(f.path + File.separator + fileName)
     }
-
 }

@@ -20,7 +20,6 @@ import de.ur.mi.audidroid.utils.HandlePlayerBar
 import java.io.File
 import java.io.IOException
 
-
 /**
  * ViewModel for PlayerFragment.
  * @author: Theresa Strohmeier

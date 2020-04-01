@@ -2,11 +2,11 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -17,8 +17,8 @@ import de.ur.mi.audidroid.databinding.EditLabelsFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.LabelsDialog
 import de.ur.mi.audidroid.viewmodels.EditLabelsViewModel
-import kotlinx.android.synthetic.main.edit_labels_fragment.*
 import java.lang.IllegalArgumentException
+import kotlinx.android.synthetic.main.edit_labels_fragment.*
 
 class EditLabelsFragment : Fragment() {
 
@@ -31,7 +31,8 @@ class EditLabelsFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val application = this.activity!!.application
@@ -107,5 +108,4 @@ class EditLabelsFragment : Fragment() {
             }
         }
     }
-
 }

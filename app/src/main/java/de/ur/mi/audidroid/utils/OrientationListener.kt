@@ -6,7 +6,6 @@ import android.content.pm.ActivityInfo
 import android.view.OrientationEventListener
 import de.ur.mi.audidroid.R
 
-
 /**
  * Listener for rotation changes of the device
  * @author: Sabine Roth

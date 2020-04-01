@@ -17,6 +17,7 @@ import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
@@ -28,7 +29,6 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
-import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 
 class EditRecordingViewModel(
     recordingId: Int,
@@ -231,7 +231,6 @@ class EditRecordingViewModel(
                 }
 
                 enableButtons()
-
             }
         })
     }

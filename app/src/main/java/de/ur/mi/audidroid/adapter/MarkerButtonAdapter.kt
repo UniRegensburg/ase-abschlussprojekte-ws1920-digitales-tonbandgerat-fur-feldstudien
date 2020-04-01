@@ -8,27 +8,36 @@ import de.ur.mi.audidroid.databinding.MarkerButtonBinding
 import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
 
-class MarkerButtonAdapter(private val recordViewModel: RecordViewModel) :
-    ListAdapter<MarkerEntity, MarkerButtonAdapter.ViewHolder>(MarkerDiffCallback()) {
+class MarkerButtonAdapter(
+    private val recordViewModel: RecordViewModel
+) : ListAdapter<MarkerEntity, MarkerButtonAdapter.ViewHolder>(MarkerDiffCallback()) {
 
     private val markerButtonUserActionsListener = object : MarkerButtonUserActionsListener {
 
-        override fun onMarkerButtonClicked(markerEntity: MarkerEntity) {
+        override fun onMarkerButtonClicked(
+            markerEntity: MarkerEntity
+        ) {
             recordViewModel.onMarkerButtonClicked(markerEntity)
         }
-
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int
+    ) {
         holder.bind(getItem(position) as MarkerEntity, markerButtonUserActionsListener)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewHolder {
         return ViewHolder.from(parent) as ViewHolder
     }
 
-    class ViewHolder private constructor(private val binding: MarkerButtonBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder private constructor(
+        private val binding: MarkerButtonBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
             item: MarkerEntity,
@@ -40,12 +49,14 @@ class MarkerButtonAdapter(private val recordViewModel: RecordViewModel) :
         }
 
         companion object {
-            fun from(parent: ViewGroup): RecyclerView.ViewHolder {
+
+            fun from(
+                parent: ViewGroup
+            ): RecyclerView.ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = MarkerButtonBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }
     }
-
 }

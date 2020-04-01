@@ -15,7 +15,7 @@ interface HandlePlayerBar {
 
     fun returnPlaying() {}
 
-    fun doSkippingPlaying(mediaPlayer: MediaPlayer, context: Context){
+    fun doSkippingPlaying(mediaPlayer: MediaPlayer, context: Context) {
         val moveTime =
             mediaPlayer.currentPosition + context.resources.getInteger(R.integer.jump_amount).toLong()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
@@ -24,7 +24,7 @@ interface HandlePlayerBar {
         ) else mediaPlayer.seekTo(moveTime.toInt())
     }
 
-    fun doReturnPlaying(mediaPlayer: MediaPlayer, context: Context){
+    fun doReturnPlaying(mediaPlayer: MediaPlayer, context: Context) {
         val moveTime =
             mediaPlayer.currentPosition - context.resources.getInteger(R.integer.jump_amount).toLong()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(

@@ -4,8 +4,11 @@ import de.ur.mi.audidroid.models.MarkerEntity
 
 interface MarkerUserActionsListener {
 
-    fun onMarkerClicked(markerEntity: MarkerEntity)
+    fun onMarkerClicked(
+        markerEntity: MarkerEntity
+    )
 
-    fun onMarkerDeleteClicked(markerEntity: MarkerEntity)
-
+    fun onMarkerDeleteClicked(
+        markerEntity: MarkerEntity
+    )
 }

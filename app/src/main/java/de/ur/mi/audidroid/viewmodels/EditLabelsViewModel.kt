@@ -59,7 +59,7 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onLabelSaveClicked(nameInput: String?) {
-        if(checkInput(nameInput)){
+        if (checkInput(nameInput)) {
             _createAlertDialog.value = false
             insertLabelIntoDB(nameInput!!)
         }
@@ -67,13 +67,13 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) :
 
     fun onLabelUpdateClicked(nameInput: String?, labelEntity: LabelEntity) {
         _createAlertDialog.value = false
-        if(checkInput(nameInput)){
+        if (checkInput(nameInput)) {
             updateLabelInDB(nameInput!!, labelEntity)
         }
     }
 
-    private fun checkInput(nameInput: String?): Boolean{
-        if (nameInput==null){
+    private fun checkInput(nameInput: String?): Boolean {
+        if (nameInput == null) {
             return false
         }
         if (labelNameAlreadyTaken(nameInput)) {
@@ -86,7 +86,7 @@ class EditLabelsViewModel(dataSource: Repository, application: Application) :
             _createAlertDialog.value = true
             return false
         }
-        if (nameInput.length > res.getInteger(R.integer.max_label_mark_length)){
+        if (nameInput.length > res.getInteger(R.integer.max_label_mark_length)) {
             errorMessage = res.getString(R.string.label_name_too_long)
             _createAlertDialog.value = true
             return false

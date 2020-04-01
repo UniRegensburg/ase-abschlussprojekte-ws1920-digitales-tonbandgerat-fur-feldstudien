@@ -1,6 +1,5 @@
 package de.ur.mi.audidroid.utils
 
-
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.View
