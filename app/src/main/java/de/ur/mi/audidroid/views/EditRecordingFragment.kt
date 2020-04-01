@@ -28,6 +28,7 @@ class EditRecordingFragment : Fragment() {
     private lateinit var editRecordingViewModel: EditRecordingViewModel
     private lateinit var binding: EditRecordingFragmentBinding
     private lateinit var dataSource: Repository
+    private lateinit var args: EditRecordingFragmentArgs
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +40,7 @@ class EditRecordingFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.edit_recording_fragment, container, false)
 
         val application = this.activity!!.application
-        val args = EditRecordingFragmentArgs.fromBundle(arguments!!)
+        args = EditRecordingFragmentArgs.fromBundle(arguments!!)
 
         dataSource = Repository(application)
         val handlePlayerBar = initHandler()
@@ -136,6 +137,7 @@ class EditRecordingFragment : Fragment() {
                 de.ur.mi.audidroid.utils.EditRecordingDialog.createDialog(
                     paramContext = context!!,
                     layoutId = R.layout.save_dialog,
+                    recordingId = args.recordingId,
                     viewModel = editRecordingViewModel,
                     errorMessage = editRecordingViewModel.saveErrorMessage,
                     editRecordingFragment = this,
@@ -234,6 +236,11 @@ class EditRecordingFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        editRecordingViewModel.fragmentOnPause()
     }
 
     /**

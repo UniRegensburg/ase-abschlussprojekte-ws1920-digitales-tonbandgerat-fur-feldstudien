@@ -28,17 +28,20 @@ object EditRecordingDialog {
     private lateinit var pathTextView: TextView
     private lateinit var context: Context
     private var selectedLabels = ArrayList<String>()
+    private var previousLabels = ArrayList<String>()
     private var selectedPath: String? = null
     private lateinit var fragment: EditRecordingFragment
     private lateinit var dataSource: Repository
     private lateinit var labelEntities: List<LabelEntity>
     private lateinit var viewModel: EditRecordingViewModel
     private var layoutId: Int? = null
+    private var recordingId: Int? = null
     private lateinit var errorTextView: TextView
 
     fun createDialog(
         paramContext: Context,
         layoutId: Int,
+        recordingId: Int,
         viewModel: EditRecordingViewModel,
         errorMessage: String? = null,
         editRecordingFragment: EditRecordingFragment,
@@ -47,6 +50,7 @@ object EditRecordingDialog {
         context = paramContext
         this.dataSource = dataSource
         this.layoutId = layoutId
+        this.recordingId = recordingId
         this.viewModel = viewModel
         fragment = editRecordingFragment
         val builder = MaterialAlertDialogBuilder(context)
@@ -61,6 +65,15 @@ object EditRecordingDialog {
     }
 
     private fun prepareDataSource() {
+        dataSource.getRecLabelsById(recordingId!!).observe(fragment, Observer {
+            for (i in it.indices) {
+                previousLabels.add(it[i].labelName)
+            }
+            getAllLabels()
+        })
+    }
+
+    private fun getAllLabels() {
         dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
     }
 
@@ -87,6 +100,7 @@ object EditRecordingDialog {
             }
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
                 viewModel.cancelSaving()
+                previousLabels.clear()
             }
         }
     }
@@ -102,6 +116,7 @@ object EditRecordingDialog {
             getLabelIdFromName()
         )
         selectedLabels.clear()
+        previousLabels.clear()
     }
 
     private fun getStoragePreference(): String? {
@@ -139,17 +154,27 @@ object EditRecordingDialog {
             View.GONE
     }
 
+
     private fun createChip(name: String): Chip {
         val chip = Chip(context)
         with(chip) {
             text = name
-            chipBackgroundColor =
-                ColorStateList.valueOf(
+            if (previousLabels.contains(name)) {
+                chipBackgroundColor = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        EditRecordingDialog.context,
+                        R.color.color_primary
+                    )
+                )
+                selectedLabels.add(name)
+            } else {
+                chipBackgroundColor = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         EditRecordingDialog.context,
                         R.color.grayed_out
                     )
                 )
+            }
             setOnClickListener { labelClicked(chip) }
         }
         return chip

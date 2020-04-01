@@ -23,7 +23,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
-    val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
+    private val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
         repository.getAllRecordingsWithLabels()
     private lateinit var frameLayout: FrameLayout

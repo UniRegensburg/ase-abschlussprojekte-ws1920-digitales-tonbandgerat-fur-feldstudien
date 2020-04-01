@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
+import kotlin.collections.ArrayList
 
 class EditRecordingViewModel(
     val recordingId: Int,
@@ -39,6 +40,7 @@ class EditRecordingViewModel(
     private lateinit var frameLayout: FrameLayout
     private lateinit var seekBar: SeekBar
     private lateinit var rangeBar: MultiSlider
+    private var createdFiles = ArrayList<File>()
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val copiedRecording: Long = repository.getCopiedRecordingById(recordingId)
@@ -232,6 +234,12 @@ class EditRecordingViewModel(
         mediaPlayer.release()
     }
 
+    fun fragmentOnPause() {
+        if (recordingEdited.value!!) {
+            deleteCreatedFiles()
+        }
+    }
+
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
@@ -309,6 +317,7 @@ class EditRecordingViewModel(
             audioInProgress.value = false
             tempFile = convertedFile.path
             updateRecording(convertedFile)
+            createdFiles.add(convertedFile)
             updateMarks(type, startTimeInMilli, endTimeInMilli)
             initializeMediaPlayer()
             initializeSeekBar(seekBar)
@@ -430,7 +439,6 @@ class EditRecordingViewModel(
                 )
             }
         }
-
         _navigateToFilesFragment.value = true
         showSnackBar(R.string.record_saved)
         saveErrorMessage = null
@@ -535,6 +543,12 @@ class EditRecordingViewModel(
 
     fun cancelDialog() {
         _createCancelEditingDialog.value = false
+    }
+
+    private fun deleteCreatedFiles() {
+        for (file in createdFiles) {
+            file.delete()
+        }
     }
 
     private fun getRecordingDuration(file: File): String? {
