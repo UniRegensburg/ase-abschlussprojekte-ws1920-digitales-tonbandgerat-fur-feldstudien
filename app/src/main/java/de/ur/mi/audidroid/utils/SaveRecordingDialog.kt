@@ -57,6 +57,7 @@ object SaveRecordingDialog {
         dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
         dialog = builder.create()
         dialog.setOnCancelListener {
+            selectedLabels.clear()
             recordViewModel.cancelDialog()
         }
         dialog.show()
