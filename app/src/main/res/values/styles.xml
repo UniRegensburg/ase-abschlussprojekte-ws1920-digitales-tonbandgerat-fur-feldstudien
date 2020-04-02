@@ -66,16 +66,16 @@
 
     <!-- Leanback-->
     <style name="AudidroidTheme.OnBoarding" parent="Theme.Leanback.Onboarding">
+        <item name="fontFamily">@font/rubik</item>
         <item name="onboardingDescriptionStyle">@style/OptimizedOnboardingDescriptionStyle</item>
         <item name="onboardingLogoStyle">@style/OptimizedLogoStyle</item>
-        <item name="fontFamily">@font/rubik</item>
+        <item name="onboardingPageIndicatorStyle">@style/OptimizedPageIndicator</item>
+        <item name="onboardingNavigatorContainerStyle">@style/OptimizedNavContainer</item>
     </style>
 
     <style name="OptimizedOnboardingDescriptionStyle" parent="Widget.Leanback.OnboardingDescriptionStyle">
         <item name="android:paddingRight">@dimen/keyline_2</item>
         <item name="android:paddingLeft">@dimen/keyline_2</item>
-        <item name="android:maxLines">5</item>
-        <item name="android:minLines">4</item>
     </style>
 
     <style name="OptimizedLogoStyle" parent="Widget.Leanback.OnboardingLogoStyle">
@@ -83,9 +83,12 @@
         <item name="android:layout_height">@dimen/size_logo</item>
     </style>
 
-    <style name="OptimizedDescriptionTitleStyle" parent="Widget.Leanback.DetailsDescriptionTitleStyle">
-        <item name="android:maxLines">5</item>
+    <style name="OptimizedPageIndicator" parent="Widget.Leanback.OnboardingPageIndicatorStyle">
+        <item name="android:layout_gravity">bottom|center_horizontal</item>
     </style>
 
+    <style name="OptimizedNavContainer" parent="Widget.Leanback.OnboardingNavigatorContainerStyle">
+        <item name="android:layout_marginBottom">15dp</item>
+    </style>
 
 </resources>
