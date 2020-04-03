@@ -41,10 +41,20 @@ abstract class RecorderDatabase : RoomDatabase() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             Executors.newSingleThreadScheduledExecutor().execute {
-                                val defaultMarker = MarkerEntity(0, "Mark")
-                                val job = Job()
+                                val defaultMarkerQuestion = MarkerEntity(0, "Question")
+                                val defaultMarkerAnswer = MarkerEntity(0, "Answer")
+                                val job: CompletableJob = Job()
                                 CoroutineScope(job + Dispatchers.Main).launch {
-                                    getInstance(context).markerDao().insertMarker(defaultMarker)
+                                    getInstance(context).markerDao().insertMarker(defaultMarkerQuestion)
+                                    getInstance(context).markerDao().insertMarker(defaultMarkerAnswer)
+                                }
+                            }
+
+                            Executors.newSingleThreadScheduledExecutor().execute {
+                                val defaultLabelInterview = LabelEntity(0, "Interview")
+                                val job: CompletableJob = Job()
+                                CoroutineScope(job + Dispatchers.Main).launch {
+                                    getInstance(context).labelDao().insert(defaultLabelInterview)
                                 }
                             }
                         }
