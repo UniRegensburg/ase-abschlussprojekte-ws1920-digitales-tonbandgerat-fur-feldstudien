@@ -71,6 +71,7 @@
         <item name="onboardingLogoStyle">@style/OptimizedLogoStyle</item>
         <item name="onboardingPageIndicatorStyle">@style/OptimizedPageIndicator</item>
         <item name="onboardingNavigatorContainerStyle">@style/OptimizedNavContainer</item>
+        <item name="onboardingHeaderStyle">@style/OptimizedHeader</item>
     </style>
 
     <style name="OptimizedOnboardingDescriptionStyle" parent="Widget.Leanback.OnboardingDescriptionStyle">
@@ -85,10 +86,17 @@
 
     <style name="OptimizedPageIndicator" parent="Widget.Leanback.OnboardingPageIndicatorStyle">
         <item name="android:layout_gravity">bottom|center_horizontal</item>
+        <item name="dotToDotGap">@dimen/keyline_5</item>
+        <item name="lbDotRadius">@dimen/dot_radius</item>
+        <item name="dotBgColor">@color/color_surface</item>
     </style>
 
     <style name="OptimizedNavContainer" parent="Widget.Leanback.OnboardingNavigatorContainerStyle">
-        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:layout_marginBottom">@dimen/container_margin</item>
+    </style>
+
+    <style name="OptimizedHeader" parent="Widget.Leanback.OnboardingHeaderStyle">
+        <item name="android:layout_marginTop">@dimen/container_margin</item>
     </style>
 
 </resources>

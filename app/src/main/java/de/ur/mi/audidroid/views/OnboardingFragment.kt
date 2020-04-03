@@ -1,21 +1,17 @@
 package de.ur.mi.audidroid.views
 
-import android.animation.Animator
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
-import android.view.WindowManager
-import android.widget.ImageView
+import android.widget.Button
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginTop
 import androidx.leanback.app.OnboardingSupportFragment
 import androidx.preference.PreferenceManager
 import de.ur.mi.audidroid.R
-import org.jetbrains.anko.doAsync
+import pl.droidsonroids.gif.GifDrawable
+import pl.droidsonroids.gif.MultiCallback
 
 
 class OnboardingFragment : OnboardingSupportFragment() {
@@ -23,7 +19,8 @@ class OnboardingFragment : OnboardingSupportFragment() {
 
     private lateinit var titles: Array<String>
     private lateinit var descriptions: Array<String>
-    private lateinit var contentView: ImageView
+    private lateinit var contentView: pl.droidsonroids.gif.GifImageView
+    private lateinit var skipButton: Button
 
 
     override fun onAttach(context: Context) {
@@ -35,17 +32,20 @@ class OnboardingFragment : OnboardingSupportFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         logoResourceId = R.drawable.ic_launcher_round
-        titleViewTextColor = ContextCompat.getColor(context!!, R.color.color_on_surface)
-        descriptionViewTextColor = ContextCompat.getColor(context!!, R.color.color_on_surface)
+        titleViewTextColor = ContextCompat.getColor(context!!, R.color.color_surface)
+        descriptionViewTextColor = ContextCompat.getColor(context!!, R.color.color_surface)
     }
 
     override fun onPageChanged(newPage: Int, previousPage: Int) {
         super.onPageChanged(newPage, previousPage)
-        when(newPage){
-            1 -> contentView.setImageResource(R.drawable.save)
-            2 -> contentView.setImageResource(R.drawable.files)
-            3 -> contentView.setImageResource(R.drawable.cut)
-            4 -> contentView.setImageResource(R.drawable.settings)
+        when (newPage) {
+            1 -> contentView.setImageDrawable(roundEdges(R.drawable.save))
+            2 -> contentView.setImageDrawable(roundEdges(R.drawable.files))
+            3 -> contentView.setImageDrawable(roundEdges(R.drawable.cut))
+            4 -> {
+                contentView.setImageDrawable(roundEdges(R.drawable.settings))
+                skipButton.visibility = View.GONE
+            }
         }
     }
 
@@ -54,8 +54,15 @@ class OnboardingFragment : OnboardingSupportFragment() {
             R.layout.onboarding_image, container,
             false
         ) as pl.droidsonroids.gif.GifImageView
+        contentView.setImageDrawable(roundEdges(R.drawable.rec))
         contentView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
         return contentView
+    }
+
+    private fun roundEdges(gifId: Int): GifDrawable{
+        val gif = GifDrawable(resources, gifId)
+        gif.cornerRadius = 80f
+        return gif
     }
 
     override fun getPageCount(): Int {
@@ -71,12 +78,19 @@ class OnboardingFragment : OnboardingSupportFragment() {
     }
 
     override fun onCreateForegroundView(inflater: LayoutInflater?, container: ViewGroup?): View? {
-        return null
+        skipButton = layoutInflater.inflate(
+            R.layout.onboarding_skip, container,
+            false
+        ) as Button
+        skipButton.setOnClickListener {
+            onFinishFragment()
+        }
+        return skipButton
     }
 
     override fun onCreateBackgroundView(inflater: LayoutInflater?, container: ViewGroup?): View? {
         val background = View(activity)
-        background.setBackgroundColor(ContextCompat.getColor(context!!, R.color.color_background))
+        background.setBackgroundColor(ContextCompat.getColor(context!!, R.color.color_primary))
         return background
     }
 

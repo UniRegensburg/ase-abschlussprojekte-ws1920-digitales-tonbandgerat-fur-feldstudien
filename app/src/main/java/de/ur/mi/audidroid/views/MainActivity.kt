@@ -105,7 +105,6 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == resources.getInteger(R.integer.activity_request_code_onboarding)) {
-
             checkPermissions()
         }
 
