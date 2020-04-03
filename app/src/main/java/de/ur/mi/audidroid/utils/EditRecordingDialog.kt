@@ -55,7 +55,9 @@ object EditRecordingDialog {
         setDialogButtons(builder)
 
         dialog = builder.create()
-        dialog.setCancelable(false)
+        dialog.setOnCancelListener{
+            cancelSaving()
+        }
         dialog.show()
         initializeDialog(errorMessage)
     }
@@ -86,9 +88,14 @@ object EditRecordingDialog {
                 saveButtonClicked()
             }
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                viewModel.cancelSaving()
+                cancelSaving()
             }
         }
+    }
+
+    private fun cancelSaving(){
+        selectedLabels.clear()
+        viewModel.cancelSaving()
     }
 
     private fun saveButtonClicked() {

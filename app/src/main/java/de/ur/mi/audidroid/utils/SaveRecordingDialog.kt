@@ -57,8 +57,7 @@ object SaveRecordingDialog {
         dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
         dialog = builder.create()
         dialog.setOnCancelListener {
-            selectedLabels.clear()
-            recordViewModel.cancelDialog()
+            cancelSaving()
         }
         dialog.show()
         initializeDialog(errorMessage)
@@ -85,9 +84,14 @@ object SaveRecordingDialog {
                 saveButtonClicked()
             }
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                viewModel.cancelDialog()
+               cancelSaving()
             }
         }
+    }
+
+    private fun cancelSaving(){
+        selectedLabels.clear()
+        viewModel.cancelDialog()
     }
 
     private fun saveButtonClicked() {
