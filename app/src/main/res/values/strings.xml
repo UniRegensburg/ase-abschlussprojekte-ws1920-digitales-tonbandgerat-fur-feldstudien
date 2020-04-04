@@ -195,6 +195,9 @@
 
     <string name="sad_face">Sad face</string>
     <string name="delete_mark_dialog_header">Delete mark?</string>
+    <string name="default_label_interview">Interview</string>
+    <string name="default_marker_question">Question</string>
+    <string name="default_marker_answer">Answer</string>
 
 
 </resources>
