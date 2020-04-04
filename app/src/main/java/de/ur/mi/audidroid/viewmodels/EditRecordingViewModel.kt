@@ -37,6 +37,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
+import de.ur.mi.audidroid.models.MarkTimestamp
 
 class EditRecordingViewModel(
     recordingId: Int,
