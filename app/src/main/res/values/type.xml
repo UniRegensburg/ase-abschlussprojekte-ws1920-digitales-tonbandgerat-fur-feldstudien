@@ -56,6 +56,10 @@
         <item name="android:textSize">17sp</item>
     </style>
 
+    <style name="TextAppearance.AudidroidTheme.Chronometer" parent="TextAppearance.AudidroidTheme.Headline2">
+        <item name="fontFamily">monospace</item>
+    </style>
+
     <style name="TextAppearance.AudidroidTheme.Subtitle1" parent="TextAppearance.MaterialComponents.Subtitle1">
         <item name="fontFamily">@font/rubik</item>
         <item name="android:fontFamily">@font/rubik</item>

@@ -135,9 +135,15 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun updateNameAndPath(uid: Int, name: String, path: String) {
+    fun updatePreviousRecording(copiedRecordingId: Int, recordingId: Int, path: String) {
         CoroutineScope(coroutineContext).launch {
-            entryDao.updateNameAndPath(uid, name, path)
+            entryDao.updatePreviousRecording(copiedRecordingId, recordingId, path)
+        }
+    }
+
+    fun updateNameAndPath(uid: Int, name: String, path: String, date: String) {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.updateNameAndPath(uid, name, path, date)
         }
     }
 
@@ -214,9 +220,21 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun updatePreviousLabel(labelAssignment: LabelAssignmentEntity) {
+        CoroutineScope(coroutineContext).launch {
+            labelAssignmentDao.updatePreviousLabel(labelAssignment)
+        }
+    }
+
     fun deleteRecMarks(uid: Int) {
         CoroutineScope(coroutineContext).launch {
             markerDao.deleteRecMarks(uid)
+        }
+    }
+
+    fun updateMarks(recordingId: Int, copiedRecording: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.updateMarks(recordingId, copiedRecording)
         }
     }
 

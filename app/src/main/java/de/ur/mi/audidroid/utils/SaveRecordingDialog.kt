@@ -66,9 +66,10 @@ object SaveRecordingDialog {
     private fun initializeDialog(errorMessage: String?) {
         pathTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_textview_path)!!
         selectedPath = getStoragePreference()
-        dialog.findViewById<ImageButton>(R.id.dialog_save_recording_path_button)!!.setOnClickListener {
-            pathButtonClicked()
-        }
+        dialog.findViewById<ImageButton>(R.id.dialog_save_recording_path_button)!!
+            .setOnClickListener {
+                pathButtonClicked()
+            }
         getNamePreference()
         if (errorMessage != null) {
             errorTextView =
@@ -84,12 +85,12 @@ object SaveRecordingDialog {
                 saveButtonClicked()
             }
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-               cancelSaving()
+                cancelSaving()
             }
         }
     }
 
-    private fun cancelSaving(){
+    private fun cancelSaving() {
         selectedLabels.clear()
         viewModel.cancelDialog()
     }
@@ -168,6 +169,14 @@ object SaveRecordingDialog {
                         R.color.grayed_out
                     )
                 )
+            setTextColor(
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        SaveRecordingDialog.context,
+                        R.color.color_on_background
+                    )
+                )
+            )
             setOnClickListener { labelClicked(chip) }
         }
         return chip
@@ -187,6 +196,14 @@ object SaveRecordingDialog {
         if (selectedLabels.size < context.resources.getInteger(R.integer.max_label_size)) {
             clickedLabel.chipBackgroundColor =
                 ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
+            clickedLabel.setTextColor(
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.color_on_primary
+                    )
+                )
+            )
             selectedLabels.add((clickedLabel).text.toString())
         } else Snackbar.make(
             fragment.requireView(),
@@ -198,6 +215,14 @@ object SaveRecordingDialog {
     private fun removeClickedLabel(clickedLabel: Chip) {
         clickedLabel.chipBackgroundColor =
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
+        clickedLabel.setTextColor(
+            ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_on_background
+                )
+            )
+        )
         selectedLabels.remove((clickedLabel).text.toString())
     }
 
@@ -230,7 +255,7 @@ object SaveRecordingDialog {
         editText.setSelection(storedName.length)
     }
 
-    private fun checkVariables(nameParam: String): String{
+    private fun checkVariables(nameParam: String): String {
         var name = nameParam
         if (name.contains("{date}")) {
             name = name.replace(

@@ -151,6 +151,7 @@
     <string name="dialog_save_recording_path_hint">Choose a path</string>
     <string name="dialog_save_recording_label">Labels</string>
     <string name="dialog_save_button_text">Save</string>
+    <string name="dialog_update_button_text">Update</string>
     <string name="dialog_cancel_button_text">Cancel</string>
     <string name="dialog_invalid_name">Just use letters, numbers and _-{}.</string>
     <string name="dialog_already_exist">Duplication error. Change the name or the path.</string>

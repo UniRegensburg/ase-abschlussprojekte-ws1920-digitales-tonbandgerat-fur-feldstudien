@@ -26,11 +26,14 @@ interface EntryDao {
     @Query("INSERT INTO recordingsTable (uid, recordingName, recordingPath, date, duration) SELECT null, recordingName, recordingPath, date, duration FROM recordingsTable WHERE uid = :key")
     suspend fun getCopiedRecordingById(key: Int): Long
 
+    @Query("UPDATE recordingsTable SET uid = :recordingId, recordingPath = :path WHERE uid = :copiedRecordingId")
+    suspend fun updatePreviousRecording(copiedRecordingId: Int, recordingId: Int, path: String)
+
     @Update
     suspend fun updateRecording(entryEntity: EntryEntity)
 
-    @Query("UPDATE recordingsTable SET recordingName = :name, recordingPath = :path WHERE uid = :key")
-    suspend fun updateNameAndPath(key: Int, name: String, path: String)
+    @Query("UPDATE recordingsTable SET recordingName = :name, recordingPath = :path, date = :date WHERE uid = :key")
+    suspend fun updateNameAndPath(key: Int, name: String, path: String, date: String)
 
     @Query("DELETE FROM recordingsTable WHERE uid = :key")
     suspend fun delete(key: Int)

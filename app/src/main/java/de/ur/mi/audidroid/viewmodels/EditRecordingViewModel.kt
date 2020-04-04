@@ -427,7 +427,7 @@ class EditRecordingViewModel(
         }
         File(tempFile).copyTo(newFile)
 
-        repository.updateNameAndPath(copiedRecording.toInt(), name, path)
+        repository.updateNameAndPath(copiedRecording.toInt(), name, path, getDate())
         if (labels != null) {
             for (i in labels.indices) {
                 repository.insertRecLabels(
@@ -439,6 +439,37 @@ class EditRecordingViewModel(
                 )
             }
         }
+        _navigateToFilesFragment.value = true
+        showSnackBar(R.string.record_saved)
+        saveErrorMessage = null
+    }
+
+    fun updatePreviousRecording(
+        name: String,
+        pathInput: String?,
+        labels: ArrayList<Int>?
+    ) {
+        _createSaveDialog.value = false
+
+        val path = java.lang.String.format(
+            "%s/$name%s",
+            (pathInput ?: context.filesDir.absolutePath),
+            res.getString(R.string.suffix_audio_file)
+        )
+
+        repository.deleteRecLabels(recordingId)
+        if (labels != null) {
+            for (i in labels.indices) {
+                repository.updatePreviousLabel(LabelAssignmentEntity(0, recordingId, labels[i]))
+            }
+        }
+
+        repository.deleteRecMarks(recordingId)
+        repository.updateMarks(recordingId, copiedRecording.toInt())
+
+        repository.deleteRecording(recordingId)
+        repository.updatePreviousRecording(copiedRecording.toInt(), recordingId, path)
+
         _navigateToFilesFragment.value = true
         showSnackBar(R.string.record_saved)
         saveErrorMessage = null
@@ -550,6 +581,7 @@ class EditRecordingViewModel(
             file.delete()
         }
     }
+
 
     private fun getRecordingDuration(file: File): String? {
         val uri: Uri = Uri.fromFile(file)

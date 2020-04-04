@@ -13,9 +13,6 @@ interface MarkerDao {
     @Query("SELECT COUNT(uid) FROM markerTable")
     suspend fun getMarkerCount(): Int
 
-    @Query("SELECT * FROM markerTable WHERE uid = :key")
-    fun getMarkerById(key: Int): LiveData<MarkerEntity>
-
     @Query("SELECT * FROM markerTable WHERE markerName = :name")
     suspend fun getMarkerByName(name: String): List<MarkerEntity>
 
@@ -55,6 +52,9 @@ interface MarkerDao {
 
     @Query("DELETE FROM markerTimeTable WHERE recordingId = :key")
     suspend fun deleteRecMarks(key: Int)
+
+    @Query("UPDATE markerTimeTable SET recordingId = :recordingId WHERE recordingId = :copiedRecordingId")
+    suspend fun updateMarks(recordingId: Int, copiedRecordingId: Int)
 
     @Query("DELETE FROM markerTimeTable WHERE mid = :key")
     suspend fun deleteMark(key: Int)

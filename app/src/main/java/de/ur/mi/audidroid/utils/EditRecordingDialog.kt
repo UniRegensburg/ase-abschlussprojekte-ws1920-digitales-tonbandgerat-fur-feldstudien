@@ -2,13 +2,17 @@ package de.ur.mi.audidroid.utils
 
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.ColorStateList
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -27,6 +31,7 @@ object EditRecordingDialog {
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
     private lateinit var pathTextView: TextView
     private lateinit var context: Context
+    private lateinit var builder: MaterialAlertDialogBuilder
     private var selectedLabels = ArrayList<String>()
     private var previousLabels = ArrayList<String>()
     private var selectedPath: String? = null
@@ -36,7 +41,9 @@ object EditRecordingDialog {
     private lateinit var viewModel: EditRecordingViewModel
     private var layoutId: Int? = null
     private var recordingId: Int? = null
+    private var previousRecordingName: String = ""
     private lateinit var errorTextView: TextView
+    private var previousName = MutableLiveData<Boolean>()
 
     fun createDialog(
         paramContext: Context,
@@ -52,10 +59,11 @@ object EditRecordingDialog {
         this.layoutId = layoutId
         this.recordingId = recordingId
         this.viewModel = viewModel
+        builder = MaterialAlertDialogBuilder(context)
         fragment = editRecordingFragment
-        val builder = MaterialAlertDialogBuilder(context)
+        previousName.value = true
         builder.setView(layoutId)
-        prepareDataSource()
+        prepareDataSourceAndDialog(errorMessage)
         setDialogButtons(builder)
 
         dialog = builder.create()
@@ -63,15 +71,18 @@ object EditRecordingDialog {
             cancelSaving()
         }
         dialog.show()
-        initializeDialog(errorMessage)
     }
 
-    private fun prepareDataSource() {
+    private fun prepareDataSourceAndDialog(errorMessage: String?) {
+        dataSource.getRecordingById(recordingId!!).observe(fragment, Observer {
+            previousRecordingName = it.recordingName
+        })
         dataSource.getRecLabelsById(recordingId!!).observe(fragment, Observer {
             for (i in it.indices) {
                 previousLabels.add(it[i].labelName)
             }
             getAllLabels()
+            initializeDialog(errorMessage)
         })
     }
 
@@ -86,7 +97,7 @@ object EditRecordingDialog {
             .setOnClickListener {
                 pathButtonClicked()
             }
-        getNamePreference()
+        getRecordingName()
         if (errorMessage != null) {
             errorTextView =
                 dialog.findViewById<TextView>(R.id.dialog_save_recording_error_textview)!!
@@ -97,8 +108,14 @@ object EditRecordingDialog {
 
     private fun setDialogButtons(builder: MaterialAlertDialogBuilder) {
         with(builder) {
-            setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
-                saveButtonClicked()
+            setPositiveButton(context.getString(R.string.dialog_update_button_text)) { _, _ ->
+                val editText =
+                    dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
+                if (editText.text.toString() == previousRecordingName) {
+                    updateButtonClicked()
+                } else {
+                    saveButtonClicked()
+                }
             }
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
                 cancelSaving()
@@ -119,6 +136,18 @@ object EditRecordingDialog {
         nameInput = if (nameInput == "") null
         else checkVariables(nameInput!!)
         viewModel.getNewFileFromUserInput(
+            nameInput,
+            selectedPath,
+            getLabelIdFromName()
+        )
+        selectedLabels.clear()
+        previousLabels.clear()
+    }
+
+    private fun updateButtonClicked() {
+        val nameInput: String =
+            dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!.text.toString()
+        viewModel.updatePreviousRecording(
             nameInput,
             selectedPath,
             getLabelIdFromName()
@@ -162,7 +191,6 @@ object EditRecordingDialog {
             View.GONE
     }
 
-
     private fun createChip(name: String): Chip {
         val chip = Chip(context)
         with(chip) {
@@ -172,6 +200,14 @@ object EditRecordingDialog {
                     ContextCompat.getColor(
                         EditRecordingDialog.context,
                         R.color.color_primary
+                    )
+                )
+                setTextColor(
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.color_on_primary
+                        )
                     )
                 )
                 selectedLabels.add(name)
@@ -202,6 +238,14 @@ object EditRecordingDialog {
         if (selectedLabels.size < context.resources.getInteger(R.integer.max_label_size)) {
             clickedLabel.chipBackgroundColor =
                 ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
+            clickedLabel.setTextColor(
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.color_on_primary
+                    )
+                )
+            )
             selectedLabels.add((clickedLabel).text.toString())
         } else Snackbar.make(
             fragment.requireView(),
@@ -213,6 +257,14 @@ object EditRecordingDialog {
     private fun removeClickedLabel(clickedLabel: Chip) {
         clickedLabel.chipBackgroundColor =
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
+        clickedLabel.setTextColor(
+            ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_on_background
+                )
+            )
+        )
         selectedLabels.remove((clickedLabel).text.toString())
     }
 
@@ -230,19 +282,27 @@ object EditRecordingDialog {
         } else null
     }
 
-    private fun getNamePreference() {
+    private fun getRecordingName() {
         val editText = dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
-        val preferences = context.getSharedPreferences(
-            context.getString(R.string.filename_preference_key),
-            Context.MODE_PRIVATE
-        )
-        var storedName = preferences.getString(
-            context.getString(R.string.filename_preference_key),
-            context.getString(R.string.filename_preference_default_value)
-        )!!
-        storedName = checkVariables(storedName)
-        editText.setText(storedName)
-        editText.setSelection(storedName.length)
+        editText.setText(previousRecordingName)
+        editText.setSelection(previousRecordingName.length)
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.toString() == previousRecordingName) {
+                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).text =
+                        context.getString(R.string.dialog_update_button_text)
+                } else {
+                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).text =
+                        context.getString(R.string.dialog_save_button_text)
+                }
+            }
+        })
     }
 
     private fun checkVariables(nameParam: String): String {

@@ -67,6 +67,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         if (file.delete()) {
             repository.deleteRecording(recordingAndLabels.uid)
             repository.deleteRecMarks(recordingAndLabels.uid)
+            repository.deleteRecLabels(recordingAndLabels.uid)
             showSnackBar(
                 String.format(
                     context.getString(R.string.recording_deleted),
