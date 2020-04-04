@@ -6,7 +6,7 @@ import androidx.room.*
  *  MarkTimestamp represents a mark made with a given marker, attached to a given recording.
  *  RecordingAndMarker maps the one-to-many relationship between a recording and its marks.
  *  MarkNadTimestamp represents the relation between a MarkTimestamp and its corresponding MarkerEntity.
- * @author: Jonas Puchinger, Lisa Sanladerer
+ *  @author: Jonas Puchinger, Lisa Sanladerer
  */
 
 @Entity(tableName = "markerTable")
@@ -20,6 +20,7 @@ data class MarkTimestamp(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "mid") val mid: Int,
     @ColumnInfo(name = "recordingId") val recordingId: Int,
     @ColumnInfo(name = "markerId") val markerId: Int,
+    @ColumnInfo(name = "markComment") val markComment: String? = null,
     @ColumnInfo(name = "markTime") val markTime: String
 )
 

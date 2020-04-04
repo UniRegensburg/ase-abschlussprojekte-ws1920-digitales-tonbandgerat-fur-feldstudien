@@ -255,7 +255,11 @@ class RecordViewModel(
 
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
         val uid = dataSource.insertRecording(audio).toInt()
-        if (labels != null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
+        if (labels != null) {
+            for (i in labels.indices) {
+                dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels[i]))
+            }
+        }
         if (markList.isNotEmpty()) {
             saveMarksInDB(uid)
         }
@@ -284,7 +288,7 @@ class RecordViewModel(
 
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
-            val mark = MarkTimestamp(0, recordingId, it.first.uid, it.second)
+            val mark = MarkTimestamp(0, recordingId, it.first.uid, null, it.second)
             dataSource.insertMark(mark)
         }
         markList = mutableListOf()

@@ -4,6 +4,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="action_save_edited_rec">Save</string>
+    <string name="action_edit_rec">Edit</string>
 
     <!--Menu-->
     <string name="menu_record">Record</string>
@@ -56,6 +57,7 @@
     <!-- PlayerFragment -->
     <string name="play_button">Play recording</string>
     <string name="pause_button">Pause recording</string>
+    <string name="labels_text_view">labels</string>
     <string name="error_message_initialization_failed">Initialization of MediaPlayer failed</string>
     <string name="error_message_path">File moved or deleted</string>
     <string name="player_moved_forward">5 sec skipped</string>
@@ -71,6 +73,7 @@
     <string name="error_message_file_cannot_be_deleted">File cannot be deleted.</string>
     <string name="error_message_path_does_not_exist">File cannot be deleted. File path does not exist.</string>
     <string name="delete_recording_dialog_header">Delete recording \'%1$s\'?</string>
+    <string name="content_description_audio_files">Audio files icon</string>
 
     <!-- EditRecordingFragment -->
     <string name="cut_inner_button">Cut inner</string>
@@ -151,6 +154,7 @@
     <string name="dialog_invalid_name">Just use letters, numbers and _-{}.</string>
     <string name="dialog_already_exist">Duplication error. Change the name or the path.</string>
     <string name="dialog_name_length">Enter a maximum of thirty characters.</string>
+    <string name="dialog_just_three_labels">Select a maximum of three labels.</string>
 
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
@@ -183,8 +187,15 @@
     <string name="audio_format_wma">WMA</string>
     <string name="audio_format_wav">WAV</string>
     <string name="audio_format_flac">FLAC</string>
-
+    <string name="button_new_comment">New comment</string>
+    <string name="button_edit_comment">Edit comment</string>
+    <string name="add_comment_text_hint">Enter comment</string>
+    <string name="edit_comment_dialog_header">Edit comment</string>
+    <string name="add_comment_dialog_header">Add comment</string>
+    <string name="comment_updated">Comment edited</string>
 
     <string name="sad_face">Sad face</string>
+    <string name="delete_mark_dialog_header">Delete mark?</string>
+
 
 </resources>

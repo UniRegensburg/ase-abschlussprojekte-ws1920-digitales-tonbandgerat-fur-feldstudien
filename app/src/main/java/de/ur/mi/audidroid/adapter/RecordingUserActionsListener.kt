@@ -1,10 +1,10 @@
 package de.ur.mi.audidroid.adapter
 
 import android.view.View
-import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.RecordingAndLabels
 
 interface RecordingUserActionsListener {
-    fun onRecordingClicked(entryEntity: EntryEntity)
+    fun onRecordingClicked(recordingAndLabels: RecordingAndLabels)
 
-    fun onButtonClicked(entryEntity: EntryEntity, view: View)
+    fun onButtonClicked(recordingAndLabels: RecordingAndLabels, view: View)
 }

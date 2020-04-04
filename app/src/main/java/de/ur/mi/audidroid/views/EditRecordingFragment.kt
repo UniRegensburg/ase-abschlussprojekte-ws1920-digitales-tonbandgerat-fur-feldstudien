@@ -44,7 +44,9 @@ class EditRecordingFragment : Fragment() {
             ViewModelProvider(this, viewModelFactory).get(EditRecordingViewModel::class.java)
 
         binding.editRecordingViewModel = editRecordingViewModel
+
         binding.handlePlayerBar = handlePlayerBar
+
         binding.lifecycleOwner = this
         setHasOptionsMenu(true)
 
@@ -64,6 +66,8 @@ class EditRecordingFragment : Fragment() {
             }
         })
         createEditRecordingDialog()
+        createCommentDialog()
+        createConfirmDialog()
         setupAdapter()
     }
 
@@ -88,13 +92,13 @@ class EditRecordingFragment : Fragment() {
     }
 
     private fun createEditRecordingDialog() {
-        editRecordingViewModel.createDialog.observe(viewLifecycleOwner, Observer {
+        editRecordingViewModel.createSaveDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 de.ur.mi.audidroid.utils.EditRecordingDialog.createDialog(
                     paramContext = context!!,
                     layoutId = R.layout.save_dialog,
                     viewModel = editRecordingViewModel,
-                    errorMessage = editRecordingViewModel.errorMessage,
+                    errorMessage = editRecordingViewModel.saveErrorMessage,
                     editRecordingFragment = this,
                     dataSource = dataSource
                 )
@@ -102,8 +106,33 @@ class EditRecordingFragment : Fragment() {
         })
     }
 
-    private fun setupAdapter() {
+    private fun createCommentDialog() {
+        editRecordingViewModel.createCommentDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                de.ur.mi.audidroid.utils.CommentDialog.createDialog(
+                    context = context!!,
+                    markTimestampToBeEdited = editRecordingViewModel.markTimestampToBeEdited,
+                    layoutId = R.layout.comment_dialog,
+                    viewModel = editRecordingViewModel,
+                    errorMessage = editRecordingViewModel.commentErrorMessage
+                )
+            }
+        })
+    }
 
+    private fun createConfirmDialog() {
+        editRecordingViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                de.ur.mi.audidroid.utils.DeleteMarkDialog.createDialog(
+                    context = context!!,
+                    markToBeEdited = editRecordingViewModel.markToBeDeleted,
+                    viewModel = editRecordingViewModel
+                )
+            }
+        })
+    }
+
+    private fun setupAdapter() {
         adapter = EditMarkerItemAdapter(editRecordingViewModel)
         binding.markerList.adapter = adapter
 

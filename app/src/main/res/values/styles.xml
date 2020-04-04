@@ -32,7 +32,9 @@
 
     <style name="AudidroidTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AudidroidTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AudidroidTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColor">@color/color_on_background</item>
+    </style>
 
     <style name="AudidroidTheme.Splash" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_drawable</item>
@@ -50,6 +52,16 @@
     <style name="Widget.AudidroidTheme.Seekbar" parent="Widget.AppCompat.SeekBar">
         <item name="android:progressTint">?colorPrimary</item>
         <item name="android:thumbTint">?colorPrimary</item>
+    </style>
+
+    <style name="Widget.AudidroidTheme.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="shapeAppearance">?shapeAppearanceSmallComponent</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">?colorOnBackground</item>
     </style>
 
 </resources>

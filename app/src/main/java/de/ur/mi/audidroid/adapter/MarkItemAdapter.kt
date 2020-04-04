@@ -1,18 +1,33 @@
 package de.ur.mi.audidroid.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.MarkItemBinding
+import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 import de.ur.mi.audidroid.models.MarkAndTimestamp
+import de.ur.mi.audidroid.viewmodels.PlayerViewModel
 
-class MarkItemAdapter :
+class MarkItemAdapter(
+    private val playerViewModel: PlayerViewModel
+) :
     ListAdapter<MarkAndTimestamp, MarkItemAdapter.ViewHolder>(MarkAndTimeStampDiffCallback()) {
 
+    private val userActionsListener = object : MarkUserActionsListener {
+
+        override fun onMarkClicked(mark: ExpandableMarkAndTimestamp, view: View) {
+            if (mark.markAndTimestamp.markTimestamp.markComment != null) {
+                mark.isExpanded = !mark.isExpanded
+            }
+        }
+
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position)!!)
+        holder.bind(getItem(position)!!, userActionsListener)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,9 +38,11 @@ class MarkItemAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: MarkAndTimestamp
+            item: MarkAndTimestamp,
+            listener: MarkUserActionsListener
         ) {
-            binding.mark = item
+            binding.mark = ExpandableMarkAndTimestamp(item)
+            binding.listener = listener
             binding.executePendingBindings()
         }
 
