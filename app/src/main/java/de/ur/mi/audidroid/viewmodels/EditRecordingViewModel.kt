@@ -187,7 +187,9 @@ class EditRecordingViewModel(
     }
 
     private fun initializeVisualizer() {
-        val audioFile = File(tempFile)
+        val audioFile = File(context.filesDir, "internalCopy")
+        File(tempFile).copyTo(audioFile)
+
         val wavePic = File(context.filesDir, "waveform.png")
         val image = frameLayout.findViewById<ImageView>(R.id.waveView)
         val colorHex = "#" + Integer.toHexString(
@@ -206,6 +208,7 @@ class EditRecordingViewModel(
                         image.setImageURI(null)
                         image.setImageURI(Uri.fromFile(wavePic))
                         wavePic.delete()
+                        audioFile.delete()
                     }
                 }
             }

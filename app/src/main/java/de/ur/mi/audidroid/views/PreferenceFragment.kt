@@ -139,8 +139,8 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         )
         val path = data!!.dataString!!
         val realPath =
-            when (path == context.resources.getString(R.string.default_storage_location)) {
-                true -> path
+            when (path == context.resources.getString(R.string.default_storage_location) || path.contains(context.packageName)) {
+                true -> context.resources.getString(R.string.default_storage_location)
                 false -> Pathfinder.getRealPath(context, Uri.parse(path))
             }
         if (realPath == null) {
