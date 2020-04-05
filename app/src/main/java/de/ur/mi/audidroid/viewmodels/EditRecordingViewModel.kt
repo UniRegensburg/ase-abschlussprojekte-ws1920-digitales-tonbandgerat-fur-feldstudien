@@ -187,11 +187,10 @@ class EditRecordingViewModel(
     }
 
     private fun initializeVisualizer() {
-        val audioFile = File(context.filesDir, "internalCopy")
-        File(tempFile).copyTo(audioFile)
+        val internalAudioCopy = File(context.filesDir, "internalCopy")
+        File(tempFile).copyTo(internalAudioCopy)
 
         val wavePic = File(context.filesDir, "waveform.png")
-        val image = frameLayout.findViewById<ImageView>(R.id.waveView)
         val colorHex = "#" + Integer.toHexString(
             ContextCompat.getColor(
                 context,
@@ -199,12 +198,13 @@ class EditRecordingViewModel(
             ) and 0x00ffffff
         )
         val command =
-            "-i ${audioFile.path} -filter_complex \"compand=attacks=0:points=10/25:gain=5,showwavespic=s=640x120:colors=$colorHex\" -frames:v 1 ${wavePic.path}"
+            "-i ${internalAudioCopy.path} -filter_complex \"compand=attacks=0:points=10/25:gain=5,showwavespic=s=640x120:colors=$colorHex\" -frames:v 1 ${wavePic.path}"
 
         try {
             when (FFmpeg.execute(command)) {
                 Config.RETURN_CODE_SUCCESS -> {
                     if (wavePic.exists()) {
+                        val image = frameLayout.findViewById<ImageView>(R.id.waveView)
                         image.setImageURI(null)
                         image.setImageURI(Uri.fromFile(wavePic))
                         wavePic.delete()
@@ -212,9 +212,9 @@ class EditRecordingViewModel(
                 }
             }
         } catch (e: Exception) {
-            Log.e("WavePic", "Creating failed")
+            Log.e("WavePic", "preparation failed")
         }
-        audioFile.delete()
+        internalAudioCopy.delete()
     }
 
     fun onStartPlayer() {

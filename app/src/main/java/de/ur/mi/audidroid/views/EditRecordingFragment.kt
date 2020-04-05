@@ -179,8 +179,4 @@ class EditRecordingFragment : Fragment() {
             throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 }
