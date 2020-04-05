@@ -199,7 +199,7 @@ class EditRecordingViewModel(
             ) and 0x00ffffff
         )
         val command =
-            "-i ${audioFile.path} -filter_complex \"compand,showwavespic=s=640x120:colors=$colorHex\" -frames:v 1 ${wavePic.path}"
+            "-i ${audioFile.path} -filter_complex \"compand=attacks=0:points=10/25:gain=5,showwavespic=s=640x120:colors=$colorHex\" -frames:v 1 ${wavePic.path}"
 
         try {
             when (FFmpeg.execute(command)) {
@@ -208,13 +208,13 @@ class EditRecordingViewModel(
                         image.setImageURI(null)
                         image.setImageURI(Uri.fromFile(wavePic))
                         wavePic.delete()
-                        audioFile.delete()
                     }
                 }
             }
         } catch (e: Exception) {
             Log.e("WavePic", "Creating failed")
         }
+        audioFile.delete()
     }
 
     fun onStartPlayer() {
