@@ -3,6 +3,7 @@
     <dimen name="keyline_0">2dp</dimen>
     <dimen name="keyline_1">4dp</dimen>
     <dimen name="keyline_2">8dp</dimen>
+    <dimen name="keyline_3">12dp</dimen>
     <dimen name="keyline_4">16dp</dimen>
     <dimen name="keyline_5">24dp</dimen>
     <dimen name="keyline_7">48dp</dimen>
@@ -38,8 +39,9 @@
     <!--BottomBar-->
     <dimen name="bar_size_fab">72dp</dimen>
     <dimen name="bar_size_image">32dp</dimen>
-    <dimen name="bar_margin">70dp</dimen>
+    <dimen name="bar_margin_start_end">62dp</dimen>
     <dimen name="bar_cradle_margin">6dp</dimen>
+    <dimen name="bar_margin_bottom">13dp</dimen>
 
     <!-- Dialog -->
     <dimen name="dialog_padding">@dimen/keyline_5</dimen>

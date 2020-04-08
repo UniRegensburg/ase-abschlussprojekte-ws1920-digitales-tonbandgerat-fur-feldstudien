@@ -29,8 +29,8 @@ interface EntryDao {
     @Insert(onConflict = REPLACE)
     suspend fun insert(entryEntity: EntryEntity): Long
 
-    @Delete
-    suspend fun delete(entryEntity: EntryEntity)
+    @Query("DELETE FROM recordingsTable WHERE uid = :key")
+    suspend fun delete(key: Int)
 
     @Query("DELETE FROM recordingsTable")
     fun clearTable()

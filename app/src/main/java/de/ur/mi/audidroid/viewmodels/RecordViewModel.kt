@@ -8,7 +8,6 @@ import android.media.MediaRecorder
 import android.net.Uri
 import android.os.SystemClock
 import android.text.format.DateUtils
-import android.view.View
 import android.widget.Chronometer
 import android.widget.FrameLayout
 import androidx.documentfile.provider.DocumentFile
@@ -20,9 +19,10 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.LabelAssignmentEntity
-import de.ur.mi.audidroid.models.MarkerTimeRelation
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.StorageHelper
+import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.utils.QuitRecordingDialog
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -34,7 +34,11 @@ import java.util.regex.Pattern
  * @author: Sabine Roth
  */
 
-class RecordViewModel(private val dataSource: Repository, application: Application) :
+class RecordViewModel(
+    private val dataSource: Repository,
+    application: Application,
+    private val activityContext: Context
+) :
     AndroidViewModel(application) {
 
     private val repository = dataSource
@@ -46,22 +50,27 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     private lateinit var frameLayout: FrameLayout
     private var recorderInitialized = false
     private val context = getApplication<Application>().applicationContext
-    private var markList = mutableListOf<Pair<String, String>>()
+
+    //private var markList = mutableListOf<Pair<String, String>>()
     var allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
+
+    val allMarkers: LiveData<List<MarkerEntity>> = repository.getAllMarkers()
+    private var markList = mutableListOf<Pair<MarkerEntity, String>>()
+
+
     var isRecording = MutableLiveData<Boolean>()
     var buttonsVisible = MutableLiveData<Boolean>()
     val res: Resources = context.resources
     private val _createDialog = MutableLiveData<Boolean>()
     var errorMessage: String? = null
+    val createDialog: MutableLiveData<Boolean>
+        get() = _createDialog
 
     init {
         isRecording.value = false
         buttonsVisible.value = false
-
+        createDialog.value = false
     }
-
-    val createDialog: MutableLiveData<Boolean>
-        get() = _createDialog
 
     fun initializeTimer(chronometer: Chronometer) {
         timer = chronometer
@@ -135,16 +144,39 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
         currentRecordTime = timer.text.toString()
     }
 
+
+    fun fragmentOnPause() {
+        if (recorderInitialized && createDialog.value == false && timer.text.toString() != res.getString(
+                R.string.start_time
+            )
+        ) deleteRecord()
+    }
+
+    fun onMarkerButtonClicked(markerEntity: MarkerEntity) {
+        val markEntry = Pair(markerEntity, timer.text.toString())
+        markList.add(markEntry)
+        showSnackBarShort(R.string.mark_made)
+    }
+
     fun cancelRecord() {
         if (recorderInitialized && createDialog.value == false) {
-            showSnackBar(R.string.record_removed)
-            File(tempFile).delete()
-            endRecordSession()
-            resetView()
+            prepareForPossResume()
+            QuitRecordingDialog.createDialog(
+                activityContext,
+                res.getString(R.string.quit_recording),
+                this
+            )
         }
     }
 
-    fun cancelSaving() {
+    fun deleteRecord() {
+        showSnackBar(R.string.record_removed)
+        File(tempFile).delete()
+        endRecordSession()
+        resetView()
+    }
+
+    fun cancelDialog() {
         errorMessage = null
         _createDialog.value = false
         buttonsVisible.value = true
@@ -249,48 +281,65 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
             res.getString(R.string.suffix_audio_file)
         )
         val newFile = File(path)
+//<<<<<<< HEAD
         val storagePref = getStoragePreference()
 
         val uniqueName = checkNameUniqueness(storagePref, newFile, name)
-        if (!uniqueName){
-            return
-        }
+        if (!uniqueName) {
+//=======
+            if (newFile.exists()) {
+                errorDialog(res.getString(R.string.dialog_already_exist))
+//>>>>>>> master
+                return
+            }
 
-        endRecordSession()
-        val fileIsInternal = storagePref.toString().equals(res.getString(R.string.storage_location_default))
-        if (fileIsInternal){
-            File(tempFile).copyTo(newFile)
-        }else{
-            path = StorageHelper.createExternalFile(context,
-                File(tempFile), name, getStoragePreference())
-            newFile.delete()
-        }
-        val recordingDuration = getRecordingDuration() ?: currentRecordTime
+            endRecordSession()
+            val fileIsInternal =
+                storagePref.toString().equals(res.getString(R.string.storage_location_default))
+            if (fileIsInternal) {
+                File(tempFile).copyTo(newFile)
+            } else {
+                path = StorageHelper.createExternalFile(
+                    context,
+                    File(tempFile), name, getStoragePreference()
+                )
+                newFile.delete()
+            }
+            val recordingDuration = getRecordingDuration() ?: currentRecordTime
 
-        var folderRef: Int? = null
-        if (!fileIsInternal){
-            val folderPath = StorageHelper.getExternalFolderPath(context, path, name)
-            folderRef = StorageHelper.handleFolderReference(folderPath!!, allFolders.value!!, repository)
-        }
+            var folderRef: Int? = null
+            if (!fileIsInternal) {
+                val folderPath = StorageHelper.getExternalFolderPath(context, path, name)
+                folderRef = StorageHelper.handleFolderReference(
+                    folderPath!!,
+                    allFolders.value!!,
+                    repository
+                )
+            }
 
-        val audio =
-            EntryEntity(
-                uid = 0,
-                recordingName = name,
-                recordingPath = path,
-                date = getDate(),
-                duration = recordingDuration,
-                folder = folderRef
-            )
-        saveRecordInDB(audio, labels)
-        File(tempFile).delete()
-        resetView()
-        errorMessage = null
+            val audio =
+                EntryEntity(
+                    uid = 0,
+                    recordingName = name,
+                    recordingPath = path,
+                    date = getDate(),
+                    duration = recordingDuration,
+                    folder = folderRef
+                )
+            saveRecordInDB(audio, labels)
+            File(tempFile).delete()
+            resetView()
+            errorMessage = null
+        }
     }
 
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
         val uid = dataSource.insertRecording(audio).toInt()
-        if (labels != null) dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels))
+        if (labels != null) {
+            for (i in labels.indices) {
+                dataSource.insertRecLabels(LabelAssignmentEntity(0, uid, labels[i]))
+            }
+        }
         if (markList.isNotEmpty()) {
             saveMarksInDB(uid)
         }
@@ -319,17 +368,10 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
 
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
-            val mark = MarkerTimeRelation(0, recordingId, it.first, it.second)
-            repository.insertMark(mark)
+            val mark = MarkTimestamp(0, recordingId, it.first.uid, null, it.second)
+            dataSource.insertMark(mark)
         }
         markList = mutableListOf()
-    }
-
-    fun makeMark(view: View) {
-        val btnId = view.resources.getResourceName(view.id)
-        val markEntry = Pair(btnId, timer.text.toString())
-        markList.add(markEntry)
-        showSnackBarShort(R.string.mark_made)
     }
 
     /**
@@ -347,7 +389,7 @@ class RecordViewModel(private val dataSource: Repository, application: Applicati
     }
 
     private fun showSnackBarShort(text: Int) {
-        Snackbar.make(frameLayout, text, Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(frameLayout, text, res.getInteger(R.integer.snackbar_quite_short)).show()
     }
 
     /** Returns the last stopped time as an Integer value */

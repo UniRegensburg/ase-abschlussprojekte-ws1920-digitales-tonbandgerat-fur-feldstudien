@@ -28,7 +28,7 @@ import kotlin.collections.ArrayList
  * @author: Sabine Roth
  */
 
-object Dialog {
+object SaveRecordingDialog {
 
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
     private lateinit var pathTextView: TextView
@@ -36,43 +36,31 @@ object Dialog {
     private var selectedLabels = ArrayList<String>()
     private var selectedPath: String? = null
     private lateinit var fragment: RecordFragment
-    private lateinit var dataSource: Repository
     private lateinit var labelEntities: List<LabelEntity>
-    private lateinit var viewModel: RecordViewModel
-    private var layoutId: Int? = null
     private lateinit var errorTextView: TextView
+    private lateinit var viewModel: RecordViewModel
 
     fun createDialog(
         paramContext: Context,
-        layoutId: Int? = null,
-        textId: Int? = null,
-        viewModel: RecordViewModel? = null,
+        layoutId: Int,
         errorMessage: String? = null,
-        recordFragment: RecordFragment? = null,
-        dataSource: Repository? = null
+        dataSource: Repository,
+        recordViewModel: RecordViewModel,
+        recordFragment: RecordFragment
     ) {
         context = paramContext
-        if (layoutId != null) this.layoutId = layoutId
-        if (viewModel != null) this.viewModel = viewModel
-        if (recordFragment != null) fragment = recordFragment
-        if (dataSource != null) this.dataSource = dataSource
+        this.viewModel = recordViewModel
+        fragment = recordFragment
         val builder = MaterialAlertDialogBuilder(context)
-        if (layoutId != null) {
-            builder.setView(layoutId)
-            prepareDataSource()
-            setDialogButtons(builder)
-        }
-        if (textId != null) {
-            createPermissionDialog(builder, textId)
-        }
+            .setView(layoutId)
+        setDialogButtons(builder)
+        dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
         dialog = builder.create()
-        dialog.setCancelable(false)
+        dialog.setOnCancelListener {
+            cancelSaving()
+        }
         dialog.show()
         initializeDialog(errorMessage)
-    }
-
-    private fun prepareDataSource() {
-        dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
     }
 
     private fun initializeDialog(errorMessage: String?) {
@@ -96,34 +84,28 @@ object Dialog {
                 saveButtonClicked()
             }
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                viewModel.cancelSaving()
+               cancelSaving()
             }
         }
+    }
+
+    private fun cancelSaving(){
+        selectedLabels.clear()
+        viewModel.cancelDialog()
     }
 
     private fun saveButtonClicked() {
         var nameInput: String? =
             dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
                 .text.toString()
-        if (nameInput == "") nameInput = null
+        nameInput = if (nameInput == "") null
+        else checkVariables(nameInput!!)
         viewModel.getNewFileFromUserInput(
             nameInput,
             selectedPath,
             getLabelIdFromName()
         )
         selectedLabels.clear()
-    }
-
-    private fun createPermissionDialog(builder: MaterialAlertDialogBuilder, textId: Int) {
-        with(builder) {
-            setTitle(R.string.permission_title)
-            setMessage(textId)
-            setPositiveButton(
-                R.string.permission_button
-            ) { _, _ ->
-                PermissionHelper.makeRequest(context)
-            }
-        }
     }
 
     private fun getStoragePreference(): String? {
@@ -180,7 +162,12 @@ object Dialog {
         with(chip) {
             text = name
             chipBackgroundColor =
-                ColorStateList.valueOf(ContextCompat.getColor(Dialog.context, R.color.grayed_out))
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        SaveRecordingDialog.context,
+                        R.color.grayed_out
+                    )
+                )
             setOnClickListener { labelClicked(chip) }
         }
         return chip
@@ -197,9 +184,15 @@ object Dialog {
     }
 
     private fun addClickedLabel(clickedLabel: Chip) {
-        clickedLabel.chipBackgroundColor =
-            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
-        selectedLabels.add((clickedLabel).text.toString())
+        if (selectedLabels.size < context.resources.getInteger(R.integer.max_label_size)) {
+            clickedLabel.chipBackgroundColor =
+                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
+            selectedLabels.add((clickedLabel).text.toString())
+        } else Snackbar.make(
+            fragment.requireView(),
+            context.resources.getString(R.string.dialog_just_three_labels),
+            Snackbar.LENGTH_LONG
+        ).show()
     }
 
     private fun removeClickedLabel(clickedLabel: Chip) {
@@ -232,8 +225,15 @@ object Dialog {
             context.getString(R.string.filename_preference_key),
             context.getString(R.string.filename_preference_default_value)
         )!!
-        if (storedName.contains("{date}")) {
-            storedName = storedName.replace(
+        storedName = checkVariables(storedName)
+        editText.setText(storedName)
+        editText.setSelection(storedName.length)
+    }
+
+    private fun checkVariables(nameParam: String): String{
+        var name = nameParam
+        if (name.contains("{date}")) {
+            name = name.replace(
                 "{date}", java.lang.String.format(
                     "%s",
                     android.text.format.DateFormat.format(
@@ -243,8 +243,8 @@ object Dialog {
                 )
             )
         }
-        if (storedName.contains("{time}")) {
-            storedName = storedName.replace(
+        if (name.contains("{time}")) {
+            name = name.replace(
                 "{time}", java.lang.String.format(
                     "%s",
                     android.text.format.DateFormat.format(
@@ -254,7 +254,6 @@ object Dialog {
                 )
             )
         }
-        editText.setText(storedName)
-        editText.setSelection(storedName.length)
+        return name
     }
 }

@@ -5,13 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.View
+import androidx.core.content.edit
 import androidx.navigation.findNavController
-import androidx.preference.EditTextPreference
-import androidx.preference.ListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.utils.OrientationListener
 import de.ur.mi.audidroid.utils.Pathfinder
 import de.ur.mi.audidroid.utils.ThemeHelper
 import java.util.regex.Pattern
@@ -22,10 +21,30 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
+        initRotatePreference()
         initLabelsPreference()
+        initMarkersPreference()
         initFileNamePreference()
         initThemePreference()
         initStoragePreference()
+    }
+
+    private fun initRotatePreference() {
+        val rotatePreference =
+            findPreference<SwitchPreference>(getString(R.string.rotate_preference_key))!!
+        val preferences = context!!.getSharedPreferences(
+            getString(R.string.rotate_preference_key),
+            Context.MODE_PRIVATE
+        )
+        rotatePreference.onPreferenceChangeListener =
+            Preference.OnPreferenceChangeListener { _, newValue ->
+                preferences.edit {
+                    putBoolean(getString(R.string.rotate_preference_key), newValue as Boolean)
+                    commit()
+                }
+                OrientationListener.adjustRotationListener(context!!)
+                true
+            }
     }
 
     private fun initLabelsPreference() {
@@ -34,6 +53,16 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         labelsPreference.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
                 view!!.findNavController().navigate(R.id.action_global_editLabelsFragment)
+                true
+            }
+    }
+
+    private fun initMarkersPreference() {
+        val markersPreference =
+            findPreference<Preference>(getString(R.string.markers_preference_key))!!
+        markersPreference.onPreferenceClickListener =
+            Preference.OnPreferenceClickListener {
+                view!!.findNavController().navigate(R.id.action_global_editMarkersFragment)
                 true
             }
     }
@@ -121,7 +150,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             ).show()
             return
         }
-        preference.summary = realPath!!
+        preference.summary = realPath
         with(preferences.edit()) {
             putString(context.resources.getString(R.string.storage_preference_key), realPath)
             commit()

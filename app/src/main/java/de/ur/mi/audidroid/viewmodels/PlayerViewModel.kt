@@ -15,11 +15,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.MarkerTimeRelation
-import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.utils.HandlePlayerBar
 import java.io.File
 import java.io.IOException
+
 
 /**
  * ViewModel for PlayerFragment.
@@ -28,7 +28,8 @@ import java.io.IOException
 class PlayerViewModel(
     recordingId: Int,
     dataSource: Repository,
-    application: Application
+    application: Application,
+    val handlePlayerBar: HandlePlayerBar
 ) : AndroidViewModel(application) {
 
     private val repository = dataSource
@@ -39,10 +40,11 @@ class PlayerViewModel(
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     val recording: LiveData<EntryEntity> =
         repository.getRecordingById(recordingId)
-    val allMarks: LiveData<List<MarkerTimeRelation>> = repository.getAllMarks(recordingId)
+    val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
+    val allLabels: LiveData<List<LabelEntity>> = repository.getRecLabelsById(recordingId)
     var isPlaying = MutableLiveData<Boolean>()
-    var isPlayerViewModel = MutableLiveData<Boolean>()
     var recordingPath = ""
+    private lateinit var seekBar: SeekBar
 
 
     private lateinit var runnable: Runnable
@@ -65,15 +67,23 @@ class PlayerViewModel(
         DateUtils.formatElapsedTime(duration)
     }
 
-    // If there are no recordings in the database, a TextView is displayed.
-    val empty: LiveData<Boolean> = Transformations.map(allMarks) {
+    // If there are no marks in the database, a TextView is displayed.
+    val noMarks: LiveData<Boolean> = Transformations.map(allMarks) {
+        it.isEmpty()
+    }
+
+    val noLabels: LiveData<Boolean> = Transformations.map(allLabels) {
         it.isEmpty()
     }
 
     fun initializeMediaPlayer() {
         isPlaying.value = false
+/*<<<<<<< HEAD
         isPlayerViewModel.value = true
         //val uri: Uri = Uri.fromFile(File(recordingPath))
+=======*/
+        val uri: Uri = Uri.fromFile(File(recordingPath))
+
         mediaPlayer = MediaPlayer().apply {
             try {
                 reset()
@@ -103,6 +113,7 @@ class PlayerViewModel(
     }
 
     fun initializeSeekBar(seekBar: SeekBar) {
+        this.seekBar = seekBar
         seekBar.max = mediaPlayer.duration
         _currentDuration.value =
             mediaPlayer.currentPosition / oneSecond
@@ -160,6 +171,7 @@ class PlayerViewModel(
         handler.removeCallbacks(runnable)
         isPlaying.value = mediaPlayer.isPlaying
         initializeMediaPlayer()
+        initializeSeekBar(seekBar)
     }
 
     override fun onCleared() {
@@ -171,5 +183,13 @@ class PlayerViewModel(
 
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
+    }
+
+    fun skipPlaying() {
+        handlePlayerBar.doSkippingPlaying(mediaPlayer, context)
+    }
+
+    fun returnPlaying() {
+        handlePlayerBar.doReturnPlaying(mediaPlayer, context)
     }
 }

@@ -13,10 +13,7 @@ import androidx.navigation.ui.*
 import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.utils.Dialog
-import de.ur.mi.audidroid.utils.Pathfinder
-import de.ur.mi.audidroid.utils.PermissionHelper
-import de.ur.mi.audidroid.utils.ThemeHelper
+import de.ur.mi.audidroid.utils.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
@@ -48,6 +45,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
 
         initTheme()
         checkPermissions()
+        OrientationListener.adjustRotationListener(this)
     }
 
     /** Applies the app theme selected by the user.
@@ -70,6 +68,10 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         if (result != null) PermissionHelper.showDialog(result, this@MainActivity)
     }
 
+    /**
+     * Is triggered after the permission dialogs where granted or denied.
+     * @author: Sabine Roth
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -86,6 +88,10 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
         }
     }
 
+    /**
+     * Is triggered if the user has selected a path via DocumentTree
+     * @author: Sabine Roth
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == resources.getInteger(R.integer.activity_request_code_preference_storage) &&
@@ -98,7 +104,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     data,
                     this.window.decorView
                 )
-            } else Dialog.resultPathfinder(data!!.data!!)
+            } else SaveRecordingDialog.resultPathfinder(data!!.data!!)
         }
     }
 

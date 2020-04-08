@@ -9,6 +9,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.LabelEntity
 import de.ur.mi.audidroid.viewmodels.EditLabelsViewModel
+import kotlinx.android.synthetic.main.labels_dialog.*
 
 object LabelsDialog {
 
@@ -31,9 +32,8 @@ object LabelsDialog {
                 editText.setText(labelToBeEdited.labelName)
             }
             val pos: Int = editText.text.length
-            editText.requestFocus()
+            editText.showKeyboard()
             editText.setSelection(pos)
-            KeyboardHelper.showSoftKeyboard(editText)
             builder.setView(dialogView)
             if (errorMessage != null) {
                 builder.setMessage(errorMessage)
@@ -53,11 +53,11 @@ object LabelsDialog {
                     } else {
                         viewModel?.onLabelSaveClicked(nameInput)
                     }
-                    KeyboardHelper.hideSoftKeyboard(editText)
+                    editText.hideKeyboard()
                 }
                 setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                    KeyboardHelper.hideSoftKeyboard(editText)
                     viewModel?.cancelSaving()
+                    editText.hideKeyboard()
                 }
             }
         }
@@ -85,14 +85,11 @@ object LabelsDialog {
         dialog.setCancelable(true)
         dialog.setOnCancelListener {
             viewModel!!.cancelSaving()
-            dialog.findViewById<EditText>(R.id.dialog_add_label_edit_text)?.let { editText ->
-                KeyboardHelper.hideSoftKeyboard(editText)
-            }
+            dialog.dialog_add_label_edit_text.hideKeyboard()
         }
         dialog.setOnDismissListener {
-            dialog.findViewById<EditText>(R.id.dialog_add_label_edit_text)?.let { editText ->
-                KeyboardHelper.hideSoftKeyboard(editText)
-            }
+            viewModel!!.cancelSaving()
+            dialog.dialog_add_label_edit_text.hideKeyboard()
         }
     }
 }

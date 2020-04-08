@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.databinding.RecordingItemBinding
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.views.FilesFragment
 
@@ -22,15 +22,22 @@ class RecordingItemAdapter(
     private val filesFragment: FilesFragment,
     private val filesViewModel: FilesViewModel
 ) :
-    ListAdapter<EntryEntity, RecordingItemAdapter.ViewHolder>(RecordingDiffCallback()) {
+    ListAdapter<RecordingAndLabels, RecordingItemAdapter.ViewHolder>(RecordingDiffCallback()) {
 
     val userActionsListener = object : RecordingUserActionsListener {
-        override fun onRecordingClicked(entryEntity: EntryEntity) {
-            filesViewModel.onRecordingClicked(entryEntity.uid)
+        override fun onRecordingClicked(recordingAndLabels: RecordingAndLabels) {
+            filesViewModel.onRecordingClicked(recordingAndLabels.uid)
         }
-
+/*
+<<<< HEAD
         override fun onButtonClicked(entryEntity: EntryEntity, view: View) {
             filesFragment.openRecordingPopupMenu(entryEntity, view)
+=====
+        override fun onButtonClicked(recordingAndLabels: RecordingAndLabels, view: View) {
+            filesFragment.openPopupMenu(recordingAndLabels, view)
+>>>>> master*/
+        override fun onButtonClicked(recordingAndLabels: RecordingAndLabels, view: View) {
+            filesFragment.openRecordingPopupMenu(recordingAndLabels, view)
         }
     }
 
@@ -46,7 +53,7 @@ class RecordingItemAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(
-            item: EntryEntity,
+            item: RecordingAndLabels,
             listener: RecordingUserActionsListener
         ) {
             binding.recording = item
@@ -65,13 +72,19 @@ class RecordingItemAdapter(
 }
 
 // DiffUtil uses these two methods to figure out how the list and items have changed
-class RecordingDiffCallback : DiffUtil.ItemCallback<EntryEntity>() {
+class RecordingDiffCallback : DiffUtil.ItemCallback<RecordingAndLabels>() {
 
-    override fun areItemsTheSame(oldItem: EntryEntity, newItem: EntryEntity): Boolean {
+    override fun areItemsTheSame(
+        oldItem: RecordingAndLabels,
+        newItem: RecordingAndLabels
+    ): Boolean {
         return oldItem.uid == newItem.uid
     }
 
-    override fun areContentsTheSame(oldItem: EntryEntity, newItem: EntryEntity): Boolean {
+    override fun areContentsTheSame(
+        oldItem: RecordingAndLabels,
+        newItem: RecordingAndLabels
+    ): Boolean {
         return oldItem == newItem
     }
 }

@@ -10,6 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
 import de.ur.mi.audidroid.utils.StorageHelper
@@ -24,13 +25,23 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
+
+
+    val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecordingsWithLabels()
+
     private lateinit var frameLayout: FrameLayout
-    var recordingToBeExported: EntryEntity? = null
+
     var recordingToBeMoved: EntryEntity? = null
+
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
     var errorMessage: String? = null
-    var recording: EntryEntity? = null
+
+    var recording: RecordingAndLabels? = null
+    var recordingToBeExported: RecordingAndLabels? = null
+    //var recordingToBeExported: EntryEntity? = null
+
 
     private val _createAlertConvertDialog = MutableLiveData<Boolean>()
     val createAlertConvertDialog: MutableLiveData<Boolean>
@@ -66,19 +77,26 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _createAlertConvertDialog.value = false
     }
 
-    fun delete(entryEntity: EntryEntity) {
-        recording = entryEntity
+    fun delete(recordingAndLabels: RecordingAndLabels) {
+        recording = recordingAndLabels
         _createConfirmDialog.value = true
     }
 
+/*<<<<<<< HEAD
     fun deleteRecording(entryEntity: EntryEntity) {
         val deletedSuccessful = StorageHelper.deleteFile(context, entryEntity)
         if (deletedSuccessful) {
             repository.deleteRecording(entryEntity)
+=======*/
+    fun deleteRecording(recordingAndLabels: RecordingAndLabels) {
+        val file = File(recordingAndLabels.recordingPath)
+        if (file.delete()) {
+            repository.deleteRecording(recordingAndLabels.uid)
+            repository.deleteRecMarks(recordingAndLabels.uid)
             showSnackBar(
                 String.format(
                     context.getString(R.string.recording_deleted),
-                    entryEntity.recordingName
+                    recordingAndLabels.recordingName
                 )
             )
             recording = null
@@ -102,15 +120,15 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun checkExistence(
-        it: List<EntryEntity>,
-        array: ArrayList<EntryEntity>
-    ): ArrayList<EntryEntity> {
+        it: List<RecordingAndLabels>,
+        array: ArrayList<RecordingAndLabels>
+    ): ArrayList<RecordingAndLabels> {
         for (i in it.indices) {
             val file = File(it[i].recordingPath)
             if (file.exists()) {
                 array.add(it[i])
             } else {
-                repository.deleteRecording(it[i])
+                repository.deleteRecording(it[i].uid)
                 repository.deleteRecMarks(it[i].uid)
                 repository.deleteRecLabels(it[i].uid)
             }
@@ -139,7 +157,8 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             folderRefs.forEach {ref ->
                 allRecordings.value!!.forEach {
                     if (it.folder == ref) {
-                        deleteRecording(it)
+                       // deleteRecording(it)
+                        println("TO DELETE: "+ it.recordingName)
                     }
                 }
             }

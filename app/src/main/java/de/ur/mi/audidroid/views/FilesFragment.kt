@@ -22,6 +22,7 @@ import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
@@ -110,15 +111,34 @@ class FilesFragment : Fragment() {
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.
+    /*
+<<<< HEAD
     fun openRecordingPopupMenu(entryEntity: EntryEntity, view: View) {
+===
+    fun openPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
+>>>> master*/
+    fun openRecordingPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_delete_recording ->
-                    filesViewModel.delete(entryEntity)
+                    filesViewModel.delete(recordingAndLabels)
                 R.id.action_edit_recording ->
-                    navigateToEditFragment(entryEntity)
+                    navigateToEditFragment(recordingAndLabels)
+                R.id.action_share_recording -> {
+                    filesViewModel.recordingToBeExported = recordingAndLabels
+                    filesViewModel.createAlertConvertDialog.value = true}
+
+                R.id.action_move_recording -> {
+                    //filesViewModel.recordingToBeMoved = recordingAndLabels
+                    println(recordingAndLabels)
+                    filesViewModel.createAlertFolderDialog.value = true
+                }
+
+
+                    /*<<<<<<< HEAD
+
                 R.id.action_move_recording -> {
                     filesViewModel.recordingToBeMoved = entryEntity
                     filesViewModel.createAlertFolderDialog.value = true
@@ -126,7 +146,14 @@ class FilesFragment : Fragment() {
                 R.id.action_share_recording -> {
                     filesViewModel.recordingToBeExported = entryEntity
                     filesViewModel.createAlertConvertDialog.value = true
-                }
+===
+
+
+                R.id.action_share_recording -> {
+                    filesViewModel.recordingToBeExported = recordingAndLabels
+                    filesViewModel._createAlertDialog.value = true
+>>> master*/
+
             }
             true
         }
@@ -149,9 +176,9 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
-    private fun navigateToEditFragment(entryEntity: EntryEntity) {
+    private fun navigateToEditFragment(recordingAndLabels: RecordingAndLabels) {
         this.findNavController().navigate(
-            FilesFragmentDirections.actionFilesToEdit(entryEntity.uid)
+            FilesFragmentDirections.actionFilesToEdit(recordingAndLabels.uid)
         )
     }
 
@@ -163,6 +190,7 @@ class FilesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
+
         val filesViewModel = binding.filesViewModel
         val folderViewModel = binding.folderViewModel
 
@@ -176,6 +204,7 @@ class FilesFragment : Fragment() {
             binding.externalFolderList.adapter = externalFolderAdapter
             binding.addExternalFolder.setOnClickListener { _ -> onClickAddExternalFolder() }
 
+            /*
             //Sets Adapter to RecyclingView for Recordings with no folder association.
             filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {
                 it?.let {
@@ -183,6 +212,15 @@ class FilesFragment : Fragment() {
                     array = filesViewModel.checkExistence(it, array)
                     recordingAdapter.submitList(array)
 
+                }
+            })*/
+
+
+            filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
+                it?.let {
+                    var array = arrayListOf<RecordingAndLabels>()
+                    array = filesViewModel.checkExistence(it, array)
+                    recordingAdapter.submitList(array)
                 }
             })
 
@@ -202,6 +240,19 @@ class FilesFragment : Fragment() {
                 }
             })
         }
+
+/*=
+        adapter = RecordingItemAdapter(this, filesViewModel)
+        binding.recordingList.adapter = adapter
+
+        filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                var array = arrayListOf<RecordingAndLabels>()
+                array = filesViewModel.checkExistence(it, array)
+                adapter.submitList(array)
+            }
+        })
+>>> master*/
     }
 
     private fun createConfirmDialog() {

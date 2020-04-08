@@ -34,6 +34,9 @@
         <argument
             android:name="recordingId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_player_to_edit"
+            app:destination="@id/edit" />
     </fragment>
     <fragment
         android:id="@+id/edit"
@@ -51,5 +54,12 @@
     <action
         android:id="@+id/action_global_editLabelsFragment"
         app:destination="@id/editLabelsFragment" />
+    <fragment
+        android:id="@+id/editMarkersFragment"
+        android:name="de.ur.mi.audidroid.views.EditMarkersFragment"
+        android:label="@string/markers_label" />
+    <action
+        android:id="@+id/action_global_editMarkersFragment"
+        app:destination="@id/editMarkersFragment" />
 
 </navigation>

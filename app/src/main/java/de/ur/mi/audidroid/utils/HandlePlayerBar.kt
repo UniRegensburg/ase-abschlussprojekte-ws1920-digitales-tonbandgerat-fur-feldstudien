@@ -1,24 +1,35 @@
 package de.ur.mi.audidroid.utils
 
-import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
-import de.ur.mi.audidroid.viewmodels.PlayerViewModel
-import de.ur.mi.audidroid.viewmodels.RecordViewModel
+import android.content.Context
+import android.media.MediaPlayer
+import android.os.Build
+import de.ur.mi.audidroid.R
 
-object HandlePlayerBar {
+interface HandlePlayerBar {
 
-    fun playOnPlayerView(playerViewModel: PlayerViewModel) {
-        playerViewModel.onStartPlayer()
+    fun play() {}
+
+    fun pause() {}
+
+    fun skipPlaying() {}
+
+    fun returnPlaying() {}
+
+    fun doSkippingPlaying(mediaPlayer: MediaPlayer, context: Context){
+        val moveTime =
+            mediaPlayer.currentPosition + context.resources.getInteger(R.integer.jump_amount).toLong()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
+            moveTime,
+            MediaPlayer.SEEK_NEXT_SYNC
+        ) else mediaPlayer.seekTo(moveTime.toInt())
     }
 
-    fun pauseOnPlayerView(playerViewModel: PlayerViewModel) {
-        playerViewModel.onPausePlayer()
-    }
-
-    fun playOnEditView(editViewModel: EditRecordingViewModel) {
-        editViewModel.onStartPlayer()
-    }
-
-    fun pauseOnEditView(editViewModel: EditRecordingViewModel) {
-        editViewModel.onPausePlayer()
+    fun doReturnPlaying(mediaPlayer: MediaPlayer, context: Context){
+        val moveTime =
+            mediaPlayer.currentPosition - context.resources.getInteger(R.integer.jump_amount).toLong()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) mediaPlayer.seekTo(
+            moveTime,
+            MediaPlayer.SEEK_PREVIOUS_SYNC
+        ) else mediaPlayer.seekTo(moveTime.toInt())
     }
 }
