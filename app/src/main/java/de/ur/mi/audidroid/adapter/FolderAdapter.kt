@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.FolderItemBinding
 import de.ur.mi.audidroid.models.FolderEntity
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import de.ur.mi.audidroid.views.FilesFragment
@@ -76,14 +77,21 @@ class FolderAdapter(
     //Adapter, which is provided for the nested recyclerview
     private fun setUpRecordingAdapter(holder: ViewHolder) {
         val filesViewModel = filesViewModel
-        val recordings = filesViewModel.getAllRecordingsByFolder(folderItem)
-
         recordingAdapter = RecordingItemAdapter(filesFragment, filesViewModel)
+
+        filesViewModel.allRecordingsWithLabels.observe(holder.itemView.context as LifecycleOwner, Observer {
+            it?.let {
+                var array = arrayListOf<RecordingAndLabels>()
+                array = filesViewModel.checkExistence(it, array)
+                recordingAdapter.submitList(array)
+            }
+        })
+        /*val recordings = filesViewModel.getAllRecordingsByFolder(folderItem)
         recordings.observe( holder.itemView.context as LifecycleOwner, Observer {
             it?.let {
                 recordingAdapter.submitList(it)
             }
-        })
+        })*/
 
 
     }

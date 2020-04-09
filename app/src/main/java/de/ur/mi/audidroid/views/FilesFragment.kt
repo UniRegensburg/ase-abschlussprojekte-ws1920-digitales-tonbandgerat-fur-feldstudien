@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,7 +63,7 @@ class FilesFragment : Fragment() {
 
         binding.folderViewModel = folderViewModel
         binding.filesViewModel = filesViewModel
-
+        binding.filesFragment = this
         binding.lifecycleOwner = this
 
         folderViewModel.initFolderSorting()
@@ -176,6 +177,22 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
+    fun addFolderPopupMenu(view: View){
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.menuInflater.inflate(R.menu.popup_menu_add_folder, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId){
+                R.id.action_add_folder_int ->
+                   folderViewModel.onAddInternalFolderClicked()
+                R.id.action_add_folder_ext ->
+                    onClickAddExternalFolder()
+            }
+            true
+        }
+
+        popupMenu.show()
+    }
+
     private fun navigateToEditFragment(recordingAndLabels: RecordingAndLabels) {
         this.findNavController().navigate(
             FilesFragmentDirections.actionFilesToEdit(recordingAndLabels.uid)
@@ -202,7 +219,7 @@ class FilesFragment : Fragment() {
             binding.recordingListDisplay.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
             binding.externalFolderList.adapter = externalFolderAdapter
-            binding.addExternalFolder.setOnClickListener { _ -> onClickAddExternalFolder() }
+         
 
             /*
             //Sets Adapter to RecyclingView for Recordings with no folder association.

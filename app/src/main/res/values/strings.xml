@@ -99,6 +99,9 @@
     <string name="sample_mark">Mark</string>
     <string name="mark_deleted">Mark deleted</string>
 
+    <!-- FolderPopup -->
+    <string name="popup_menu_folder_ext">External</string>
+    <string name="popup_menu_folder_int">Internal</string>
 
     <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>

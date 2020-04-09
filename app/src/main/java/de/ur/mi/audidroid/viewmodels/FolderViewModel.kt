@@ -204,7 +204,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
         val updatedEntry = EntryEntity(entryEntity.uid,
             entryEntity.recordingName, recordingPath,
-            entryEntity.date, entryEntity.duration, folderUid, entryEntity.labels)
+            entryEntity.date, entryEntity.duration, folderUid)
         repository.updateEntry(updatedEntry)
     }
 }

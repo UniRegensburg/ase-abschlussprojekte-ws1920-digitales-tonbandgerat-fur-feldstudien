@@ -49,7 +49,8 @@ object FolderDialog {
                 val pos: Int = editText.text.length
                 editText.requestFocus()
                 editText.setSelection(pos)
-                KeyboardHelper.showSoftKeyboard(editText)
+                //KeyboardHelper.showSoftKeyboard(editText)
+                editText.showKeyboard()
                 builder.setView(dialogView)
                 if (errorMessage != null) {
                     builder.setMessage(errorMessage)
@@ -63,11 +64,13 @@ object FolderDialog {
                     setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
                         val nameInput: String? = editText.text.toString()
                         folderViewModel.onFolderSaveClicked(nameInput!!, folderToBeEdited)
-                        KeyboardHelper.hideSoftKeyboard(editText)
+                        //KeyboardHelper.hideSoftKeyboard(editText)
+                        editText.hideKeyboard()
                     }
                     setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                        KeyboardHelper.hideSoftKeyboard(editText)
+                        //KeyboardHelper.hideSoftKeyboard(editText)
                         folderViewModel.cancelFolderDialog()
+                        editText.hideKeyboard()
                     }
                 }
             }
@@ -153,7 +156,8 @@ object FolderDialog {
         dialog.setCancelable(true)
         dialog.setOnDismissListener {
             dialog.findViewById<EditText>(R.id.dialog_add_label_edit_text)?.let { editText ->
-                KeyboardHelper.hideSoftKeyboard(editText)
+                //KeyboardHelper.hideSoftKeyboard(editText)
+                editText.hideKeyboard()
             }
         }
     }

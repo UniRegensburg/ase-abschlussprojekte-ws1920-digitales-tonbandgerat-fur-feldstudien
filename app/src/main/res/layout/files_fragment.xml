@@ -19,6 +19,9 @@
         <variable
             name="folderListener"
             type="de.ur.mi.audidroid.adapter.FolderUserActionsListener" />
+        <variable
+            name="filesFragment"
+            type="de.ur.mi.audidroid.views.FilesFragment" />
     </data>
 
     <FrameLayout
@@ -26,6 +29,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".views.FilesFragment">
+
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="16dp"
+                android:contentDescription="@string/add_label_button_text"
+                android:onClick="@{(view) -> filesFragment.addFolderPopupMenu(view)}"
+                android:src="@drawable/ic_create_new_folder"
+                app:tint="@color/color_on_secondary" />
+
+
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -93,20 +110,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
-                    <ImageButton
-                        android:id="@+id/add_internal_folder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:contentDescription="@string/popup_menu_option_add_folder"
-                        android:onClick="@{() -> folderViewModel.onAddInternalFolderClicked()}"
-                        android:padding="@dimen/keyline_2"
-                        android:src="@drawable/ic_create_new_folder"
-                        android:tint="@color/color_on_surface"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintTop_toTopOf="parent" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -133,19 +137,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
-                    <ImageButton
-                        android:id="@+id/add_external_folder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:contentDescription="@string/popup_menu_option_add_folder"
-                        android:padding="@dimen/keyline_2"
-                        android:src="@drawable/ic_create_new_folder"
-                        android:tint="@color/color_on_surface"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
