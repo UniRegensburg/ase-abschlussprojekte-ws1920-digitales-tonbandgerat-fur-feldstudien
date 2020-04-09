@@ -86,23 +86,6 @@ class FolderAdapter(
                 recordingAdapter.submitList(array)
             }
         })
-
-        /*
-        filesViewModel.allRecordingsWithLabels.observe(holder.itemView.context as LifecycleOwner, Observer {
-            it?.let {
-                var array = arrayListOf<RecordingAndLabels>()
-                array = filesViewModel.checkExistence(it, array)
-                recordingAdapter.submitList(array)
-            }
-        })*/
-        /*val recordings = filesViewModel.getAllRecordingsByFolder(folderItem)
-        recordings.observe( holder.itemView.context as LifecycleOwner, Observer {
-            it?.let {
-                recordingAdapter.submitList(it)
-            }
-        })*/
-
-
     }
 }
 

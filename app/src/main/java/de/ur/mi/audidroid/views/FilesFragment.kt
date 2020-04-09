@@ -207,19 +207,6 @@ class FilesFragment : Fragment() {
             binding.recordingListDisplay.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
 
-
-            /*
-            //Sets Adapter to RecyclingView for Recordings with no folder association.
-            filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {
-                it?.let {
-                    var array = arrayListOf<EntryEntity>()
-                    array = filesViewModel.checkExistence(it, array)
-                    recordingAdapter.submitList(array)
-
-                }
-            })*/
-
-
             filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     var array = arrayListOf<RecordingAndLabels>()
@@ -242,37 +229,7 @@ class FilesFragment : Fragment() {
                 println(folderViewModel.allFolders.value)
                 println("UPDATE")
             })
-            /*
-            //Sets Adapters to RecyclingView containing the known folders and their content.
-            folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {
-                it?.let {
-                    folderAdapter.submitList(it)
-                    view!!.invalidate()
-
-                }
-            })
-
-            folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {
-                it?.let {
-                    println("JO")
-                    externalFolderAdapter.submitList(it)
-                    view!!.invalidate()
-                }
-            })*/
         }
-
-/*=
-        adapter = RecordingItemAdapter(this, filesViewModel)
-        binding.recordingList.adapter = adapter
-
-        filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                var array = arrayListOf<RecordingAndLabels>()
-                array = filesViewModel.checkExistence(it, array)
-                adapter.submitList(array)
-            }
-        })
->>> master*/
     }
 
     private fun createConfirmDialog() {

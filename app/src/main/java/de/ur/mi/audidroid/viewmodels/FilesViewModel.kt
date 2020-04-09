@@ -25,24 +25,19 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
-
+    private lateinit var frameLayout: FrameLayout
+    var errorMessage: String? = null
+    var recordingToBeMoved: RecordingAndLabels? = null
+    var recording: RecordingAndLabels? = null
+    var recordingToBeExported: RecordingAndLabels? = null
 
     val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
         repository.getAllRecordingsWithLabels()
+    val allRecordings: LiveData<List<EntryEntity>> =
+        repository.getAllRecordings()
+    val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> =
+        repository.getRecordingWithNoFolder()
 
-
-
-    private lateinit var frameLayout: FrameLayout
-
-    //var recordingToBeMoved: EntryEntity? = null
-    var recordingToBeMoved: RecordingAndLabels? = null
-    val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
-    val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
-    var errorMessage: String? = null
-
-    var recording: RecordingAndLabels? = null
-    var recordingToBeExported: RecordingAndLabels? = null
-    //var recordingToBeExported: EntryEntity? = null
 
 
     private val _createAlertConvertDialog = MutableLiveData<Boolean>()
@@ -153,19 +148,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         errorMessage = null
         recordingToBeMoved = null
     }
-    /*
-    fun recordingMoveValid(entryEntity: EntryEntity, destFolder: Int?){
-        _createAlertFolderDialog.value = false
-        if (destFolder == null) {
-            if (entryEntity.recordingPath.startsWith(context.getString(R.string.content_uri_prefix))) {
-                errorMessage = context.getString(R.string.dialog_invalide_enty_move)
-                _createAlertFolderDialog.value = true
-                return
-            }
-        }
-        errorMessage = null
-        recordingToBeMoved = null
-    }*/
 
     fun deleteEntriesInFolders(folderRefs: List<Int>) {
         if (folderRefs.isNotEmpty()){
