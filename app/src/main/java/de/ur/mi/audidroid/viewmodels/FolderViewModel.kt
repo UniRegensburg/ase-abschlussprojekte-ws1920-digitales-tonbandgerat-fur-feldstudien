@@ -125,9 +125,14 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         }
     }
 
+    fun noFolderAvailable(){
+        println("snackbar should show" )
+        _showSnackbarEvent.value = res.getString(R.string.no_folder_available)
+    }
+
     private fun deleteFolderFromDB(folderList: List<FolderEntity>) {
         folderList.forEach { repository.deleteFolder(it) }
-        _showSnackbarEvent.value = res.getString(R.string.delete)
+        _showSnackbarEvent.value = res.getString(R.string.folder_deleted)
         folderToBeEdited = null
     }
 
@@ -186,7 +191,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         addFolder = null
         errorMessage = null
         createFolderInDB(nameInput, parentFolder)
-        _showSnackbarEvent.value = res.getString(R.string.create_folder)
+        _showSnackbarEvent.value = res.getString(R.string.folder_created)
     }
 
     private fun createFolderInDB(nameInput: String, parentFolder: FolderEntity?){

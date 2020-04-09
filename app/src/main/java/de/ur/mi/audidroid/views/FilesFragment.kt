@@ -102,13 +102,21 @@ class FilesFragment : Fragment() {
         })
 
         folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
+            if (it.isNotEmpty()){
+                Snackbar.make(view!!, it, Snackbar.LENGTH_SHORT).show()
+                folderViewModel.doneShowingSnackbar()
+            }
+            /*
             if(it == context!!.resources.getString(R.string.delete)){
                 Snackbar.make(view!!,  R.string.folder_deleted, Snackbar.LENGTH_SHORT).show()
                 folderViewModel.doneShowingSnackbar()
             }else if (it == context!!.resources.getString(R.string.create_folder)){
                 Snackbar.make(view!!,  R.string.folder_created, Snackbar.LENGTH_SHORT).show()
                 folderViewModel.doneShowingSnackbar()
-            }
+            }else if (it == context!!.resources.getString(R.string.no_folder_available)){
+                Snackbar.make(view!!, R.string.no_folder_available, Snackbar.LENGTH_SHORT).show()
+                folderViewModel.doneShowingSnackbar()
+            }*/
         })
     }
 
@@ -223,9 +231,16 @@ class FilesFragment : Fragment() {
             folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     folderAdapter.submitList(it)
-                    view!!.invalidate()
 
+                    println("UPdate sorted")
                 }
+            })
+
+            folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {
+                folder_list.invalidate()
+                folder_list.requestLayout()
+                println(folderViewModel.allFolders.value)
+                println("UPDATE")
             })
             /*
             //Sets Adapters to RecyclingView containing the known folders and their content.

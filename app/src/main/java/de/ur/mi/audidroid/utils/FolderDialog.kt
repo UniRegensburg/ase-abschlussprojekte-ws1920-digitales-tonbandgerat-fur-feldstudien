@@ -74,41 +74,46 @@ object FolderDialog {
 
             //Dialog for the move of a recording to another folder.
             if (recordingToBeMoved != null){
-                var position = -1
-                val folderNameArray =
-                    getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
-                println(folderNameArray)
-                if (folderNameArray.isNotEmpty()) {
-                    builder.setTitle(R.string.move_file_dialog_header)
-                    with(builder) {
-                        builder.setSingleChoiceItems(folderNameArray, position) { _, which ->
-                            position = which
-                        }
-                        setPositiveButton(R.string.popup_menu_option_move_file) { _, _ ->
-                             if (position != -1){
-                                 filesViewModel.recordingMoveValid(recordingToBeMoved, listOfAvailableFolders!![position].uid)
-                                 folderViewModel.onMoveRecordingToFolder(recordingToBeMoved, listOfAvailableFolders[position])
+                if (listOfAvailableFolders!!.isNotEmpty()) {
+                    var position = -1
+                    val folderNameArray =
+                        getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
+                    println(folderNameArray)
+                    if (folderNameArray.isNotEmpty()) {
+                        builder.setTitle(R.string.move_file_dialog_header)
+                        with(builder) {
+                            builder.setSingleChoiceItems(folderNameArray, position) { _, which ->
+                                position = which
+                            }
+                            setPositiveButton(R.string.popup_menu_option_move_file) { _, _ ->
+                                if (position != -1) {
+                                    filesViewModel.recordingMoveValid(
+                                        recordingToBeMoved,
+                                        listOfAvailableFolders!![position].uid
+                                    )
+                                    folderViewModel.onMoveRecordingToFolder(
+                                        recordingToBeMoved,
+                                        listOfAvailableFolders[position]
+                                    )
 
-                            }else{
+                                } else {
+                                    filesViewModel.cancelFolderDialog()
+                                }
+                            }
+                            setNeutralButton(R.string.popup_menu_cancel) { _, _ ->
                                 filesViewModel.cancelFolderDialog()
                             }
-                        }
-                        setNeutralButton(R.string.popup_menu_cancel) { _, _ ->
-                            filesViewModel.cancelFolderDialog()
-                        }
-                        setNegativeButton( R.string.dialog_no_folder) { _, _ ->
-                            filesViewModel.recordingMoveValid(recordingToBeMoved,null)
-                            folderViewModel.onMoveRecordingToFolder(recordingToBeMoved,null)
+                            setNegativeButton(R.string.dialog_no_folder) { _, _ ->
+                                filesViewModel.recordingMoveValid(recordingToBeMoved, null)
+                                folderViewModel.onMoveRecordingToFolder(recordingToBeMoved, null)
 
+                            }
                         }
                     }
-                } else {
-                    with(builder) {
-                        setTitle(R.string.no_folder_available)
-                        setNegativeButton(R.string.permission_button) { _, _ ->
-                            folderViewModel.cancelFolderDialog()
-                        }
-                    }
+                }else{
+                    //Shows Snackbar if no Folders exist.
+                    folderViewModel.noFolderAvailable()
+                    filesViewModel.cancelFolderDialog()
                 }
             }
         }
