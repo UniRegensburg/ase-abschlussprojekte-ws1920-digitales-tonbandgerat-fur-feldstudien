@@ -37,4 +37,7 @@ interface EntryDao {
 
     @Update
     suspend fun update(entryEntity: EntryEntity)
+
+    @Query ("UPDATE recordingsTable SET folder = :folderUid, recordingPath = :recordingPath WHERE uid = :entryUid ")
+    suspend fun updateFolderRef(entryUid: Int, folderUid: Int?, recordingPath: String)
 }

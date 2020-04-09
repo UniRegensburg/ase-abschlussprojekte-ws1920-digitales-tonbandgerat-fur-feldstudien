@@ -30,10 +30,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
         repository.getAllRecordingsWithLabels()
 
+
+
     private lateinit var frameLayout: FrameLayout
 
-    var recordingToBeMoved: EntryEntity? = null
-
+    //var recordingToBeMoved: EntryEntity? = null
+    var recordingToBeMoved: RecordingAndLabels? = null
     val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
     var errorMessage: String? = null
@@ -139,6 +141,19 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     /** Checks if a recording is allowed to be moved to the destination, i. e. catch and deny
      *  the attempt of moving an external file to the internal storage (via 'remove from folder').
      */
+    fun recordingMoveValid(recordingAndLabels: RecordingAndLabels, destFolder: Int?) {
+        _createAlertFolderDialog.value = false
+        if (destFolder == null) {
+            if (recordingAndLabels.recordingPath.startsWith(context.getString(R.string.content_uri_prefix))) {
+                errorMessage = context.getString(R.string.dialog_invalide_enty_move)
+                _createAlertFolderDialog.value = true
+                return
+            }
+        }
+        errorMessage = null
+        recordingToBeMoved = null
+    }
+    /*
     fun recordingMoveValid(entryEntity: EntryEntity, destFolder: Int?){
         _createAlertFolderDialog.value = false
         if (destFolder == null) {
@@ -150,7 +165,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
         errorMessage = null
         recordingToBeMoved = null
-    }
+    }*/
 
     fun deleteEntriesInFolders(folderRefs: List<Int>) {
         if (folderRefs.isNotEmpty()){
@@ -163,6 +178,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 }
             }
         }
+    }
+
+    fun getRecordingsWithLabelByFolder(folderId: Int):LiveData<List<RecordingAndLabels>>{
+        return repository.getRecordingsWithLabelsByFolder(folderId)
     }
 
     fun getAllRecordingsByFolder(folder : FolderEntity): LiveData<List<EntryEntity>>{

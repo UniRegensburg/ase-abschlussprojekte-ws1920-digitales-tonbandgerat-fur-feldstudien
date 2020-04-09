@@ -292,45 +292,44 @@ class RecordViewModel(
 //>>>>>>> master
                 return
             }
-
-            endRecordSession()
-            val fileIsInternal =
-                storagePref.toString().equals(res.getString(R.string.storage_location_default))
-            if (fileIsInternal) {
-                File(tempFile).copyTo(newFile)
-            } else {
-                path = StorageHelper.createExternalFile(
-                    context,
-                    File(tempFile), name, getStoragePreference()
-                )
-                newFile.delete()
-            }
-            val recordingDuration = getRecordingDuration() ?: currentRecordTime
-
-            var folderRef: Int? = null
-            if (!fileIsInternal) {
-                val folderPath = StorageHelper.getExternalFolderPath(context, path, name)
-                folderRef = StorageHelper.handleFolderReference(
-                    folderPath!!,
-                    allFolders.value!!,
-                    repository
-                )
-            }
-
-            val audio =
-                EntryEntity(
-                    uid = 0,
-                    recordingName = name,
-                    recordingPath = path,
-                    date = getDate(),
-                    duration = recordingDuration,
-                    folder = folderRef
-                )
-            saveRecordInDB(audio, labels)
-            File(tempFile).delete()
-            resetView()
-            errorMessage = null
         }
+        endRecordSession()
+        val fileIsInternal =
+            storagePref.toString().equals(res.getString(R.string.storage_location_default))
+        if (fileIsInternal) {
+            File(tempFile).copyTo(newFile)
+        } else {
+            path = StorageHelper.createExternalFile(
+                context,
+                File(tempFile), name, getStoragePreference()
+            )
+            newFile.delete()
+        }
+        val recordingDuration = getRecordingDuration() ?: currentRecordTime
+
+        var folderRef: Int? = null
+        if (!fileIsInternal) {
+            val folderPath = StorageHelper.getExternalFolderPath(context, path, name)
+            folderRef = StorageHelper.handleFolderReference(
+                folderPath!!,
+                allFolders.value!!,
+                repository
+            )
+        }
+
+        val audio =
+            EntryEntity(
+                uid = 0,
+                recordingName = name,
+                recordingPath = path,
+                date = getDate(),
+                duration = recordingDuration,
+                folder = folderRef
+            )
+        saveRecordInDB(audio, labels)
+        File(tempFile).delete()
+        resetView()
+        errorMessage = null
     }
 
     private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {

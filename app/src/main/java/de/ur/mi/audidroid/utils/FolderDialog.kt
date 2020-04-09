@@ -8,6 +8,7 @@ import android.widget.EditText
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 
@@ -29,14 +30,13 @@ object FolderDialog {
         folderToBeEdited: FolderEntity? = null,
         errorMessage: String? = null,
         addFolder: Boolean? = null,
-        recordingToBeMoved: EntryEntity? = null,
+        recordingToBeMoved: RecordingAndLabels? = null,
         listOfAvailableFolders: List<FolderEntity>? = null
         ) {
         val builder = AlertDialog.Builder(context)
         if (errorMessage != null) {
             builder.setMessage(errorMessage)
         }
-
         if (type == R.string.alert_dialog){
             //Dialog for the creation of a new internal folder.
             if (addFolder != null) {
@@ -49,7 +49,6 @@ object FolderDialog {
                 val pos: Int = editText.text.length
                 editText.requestFocus()
                 editText.setSelection(pos)
-                //KeyboardHelper.showSoftKeyboard(editText)
                 editText.showKeyboard()
                 builder.setView(dialogView)
                 if (errorMessage != null) {
@@ -64,11 +63,9 @@ object FolderDialog {
                     setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
                         val nameInput: String? = editText.text.toString()
                         folderViewModel.onFolderSaveClicked(nameInput!!, folderToBeEdited)
-                        //KeyboardHelper.hideSoftKeyboard(editText)
                         editText.hideKeyboard()
                     }
                     setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                        //KeyboardHelper.hideSoftKeyboard(editText)
                         folderViewModel.cancelFolderDialog()
                         editText.hideKeyboard()
                     }
@@ -80,6 +77,7 @@ object FolderDialog {
                 var position = -1
                 val folderNameArray =
                     getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
+                println(folderNameArray)
                 if (folderNameArray.isNotEmpty()) {
                     builder.setTitle(R.string.move_file_dialog_header)
                     with(builder) {
@@ -128,7 +126,6 @@ object FolderDialog {
                     )
                 )
                 setPositiveButton(context.getString(R.string.delete)){ _, _ ->
-
                     if (!folderToBeEdited.isExternal){
                         val folderReferences = folderViewModel.onDeleteFolderAndContent(folderToBeEdited)
                         filesViewModel.deleteEntriesInFolders(folderReferences)
@@ -140,7 +137,6 @@ object FolderDialog {
 
                     folderViewModel.cancelFolderDialog()
 
-
                 }
                 setNegativeButton(context.getString(R.string.dialog_cancel_button_text)){_, _ ->
                     folderViewModel.cancelFolderDialog()
@@ -151,12 +147,11 @@ object FolderDialog {
         dialog = builder.create()
         dialog.show()
 
-        disableRemoveFromFolder(type, recordingToBeMoved)
+        //disableRemoveFromFolder(type, recordingToBeMoved)
 
         dialog.setCancelable(true)
         dialog.setOnDismissListener {
             dialog.findViewById<EditText>(R.id.dialog_add_label_edit_text)?.let { editText ->
-                //KeyboardHelper.hideSoftKeyboard(editText)
                 editText.hideKeyboard()
             }
         }
@@ -173,13 +168,12 @@ object FolderDialog {
 
    // Gets the possible options for a file move. Once a file is stored outside the app, it won't be able to become
    // internalized again.
-    private fun getFolderOptions(context: Context, listOfAvailableFolders: List<FolderEntity>?, entryToBeMoved: EntryEntity): Array<String>{
+    private fun getFolderOptions(context: Context, listOfAvailableFolders: List<FolderEntity>?, entryToBeMoved: RecordingAndLabels): Array<String>{
         val folderNameList: ArrayList<String> = ArrayList()
+
         if (entryToBeMoved.recordingPath.startsWith(context.getString(R.string.content_uri_prefix))){
             listOfAvailableFolders!!.forEach {
-                if (it.isExternal){
-                    folderNameList.add(it.folderName)
-                }
+                if (it.isExternal){ folderNameList.add(it.folderName) }
             }
         }else{
             listOfAvailableFolders!!.forEach {

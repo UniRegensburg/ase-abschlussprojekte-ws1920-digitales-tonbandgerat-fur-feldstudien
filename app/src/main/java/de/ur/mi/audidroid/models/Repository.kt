@@ -133,6 +133,12 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun updateFolderRef(entryUid: Int, folderUid: Int?, recordingPath: String){
+        CoroutineScope(coroutineContext).launch {
+            entryDao.updateFolderRef(entryUid, folderUid, recordingPath)
+        }
+    }
+
     fun updateLabel(labelEntity: LabelEntity) {
         CoroutineScope(coroutineContext).launch {
             labelDao.update(labelEntity)
@@ -185,6 +191,10 @@ class Repository(application: Application) : CoroutineScope {
 
     fun getAllRecordingsWithLabels(): LiveData<List<RecordingAndLabels>> {
         return labelDao.getAllRecordingsWithLabels()
+    }
+
+    fun getRecordingsWithLabelsByFolder(folderUid: Int): LiveData<List<RecordingAndLabels>>{
+        return labelDao.getRecordingsWithLabelsByFolder(folderUid)
     }
 
     fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {

@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.StorageHelper
 import java.util.regex.Pattern
@@ -206,7 +207,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         return Pattern.compile("^[a-zA-Z0-9_-]{1,10}$").matcher(folderName).matches()
     }
 
-    fun onMoveRecordingToFolder(recording: EntryEntity, destFolder: FolderEntity?){
+    fun onMoveRecordingToFolder(recording: RecordingAndLabels, destFolder: FolderEntity?){
         var newRecordingPath: String? = null
         var folderRef: Int? = null
         var moveSuccessful = true
@@ -224,14 +225,40 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             updateFolderReference(recording, folderRef , newRecordingPath)
         }
     }
+    /*
+    fun onMoveRecordingToFolder(recording: EntryEntity, destFolder: FolderEntity?){
+        var newRecordingPath: String? = null
+        var folderRef: Int? = null
+        var moveSuccessful = true
 
-    private fun updateFolderReference(entryEntity: EntryEntity, folderUid: Int?, newPath: String?){
+        if (destFolder != null){
+            folderRef = destFolder.uid
+        }
+        if (destFolder != null && destFolder.isExternal){
+            newRecordingPath = StorageHelper.moveRecordingExternally(context, recording, destFolder.dirPath!!)
+            if (newRecordingPath == null){
+                moveSuccessful = false
+            }
+        }
+        if (moveSuccessful){
+            updateFolderReference(recording, folderRef , newRecordingPath)
+        }
+    }*/
+
+    private fun updateFolderReference(entryEntity: RecordingAndLabels, folderUid: Int?, newPath: String?){
+
+
         var recordingPath = entryEntity.recordingPath
         if (newPath != null){ recordingPath = newPath}
 
-        val updatedEntry = EntryEntity(entryEntity.uid,
-            entryEntity.recordingName, recordingPath,
-            entryEntity.date, entryEntity.duration, folderUid)
-        repository.updateEntry(updatedEntry)
+        repository.updateFolderRef(entryEntity.uid, folderUid, recordingPath)
+
+    /* val updatedEntry = EntryEntity(entryEntity.uid,
+                entryEntity.recordingName, recordingPath,
+                entryEntity.date, entryEntity.duration, folderUid)
+            repository.updateEntry(updatedEntry)
+            */
+
+
     }
 }

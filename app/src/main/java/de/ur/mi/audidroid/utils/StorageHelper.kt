@@ -7,6 +7,7 @@ import androidx.documentfile.provider.DocumentFile
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
+import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import java.io.File
 import java.io.IOException
@@ -126,7 +127,7 @@ object StorageHelper {
         return name + context!!.resources.getString(R.string.suffix_audio_file)
     }
 
-    fun moveRecordingExternally(context: Context, entryEntity: EntryEntity, folderPath: String): String?{
+    fun moveRecordingExternally(context: Context, entryEntity: RecordingAndLabels, folderPath: String): String?{
         var newPath: String? = null
         if(folderPath.contains(context.getString(R.string.content_uri_prefix))){
 

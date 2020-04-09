@@ -66,7 +66,7 @@ class FilesFragment : Fragment() {
         binding.filesFragment = this
         binding.lifecycleOwner = this
 
-        folderViewModel.initFolderSorting()
+        //folderViewModel.initFolderSorting()
         folderViewModel.sortAllFolders()
         folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
         folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
@@ -131,31 +131,10 @@ class FilesFragment : Fragment() {
                 R.id.action_share_recording -> {
                     filesViewModel.recordingToBeExported = recordingAndLabels
                     filesViewModel.createAlertConvertDialog.value = true}
-
                 R.id.action_move_recording -> {
-                    //filesViewModel.recordingToBeMoved = recordingAndLabels
-                    println(recordingAndLabels)
+                    filesViewModel.recordingToBeMoved = recordingAndLabels
                     filesViewModel.createAlertFolderDialog.value = true
                 }
-
-
-                    /*<<<<<<< HEAD
-
-                R.id.action_move_recording -> {
-                    filesViewModel.recordingToBeMoved = entryEntity
-                    filesViewModel.createAlertFolderDialog.value = true
-                }
-                R.id.action_share_recording -> {
-                    filesViewModel.recordingToBeExported = entryEntity
-                    filesViewModel.createAlertConvertDialog.value = true
-===
-
-
-                R.id.action_share_recording -> {
-                    filesViewModel.recordingToBeExported = recordingAndLabels
-                    filesViewModel._createAlertDialog.value = true
->>> master*/
-
             }
             true
         }
@@ -219,7 +198,6 @@ class FilesFragment : Fragment() {
 
             binding.recordingListDisplay.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
-            //binding.externalFolderList.adapter = externalFolderAdapter
 
 
             /*
@@ -246,8 +224,7 @@ class FilesFragment : Fragment() {
                 it?.let {
                     folderAdapter.submitList(it)
                     view!!.invalidate()
-                    //folderAdapter.submitList(it)
-                    //view!!.invalidate()
+
                 }
             })
             /*
@@ -258,7 +235,7 @@ class FilesFragment : Fragment() {
                     view!!.invalidate()
 
                 }
-            })*/
+            })
 
             folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
@@ -266,7 +243,7 @@ class FilesFragment : Fragment() {
                     externalFolderAdapter.submitList(it)
                     view!!.invalidate()
                 }
-            })
+            })*/
         }
 
 /*=
