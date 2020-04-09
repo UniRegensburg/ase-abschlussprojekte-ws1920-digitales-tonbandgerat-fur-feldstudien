@@ -32,6 +32,7 @@ import de.ur.mi.audidroid.utils.StorageHelper
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
+import kotlinx.android.synthetic.main.folder_item.*
 
 /**
  * The fragment displays all recordings and folders.
@@ -69,7 +70,7 @@ class FilesFragment : Fragment() {
         //folderViewModel.initFolderSorting()
         folderViewModel.sortAllFolders()
         folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
-        folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
+        folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {container?.invalidate()})
         folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
         folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {container?.invalidate()})
@@ -93,40 +94,21 @@ class FilesFragment : Fragment() {
     }
 
     private fun observeSnackBars(){
-        //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 Snackbar.make(view!!, R.string.recording_deleted, Snackbar.LENGTH_SHORT).show()
                 filesViewModel.doneShowingSnackbar()
             }
         })
-
         folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()){
                 Snackbar.make(view!!, it, Snackbar.LENGTH_SHORT).show()
                 folderViewModel.doneShowingSnackbar()
             }
-            /*
-            if(it == context!!.resources.getString(R.string.delete)){
-                Snackbar.make(view!!,  R.string.folder_deleted, Snackbar.LENGTH_SHORT).show()
-                folderViewModel.doneShowingSnackbar()
-            }else if (it == context!!.resources.getString(R.string.create_folder)){
-                Snackbar.make(view!!,  R.string.folder_created, Snackbar.LENGTH_SHORT).show()
-                folderViewModel.doneShowingSnackbar()
-            }else if (it == context!!.resources.getString(R.string.no_folder_available)){
-                Snackbar.make(view!!, R.string.no_folder_available, Snackbar.LENGTH_SHORT).show()
-                folderViewModel.doneShowingSnackbar()
-            }*/
         })
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.
-    /*
-<<<< HEAD
-    fun openRecordingPopupMenu(entryEntity: EntryEntity, view: View) {
-===
-    fun openPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
->>>> master*/
     fun openRecordingPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
@@ -231,9 +213,10 @@ class FilesFragment : Fragment() {
             folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     folderAdapter.submitList(it)
-
                     println("UPdate sorted")
                 }
+                recycler_container?.invalidate()
+                recycler_container?.requestLayout()
             })
 
             folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {
