@@ -25,25 +25,17 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
-
-
+    private lateinit var frameLayout: FrameLayout
     val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
         repository.getAllRecordingsWithLabels()
-
-
-
-    private lateinit var frameLayout: FrameLayout
-
-    //var recordingToBeMoved: EntryEntity? = null
-    var recordingToBeMoved: RecordingAndLabels? = null
-    val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
-    val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> = repository.getRecordingWithNoFolder()
+    val allRecordings: LiveData<List<EntryEntity>> =
+        repository.getAllRecordings()
+    val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> =
+        repository.getRecordingWithNoFolder()
     var errorMessage: String? = null
-
+    var recordingToBeMoved: RecordingAndLabels? = null
     var recording: RecordingAndLabels? = null
     var recordingToBeExported: RecordingAndLabels? = null
-    //var recordingToBeExported: EntryEntity? = null
-
 
     private val _createAlertConvertDialog = MutableLiveData<Boolean>()
     val createAlertConvertDialog: MutableLiveData<Boolean>
@@ -67,6 +59,14 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun cancelFolderDialog(){
         _createAlertFolderDialog.value = false
+    }
+
+    fun initializeFrameLayout(frameLayout: FrameLayout) {
+        this.frameLayout = frameLayout
+    }
+
+    private fun showSnackBar(text: String) {
+        Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 
     // If there are no recordings in the database, a TextView is displayed.
@@ -113,14 +113,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _createConfirmDialog.value = false
     }
 
-    fun initializeFrameLayout(frameLayout: FrameLayout) {
-        this.frameLayout = frameLayout
-    }
-
-    private fun showSnackBar(text: String) {
-        Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
-    }
-
     fun checkExistence(
         it: List<RecordingAndLabels>,
         array: ArrayList<RecordingAndLabels>
@@ -153,19 +145,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         errorMessage = null
         recordingToBeMoved = null
     }
-    /*
-    fun recordingMoveValid(entryEntity: EntryEntity, destFolder: Int?){
-        _createAlertFolderDialog.value = false
-        if (destFolder == null) {
-            if (entryEntity.recordingPath.startsWith(context.getString(R.string.content_uri_prefix))) {
-                errorMessage = context.getString(R.string.dialog_invalide_enty_move)
-                _createAlertFolderDialog.value = true
-                return
-            }
-        }
-        errorMessage = null
-        recordingToBeMoved = null
-    }*/
 
     fun deleteEntriesInFolders(folderRefs: List<Int>) {
         if (folderRefs.isNotEmpty()){

@@ -32,6 +32,7 @@ import de.ur.mi.audidroid.utils.StorageHelper
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
+import kotlinx.android.synthetic.main.folder_item.*
 
 /**
  * The fragment displays all recordings and folders.
@@ -106,27 +107,10 @@ class FilesFragment : Fragment() {
                 Snackbar.make(view!!, it, Snackbar.LENGTH_SHORT).show()
                 folderViewModel.doneShowingSnackbar()
             }
-            /*
-            if(it == context!!.resources.getString(R.string.delete)){
-                Snackbar.make(view!!,  R.string.folder_deleted, Snackbar.LENGTH_SHORT).show()
-                folderViewModel.doneShowingSnackbar()
-            }else if (it == context!!.resources.getString(R.string.create_folder)){
-                Snackbar.make(view!!,  R.string.folder_created, Snackbar.LENGTH_SHORT).show()
-                folderViewModel.doneShowingSnackbar()
-            }else if (it == context!!.resources.getString(R.string.no_folder_available)){
-                Snackbar.make(view!!, R.string.no_folder_available, Snackbar.LENGTH_SHORT).show()
-                folderViewModel.doneShowingSnackbar()
-            }*/
         })
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.
-    /*
-<<<< HEAD
-    fun openRecordingPopupMenu(entryEntity: EntryEntity, view: View) {
-===
-    fun openPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
->>>> master*/
     fun openRecordingPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
@@ -207,19 +191,6 @@ class FilesFragment : Fragment() {
             binding.recordingListDisplay.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
 
-
-            /*
-            //Sets Adapter to RecyclingView for Recordings with no folder association.
-            filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {
-                it?.let {
-                    var array = arrayListOf<EntryEntity>()
-                    array = filesViewModel.checkExistence(it, array)
-                    recordingAdapter.submitList(array)
-
-                }
-            })*/
-
-
             filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     var array = arrayListOf<RecordingAndLabels>()
@@ -231,48 +202,11 @@ class FilesFragment : Fragment() {
             folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     folderAdapter.submitList(it)
-
-                    println("UPdate sorted")
+                    recycler_container?.requestLayout()
+                    recycler_container?.invalidate()
                 }
             })
-
-            folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {
-                folder_list.invalidate()
-                folder_list.requestLayout()
-                println(folderViewModel.allFolders.value)
-                println("UPDATE")
-            })
-            /*
-            //Sets Adapters to RecyclingView containing the known folders and their content.
-            folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {
-                it?.let {
-                    folderAdapter.submitList(it)
-                    view!!.invalidate()
-
-                }
-            })
-
-            folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {
-                it?.let {
-                    println("JO")
-                    externalFolderAdapter.submitList(it)
-                    view!!.invalidate()
-                }
-            })*/
         }
-
-/*=
-        adapter = RecordingItemAdapter(this, filesViewModel)
-        binding.recordingList.adapter = adapter
-
-        filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                var array = arrayListOf<RecordingAndLabels>()
-                array = filesViewModel.checkExistence(it, array)
-                adapter.submitList(array)
-            }
-        })
->>> master*/
     }
 
     private fun createConfirmDialog() {

@@ -3,14 +3,12 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.content.res.Resources
-import android.icu.text.CaseMap
 import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
@@ -26,9 +24,6 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     private val _createAlertFolderDialog = MutableLiveData<Boolean>()
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
-    var allInternalFolders: LiveData<List<FolderEntity>> = repository.getFolderByStorage(false)
-    var allExternalFolders: LiveData<List<FolderEntity>> = repository.getFolderByStorage(true)
-
     val allFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var allInternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var allExternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
@@ -77,30 +72,17 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     fun sortAllFolders() {
         allFoldersSorted.addSource(allFolders){
-            print("Hello")
-            var sortedFolders = mutableListOf<FolderEntity>()
-
+            val sortedFolders = mutableListOf<FolderEntity>()
             val internalFolders = getFolderStatus(allFolders.value!!, false)
             val externalFolders = getFolderStatus(allFolders.value!!, true)
-            println("jo")
             val internalFoldersSorted = StorageHelper.getInternalFolderHierarchy(internalFolders)
-            println(internalFolders.isNullOrEmpty())
             if (internalFolders!!.isNotEmpty()){sortedFolders.addAll(internalFoldersSorted!!.asIterable())}
-            println(sortedFolders.isNullOrEmpty())
             if (externalFolders!!.isNotEmpty()){sortedFolders.addAll(externalFolders.asIterable())}
             if (sortedFolders.isEmpty()){
                allFoldersSorted.value = null
             }else{
                 allFoldersSorted.value = sortedFolders
             }
-        }
-    }
-    // The lists with the content for the two Folder RecyclerViews are prepared and curated.
-    fun initFolderSorting(){
-
-        allExternalFoldersSorted.removeSource(allExternalFolders)
-        allExternalFoldersSorted.addSource(allExternalFolders){
-            allExternalFoldersSorted.value = allExternalFolders.value
         }
     }
 
@@ -230,40 +212,11 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             updateFolderReference(recording, folderRef , newRecordingPath)
         }
     }
-    /*
-    fun onMoveRecordingToFolder(recording: EntryEntity, destFolder: FolderEntity?){
-        var newRecordingPath: String? = null
-        var folderRef: Int? = null
-        var moveSuccessful = true
-
-        if (destFolder != null){
-            folderRef = destFolder.uid
-        }
-        if (destFolder != null && destFolder.isExternal){
-            newRecordingPath = StorageHelper.moveRecordingExternally(context, recording, destFolder.dirPath!!)
-            if (newRecordingPath == null){
-                moveSuccessful = false
-            }
-        }
-        if (moveSuccessful){
-            updateFolderReference(recording, folderRef , newRecordingPath)
-        }
-    }*/
 
     private fun updateFolderReference(entryEntity: RecordingAndLabels, folderUid: Int?, newPath: String?){
-
-
         var recordingPath = entryEntity.recordingPath
         if (newPath != null){ recordingPath = newPath}
 
         repository.updateFolderRef(entryEntity.uid, folderUid, recordingPath)
-
-    /* val updatedEntry = EntryEntity(entryEntity.uid,
-                entryEntity.recordingName, recordingPath,
-                entryEntity.date, entryEntity.duration, folderUid)
-            repository.updateEntry(updatedEntry)
-            */
-
-
     }
 }
