@@ -3,6 +3,7 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.content.res.Resources
+import android.icu.text.CaseMap
 import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -27,6 +28,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     var allInternalFolders: LiveData<List<FolderEntity>> = repository.getFolderByStorage(false)
     var allExternalFolders: LiveData<List<FolderEntity>> = repository.getFolderByStorage(true)
 
+    val allFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var allInternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     var allExternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
 
@@ -64,12 +66,37 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         return false
     }
 
+    fun getFolderStatus(folders: List<FolderEntity>, isExternal: Boolean): List<FolderEntity>?{
+        val folderList = mutableListOf<FolderEntity>()
+        folders.forEach {
+            if (it.isExternal == isExternal){ folderList.add(it)}
+        }
+        return folderList
+    }
+
+    fun sortAllFolders() {
+        allFoldersSorted.addSource(allFolders){
+            print("Hello")
+            var sortedFolders = mutableListOf<FolderEntity>()
+
+            val internalFolders = getFolderStatus(allFolders.value!!, false)
+            val externalFolders = getFolderStatus(allFolders.value!!, true)
+            println("jo")
+            val internalFoldersSorted = StorageHelper.getInternalFolderHierarchy(internalFolders)
+            println(internalFolders.isNullOrEmpty())
+            if (internalFolders!!.isNotEmpty()){sortedFolders.addAll(internalFoldersSorted!!.asIterable())}
+            println(sortedFolders.isNullOrEmpty())
+            if (externalFolders!!.isNotEmpty()){sortedFolders.addAll(externalFolders.asIterable())}
+            if (sortedFolders.isEmpty()){
+               allFoldersSorted.value = null
+            }else{
+                allFoldersSorted.value = sortedFolders
+            }
+        }
+    }
     // The lists with the content for the two Folder RecyclerViews are prepared and curated.
     fun initFolderSorting(){
-        allInternalFoldersSorted.removeSource(allInternalFolders)
-        allInternalFoldersSorted.addSource(allInternalFolders){
-            allInternalFoldersSorted.value = StorageHelper.getInternalFolderHierarchy(allInternalFolders.value!!)
-        }
+
         allExternalFoldersSorted.removeSource(allExternalFolders)
         allExternalFoldersSorted.addSource(allExternalFolders){
             allExternalFoldersSorted.value = allExternalFolders.value

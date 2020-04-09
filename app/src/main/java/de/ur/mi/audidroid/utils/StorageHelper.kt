@@ -90,8 +90,8 @@ object StorageHelper {
     }
 
     //Returns a sorted list of FolderEntries, derived from the parentDir reference.
-    fun getInternalFolderHierarchy(allFolders: List<FolderEntity>): List<FolderEntity>? {
-        if (allFolders.isNotEmpty()) {
+    fun getInternalFolderHierarchy(allFolders: List<FolderEntity>?): List<FolderEntity>? {
+        if (allFolders != null && allFolders.isNotEmpty()) {
             val foldersSorted: MutableList<FolderEntity> = mutableListOf()
             allFolders.forEach {
                 if (it.parentDir == null) {

@@ -67,6 +67,7 @@ class FilesFragment : Fragment() {
         binding.lifecycleOwner = this
 
         folderViewModel.initFolderSorting()
+        folderViewModel.sortAllFolders()
         folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
         folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
         folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
@@ -218,8 +219,8 @@ class FilesFragment : Fragment() {
 
             binding.recordingListDisplay.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
-            binding.externalFolderList.adapter = externalFolderAdapter
-         
+            //binding.externalFolderList.adapter = externalFolderAdapter
+
 
             /*
             //Sets Adapter to RecyclingView for Recordings with no folder association.
@@ -241,6 +242,15 @@ class FilesFragment : Fragment() {
                 }
             })
 
+            folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {
+                it?.let {
+                    folderAdapter.submitList(it)
+                    view!!.invalidate()
+                    //folderAdapter.submitList(it)
+                    //view!!.invalidate()
+                }
+            })
+            /*
             //Sets Adapters to RecyclingView containing the known folders and their content.
             folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
@@ -248,10 +258,11 @@ class FilesFragment : Fragment() {
                     view!!.invalidate()
 
                 }
-            })
+            })*/
 
             folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
+                    println("JO")
                     externalFolderAdapter.submitList(it)
                     view!!.invalidate()
                 }

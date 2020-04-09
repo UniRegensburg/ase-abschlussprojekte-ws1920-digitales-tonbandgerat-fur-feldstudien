@@ -19,7 +19,7 @@ class Repository(application: Application) : CoroutineScope {
     private var markerDao: MarkerDao
     private var labelAssignmentDao: LabelAssignmentDao
     private var allRecordings: LiveData<List<EntryEntity>>
-    private var allFolders: LiveData<List<FolderEntity>>
+    //private var allFolders: LiveData<List<FolderEntity>>
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
@@ -35,7 +35,7 @@ class Repository(application: Application) : CoroutineScope {
         markerDao = database.markerDao()
         labelAssignmentDao = database.labelAssignmentDao()
         allRecordings = entryDao.getAllRecordings()
-        allFolders = folderDao.getAllFolders()
+        //allFolders = folderDao.getAllFolders()
     }
 
     fun getAllRecordings(): LiveData<List<EntryEntity>> {
@@ -47,7 +47,7 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun getAllFolders(): LiveData<List<FolderEntity>>{
-        return allFolders
+        return folderDao.getAllFolders()
     }
 
    // fun deleteRecording(entryEntity: EntryEntity) {

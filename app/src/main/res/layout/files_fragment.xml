@@ -30,7 +30,6 @@
         android:layout_height="match_parent"
         tools:context=".views.FilesFragment">
 
-
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -45,7 +44,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
             <LinearLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
@@ -56,17 +55,11 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/keyline_1"
-                    android:text="@string/recordings_unfiled"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Caption" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recording_list_display"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:listitem="@layout/recording_item" />
 
@@ -75,6 +68,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:orientation="vertical"
+                    android:paddingTop="@dimen/keyline_7"
                     android:visibility="@{filesViewModel.empty ? View.VISIBLE : View.GONE}">
 
                     <ImageView
@@ -93,54 +87,8 @@
                         android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
 
                 </LinearLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/keyline_2"
-                    android:padding="@dimen/constraint_layout_padding">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/files_container_internal"
-                        android:padding="@dimen/keyline_2"
-                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Caption"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/folder_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/folder_item" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/keyline_2"
-                    android:padding="@dimen/constraint_layout_padding">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/files_container_external"
-                        android:padding="@dimen/keyline_2"
-                        android:textAppearance="@style/TextAppearance.AudidroidTheme.Caption"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/external_folder_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
