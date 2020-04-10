@@ -67,7 +67,6 @@ class FilesFragment : Fragment() {
         binding.filesFragment = this
         binding.lifecycleOwner = this
 
-        //folderViewModel.initFolderSorting()
         folderViewModel.sortAllFolders()
         folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
         folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
@@ -94,7 +93,6 @@ class FilesFragment : Fragment() {
     }
 
     private fun observeSnackBars(){
-        //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 Snackbar.make(view!!, R.string.recording_deleted, Snackbar.LENGTH_SHORT).show()
@@ -107,17 +105,6 @@ class FilesFragment : Fragment() {
                 Snackbar.make(view!!, it, Snackbar.LENGTH_SHORT).show()
                 folderViewModel.doneShowingSnackbar()
             }
-            /*
-            if(it == context!!.resources.getString(R.string.delete)){
-                Snackbar.make(view!!,  R.string.folder_deleted, Snackbar.LENGTH_SHORT).show()
-                folderViewModel.doneShowingSnackbar()
-            }else if (it == context!!.resources.getString(R.string.create_folder)){
-                Snackbar.make(view!!,  R.string.folder_created, Snackbar.LENGTH_SHORT).show()
-                folderViewModel.doneShowingSnackbar()
-            }else if (it == context!!.resources.getString(R.string.no_folder_available)){
-                Snackbar.make(view!!, R.string.no_folder_available, Snackbar.LENGTH_SHORT).show()
-                folderViewModel.doneShowingSnackbar()
-            }*/
         })
     }
 
@@ -204,9 +191,11 @@ class FilesFragment : Fragment() {
 
             filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
                 it?.let {
+                    recordingAdapter.submitList(it)
+                    /*
                     var array = arrayListOf<RecordingAndLabels>()
                     array = filesViewModel.checkExistence(it, array)
-                    recordingAdapter.submitList(array)
+                    recordingAdapter.submitList(array)*/
                 }
             })
 

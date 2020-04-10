@@ -19,7 +19,6 @@ class Repository(application: Application) : CoroutineScope {
     private var markerDao: MarkerDao
     private var labelAssignmentDao: LabelAssignmentDao
     private var allRecordings: LiveData<List<EntryEntity>>
-    //private var allFolders: LiveData<List<FolderEntity>>
 
     private val job = Job()
     override val coroutineContext: CoroutineContext

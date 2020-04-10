@@ -78,9 +78,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             val internalFolders = getFolderStatus(allFolders.value!!, false)
             val externalFolders = getFolderStatus(allFolders.value!!, true)
             val internalFoldersSorted = StorageHelper.getInternalFolderHierarchy(internalFolders)
-            println(internalFolders.isNullOrEmpty())
             if (internalFolders!!.isNotEmpty()){sortedFolders.addAll(internalFoldersSorted!!.asIterable())}
-            println(sortedFolders.isNullOrEmpty())
             if (externalFolders!!.isNotEmpty()){sortedFolders.addAll(externalFolders.asIterable())}
             if (sortedFolders.isEmpty()){
                allFoldersSorted.value = null
@@ -138,6 +136,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     fun onDeleteExternalFolder(folder: FolderEntity){
         StorageHelper.handleExternalFolderDeletion(context, folder.dirPath!!)
+        deleteFolderFromDB(listOf(folder))
         folderView!!.invalidate()
         folderView = null
         folderToBeEdited = null
