@@ -13,6 +13,7 @@ import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -73,14 +74,9 @@ class FilesFragment : Fragment() {
         folderViewModel.sortAllFolders()
         folderViewModel.updateFolderView.observe(viewLifecycleOwner, Observer {
             if (it == true){
-                val folders = recording_list.children
-                folders.forEach { folder ->
-                    val recordings = folder.childrenSequence()
-                    recordings.forEach {
-                        it.forceLayout() }
-                    folder.invalidate()
-                    folder.requestLayout()
-                }
+                val fragment = this.fragmentManager
+                val fragmentManager = fragment!!.beginTransaction()
+                fragmentManager.detach(this).attach(this).commit()
                 folderViewModel.resetFolderViewUpdate()
             }
         })
@@ -102,6 +98,8 @@ class FilesFragment : Fragment() {
             })
         return binding.root
     }
+
+
 
     private fun observeSnackBars(){
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
