@@ -2,12 +2,10 @@ package de.ur.mi.audidroid.utils
 
 import android.app.AlertDialog
 import android.content.Context
-import android.icu.text.CaseMap
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
@@ -75,11 +73,8 @@ object FolderDialog {
 
             //Dialog for the move of a recording to another folder.
             if (recordingToBeMoved != null){
-                println("To Move")
-                println(recordingToBeMoved)
                 if (listOfAvailableFolders!!.isNotEmpty()) {
                     var position = -1
-                    //val folderNameArray = getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
                     val folderOptions = getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
                     if (folderOptions.isNotEmpty()) {
                         val folderNameArray = getFolderNames(folderOptions)
@@ -90,22 +85,15 @@ object FolderDialog {
                             }
                             setPositiveButton(R.string.popup_menu_option_move_file) { _, _ ->
                                 if (position != -1) {
-                                    println("CHOSEN FOLDER:")
-                                    println(folderOptions[position])
                                     filesViewModel.recordingMoveValid(
                                         recordingToBeMoved,
-                                        //listOfAvailableFolders!![position].uid
                                         folderOptions[position].uid
                                     )
                                     folderViewModel.onMoveRecordingToFolder(
                                         recordingToBeMoved,
-                                        //listOfAvailableFolders[position]
                                         folderOptions[position]
                                     )
-
-                                } else {
-                                    filesViewModel.cancelFolderDialog()
-                                }
+                                } else { filesViewModel.cancelFolderDialog() }
                             }
                             setNeutralButton(R.string.popup_menu_cancel) { _, _ ->
                                 filesViewModel.cancelFolderDialog()
@@ -146,9 +134,7 @@ object FolderDialog {
                         filesViewModel.deleteEntriesInFolders(folderReference)
                         folderViewModel.onDeleteExternalFolder(folderToBeEdited)
                     }
-
                     folderViewModel.cancelFolderDialog()
-
                 }
                 setNegativeButton(context.getString(R.string.dialog_cancel_button_text)){_, _ ->
                     folderViewModel.cancelFolderDialog()
@@ -181,18 +167,19 @@ object FolderDialog {
    // Gets the possible options for a file move. Once a file is stored outside the app, it won't be able to become
    // internalized again.
     private fun getFolderOptions(context: Context, listOfAvailableFolders: List<FolderEntity>?, entryToBeMoved: RecordingAndLabels): List<FolderEntity>{
-        //val folderNameList: ArrayList<String> = ArrayList()
-        //val folderList: ArrayList<FolderEntity> = ArrayList()
         val folderList = mutableListOf<FolderEntity>()
         if (entryToBeMoved.recordingPath.startsWith(context.getString(R.string.content_uri_prefix))){
             listOfAvailableFolders!!.forEach {
-                if (it.isExternal){ folderList.add(it)}
+                if (it.isExternal && it.uid != entryToBeMoved.folder){ folderList.add(it)}
             }
         }else{
-            listOfAvailableFolders!!.forEach { folderList.add(it) }
+            listOfAvailableFolders!!.forEach {
+                if (it.uid != entryToBeMoved.folder) {folderList.add(it) }
+            }
         }
         return folderList
     }
+
     private fun getFolderNames(folderList: List<FolderEntity>):Array<String> {
         val folderNameList: ArrayList<String> = ArrayList()
         folderList.forEach { folderNameList.add(it.folderName) }

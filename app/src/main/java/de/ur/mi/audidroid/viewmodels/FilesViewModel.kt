@@ -35,8 +35,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         repository.getAllRecordingsWithLabels()
     val allRecordings: LiveData<List<EntryEntity>> =
         repository.getAllRecordings()
-    val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> =
-        repository.getRecordingWithNoFolder()
 
     private val _createAlertConvertDialog = MutableLiveData<Boolean>()
     val createAlertConvertDialog: MutableLiveData<Boolean>
@@ -114,8 +112,8 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         array: ArrayList<RecordingAndLabels>
     ): ArrayList<RecordingAndLabels> {
         for (i in it.indices) {
-            val file = File(it[i].recordingPath)
-            if (file.exists()) {
+            if (StorageHelper.checkFileExistence(context, it[i].recordingPath,
+                    it[i].recordingName)){
                 array.add(it[i])
             } else {
                 repository.deleteRecording(it[i].uid)
@@ -155,10 +153,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 }
             }
         }
-    }
-
-    fun getRecordingsWithLabelByFolder(folderId: Int):LiveData<List<RecordingAndLabels>>{
-        return repository.getRecordingsWithLabelsByFolder(folderId)
     }
 
     fun getAllRecordingsByFolder(folder : FolderEntity): LiveData<List<EntryEntity>>{

@@ -1,13 +1,10 @@
 package de.ur.mi.audidroid.utils
 
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
@@ -29,11 +26,22 @@ object StorageHelper {
         return intent
     }
 
+    fun checkFileExistence(context: Context, recodingPath: String, recodingName: String):Boolean{
+        var fileExists = false
+        if (recodingPath.startsWith(context.resources.getString(R.string.content_uri_prefix))){
+            val treeUri = Uri.parse(recodingPath)
+            val filename = recodingName +  context.resources.getString(R.string.suffix_audio_file)
+            val file = DocumentFile.fromTreeUri(context,treeUri)!!.findFile(filename)
+            if (file!!.exists()){fileExists = true}
+        }else{
+            val file = File(recodingPath)
+            if (file.exists()){fileExists = true}
+        }
+        return fileExists
+    }
     fun handleFolderReference(path: String, allFolders: List<FolderEntity>, repository: Repository):Int{
         allFolders.forEach {
-            if (it.dirPath == path){
-               return it.uid
-            }
+            if (it.dirPath == path){return it.uid }
         }
         return createFolderFromUri(repository, path)
     }
@@ -74,9 +82,9 @@ object StorageHelper {
             nestingDescr = internalFolderDescr(parentFolder.folderName, parentFolder.nestingDescr)
             parentFolderRef = parentFolder.uid
         }
-        val newFolderEntity = FolderEntity(0, name,null,
+
+        return  FolderEntity(0, name,null,
             false, parentFolderRef , nestingDescr)
-        return newFolderEntity
     }
 
     //Returns the last component of the external folder (to be used as name).
@@ -129,30 +137,23 @@ object StorageHelper {
     }
 
     fun moveRecordingExternally(context: Context, recording: RecordingAndLabels, folderPath: String): String?{
-
-        println("Move Externally")
         var newPath: String? = null
         if(folderPath.contains(context.getString(R.string.content_uri_prefix))){
             println(folderPath)
-            val uri = Uri.parse(folderPath)
-            val dstFile = DocumentFile.fromTreeUri(context, uri)!!
+            val dstfolderUri = Uri.parse(folderPath)
+            val dstFile = DocumentFile.fromTreeUri(context, dstfolderUri)!!
                 .createFile("aac", getDocumentName(context, recording.recordingName))
             if (recording.recordingPath.contains(context.getString(R.string.content_uri_prefix))){
-                println("___________________________")
-                val srcTree = DocumentFile.fromTreeUri(context, uri)
+                val srcFolderUri = Uri.parse(recording.recordingPath)
                 val filename = recording.recordingName +  context.resources.getString(R.string.suffix_audio_file)
+                val srcTree = DocumentFile.fromTreeUri(context, srcFolderUri)
                 val srcFile = srcTree!!.findFile(filename)
-                println(srcTree.uri)
-                println(srcFile!!.uri)
-                println(dstFile!!.uri)
-                if (copyExternalFile(context, srcFile!!, dstFile!! )){
+
+                if (copyExternalFile(context, srcFile!!.uri, dstFile!!.uri )){
                     srcFile.delete()
                     newPath = dstFile.uri.toString()
                 }
-
             }else {
-
-                //Existing: int -> ext
                 val srcFile = File(recording.recordingPath)
                 if (copyToExternalFile(context, srcFile, dstFile!!)){
                     srcFile.delete()
@@ -162,10 +163,11 @@ object StorageHelper {
         }
         return newPath
     }
-    private fun copyExternalFile(context: Context, src: DocumentFile, dst: DocumentFile): Boolean{
+
+    private fun copyExternalFile(context: Context, src: Uri, dst: Uri): Boolean{
         try {
-            val inputStream = context.contentResolver.openInputStream(src.uri)
-            val outputStream = context.contentResolver.openOutputStream(dst.uri)
+            val inputStream = context.contentResolver.openInputStream(src)
+            val outputStream = context.contentResolver.openOutputStream(dst)
             inputStream!!.copyTo(outputStream!!)
             inputStream.close()
             outputStream.close()
@@ -174,6 +176,7 @@ object StorageHelper {
             return false
         }
     }
+
     private fun copyToExternalFile (context: Context, src: File, dst: DocumentFile): Boolean{
         try {
             val inputStream = src.inputStream()
@@ -223,7 +226,6 @@ object StorageHelper {
         }
         return sucessfull
     }
-
 
     private fun deleteExternalFolder(context: Context, path: String): Boolean{
         val treeUri = Uri.parse(path)

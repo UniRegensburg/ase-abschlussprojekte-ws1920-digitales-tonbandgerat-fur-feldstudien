@@ -6,5 +6,6 @@ data class RecordingAndLabels(
     val recordingPath: String,
     val date: String,
     val duration: String,
-    val labels: String?
+    val labels: String?,
+    val folder: Int?
 )

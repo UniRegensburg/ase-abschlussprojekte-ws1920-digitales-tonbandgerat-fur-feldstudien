@@ -17,7 +17,7 @@ interface LabelDao {
     @Query("SELECT * FROM labelsTable")
     fun getAllLabels(): LiveData<List<LabelEntity>>
 
-    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ")
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, R.folder, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ")
     fun getAllRecordingsWithLabels(): LiveData<List<RecordingAndLabels>>
 
     @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId WHERE R.folder = :folderUid GROUP BY R.uid ")

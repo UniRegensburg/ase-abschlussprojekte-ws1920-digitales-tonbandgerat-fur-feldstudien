@@ -24,10 +24,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     private val _createAlertFolderDialog = MutableLiveData<Boolean>()
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
-
     val allFoldersSorted = MediatorLiveData<List<FolderEntity>>()
-    var allInternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
-    var allExternalFoldersSorted = MediatorLiveData<List<FolderEntity>>()
 
     var dialogType: Int = R.string.confirm_dialog
     var errorMessage: String? = null
@@ -55,7 +52,6 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         _createAlertFolderDialog.value = false
         _createConfirmDialog.value = false
         folderView = null
-
     }
 
     fun isSubfolder(folder: FolderEntity): Boolean{
@@ -63,7 +59,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         return false
     }
 
-    fun getFolderStatus(folders: List<FolderEntity>, isExternal: Boolean): List<FolderEntity>?{
+    private fun getFolderExternal(folders: List<FolderEntity>, isExternal: Boolean): List<FolderEntity>?{
         val folderList = mutableListOf<FolderEntity>()
         folders.forEach {
             if (it.isExternal == isExternal){ folderList.add(it)}
@@ -75,8 +71,8 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         allFoldersSorted.removeSource(allFolders)
         allFoldersSorted.addSource(allFolders){
             val sortedFolders = mutableListOf<FolderEntity>()
-            val internalFolders = getFolderStatus(allFolders.value!!, false)
-            val externalFolders = getFolderStatus(allFolders.value!!, true)
+            val internalFolders = getFolderExternal(allFolders.value!!, false)
+            val externalFolders = getFolderExternal(allFolders.value!!, true)
             val internalFoldersSorted = StorageHelper.getInternalFolderHierarchy(internalFolders)
             if (internalFolders!!.isNotEmpty()){sortedFolders.addAll(internalFoldersSorted!!.asIterable())}
             if (externalFolders!!.isNotEmpty()){sortedFolders.addAll(externalFolders.asIterable())}
@@ -109,12 +105,14 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         }
     }
 
+    fun noSubfolderPossible(){
+        _showSnackbarEvent.value = res.getString(R.string.popup_menu_no_subfolder)
+    }
     fun noFolderAvailable(){
         _showSnackbarEvent.value = res.getString(R.string.no_folder_available)
     }
 
     private fun deleteFolderFromDB(folderList: List<FolderEntity>) {
-
         folderList.forEach { repository.deleteFolder(it) }
         _showSnackbarEvent.value = res.getString(R.string.folder_deleted)
         folderToBeEdited = null
@@ -198,27 +196,17 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onMoveRecordingToFolder(recording: RecordingAndLabels, destFolder: FolderEntity?){
-        println("MOVE THE RECORDING")
-        println(recording)
-        println(destFolder)
         var newRecordingPath: String? = null
         var folderRef: Int? = null
         var moveSuccessful = true
-
         if (destFolder != null) {
             folderRef = destFolder.uid
-
             if (destFolder.isExternal) {
-                println("Hello therre")
                 newRecordingPath =
                     StorageHelper.moveRecordingExternally(context, recording, destFolder.dirPath!!)
-                if (newRecordingPath == null) {
-                    println("FAIL")
-                    moveSuccessful = false
-                }
+                if (newRecordingPath == null) { moveSuccessful = false }
             }
         }
-
         if (moveSuccessful){
             updateFolderReference(recording, folderRef , newRecordingPath)
         }

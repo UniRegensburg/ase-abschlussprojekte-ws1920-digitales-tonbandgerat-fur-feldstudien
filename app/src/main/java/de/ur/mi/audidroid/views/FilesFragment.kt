@@ -68,12 +68,11 @@ class FilesFragment : Fragment() {
         binding.lifecycleOwner = this
 
         folderViewModel.sortAllFolders()
-        folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
-        folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
-        folderViewModel.allInternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
-        folderViewModel.allExternalFoldersSorted.observe(viewLifecycleOwner, Observer {  })
+        //folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
+        //folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
+
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {container?.invalidate()})
-        filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {})
+        //filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {})
 
         observeSnackBars()
 
@@ -137,8 +136,13 @@ class FilesFragment : Fragment() {
         popupMenu.menuInflater.inflate(R.menu.popup_menu_folder, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId){
-                R.id.action_add_subfolder ->
-                    folderViewModel.onAddFolderClicked(folder)
+                R.id.action_add_subfolder ->{
+                    if (folder.isExternal){
+                        folderViewModel.noSubfolderPossible()
+                    }else{
+                        folderViewModel.onAddFolderClicked(folder)
+                    }
+                }
                 R.id.action_delete_folder ->
                     folderViewModel.onDeleteFolderClicked(folder, view)
             }
@@ -159,7 +163,6 @@ class FilesFragment : Fragment() {
             }
             true
         }
-
         popupMenu.show()
     }
 
@@ -191,11 +194,9 @@ class FilesFragment : Fragment() {
 
             filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
                 it?.let {
-                    recordingAdapter.submitList(it)
-                    /*
                     var array = arrayListOf<RecordingAndLabels>()
                     array = filesViewModel.checkExistence(it, array)
-                    recordingAdapter.submitList(array)*/
+                    recordingAdapter.submitList(array)
                 }
             })
 
@@ -207,8 +208,6 @@ class FilesFragment : Fragment() {
 
                 }
             })
-
-
         }
     }
 
@@ -262,8 +261,8 @@ class FilesFragment : Fragment() {
                     errorMessage = folderViewModel.errorMessage,
                     addFolder = folderViewModel.addFolder,
                     layoutId = R.layout.folder_dialog,
-                    folderToBeEdited = folderViewModel.folderToBeEdited)
-
+                    folderToBeEdited = folderViewModel.folderToBeEdited
+                )
             }
         })
         //Dialog for deletion of folder.
@@ -276,7 +275,8 @@ class FilesFragment : Fragment() {
                     filesViewModel = filesViewModel,
                     errorMessage = folderViewModel.errorMessage,
                     folderToBeEdited = folderViewModel.folderToBeEdited,
-                    listOfAvailableFolders = folderViewModel.allFolders.value)
+                    listOfAvailableFolders = folderViewModel.allFolders.value
+                )
             }
         })
     }
