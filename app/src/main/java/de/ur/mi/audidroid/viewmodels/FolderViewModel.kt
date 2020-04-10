@@ -205,13 +205,17 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         var folderRef: Int? = null
         var moveSuccessful = true
 
-        if (destFolder != null){
+        if (destFolder != null) {
             folderRef = destFolder.uid
-        }
-        if (destFolder != null && destFolder.isExternal){
-            newRecordingPath = StorageHelper.moveRecordingExternally(context, recording, destFolder.dirPath!!)
-            if (newRecordingPath == null){
-                moveSuccessful = false
+
+            if (destFolder.isExternal) {
+                println("Hello therre")
+                newRecordingPath =
+                    StorageHelper.moveRecordingExternally(context, recording, destFolder.dirPath!!)
+                if (newRecordingPath == null) {
+                    println("FAIL")
+                    moveSuccessful = false
+                }
             }
         }
 

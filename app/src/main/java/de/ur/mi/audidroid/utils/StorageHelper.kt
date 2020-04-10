@@ -1,8 +1,10 @@
 package de.ur.mi.audidroid.utils
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
@@ -126,20 +128,63 @@ object StorageHelper {
         return name + context!!.resources.getString(R.string.suffix_audio_file)
     }
 
-    fun moveRecordingExternally(context: Context, entryEntity: RecordingAndLabels, folderPath: String): String?{
+    fun moveRecordingExternally(context: Context, recording: RecordingAndLabels, folderPath: String): String?{
+
+        println("Move Externally")
         var newPath: String? = null
         if(folderPath.contains(context.getString(R.string.content_uri_prefix))){
-
-            val srcFile = File(entryEntity.recordingPath)
+            println(folderPath)
             val uri = Uri.parse(folderPath)
             val dstFile = DocumentFile.fromTreeUri(context, uri)!!
-                .createFile("aac", getDocumentName(context,entryEntity.recordingName))
-            copyToExternalFile(context, srcFile , dstFile!!)
-            srcFile.delete()
+                .createFile("aac", getDocumentName(context, recording.recordingName))
+            if (recording.recordingPath.contains(context.getString(R.string.content_uri_prefix))){
+                println("___________________________")
+                val srcTree = DocumentFile.fromTreeUri(context, uri)
+                val filename = recording.recordingName +  context.resources.getString(R.string.suffix_audio_file)
+                val srcFile = srcTree!!.findFile(filename)
+                println(srcTree.uri)
+                println(srcFile!!.uri)
+                println(dstFile!!.uri)
+                if (copyExternalFile(context, srcFile!!, dstFile!! )){
+                    srcFile.delete()
+                    newPath = dstFile.uri.toString()
+                }
 
-            newPath = dstFile.uri.toString()
+            }else {
+
+                //Existing: int -> ext
+                val srcFile = File(recording.recordingPath)
+                if (copyToExternalFile(context, srcFile, dstFile!!)){
+                    srcFile.delete()
+                    newPath = dstFile.uri.toString()
+                }
+            }
         }
         return newPath
+    }
+    private fun copyExternalFile(context: Context, src: DocumentFile, dst: DocumentFile): Boolean{
+        try {
+            val inputStream = context.contentResolver.openInputStream(src.uri)
+            val outputStream = context.contentResolver.openOutputStream(dst.uri)
+            inputStream!!.copyTo(outputStream!!)
+            inputStream.close()
+            outputStream.close()
+            return true
+        }catch (e: IOException){
+            return false
+        }
+    }
+    private fun copyToExternalFile (context: Context, src: File, dst: DocumentFile): Boolean{
+        try {
+            val inputStream = src.inputStream()
+            val outputStream = context.contentResolver.openOutputStream(dst.uri)
+            inputStream.copyTo(outputStream!!)
+            inputStream.close()
+            outputStream.close()
+            return true
+        }catch (e: IOException){
+            return false
+        }
     }
 
     // Checks if an external path already has a reference in Database.
@@ -169,19 +214,6 @@ object StorageHelper {
         val newExternalFile = preferredDir.createFile("aac",newName)!!
         copyToExternalFile(context, tempFile, newExternalFile)
         return newExternalFile.uri.toString()
-    }
-
-    private fun copyToExternalFile (context: Context, src: File, dst: DocumentFile): Boolean{
-        try {
-            val inputStream = src.inputStream()
-            val outputStream = context.contentResolver.openOutputStream(dst.uri)
-            inputStream.copyTo(outputStream!!)
-            inputStream.close()
-            outputStream.close()
-            return true
-        }catch (e: IOException){
-            return false
-        }
     }
 
     fun handleExternalFolderDeletion(context: Context, path: String): Boolean{
