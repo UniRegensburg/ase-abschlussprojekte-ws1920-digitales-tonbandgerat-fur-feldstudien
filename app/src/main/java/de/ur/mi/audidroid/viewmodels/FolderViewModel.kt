@@ -43,8 +43,19 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     val showSnackbarEvent: LiveData<String>
         get() = _showSnackbarEvent
 
+    private var _updateFolderView = MutableLiveData<Boolean>()
+    val updateFolderView: LiveData<Boolean>
+        get() = _updateFolderView
+
     fun doneShowingSnackbar() {
         _showSnackbarEvent.value = ""
+    }
+
+    fun updateFolderView(){
+        _updateFolderView.value = true
+    }
+    fun resetFolderViewUpdate(){
+        _updateFolderView.value = false
     }
 
     fun cancelFolderDialog(){
@@ -210,11 +221,10 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         if (moveSuccessful){
             updateFolderReference(recording, folderRef , newRecordingPath)
         }
+        updateFolderView()
     }
 
     private fun updateFolderReference(entryEntity: RecordingAndLabels, folderUid: Int?, newPath: String?){
-        println(entryEntity)
-        println(folderUid)
         var recordingPath = entryEntity.recordingPath
         if (newPath != null){ recordingPath = newPath}
         repository.updateFolderRef(entryEntity.uid, folderUid, recordingPath)

@@ -9,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -33,6 +35,7 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
 import kotlinx.android.synthetic.main.folder_item.*
+import org.jetbrains.anko.childrenSequence
 
 /**
  * The fragment displays all recordings and folders.
@@ -68,11 +71,20 @@ class FilesFragment : Fragment() {
         binding.lifecycleOwner = this
 
         folderViewModel.sortAllFolders()
-        //folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {})
-        //folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {})
-
+        folderViewModel.updateFolderView.observe(viewLifecycleOwner, Observer {
+            if (it == true){
+                val folders = recording_list.children
+                folders.forEach { folder ->
+                    val recordings = folder.childrenSequence()
+                    recordings.forEach {
+                        it.forceLayout() }
+                    folder.invalidate()
+                    folder.requestLayout()
+                }
+                folderViewModel.resetFolderViewUpdate()
+            }
+        })
         filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {container?.invalidate()})
-        //filesViewModel.allRecordingsWithNoFolder.observe(viewLifecycleOwner, Observer {})
 
         observeSnackBars()
 
