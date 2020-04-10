@@ -38,8 +38,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val allRecordingsWithNoFolder: LiveData<List<EntryEntity>> =
         repository.getRecordingWithNoFolder()
 
-
-
     private val _createAlertConvertDialog = MutableLiveData<Boolean>()
     val createAlertConvertDialog: MutableLiveData<Boolean>
         get() = _createAlertConvertDialog
@@ -79,15 +77,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _createConfirmDialog.value = true
     }
 
-/*<<<<<<< HEAD
-    fun deleteRecording(entryEntity: EntryEntity) {
-        val deletedSuccessful = StorageHelper.deleteFile(context, entryEntity)
-        if (deletedSuccessful) {
-            repository.deleteRecording(entryEntity)
-=======*/
     fun deleteRecording(recordingAndLabels: RecordingAndLabels) {
-        val file = File(recordingAndLabels.recordingPath)
-        if (file.delete()) {
+        val deletedSuccessful = StorageHelper.deleteFile(context,
+            recordingAndLabels.recordingPath, recordingAndLabels.recordingName)
+        if (deletedSuccessful) {
             repository.deleteRecording(recordingAndLabels.uid)
             repository.deleteRecMarks(recordingAndLabels.uid)
             showSnackBar(
@@ -152,10 +145,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     fun deleteEntriesInFolders(folderRefs: List<Int>) {
         if (folderRefs.isNotEmpty()){
             folderRefs.forEach {ref ->
-                allRecordings.value!!.forEach {
-                    if (it.folder == ref) {
-                       // deleteRecording(it)
-                        println("TO DELETE: "+ it.recordingName)
+                allRecordings.value!!.forEach {recording ->
+                    if (recording.folder == ref) {
+                        val recordingWithLabel = allRecordingsWithLabels.value!!
+                        recordingWithLabel.forEach {
+                            if (recording.uid == it.uid){ deleteRecording(it) }
+                        }
                     }
                 }
             }

@@ -36,12 +36,12 @@ object StorageHelper {
         return createFolderFromUri(repository, path)
     }
 
-    fun deleteFile(context: Context, entryEntity: EntryEntity): Boolean{
+    fun deleteFile(context: Context, recordingPath: String, recodingName: String): Boolean{
         val deletedSuccessfully: Boolean
-        if(entryEntity.recordingPath.startsWith(context.resources.getString(R.string.content_uri_prefix))){
-            deletedSuccessfully = deleteExternalFile(context, entryEntity.recordingPath, entryEntity.recordingName)
+        if(recordingPath.startsWith(context.resources.getString(R.string.content_uri_prefix))){
+            deletedSuccessfully = deleteExternalFile(context, recordingPath, recodingName)
         }else{
-            deletedSuccessfully = File(entryEntity.recordingPath).delete()
+            deletedSuccessfully = File(recordingPath).delete()
         }
         return deletedSuccessfully
     }
@@ -50,7 +50,6 @@ object StorageHelper {
         val treeUri = Uri.parse(path)
         val filename = name +  context.resources.getString(R.string.suffix_audio_file)
         val file = DocumentFile.fromTreeUri(context,treeUri)!!.findFile(filename)
-
         if (file!!.exists()){
             return file.delete()
         }

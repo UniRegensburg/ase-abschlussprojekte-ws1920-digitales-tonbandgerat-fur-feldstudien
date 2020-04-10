@@ -116,6 +116,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun deleteFolderFromDB(folderList: List<FolderEntity>) {
+
         folderList.forEach { repository.deleteFolder(it) }
         _showSnackbarEvent.value = res.getString(R.string.folder_deleted)
         folderToBeEdited = null
@@ -198,6 +199,9 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onMoveRecordingToFolder(recording: RecordingAndLabels, destFolder: FolderEntity?){
+        println("MOVE THE RECORDING")
+        println(recording)
+        println(destFolder)
         var newRecordingPath: String? = null
         var folderRef: Int? = null
         var moveSuccessful = true
@@ -211,12 +215,15 @@ class FolderViewModel(dataSource: Repository, application: Application) :
                 moveSuccessful = false
             }
         }
+
         if (moveSuccessful){
             updateFolderReference(recording, folderRef , newRecordingPath)
         }
     }
 
     private fun updateFolderReference(entryEntity: RecordingAndLabels, folderUid: Int?, newPath: String?){
+        println(entryEntity)
+        println(folderUid)
         var recordingPath = entryEntity.recordingPath
         if (newPath != null){ recordingPath = newPath}
         repository.updateFolderRef(entryEntity.uid, folderUid, recordingPath)

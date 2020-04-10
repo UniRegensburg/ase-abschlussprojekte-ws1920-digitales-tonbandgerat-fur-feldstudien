@@ -35,7 +35,6 @@ class Repository(application: Application) : CoroutineScope {
         markerDao = database.markerDao()
         labelAssignmentDao = database.labelAssignmentDao()
         allRecordings = entryDao.getAllRecordings()
-        //allFolders = folderDao.getAllFolders()
     }
 
     fun getAllRecordings(): LiveData<List<EntryEntity>> {
@@ -50,7 +49,6 @@ class Repository(application: Application) : CoroutineScope {
         return folderDao.getAllFolders()
     }
 
-   // fun deleteRecording(entryEntity: EntryEntity) {
     fun getAllMarkers(): LiveData<List<MarkerEntity>> {
         return markerDao.getAllMarkers()
     }
@@ -125,12 +123,6 @@ class Repository(application: Application) : CoroutineScope {
             }
         }
         return temp!!
-    }
-
-    fun updateEntry(entryEntity: EntryEntity) {
-        CoroutineScope(coroutineContext).launch {
-            entryDao.update(entryEntity)
-        }
     }
 
     fun updateFolderRef(entryUid: Int, folderUid: Int?, recordingPath: String){
@@ -215,24 +207,12 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun getFolderById(uid: Int): LiveData<FolderEntity> {
-        return folderDao.getFolderById(uid)
-    }
-
     fun getRecordingByFolder(uid: Int?): LiveData<List<EntryEntity>>{
         return entryDao.getRecordingByFolder(uid)
     }
 
     fun getRecordingWithNoFolder(): LiveData<List<EntryEntity>>{
         return entryDao.getRecordingWithNoFolder()
-    }
-
-    fun getFolderByPath(path: String): LiveData<FolderEntity>{
-        return folderDao.getFolderByPath(path)
-    }
-
-    fun getFolderByStorage(isExternal: Boolean): LiveData<List<FolderEntity>> {
-        return folderDao.getFolderByStorage(isExternal)
     }
 
     fun deleteRecLabels(uid: Int) {

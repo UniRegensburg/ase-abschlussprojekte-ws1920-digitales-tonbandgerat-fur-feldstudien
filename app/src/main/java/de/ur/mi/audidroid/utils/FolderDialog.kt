@@ -74,11 +74,13 @@ object FolderDialog {
 
             //Dialog for the move of a recording to another folder.
             if (recordingToBeMoved != null){
+                println("To Move")
+                println(recordingToBeMoved)
                 if (listOfAvailableFolders!!.isNotEmpty()) {
                     var position = -1
                     val folderNameArray =
                         getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
-                    println(folderNameArray)
+
                     if (folderNameArray.isNotEmpty()) {
                         builder.setTitle(R.string.move_file_dialog_header)
                         with(builder) {

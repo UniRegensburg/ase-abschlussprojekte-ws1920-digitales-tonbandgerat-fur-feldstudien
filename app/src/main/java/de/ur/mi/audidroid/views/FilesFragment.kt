@@ -32,6 +32,7 @@ import de.ur.mi.audidroid.utils.StorageHelper
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
+import kotlinx.android.synthetic.main.folder_item.*
 
 /**
  * The fragment displays all recordings and folders.
@@ -121,12 +122,6 @@ class FilesFragment : Fragment() {
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.
-    /*
-<<<< HEAD
-    fun openRecordingPopupMenu(entryEntity: EntryEntity, view: View) {
-===
-    fun openPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
->>>> master*/
     fun openRecordingPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
@@ -218,17 +213,13 @@ class FilesFragment : Fragment() {
             folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     folderAdapter.submitList(it)
+                    recycler_container?.invalidate()
+                    recycler_container?.requestLayout()
 
-                    println("UPdate sorted")
                 }
             })
 
-            folderViewModel.allFolders.observe(viewLifecycleOwner, Observer {
-                folder_list.invalidate()
-                folder_list.requestLayout()
-                println(folderViewModel.allFolders.value)
-                println("UPDATE")
-            })
+
         }
     }
 
