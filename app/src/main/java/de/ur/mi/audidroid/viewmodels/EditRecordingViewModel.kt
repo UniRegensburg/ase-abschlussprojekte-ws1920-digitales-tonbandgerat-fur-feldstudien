@@ -201,7 +201,7 @@ class EditRecordingViewModel(
             ) and 0x00ffffff
         )
         val command =
-            "-i ${internalAudioCopy.path} -filter_complex \"compand=attacks=0:points=10/25:gain=5,showwavespic=s=$size:colors=$colorHex\" -frames:v 1 ${wavePic.path}"
+            "-i ${internalAudioCopy.path} -filter_complex \"compand=attacks=0:points=15/30:gain=5,showwavespic=s=$size:colors=$colorHex\" -frames:v 1 ${wavePic.path}"
 
         try {
             when (FFmpeg.execute(command)) {
@@ -230,17 +230,17 @@ class EditRecordingViewModel(
             val seekBarXY = IntArray(2)
             frameLayout.findViewById<SeekBar>(R.id.seekBar).getLocationOnScreen(seekBarXY)
             if(imageXY[1] > seekBarXY[1]){
-                adjustImageHeight()
+                increaseImageHeight()
                 initializeVisualizer("640x240")
             }
         }
     }
 
-    private fun adjustImageHeight(){
+    private fun increaseImageHeight(){
         val cs = ConstraintSet()
         val constraintLayout =  frameLayout.findViewById<ConstraintLayout>(R.id.constraintLayout)
         cs.clone(constraintLayout)
-        cs.setVerticalBias(R.id.waveViewLayout, 0.085f)
+        cs.setVerticalBias(R.id.waveViewLayout, 0.075f)
         cs.applyTo(constraintLayout)
     }
 
