@@ -103,4 +103,14 @@ object Pathfinder {
     private fun isExternalStorageDocument(uri: Uri): Boolean {
         return "com.android.externalstorage.documents" == uri.authority
     }
+
+    fun getPathForView(realPath: String): String{
+        var shortedPath = realPath
+        if(shortedPath.contains("/")){
+            for(i in 0..3){
+                shortedPath = shortedPath.substringAfter("/")
+            }
+        }
+        return shortedPath
+    }
 }
