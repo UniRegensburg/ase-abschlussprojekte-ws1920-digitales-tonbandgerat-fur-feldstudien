@@ -151,7 +151,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             ).show()
             return
         }
-        preference.summary = Pathfinder.getPathForView(realPath)
+        preference.summary = Pathfinder.getShortenedPath(realPath)
         with(preferences.edit()) {
             putString(context.resources.getString(R.string.storage_preference_key), realPath)
             commit()
@@ -171,6 +171,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             putString(getString(R.string.storage_preference_key), storedPathString)
             commit()
         }
-        return Pathfinder.getPathForView(storedPathString)
+        return Pathfinder.getShortenedPath(storedPathString)
     }
 }

@@ -117,7 +117,7 @@ object SaveRecordingDialog {
             context.getString(R.string.storage_preference_key),
             context.getString(R.string.default_storage_location)
         )!!
-        updateTextView(Pathfinder.getPathForView(storedPathString))
+        updateTextView(Pathfinder.getShortenedPath(storedPathString))
         return when (storedPathString == context.getString(R.string.default_storage_location) || storedPathString.contains(context.packageName)) {
             true -> null
             false -> storedPathString
@@ -144,7 +144,7 @@ object SaveRecordingDialog {
             return
         }
         selectedPath = realPath
-        updateTextView(Pathfinder.getPathForView(realPath))
+        updateTextView(Pathfinder.getShortenedPath(realPath))
     }
 
     private fun updateTextView(path: String) {
