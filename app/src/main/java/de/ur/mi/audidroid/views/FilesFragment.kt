@@ -49,7 +49,11 @@ class FilesFragment : Fragment() {
         binding.filesViewModel = filesViewModel
         binding.lifecycleOwner = this
 
-
+        //Observer on the state variable for the sorting of list-items.
+        filesViewModel.sortModus.observe(viewLifecycleOwner, Observer {
+            println("Observer Oberserver")
+            filesViewModel.setSorting(it)
+        })
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -113,7 +117,7 @@ class FilesFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         filesViewModel.initializeFrameLayout(files_layout)
-
+        filesViewModel.setSorting(null)
         setupAdapter()
         createConfirmDialog()
     }
@@ -122,7 +126,7 @@ class FilesFragment : Fragment() {
         adapter = RecordingItemAdapter(this, filesViewModel)
         binding.recordingList.adapter = adapter
 
-        filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
+        filesViewModel.displayRecordings.observe(viewLifecycleOwner, Observer {
             it?.let {
                 var array = arrayListOf<RecordingAndLabels>()
                 array = filesViewModel.checkExistence(it, array)

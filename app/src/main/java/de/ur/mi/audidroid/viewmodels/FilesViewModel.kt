@@ -22,9 +22,17 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
-    val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
-    val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
+    private val res = context.resources
+    private val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
+    private val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
         repository.getAllRecordingsWithLabels()
+    private val allRecordingsWithLabelsOrderName: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderName()
+    private val allRecordingsWithLabelsOrderDate: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderDate()
+    private val allRecordingsWithLabelsOrderDuration: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderDuration()
+    val displayRecordings = MediatorLiveData<List<RecordingAndLabels>>()
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
     var recording: RecordingAndLabels? = null
@@ -33,23 +41,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val _sortModus = MutableLiveData<Int?>()
     val sortModus: LiveData<Int?>
         get() = _sortModus
-
-
-    fun setSorting(modus: Int?):LiveData<List<RecordingAndLabels>>{
-        if(modus == R.integer.sort_by_name){
-            return repository.getAllRecWithLabelsOrderName()
-        }else if (modus == R.integer.sort_by_date){
-            return repository.getAllRecWithLabelsOrderDate()
-        }else if (modus == R.integer.sort_by_duration){
-            return repository.getAllRecWithLabelsOrderDuration()
-        }else{
-         
-            return repository.getAllRecordingsWithLabels()
-        }
-    }
-
-
-
 
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val createConfirmDialog: LiveData<Boolean>
@@ -130,6 +121,40 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         return array
     }
 
+    // Set source of recyclerview
+    private fun removeSortedRecordingSources(){
+        displayRecordings.removeSource(allRecordingsWithLabels)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderName)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderDate)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderDuration)
+    }
+
+    fun setSorting(modus: Int?){
+        removeSortedRecordingSources()
+        when (modus){
+            res.getInteger(R.integer.sort_by_name) -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderName){
+                    displayRecordings.value = allRecordingsWithLabelsOrderName.value
+                }
+            }
+            res.getInteger(R.integer.sort_by_date) -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDate){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDate.value
+                }
+            }
+            res.getInteger(R.integer.sort_by_duration) -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDuration){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDuration.value
+                }
+            }
+            else -> {
+                displayRecordings.addSource(allRecordingsWithLabels){
+                    displayRecordings.value = allRecordingsWithLabels.value
+                }
+            }
+        }
+    }
+
     // Navigation to the PlayerFragment
     private val _navigateToPlayerFragment = MutableLiveData<Int>()
     val navigateToPlayerFragment
@@ -154,11 +179,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_sort_name ->
-                    _sortModus.value = context.resources.getInteger(R.integer.sort_by_name)
+                    _sortModus.value = res.getInteger(R.integer.sort_by_name)
                 R.id.action_sort_date ->
-                    _sortModus.value = context.resources.getInteger(R.integer.sort_by_date)
+                    _sortModus.value = res.getInteger(R.integer.sort_by_date)
                 R.id.action_sort_duration -> {
-                    _sortModus.value = context.resources.getInteger(R.integer.sort_by_duration)
+                    _sortModus.value = res.getInteger(R.integer.sort_by_duration)
                 }
             }
             true
