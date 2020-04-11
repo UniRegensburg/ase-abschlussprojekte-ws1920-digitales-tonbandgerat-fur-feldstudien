@@ -180,6 +180,7 @@
     <string name="popup_menu_sort_name">Name</string>
     <string name="popup_menu_sort_date">Date</string>
     <string name="popup_menu_sort_duration">Duration</string>
+    <string name="menu_search">Search</string>
 
     <!--Sharing-->
     <string name="popup_menu_option_share">Share</string>
