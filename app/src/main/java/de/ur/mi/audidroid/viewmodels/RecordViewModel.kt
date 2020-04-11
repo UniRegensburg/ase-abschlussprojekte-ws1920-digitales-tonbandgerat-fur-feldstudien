@@ -281,15 +281,12 @@ class RecordViewModel(
             res.getString(R.string.suffix_audio_file)
         )
         val newFile = File(path)
-//<<<<<<< HEAD
         val storagePref = getStoragePreference()
 
         val uniqueName = checkNameUniqueness(storagePref, newFile, name)
         if (!uniqueName) {
-//=======
             if (newFile.exists()) {
                 errorDialog(res.getString(R.string.dialog_already_exist))
-//>>>>>>> master
                 return
             }
         }

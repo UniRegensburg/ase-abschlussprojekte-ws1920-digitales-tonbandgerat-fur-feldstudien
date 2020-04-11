@@ -84,14 +84,11 @@ class FolderAdapter(
             recordingsWithLabels.value!!.forEach {
                 if (it.folder == folderItem.uid){recordingList.add(it)}
             }
-            //var array = arrayListOf<RecordingAndLabels>()
-            //array = filesViewModel.checkExistence(recordingList, array)
-            //recordingAdapter.submitList(array)
             recordingAdapter.submitList(recordingList)
         })
     }
-
 }
+
 class FolderDiffCallback : DiffUtil.ItemCallback<FolderEntity>() {
 
     override fun areItemsTheSame(oldItem: FolderEntity, newItem: FolderEntity): Boolean {

@@ -17,7 +17,6 @@ import de.ur.mi.audidroid.utils.Converters
  */
 
 @Database(
-//<<<<<<< HEAD entities = [EntryEntity::class, FolderEntity::class, MarkerTimeRelation::class, LabelEntity::class, LabelAssignmentEntity::class],
     entities = [EntryEntity::class, MarkTimestamp::class, MarkerEntity::class, LabelEntity::class, LabelAssignmentEntity::class, FolderEntity::class],
     version = 1,
     exportSchema = false

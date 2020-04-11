@@ -29,11 +29,8 @@ class RecordingItemAdapter(
             var array = arrayListOf<RecordingAndLabels>()
             array = filesViewModel.checkExistence(listOf(recordingAndLabels),array)
             if (array.isEmpty()){
-                println("EXISTIERT NICHT ")
-            }else{
-                filesViewModel.onRecordingClicked(recordingAndLabels.uid)
-            }
-
+                filesViewModel.snackbarInvalidEntry()
+            }else{filesViewModel.onRecordingClicked(recordingAndLabels.uid)}
         }
         override fun onButtonClicked(recordingAndLabels: RecordingAndLabels, view: View) {
             filesFragment.openRecordingPopupMenu(recordingAndLabels, view)

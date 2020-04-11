@@ -75,6 +75,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _createConfirmDialog.value = true
     }
 
+    fun snackbarInvalidEntry(){
+        showSnackBar(context.getString(R.string.no_file_at_location))
+    }
+
     fun deleteRecording(recordingAndLabels: RecordingAndLabels) {
         val deletedSuccessful = StorageHelper.deleteFile(context,
             recordingAndLabels.recordingPath, recordingAndLabels.recordingName)

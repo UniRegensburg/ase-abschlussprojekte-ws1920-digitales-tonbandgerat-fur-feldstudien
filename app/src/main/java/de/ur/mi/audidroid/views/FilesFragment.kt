@@ -193,9 +193,6 @@ class FilesFragment : Fragment() {
 
             filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
                 it?.let {
-                    //var array = arrayListOf<RecordingAndLabels>()
-                    //array = filesViewModel.checkExistence(it, array)
-                    //recordingAdapter.submitList(array)
                     recordingAdapter.submitList(it)
                 }
             })
@@ -203,9 +200,6 @@ class FilesFragment : Fragment() {
             folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {
                 it?.let {
                     folderAdapter.submitList(it)
-                    recycler_container?.invalidate()
-                    recycler_container?.requestLayout()
-
                 }
             })
         }

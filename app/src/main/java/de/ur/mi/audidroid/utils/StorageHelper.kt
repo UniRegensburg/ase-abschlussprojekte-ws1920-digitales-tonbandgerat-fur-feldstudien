@@ -140,7 +140,6 @@ object StorageHelper {
     fun moveRecordingExternally(context: Context, recording: RecordingAndLabels, folderPath: String): String?{
         var newPath: String? = null
         if(folderPath.contains(context.getString(R.string.content_uri_prefix))){
-            println(folderPath)
             val dstfolderUri = Uri.parse(folderPath)
             val dstFile = DocumentFile.fromTreeUri(context, dstfolderUri)!!
                 .createFile("aac", getDocumentName(context, recording.recordingName))

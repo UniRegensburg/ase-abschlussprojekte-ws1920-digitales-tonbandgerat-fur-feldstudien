@@ -78,10 +78,6 @@ class PlayerViewModel(
 
     fun initializeMediaPlayer() {
         isPlaying.value = false
-/*<<<<<<< HEAD
-        isPlayerViewModel.value = true
-        //val uri: Uri = Uri.fromFile(File(recordingPath))
-=======*/
         val uri: Uri = Uri.fromFile(File(recordingPath))
 
         mediaPlayer = MediaPlayer().apply {
