@@ -2,9 +2,7 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -48,10 +46,10 @@ class FilesFragment : Fragment() {
 
         binding.filesViewModel = filesViewModel
         binding.lifecycleOwner = this
+        setHasOptionsMenu(true)
 
         //Observer on the state variable for the sorting of list-items.
         filesViewModel.sortModus.observe(viewLifecycleOwner, Observer {
-            println("Observer Oberserver")
             filesViewModel.setSorting(it)
         })
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
@@ -106,6 +104,28 @@ class FilesFragment : Fragment() {
             true
         }
         popupMenu.show()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_files, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_sort_name -> {
+                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_name)
+                true
+            }
+            R.id.action_sort_date -> {
+                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_date)
+                true
+            }
+            R.id.action_sort_duration -> {
+                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_duration)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun navigateToEditFragment(recordingAndLabels: RecordingAndLabels) {

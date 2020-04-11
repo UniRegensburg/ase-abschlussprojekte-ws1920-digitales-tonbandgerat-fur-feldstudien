@@ -38,7 +38,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     var recording: RecordingAndLabels? = null
     var recordingToBeExported: RecordingAndLabels? = null
 
-    private val _sortModus = MutableLiveData<Int?>()
+    val _sortModus = MutableLiveData<Int?>()
     val sortModus: LiveData<Int?>
         get() = _sortModus
 
@@ -121,7 +121,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         return array
     }
 
-    // Set source of recyclerview
+    // Set sorted source for recording display
     private fun removeSortedRecordingSources(){
         displayRecordings.removeSource(allRecordingsWithLabels)
         displayRecordings.removeSource(allRecordingsWithLabelsOrderName)
@@ -171,23 +171,5 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     fun cancelExporting() {
         recordingToBeExported = null
         _createAlertDialog.value = false
-    }
-
-    fun openPopupMenuSort(view: View){
-        val popupMenu = PopupMenu(context, view)
-        popupMenu.menuInflater.inflate(R.menu.popup_menu_sort, popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_sort_name ->
-                    _sortModus.value = res.getInteger(R.integer.sort_by_name)
-                R.id.action_sort_date ->
-                    _sortModus.value = res.getInteger(R.integer.sort_by_date)
-                R.id.action_sort_duration -> {
-                    _sortModus.value = res.getInteger(R.integer.sort_by_duration)
-                }
-            }
-            true
-        }
-        popupMenu.show()
     }
 }
