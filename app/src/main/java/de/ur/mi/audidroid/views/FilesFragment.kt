@@ -72,15 +72,6 @@ class FilesFragment : Fragment() {
         binding.lifecycleOwner = this
 
         folderViewModel.sortAllFolders()
-        folderViewModel.updateFolderView.observe(viewLifecycleOwner, Observer {
-            if (it == true){
-                val fragment = this.fragmentManager
-                val fragmentManager = fragment!!.beginTransaction()
-                fragmentManager.detach(this).attach(this).commit()
-                folderViewModel.resetFolderViewUpdate()
-            }
-        })
-        filesViewModel.allRecordings.observe(viewLifecycleOwner, Observer {container?.invalidate()})
 
         observeSnackBars()
 
@@ -98,8 +89,6 @@ class FilesFragment : Fragment() {
             })
         return binding.root
     }
-
-
 
     private fun observeSnackBars(){
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {

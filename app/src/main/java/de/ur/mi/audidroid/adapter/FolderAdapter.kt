@@ -27,7 +27,7 @@ class FolderAdapter(
     private lateinit var folderItem: FolderEntity
     private var isSubfolder: Boolean = false
 
-    private val folderUserActionsListener = object : FolderUserActionsListener{
+    private val folderUserActionsListener = object : FolderUserActionsListener {
         override fun onAddFolderClicked(folderEntity: FolderEntity?, view: View) {
             folderViewModel.onAddFolderClicked(folderEntity)
         }
@@ -78,6 +78,7 @@ class FolderAdapter(
     private fun setUpRecordingAdapter(holder: ViewHolder) {
         recordingAdapter = RecordingItemAdapter(filesFragment, filesViewModel)
         val recordingsWithLabels = filesViewModel.allRecordingsWithLabels
+
         recordingsWithLabels.observe(holder.itemView.context as LifecycleOwner, Observer {
             val recordingList = mutableListOf<RecordingAndLabels>()
             recordingsWithLabels.value!!.forEach {
@@ -89,8 +90,8 @@ class FolderAdapter(
             recordingAdapter.submitList(recordingList)
         })
     }
-}
 
+}
 class FolderDiffCallback : DiffUtil.ItemCallback<FolderEntity>() {
 
     override fun areItemsTheSame(oldItem: FolderEntity, newItem: FolderEntity): Boolean {

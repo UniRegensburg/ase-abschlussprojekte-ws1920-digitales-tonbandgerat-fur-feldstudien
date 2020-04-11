@@ -26,16 +26,15 @@ class RecordingItemAdapter(
 
     val userActionsListener = object : RecordingUserActionsListener {
         override fun onRecordingClicked(recordingAndLabels: RecordingAndLabels) {
-            filesViewModel.onRecordingClicked(recordingAndLabels.uid)
+            var array = arrayListOf<RecordingAndLabels>()
+            array = filesViewModel.checkExistence(listOf(recordingAndLabels),array)
+            if (array.isEmpty()){
+                println("EXISTIERT NICHT ")
+            }else{
+                filesViewModel.onRecordingClicked(recordingAndLabels.uid)
+            }
+
         }
-/*
-<<<< HEAD
-        override fun onButtonClicked(entryEntity: EntryEntity, view: View) {
-            filesFragment.openRecordingPopupMenu(entryEntity, view)
-=====
-        override fun onButtonClicked(recordingAndLabels: RecordingAndLabels, view: View) {
-            filesFragment.openPopupMenu(recordingAndLabels, view)
->>>>> master*/
         override fun onButtonClicked(recordingAndLabels: RecordingAndLabels, view: View) {
             filesFragment.openRecordingPopupMenu(recordingAndLabels, view)
         }

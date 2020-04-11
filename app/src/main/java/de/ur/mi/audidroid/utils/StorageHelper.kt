@@ -28,20 +28,18 @@ object StorageHelper {
 
     fun checkFileExistence(context: Context, recodingPath: String, recodingName: String):Boolean{
         var fileExists = false
-        println("----------------")
-        println(recodingName)
-        println(recodingPath)
         if (recodingPath.startsWith(context.resources.getString(R.string.content_uri_prefix))){
             val treeUri = Uri.parse(recodingPath)
             val filename = recodingName +  context.resources.getString(R.string.suffix_audio_file)
             val file = DocumentFile.fromTreeUri(context,treeUri)!!.findFile(filename)
-            if (file!!.exists()){fileExists = true}
+            if (file != null){fileExists = true }
         }else{
             val file = File(recodingPath)
             if (file.exists()){fileExists = true}
         }
         return fileExists
     }
+
     fun handleFolderReference(path: String, allFolders: List<FolderEntity>, repository: Repository):Int{
         allFolders.forEach {
             if (it.dirPath == path){return it.uid }
