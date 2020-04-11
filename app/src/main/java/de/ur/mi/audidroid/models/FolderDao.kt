@@ -21,6 +21,9 @@ interface FolderDao {
     @Query("SELECT * FROM foldersTable WHERE isExternal =:isExternal")
     fun getFolderByStorage(isExternal : Boolean): LiveData<List<FolderEntity>>
 
+    @Query("UPDATE foldersTable SET content = :folderContent WHERE uid = :key")
+    suspend fun updateFolderContent(key: Int, folderContent: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(folderEntity: FolderEntity): Long
 

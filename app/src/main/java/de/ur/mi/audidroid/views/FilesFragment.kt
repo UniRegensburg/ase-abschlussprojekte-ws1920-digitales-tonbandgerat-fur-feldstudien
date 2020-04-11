@@ -204,9 +204,10 @@ class FilesFragment : Fragment() {
 
             filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
                 it?.let {
-                    var array = arrayListOf<RecordingAndLabels>()
-                    array = filesViewModel.checkExistence(it, array)
-                    recordingAdapter.submitList(array)
+                    //var array = arrayListOf<RecordingAndLabels>()
+                    //array = filesViewModel.checkExistence(it, array)
+                    //recordingAdapter.submitList(array)
+                    recordingAdapter.submitList(it)
                 }
             })
 

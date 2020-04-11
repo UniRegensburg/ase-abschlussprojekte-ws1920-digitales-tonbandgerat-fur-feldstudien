@@ -51,9 +51,6 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         _showSnackbarEvent.value = ""
     }
 
-    fun updateFolderView(){
-        _updateFolderView.value = true
-    }
     fun resetFolderViewUpdate(){
         _updateFolderView.value = false
     }
@@ -210,6 +207,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         var newRecordingPath: String? = null
         var folderRef: Int? = null
         var moveSuccessful = true
+
         if (destFolder != null) {
             folderRef = destFolder.uid
             if (destFolder.isExternal) {
@@ -220,8 +218,27 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         }
         if (moveSuccessful){
             updateFolderReference(recording, folderRef , newRecordingPath)
+            updateFolderContent(recording, allFolders, destFolder)
         }
-        updateFolderView()
+    }
+
+    private fun updateFolderContent(recording: RecordingAndLabels, folders: LiveData<List<FolderEntity>>, destFolder: FolderEntity?){
+        var srcFolder: FolderEntity? = null
+        val folders = folders.value
+        var content = ""
+        recording.folder?.let {
+            folders!!.forEach { if (it.uid == recording.folder){srcFolder = it} }
+            var list  = srcFolder!!.content.split(",")
+            list = list.filter { s -> s.isNotEmpty() }
+            list = list.filter { s -> !s.equals(recording.uid.toString()) }
+            list.forEach { content = content + it + "," }
+            repository.updateFolderContent(srcFolder!!.uid, content)
+        }
+        destFolder?.let {
+            content = destFolder.content
+            content = content + recording.uid.toString() + ","
+            repository.updateFolderContent(destFolder.uid, content)
+        }
     }
 
     private fun updateFolderReference(entryEntity: RecordingAndLabels, folderUid: Int?, newPath: String?){

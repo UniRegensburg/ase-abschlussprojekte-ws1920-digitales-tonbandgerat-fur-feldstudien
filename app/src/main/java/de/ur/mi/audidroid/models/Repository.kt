@@ -130,6 +130,16 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun getFolderById(folderUid: Int): LiveData<FolderEntity>{
+        return folderDao.getFolderById(folderUid)
+    }
+
+    fun updateFolderContent(folderUid: Int, content: String){
+        CoroutineScope(coroutineContext).launch {
+            folderDao.updateFolderContent(folderUid, content)
+        }
+    }
+
     fun updateLabel(labelEntity: LabelEntity) {
         CoroutineScope(coroutineContext).launch {
             labelDao.update(labelEntity)

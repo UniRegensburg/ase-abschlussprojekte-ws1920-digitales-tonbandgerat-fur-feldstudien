@@ -28,6 +28,9 @@ object StorageHelper {
 
     fun checkFileExistence(context: Context, recodingPath: String, recodingName: String):Boolean{
         var fileExists = false
+        println("----------------")
+        println(recodingName)
+        println(recodingPath)
         if (recodingPath.startsWith(context.resources.getString(R.string.content_uri_prefix))){
             val treeUri = Uri.parse(recodingPath)
             val filename = recodingName +  context.resources.getString(R.string.suffix_audio_file)
