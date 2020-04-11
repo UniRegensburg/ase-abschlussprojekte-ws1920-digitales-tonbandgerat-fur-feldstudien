@@ -175,6 +175,12 @@
     <string name="error_storage_location">Choose an other location</string>
     <string name="external_sd_card_error">Saving on an external sd card is not possible</string>
 
+    <!--Organisation-->
+    <string name="sort_by">Sort By</string>
+    <string name="popup_menu_sort_name">Name</string>
+    <string name="popup_menu_sort_date">Date</string>
+    <string name="popup_menu_sort_duration">Duration</string>
+
     <!--Sharing-->
     <string name="popup_menu_option_share">Share</string>
     <string name="share_recording">Share Recoding</string>

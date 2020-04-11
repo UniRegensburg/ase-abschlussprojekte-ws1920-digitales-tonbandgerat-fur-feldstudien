@@ -49,6 +49,7 @@ class FilesFragment : Fragment() {
         binding.filesViewModel = filesViewModel
         binding.lifecycleOwner = this
 
+
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -96,6 +97,25 @@ class FilesFragment : Fragment() {
                 R.id.action_share_recording -> {
                     filesViewModel.recordingToBeExported = recordingAndLabels
                     filesViewModel._createAlertDialog.value = true
+                }
+            }
+            true
+        }
+        popupMenu.show()
+    }
+
+    fun openPopupMenuSort(view: View){
+        println("HELLPO")
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.menuInflater.inflate(R.menu.popup_menu_sort, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_sort_name ->
+                    println("SORT BY NAME")
+                R.id.action_sort_date ->
+                    println("SORT BY date")
+                R.id.action_sort_duration -> {
+                    println("SORT BY DUR")
                 }
             }
             true

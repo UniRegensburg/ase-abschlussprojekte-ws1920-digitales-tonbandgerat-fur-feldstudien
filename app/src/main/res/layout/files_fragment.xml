@@ -4,8 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View.OnClickListener" />
 
         <import type="android.view.View" />
+
+        <variable
+            name="filesFragment"
+            type="de.ur.mi.audidroid.views.FilesFragment" />
 
         <variable
             name="filesViewModel"
@@ -17,6 +22,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".views.FilesFragment">
+        <Button
+            android:id="@+id/sort_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sort_by"
+            android:onClick="@{(view) -> filesFragment.openPopupMenuSort(view)}"
+            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recording_list"
