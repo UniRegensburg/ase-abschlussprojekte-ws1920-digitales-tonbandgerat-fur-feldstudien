@@ -1,11 +1,10 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.view.View
 import android.widget.FrameLayout
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import android.widget.PopupMenu
+import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
@@ -30,6 +29,27 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     var errorMessage: String? = null
     var recording: RecordingAndLabels? = null
     var recordingToBeExported: RecordingAndLabels? = null
+
+    private val _sortModus = MutableLiveData<Int?>()
+    val sortModus: LiveData<Int?>
+        get() = _sortModus
+
+
+    fun setSorting(modus: Int?):LiveData<List<RecordingAndLabels>>{
+        if(modus == R.integer.sort_by_name){
+            return repository.getAllRecWithLabelsOrderName()
+        }else if (modus == R.integer.sort_by_date){
+            return repository.getAllRecWithLabelsOrderDate()
+        }else if (modus == R.integer.sort_by_duration){
+            return repository.getAllRecWithLabelsOrderDuration()
+        }else{
+         
+            return repository.getAllRecordingsWithLabels()
+        }
+    }
+
+
+
 
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val createConfirmDialog: LiveData<Boolean>
@@ -126,5 +146,23 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     fun cancelExporting() {
         recordingToBeExported = null
         _createAlertDialog.value = false
+    }
+
+    fun openPopupMenuSort(view: View){
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.menuInflater.inflate(R.menu.popup_menu_sort, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.action_sort_name ->
+                    _sortModus.value = context.resources.getInteger(R.integer.sort_by_name)
+                R.id.action_sort_date ->
+                    _sortModus.value = context.resources.getInteger(R.integer.sort_by_date)
+                R.id.action_sort_duration -> {
+                    _sortModus.value = context.resources.getInteger(R.integer.sort_by_duration)
+                }
+            }
+            true
+        }
+        popupMenu.show()
     }
 }

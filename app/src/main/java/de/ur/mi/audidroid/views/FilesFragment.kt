@@ -104,25 +104,6 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
-    fun openPopupMenuSort(view: View){
-        println("HELLPO")
-        val popupMenu = PopupMenu(context, view)
-        popupMenu.menuInflater.inflate(R.menu.popup_menu_sort, popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.action_sort_name ->
-                    println("SORT BY NAME")
-                R.id.action_sort_date ->
-                    println("SORT BY date")
-                R.id.action_sort_duration -> {
-                    println("SORT BY DUR")
-                }
-            }
-            true
-        }
-        popupMenu.show()
-    }
-
     private fun navigateToEditFragment(recordingAndLabels: RecordingAndLabels) {
         this.findNavController().navigate(
             FilesFragmentDirections.actionFilesToEdit(recordingAndLabels.uid)
