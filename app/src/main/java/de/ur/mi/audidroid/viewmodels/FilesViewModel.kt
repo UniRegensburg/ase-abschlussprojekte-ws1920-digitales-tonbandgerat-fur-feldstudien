@@ -129,6 +129,19 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         displayRecordings.removeSource(allRecordingsWithLabelsOrderDuration)
     }
 
+    fun setSearchResult(search: String){
+        removeSortedRecordingSources()
+        displayRecordings.addSource(allRecordingsWithLabels){
+            val displayList = mutableListOf<RecordingAndLabels>()
+            allRecordingsWithLabels.value?.forEach { recording ->
+                if (recording.recordingName.contains(search,true)){
+                    displayList.add(recording)
+                }
+            }
+            displayRecordings.value = displayList
+        }
+    }
+
     fun setSorting(modus: Int?){
         removeSortedRecordingSources()
         when (modus){
