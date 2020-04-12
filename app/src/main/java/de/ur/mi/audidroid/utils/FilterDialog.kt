@@ -41,11 +41,12 @@ object FilterDialog {
         this.viewModel = viewModel
         this.context = context
         val builder = MaterialAlertDialogBuilder(context).setView(layoutId)
+        selectedLabels.clear()
         with(builder){
             setPositiveButton(context.getString(R.string.menu_filter)){_, _ ->
-                val labels = getLabelIdFromName()
-                println("Positiver Button geklickt")
-                viewModel.setFilterResult(labels)
+
+                viewModel.setFilterResult(selectedLabels)
+
             }
         }
 

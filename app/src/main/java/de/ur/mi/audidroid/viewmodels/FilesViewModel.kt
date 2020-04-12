@@ -12,6 +12,8 @@ import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * ViewModel for FilesFragment.
@@ -137,14 +139,35 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         displayRecordings.removeSource(allRecordingsWithLabelsOrderDuration)
     }
 
-    fun setFilterResult(labels: List<Int>?){
+    private fun getFilterParam(param: String):List<String>{
+        return param.split(",").map { it.trim() }
+    }
+
+    private fun matchParamAndRecordings(recordingList: List<RecordingAndLabels>, params: List<String>): List<RecordingAndLabels>{
+        var filteredRecordings = arrayListOf<RecordingAndLabels>()
+        recordingList.forEach {recording ->
+            filteredRecordings.add(recording)
+            if (recording.labels != null){
+                params.forEach {param ->
+                    if (!recording.labels.contains(param)){
+                        filteredRecordings.remove(recording)
+                    }
+                }
+            } else {filteredRecordings.remove(recording)}
+        }
+        return filteredRecordings
+    }
+
+    fun setFilterResult(labels: List<String>){
         removeSortedRecordingSources()
-        println("LABELS")
-        println(labels)
+
         displayRecordings.addSource(allRecordingsWithLabels){
-            val displayList = mutableListOf<RecordingAndLabels>()
-            allRecordingsWithLabels.value!!.forEach { println(it.labels)  }
-            displayRecordings.value = allRecordingsWithLabels.value
+            var displayList = allRecordingsWithLabels.value!!
+
+            if(labels.isNotEmpty()) {
+                displayList = matchParamAndRecordings(allRecordingsWithLabels.value!!, labels)
+            }
+            displayRecordings.value = displayList
         }
     }
 
