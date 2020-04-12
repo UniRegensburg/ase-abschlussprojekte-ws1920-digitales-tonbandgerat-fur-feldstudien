@@ -19,6 +19,7 @@ import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
+import de.ur.mi.audidroid.utils.FilterDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
 
@@ -31,6 +32,7 @@ class FilesFragment : Fragment() {
     private lateinit var adapter: RecordingItemAdapter
     private lateinit var binding: FilesFragmentBinding
     private lateinit var filesViewModel: FilesViewModel
+    private lateinit var dataSource: Repository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,7 +42,7 @@ class FilesFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
         val application = this.activity!!.application
-        val dataSource = Repository(application)
+        dataSource = Repository(application)
 
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
         filesViewModel = ViewModelProvider(this, viewModelFactory).get(FilesViewModel::class.java)
@@ -128,6 +130,10 @@ class FilesFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.action_filter ->{
+                filesViewModel._createFilterDialog.value = true
+                true
+            }
             R.id.action_sort_name -> {
                 filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_name)
                 true
@@ -180,6 +186,18 @@ class FilesFragment : Fragment() {
                     recording = filesViewModel.recording,
                     viewModel = filesViewModel,
                     errorMessage = filesViewModel.errorMessage
+                )
+            }
+        })
+
+        filesViewModel.createFilterDialog.observe(viewLifecycleOwner, Observer {
+            if (it){
+                FilterDialog.createDialog(
+                    context = context!!,
+                    layoutId = R.layout.filter_dialog,
+                    viewModel = filesViewModel,
+                    dataSource = dataSource,
+                    fragment = this
                 )
             }
         })

@@ -42,6 +42,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val sortModus: LiveData<Int?>
         get() = _sortModus
 
+    val _createFilterDialog = MutableLiveData<Boolean>()
+    val createFilterDialog: LiveData<Boolean>
+        get() = _createFilterDialog
+
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val createConfirmDialog: LiveData<Boolean>
         get() = _createConfirmDialog
@@ -90,6 +94,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
+    fun cancelFilterDialog(){
+        _createFilterDialog.value = false
+    }
+
     fun cancelSaving() {
         errorMessage = null
         recording = null
@@ -127,6 +135,17 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         displayRecordings.removeSource(allRecordingsWithLabelsOrderName)
         displayRecordings.removeSource(allRecordingsWithLabelsOrderDate)
         displayRecordings.removeSource(allRecordingsWithLabelsOrderDuration)
+    }
+
+    fun setFilterResult(labels: List<Int>?){
+        removeSortedRecordingSources()
+        println("LABELS")
+        println(labels)
+        displayRecordings.addSource(allRecordingsWithLabels){
+            val displayList = mutableListOf<RecordingAndLabels>()
+            allRecordingsWithLabels.value!!.forEach { println(it.labels)  }
+            displayRecordings.value = allRecordingsWithLabels.value
+        }
     }
 
     fun setSearchResult(search: String){
