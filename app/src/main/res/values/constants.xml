@@ -13,4 +13,6 @@
     <integer name="sort_by_name">0</integer>
     <integer name="sort_by_date">1</integer>
     <integer name="sort_by_duration">2</integer>
+    <integer name="chip_type_label">0</integer>
+    <integer name="chip_type_mark">1</integer>
 </resources>

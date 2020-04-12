@@ -73,7 +73,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/dialog_e_recording_label_layout"
+            android:id="@+id/dialog_filter_recording_mark_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">

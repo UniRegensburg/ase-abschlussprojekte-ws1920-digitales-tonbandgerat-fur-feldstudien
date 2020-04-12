@@ -13,6 +13,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.LabelEntity
+import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.RecordViewModel
@@ -25,9 +26,11 @@ object FilterDialog {
     private lateinit var pathTextView: TextView
     private lateinit var context: Context
     private var selectedLabels = ArrayList<String>()
+    private var selectedMarks = ArrayList<String>()
     private var selectedPath: String? = null
     private lateinit var fragment: FilesFragment
     private lateinit var labelEntities: List<LabelEntity>
+    private lateinit var markEntities: List<MarkerEntity>
     private lateinit var errorTextView: TextView
     private lateinit var viewModel: FilesViewModel
 
@@ -42,6 +45,7 @@ object FilterDialog {
         this.context = context
         val builder = MaterialAlertDialogBuilder(context).setView(layoutId)
         selectedLabels.clear()
+        selectedMarks.clear()
         with(builder){
             setPositiveButton(context.getString(R.string.menu_filter)){_, _ ->
 
@@ -51,6 +55,7 @@ object FilterDialog {
         }
 
         dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
+        dataSource.getAllMarkers().observe(fragment, Observer { getMarks(it) })
         dialog = builder.create()
         dialog.setOnCancelListener {
             cancelSaving()
@@ -58,19 +63,29 @@ object FilterDialog {
         dialog.show()
     }
 
+    private fun getMarks(list: List<MarkerEntity>) {
+        markEntities = list
+        if (list.isNotEmpty()) {
+            val chipGroup = dialog.findViewById<ChipGroup>(R.id.markChipGroup)
+            for (mark in list) {
+                chipGroup!!.addView(createChip(mark.markerName, R.integer.chip_type_mark))
+            }
+        } else dialog.findViewById<LinearLayout>(R.id.dialog_filter_recording_mark_layout)!!.visibility =
+            View.GONE
+    }
+
     private fun getLabels(list: List<LabelEntity>) {
         labelEntities = list
         if (list.isNotEmpty()) {
             val chipGroup = dialog.findViewById<ChipGroup>(R.id.labelChipGroup)
             for (label in list) {
-                chipGroup!!.addView(createChip(label.labelName))
+                chipGroup!!.addView(createChip(label.labelName, R.integer.chip_type_label))
             }
-        } else dialog.findViewById<LinearLayout>(R.id.dialog_save_recording_label_layout)!!.visibility =
+        } else dialog.findViewById<LinearLayout>(R.id.dialog_filter_recording_label_layout)!!.visibility =
             View.GONE
     }
 
-
-    private fun createChip(name: String): Chip {
+    private fun createChip(name: String, type: Int): Chip {
         val chip = Chip(context)
         with(chip) {
             text = name
@@ -81,9 +96,26 @@ object FilterDialog {
                         R.color.grayed_out
                     )
                 )
-            setOnClickListener { labelClicked(chip) }
+            if (type == R.integer.chip_type_label){
+                setOnClickListener {
+                    labelClicked(chip) }
+            }else{
+                setOnClickListener {
+                    markClicked(chip) }
+            }
+
         }
         return chip
+    }
+
+    private fun markClicked(clickedMark: Chip) {
+        for (string in selectedLabels) {
+            if (string == (clickedMark).text.toString()) {
+                removeClickedMark(clickedMark)
+                return
+            }
+        }
+        addClickedMark(clickedMark)
     }
 
     private fun labelClicked(clickedLabel: Chip) {
@@ -108,28 +140,26 @@ object FilterDialog {
         ).show()
     }
 
+    private fun addClickedMark(clickedMark: Chip) {
+        clickedMark.chipBackgroundColor =
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
+        selectedMarks.add((clickedMark).text.toString())
+    }
+
     private fun removeClickedLabel(clickedLabel: Chip) {
         clickedLabel.chipBackgroundColor =
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
         selectedLabels.remove((clickedLabel).text.toString())
     }
 
+    private fun removeClickedMark(clickedMark: Chip) {
+        clickedMark.chipBackgroundColor =
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
+        selectedMarks.remove((clickedMark).text.toString())
+    }
+
     private fun cancelSaving(){
         selectedLabels.clear()
         viewModel.cancelFilterDialog()
-    }
-
-    private fun getLabelIdFromName(): ArrayList<Int>? {
-        return if (selectedLabels.size != 0) {
-            val labelIds = ArrayList<Int>()
-            for (item in selectedLabels) {
-                for (i in labelEntities) {
-                    if (item == i.labelName) {
-                        labelIds.add(i.uid)
-                    }
-                }
-            }
-            labelIds
-        } else null
     }
 }
