@@ -51,6 +51,7 @@ class FilesFragment : Fragment() {
         binding.lifecycleOwner = this
         setHasOptionsMenu(true)
 
+        filesViewModel.allRecordingsWithMarker.observe(viewLifecycleOwner, Observer {})
         //Observer on the state variable for the sorting of list-items.
         filesViewModel.sortModus.observe(viewLifecycleOwner, Observer {
             filesViewModel.setSorting(it)

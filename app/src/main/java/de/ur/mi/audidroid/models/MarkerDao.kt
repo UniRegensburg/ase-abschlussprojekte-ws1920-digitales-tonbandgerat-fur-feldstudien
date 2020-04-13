@@ -39,6 +39,10 @@ interface MarkerDao {
     fun getMarksById(key: Int): LiveData<List<MarkAndTimestamp>>
 
     @Transaction
+    @Query("SELECT DISTINCT R.recordingId, R.markerId, L.markerName FROM markerTimeTable R LEFT JOIN markerTable L ON R.markerId = L.uid GROUP BY R.recordingId")
+    fun getRecordingsAndMarkerType(): LiveData<List<RecordingAndMarkTuple>>
+
+    @Transaction
     @Query("SELECT * FROM recordingsTable WHERE uid = :key IN (SELECT DISTINCT(mid) FROM markerTimeTable)")
     fun getRecordingFromIdInclMarks(key: Int): LiveData<List<RecordingAndMarks>>
 

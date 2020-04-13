@@ -113,6 +113,10 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun getRecordingsAndMarkerType():LiveData<List<RecordingAndMarkTuple>>{
+        return markerDao.getRecordingsAndMarkerType()
+    }
+
     fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
         return markerDao.getMarksById(uid)
     }

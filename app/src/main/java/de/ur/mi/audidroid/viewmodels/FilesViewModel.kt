@@ -7,9 +7,7 @@ import android.widget.PopupMenu
 import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.RecordingAndLabels
-import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.*
 import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
 import java.util.*
@@ -34,6 +32,8 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         repository.getAllRecWithLabelsOrderDate()
     private val allRecordingsWithLabelsOrderDuration: LiveData<List<RecordingAndLabels>> =
         repository.getAllRecWithLabelsOrderDuration()
+    val allRecordingsWithMarker: LiveData<List<RecordingAndMarkTuple>> =
+        repository.getRecordingsAndMarkerType()
     val displayRecordings = MediatorLiveData<List<RecordingAndLabels>>()
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
@@ -144,6 +144,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun matchParamAndRecordings(recordingList: List<RecordingAndLabels>, params: List<String>): List<RecordingAndLabels>{
+
         var filteredRecordings = arrayListOf<RecordingAndLabels>()
         recordingList.forEach {recording ->
             filteredRecordings.add(recording)
@@ -160,7 +161,8 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun setFilterResult(labels: List<String>){
         removeSortedRecordingSources()
-
+        println("SET Filter RESULT")
+        println(allRecordingsWithMarker.value)
         displayRecordings.addSource(allRecordingsWithLabels){
             var displayList = allRecordingsWithLabels.value!!
 
