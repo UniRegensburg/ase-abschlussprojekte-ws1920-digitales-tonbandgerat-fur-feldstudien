@@ -24,8 +24,34 @@
         tools:context=".views.EditRecordingFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/waveViewLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="-1dp"
+                android:gravity="center_horizontal"
+                android:translationZ="-1dp"
+                android:weightSum="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.108"
+                tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
+
+                <ImageView
+                    android:id="@+id/waveView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.53"
+                    android:alpha="0.4"
+                    android:contentDescription="@string/wave_pic" />
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/seekBarLayout"
@@ -111,6 +137,7 @@
             </LinearLayout>
 
             <Button
+                android:id="@+id/button_cut_inner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@drawable/button_state"
@@ -140,6 +167,7 @@
                 app:layout_constraintVertical_bias="0.242" />
 
             <Button
+                android:id="@+id/button_cut_outer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@drawable/button_state"
@@ -215,6 +243,7 @@
                 tools:listitem="@layout/edit_mark_item" />
 
             <LinearLayout
+                android:id="@+id/marks_layout"
                 android:layout_width="@dimen/layout_width_edit_fragment"
                 android:layout_height="@dimen/layout_height_edit_fragment"
                 android:layout_marginBottom="@dimen/keyline_9"
