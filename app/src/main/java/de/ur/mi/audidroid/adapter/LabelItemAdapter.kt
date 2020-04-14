@@ -18,47 +18,32 @@ import de.ur.mi.audidroid.views.EditLabelsFragment
  * @author: Jonas Puchinger
  */
 
-class LabelItemAdapter(
-    private val editLabelsViewModel: EditLabelsViewModel
-) : ListAdapter<LabelEntity, LabelItemAdapter.ViewHolder>(LabelDiffCallback()) {
+class LabelItemAdapter(private val editLabelsViewModel: EditLabelsViewModel) :
+    ListAdapter<LabelEntity, LabelItemAdapter.ViewHolder>(LabelDiffCallback()) {
 
-    private val labelUserActionsListener = object : LabelUserActionsListener {
+    private val userActionsListener = object : LabelUserActionsListener {
 
-        override fun onLabelClicked(
-            labelEntity: LabelEntity
-        ) {
+        override fun onLabelClicked(labelEntity: LabelEntity) {
             editLabelsViewModel.onLabelClicked(labelEntity)
         }
 
-        override fun onLabelDeleteClicked(
-            labelEntity: LabelEntity
-        ) {
+        override fun onLabelDeleteClicked(labelEntity: LabelEntity) {
             editLabelsViewModel.onLabelDeleteClicked(labelEntity)
         }
     }
 
-    override fun onBindViewHolder(
-        holder: ViewHolder,
-        position: Int
-    ) {
-        holder.bind(getItem(position)!!, labelUserActionsListener)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position)!!, userActionsListener)
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent) as ViewHolder
     }
 
-    class ViewHolder private constructor(
-        private val binding: LabelItemBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder private constructor(private val binding: LabelItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(
-            item: LabelEntity,
-            listener: LabelUserActionsListener
-        ) {
+        fun bind(item: LabelEntity, listener: LabelUserActionsListener) {
             binding.label = item
             binding.listener = listener
             binding.executePendingBindings()
@@ -66,11 +51,10 @@ class LabelItemAdapter(
 
         companion object {
 
-            fun from(
-                parent: ViewGroup
-            ): RecyclerView.ViewHolder {
-                val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = LabelItemBinding.inflate(layoutInflater, parent, false)
+            fun from(parent: ViewGroup): RecyclerView.ViewHolder {
+                val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
+                val binding: LabelItemBinding =
+                    LabelItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }
@@ -79,17 +63,11 @@ class LabelItemAdapter(
 
 class LabelDiffCallback : DiffUtil.ItemCallback<LabelEntity>() {
 
-    override fun areItemsTheSame(
-        oldItem: LabelEntity,
-        newItem: LabelEntity
-    ): Boolean {
+    override fun areItemsTheSame(oldItem: LabelEntity, newItem: LabelEntity): Boolean {
         return oldItem.uid == newItem.uid
     }
 
-    override fun areContentsTheSame(
-        oldItem: LabelEntity,
-        newItem: LabelEntity
-    ): Boolean {
+    override fun areContentsTheSame(oldItem: LabelEntity, newItem: LabelEntity): Boolean {
         return oldItem == newItem
     }
 }

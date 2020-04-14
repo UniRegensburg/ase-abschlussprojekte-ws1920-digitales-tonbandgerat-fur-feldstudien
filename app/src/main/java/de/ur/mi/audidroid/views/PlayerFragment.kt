@@ -110,7 +110,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = MarkItemAdapter(playerViewModel)
+        adapter = MarkItemAdapter()
         binding.markerList.adapter = adapter
 
         playerViewModel.allMarks.observe(viewLifecycleOwner, Observer {

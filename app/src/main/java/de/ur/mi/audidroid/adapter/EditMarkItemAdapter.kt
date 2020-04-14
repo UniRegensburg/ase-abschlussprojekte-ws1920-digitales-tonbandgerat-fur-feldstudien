@@ -20,57 +20,38 @@ import de.ur.mi.audidroid.views.EditRecordingFragment
  * @author: Theresa Strohmeier, Jonas Puchinger
  */
 
-class EditMarkerItemAdapter(
-    private val editRecordingViewModel: EditRecordingViewModel
-) : ListAdapter<MarkAndTimestamp, EditMarkerItemAdapter.ViewHolder>(EditMarkAndTimeStampDiffCallback()) {
+class EditMarkerItemAdapter(private val editRecordingViewModel: EditRecordingViewModel) :
+    ListAdapter<MarkAndTimestamp, EditMarkerItemAdapter.ViewHolder>(EditMarkAndTimeStampDiffCallback()) {
 
-    private val editMarksUserActionsListener = object : EditMarkUserActionsListener {
+    private val userActionsListener = object : EditMarkUserActionsListener {
 
-        override fun onMarkClicked(
-            mark: ExpandableMarkAndTimestamp,
-            view: View
-        ) {
+        override fun onMarkClicked(mark: ExpandableMarkAndTimestamp, view: View) {
             if (mark.markAndTimestamp.markTimestamp.markComment != null) {
                 mark.isExpanded = !mark.isExpanded
             }
         }
 
-        override fun onEditCommentClicked(
-            mark: ExpandableMarkAndTimestamp,
-            view: View
-        ) {
+        override fun onEditCommentClicked(mark: ExpandableMarkAndTimestamp, view: View) {
             editRecordingViewModel.onEditCommentClicked(mark)
         }
 
-        override fun onMarkDeleteClicked(
-            mark: MarkAndTimestamp
-        ) {
+        override fun onMarkDeleteClicked(mark: MarkAndTimestamp) {
             editRecordingViewModel.onMarkDeleteClicked(mark)
         }
     }
 
-    override fun onBindViewHolder(
-        holder: ViewHolder,
-        position: Int
-    ) {
-        holder.bind(getItem(position)!!, editMarksUserActionsListener)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position)!!, userActionsListener)
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent) as ViewHolder
     }
 
-    class ViewHolder private constructor(
-        private val binding: EditMarkItemBinding
-    ) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder private constructor(private val binding: EditMarkItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(
-            item: MarkAndTimestamp,
-            listener: EditMarkUserActionsListener
-        ) {
+        fun bind(item: MarkAndTimestamp, listener: EditMarkUserActionsListener) {
             binding.mark = ExpandableMarkAndTimestamp(item)
             binding.listener = listener
             binding.executePendingBindings()
@@ -78,9 +59,7 @@ class EditMarkerItemAdapter(
 
         companion object {
 
-            fun from(
-                parent: ViewGroup
-            ): RecyclerView.ViewHolder {
+            fun from(parent: ViewGroup): RecyclerView.ViewHolder {
                 val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
                 val binding: EditMarkItemBinding =
                     EditMarkItemBinding.inflate(layoutInflater, parent, false)
@@ -92,17 +71,11 @@ class EditMarkerItemAdapter(
 
 class EditMarkAndTimeStampDiffCallback : DiffUtil.ItemCallback<MarkAndTimestamp>() {
 
-    override fun areItemsTheSame(
-        oldItem: MarkAndTimestamp,
-        newItem: MarkAndTimestamp
-    ): Boolean {
+    override fun areItemsTheSame(oldItem: MarkAndTimestamp, newItem: MarkAndTimestamp): Boolean {
         return oldItem.markTimestamp.mid == newItem.markTimestamp.mid
     }
 
-    override fun areContentsTheSame(
-        oldItem: MarkAndTimestamp,
-        newItem: MarkAndTimestamp
-    ): Boolean {
+    override fun areContentsTheSame(oldItem: MarkAndTimestamp, newItem: MarkAndTimestamp): Boolean {
         return oldItem == newItem
     }
 }
