@@ -1,12 +1,16 @@
 package de.ur.mi.audidroid.models
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 
 /**
- * The LabelDao is the data access object to access the table storing labels in the apps' room database.
+ * The [LabelDao] is the data access object to access the table storing [LabelEntity] in the apps' room database.
  * Functions returning LiveData are incompatible wit Kotlin coroutines, therefore these functions are not suspended.
- *
  * @author: Jonas Puchinger
  * Adapted from: https://developer.android.com/training/data-storage/room/accessing-data
  */

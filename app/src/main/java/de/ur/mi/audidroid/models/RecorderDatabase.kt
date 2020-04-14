@@ -8,10 +8,14 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import de.ur.mi.audidroid.utils.Converters
 import java.util.concurrent.Executors
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableJob
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 /**
- * The abstract class contains the database holder and serves as the main access point for the connection to the persisted data
+ * The abstract class contains the database holder and serves as the main access point for the connection to the persisted data.
  * @authors: Sabine Roth, Jonas Puchinger
  */
 
@@ -42,14 +46,13 @@ abstract class RecorderDatabase : RoomDatabase() {
                             super.onCreate(db)
                             Executors.newSingleThreadScheduledExecutor().execute {
                                 val defaultMarker = MarkerEntity(0, "Mark")
-                                val job = Job()
+                                val job: CompletableJob = Job()
                                 CoroutineScope(job + Dispatchers.Main).launch {
                                     getInstance(context).markerDao().insertMarker(defaultMarker)
                                 }
                             }
                         }
-                    })
-                        .build()
+                    }).build()
                 }
             }
             return INSTANCE as RecorderDatabase
