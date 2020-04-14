@@ -11,13 +11,40 @@
         <menu>
             <item
                 android:id="@+id/action_sort_name"
-                android:title="@string/popup_menu_sort_name" />
+                android:title="@string/popup_menu_sort_name" >
+                <menu>
+                    <item
+                        android:id="@+id/action_sort_name_asc"
+                        android:title="@string/menu_sort_asc" />
+                    <item
+                        android:id="@+id/action_sort_name_desc"
+                        android:title="@string/menu_sort_desc" />
+                </menu>
+            </item>
             <item
                 android:id="@+id/action_sort_date"
-                android:title="@string/popup_menu_sort_date" />
+                android:title="@string/popup_menu_sort_date" >
+                <menu>
+                    <item
+                        android:id="@+id/action_sort_date_asc"
+                        android:title="@string/menu_sort_asc" />
+                    <item
+                        android:id="@+id/action_sort_date_desc"
+                        android:title="@string/menu_sort_desc" />
+                </menu>
+            </item>
             <item
                 android:id="@+id/action_sort_duration"
-                android:title="@string/popup_menu_sort_duration" />
+                android:title="@string/popup_menu_sort_duration" >
+                <menu>
+                    <item
+                        android:id="@+id/action_sort_duration_asc"
+                        android:title="@string/menu_sort_asc" />
+                    <item
+                        android:id="@+id/action_sort_duration_desc"
+                        android:title="@string/menu_sort_desc" />
+                </menu>
+            </item>
         </menu>
     </item>
 

@@ -22,16 +22,21 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
-    private val res = context.resources
     private val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     private val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
         repository.getAllRecordingsWithLabels()
-    private val allRecordingsWithLabelsOrderName: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderName()
-    private val allRecordingsWithLabelsOrderDate: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderDate()
-    private val allRecordingsWithLabelsOrderDuration: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderDuration()
+    private val allRecordingsWithLabelsOrderNameAsc: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderNameAsc()
+    private val allRecordingsWithLabelsOrderDateAsc: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderDateAsc()
+    private val allRecordingsWithLabelsOrderDurationAsc: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderDurationAsc()
+    private val allRecordingsWithLabelsOrderNameDesc: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderNameDesc()
+    private val allRecordingsWithLabelsOrderDateDesc: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderDateDesc()
+    private val allRecordingsWithLabelsOrderDurationDesc: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderDurationDesc()
     val displayRecordings = MediatorLiveData<List<RecordingAndLabels>>()
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
@@ -124,27 +129,45 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     // Set sorted source for recording display
     private fun removeSortedRecordingSources(){
         displayRecordings.removeSource(allRecordingsWithLabels)
-        displayRecordings.removeSource(allRecordingsWithLabelsOrderName)
-        displayRecordings.removeSource(allRecordingsWithLabelsOrderDate)
-        displayRecordings.removeSource(allRecordingsWithLabelsOrderDuration)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderNameAsc)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderDateAsc)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderDurationAsc)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderNameDesc)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderDateDesc)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderDurationDesc)
     }
 
     fun setSorting(modus: Int?){
         removeSortedRecordingSources()
         when (modus){
-            res.getInteger(R.integer.sort_by_name) -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderName){
-                    displayRecordings.value = allRecordingsWithLabelsOrderName.value
+            R.integer.sort_by_name_asc -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderNameAsc){
+                    displayRecordings.value = allRecordingsWithLabelsOrderNameAsc.value
                 }
             }
-            res.getInteger(R.integer.sort_by_date) -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderDate){
-                    displayRecordings.value = allRecordingsWithLabelsOrderDate.value
+            R.integer.sort_by_date_asc -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDateAsc){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDateAsc.value
                 }
             }
-            res.getInteger(R.integer.sort_by_duration) -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderDuration){
-                    displayRecordings.value = allRecordingsWithLabelsOrderDuration.value
+            R.integer.sort_by_duration_asc -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDurationAsc){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDurationAsc.value
+                }
+            }
+            R.integer.sort_by_name_desc -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderNameDesc){
+                    displayRecordings.value = allRecordingsWithLabelsOrderNameDesc.value
+                }
+            }
+            R.integer.sort_by_date_desc -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDateDesc){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDateDesc.value
+                }
+            }
+            R.integer.sort_by_duration_desc -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDurationDesc){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDurationDesc.value
                 }
             }
             else -> {

@@ -155,16 +155,28 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getAllRecordingsWithLabels()
     }
 
-    fun getAllRecWithLabelsOrderName(): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderName()
+    fun getAllRecWithLabelsOrderNameAsc(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderNameASC()
     }
 
-    fun getAllRecWithLabelsOrderDate(): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderDate()
+    fun getAllRecWithLabelsOrderDateAsc(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDateASC()
     }
 
-    fun getAllRecWithLabelsOrderDuration(): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderDuration()
+    fun getAllRecWithLabelsOrderDurationAsc(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDurationASC()
+    }
+
+    fun getAllRecWithLabelsOrderNameDesc(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderNameDESC()
+    }
+
+    fun getAllRecWithLabelsOrderDateDesc(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDateDESC()
+    }
+
+    fun getAllRecWithLabelsOrderDurationDesc(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDurationDESC()
     }
 
     fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {
