@@ -8,6 +8,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
+import kotlinx.android.synthetic.main.comment_dialog.*
 
 object CommentDialog {
 
@@ -28,9 +29,8 @@ object CommentDialog {
             editText.setText(markTimestampToBeEdited.markAndTimestamp.markTimestamp.markComment)
         }
         val pos: Int = editText.text.length
-        editText.requestFocus()
+        editText.showKeyboard()
         editText.setSelection(pos)
-        KeyboardHelper.showSoftKeyboard(editText)
         builder.setView(dialogView)
         if (errorMessage != null) {
             builder.setMessage(errorMessage)
@@ -49,11 +49,11 @@ object CommentDialog {
                     commentInput,
                     markTimestampToBeEdited
                 )
-                KeyboardHelper.hideSoftKeyboard(editText)
+                editText.hideKeyboard()
             }
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                KeyboardHelper.hideSoftKeyboard(editText)
                 viewModel?.cancelCommentSaving()
+                editText.hideKeyboard()
             }
         }
         dialog = builder.create()
@@ -61,14 +61,11 @@ object CommentDialog {
         dialog.setCancelable(true)
         dialog.setOnCancelListener {
             viewModel!!.cancelCommentSaving()
-            dialog.findViewById<EditText>(R.id.dialog_add_comment_edit_text)?.let { editText ->
-                KeyboardHelper.hideSoftKeyboard(editText)
-            }
+            dialog.dialog_add_comment_edit_text.hideKeyboard()
         }
         dialog.setOnDismissListener {
-            dialog.findViewById<EditText>(R.id.dialog_add_comment_edit_text)?.let { editText ->
-                KeyboardHelper.hideSoftKeyboard(editText)
-            }
+            viewModel!!.cancelCommentSaving()
+            dialog.dialog_add_comment_edit_text.hideKeyboard()
         }
     }
 }

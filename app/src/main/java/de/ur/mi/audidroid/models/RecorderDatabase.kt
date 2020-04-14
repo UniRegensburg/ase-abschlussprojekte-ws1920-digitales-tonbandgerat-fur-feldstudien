@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.utils.Converters
 import java.util.concurrent.Executors
 import kotlinx.coroutines.CompletableJob
@@ -45,10 +46,20 @@ abstract class RecorderDatabase : RoomDatabase() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             Executors.newSingleThreadScheduledExecutor().execute {
-                                val defaultMarker = MarkerEntity(0, "Mark")
+                                val defaultMarkerQuestion = MarkerEntity(0, context.getString(R.string.default_marker_question))
+                                val defaultMarkerAnswer = MarkerEntity(0, context.getString(R.string.default_marker_answer))
                                 val job: CompletableJob = Job()
                                 CoroutineScope(job + Dispatchers.Main).launch {
-                                    getInstance(context).markerDao().insertMarker(defaultMarker)
+                                    getInstance(context).markerDao().insertMarker(defaultMarkerQuestion)
+                                    getInstance(context).markerDao().insertMarker(defaultMarkerAnswer)
+                                }
+                            }
+
+                            Executors.newSingleThreadScheduledExecutor().execute {
+                                val defaultLabelInterview = LabelEntity(0, context.getString(R.string.default_label_interview))
+                                val job: CompletableJob = Job()
+                                CoroutineScope(job + Dispatchers.Main).launch {
+                                    getInstance(context).labelDao().insert(defaultLabelInterview)
                                 }
                             }
                         }

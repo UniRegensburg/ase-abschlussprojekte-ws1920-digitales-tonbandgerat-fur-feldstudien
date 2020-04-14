@@ -56,7 +56,7 @@ object SaveRecordingDialog {
         dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
         dialog = builder.create()
         dialog.setOnCancelListener {
-            recordViewModel.cancelDialog()
+            cancelSaving()
         }
         dialog.show()
         initializeDialog(errorMessage)
@@ -83,16 +83,22 @@ object SaveRecordingDialog {
                 saveButtonClicked()
             }
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                viewModel.cancelDialog()
+               cancelSaving()
             }
         }
+    }
+
+    private fun cancelSaving(){
+        selectedLabels.clear()
+        viewModel.cancelDialog()
     }
 
     private fun saveButtonClicked() {
         var nameInput: String? =
             dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
                 .text.toString()
-        if (nameInput == "") nameInput = null
+        nameInput = if (nameInput == "") null
+        else checkVariables(nameInput!!)
         viewModel.getNewFileFromUserInput(
             nameInput,
             selectedPath,
@@ -218,8 +224,15 @@ object SaveRecordingDialog {
             context.getString(R.string.filename_preference_key),
             context.getString(R.string.filename_preference_default_value)
         )!!
-        if (storedName.contains("{date}")) {
-            storedName = storedName.replace(
+        storedName = checkVariables(storedName)
+        editText.setText(storedName)
+        editText.setSelection(storedName.length)
+    }
+
+    private fun checkVariables(nameParam: String): String{
+        var name = nameParam
+        if (name.contains("{date}")) {
+            name = name.replace(
                 "{date}", java.lang.String.format(
                     "%s",
                     android.text.format.DateFormat.format(
@@ -229,8 +242,8 @@ object SaveRecordingDialog {
                 )
             )
         }
-        if (storedName.contains("{time}")) {
-            storedName = storedName.replace(
+        if (name.contains("{time}")) {
+            name = name.replace(
                 "{time}", java.lang.String.format(
                     "%s",
                     android.text.format.DateFormat.format(
@@ -240,7 +253,6 @@ object SaveRecordingDialog {
                 )
             )
         }
-        editText.setText(storedName)
-        editText.setSelection(storedName.length)
+        return name
     }
 }
