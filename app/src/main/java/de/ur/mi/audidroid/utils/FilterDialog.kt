@@ -3,6 +3,7 @@ package de.ur.mi.audidroid.utils
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.View
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -48,9 +49,11 @@ object FilterDialog {
         selectedMarks.clear()
         with(builder){
             setPositiveButton(context.getString(R.string.menu_filter)){_, _ ->
-
-                viewModel.setFilterResult(selectedLabels)
-
+                var nameInput: String? =
+                    dialog.findViewById<EditText>(R.id.dialog_filter_recording_edittext_name)!!
+                        .text.toString()
+                viewModel.setFilterResult(selectedLabels, selectedMarks, nameInput)
+                cancelDialog()
             }
         }
 
@@ -58,7 +61,7 @@ object FilterDialog {
         dataSource.getAllMarkers().observe(fragment, Observer { getMarks(it) })
         dialog = builder.create()
         dialog.setOnCancelListener {
-            cancelSaving()
+            cancelDialog()
         }
         dialog.show()
     }
@@ -109,7 +112,7 @@ object FilterDialog {
     }
 
     private fun markClicked(clickedMark: Chip) {
-        for (string in selectedLabels) {
+        for (string in selectedMarks) {
             if (string == (clickedMark).text.toString()) {
                 removeClickedMark(clickedMark)
                 return
@@ -158,8 +161,9 @@ object FilterDialog {
         selectedMarks.remove((clickedMark).text.toString())
     }
 
-    private fun cancelSaving(){
+    private fun cancelDialog(){
         selectedLabels.clear()
+        selectedMarks.clear()
         viewModel.cancelFilterDialog()
     }
 }

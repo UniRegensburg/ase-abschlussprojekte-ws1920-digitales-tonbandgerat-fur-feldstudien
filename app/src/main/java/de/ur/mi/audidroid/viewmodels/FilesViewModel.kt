@@ -139,37 +139,98 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         displayRecordings.removeSource(allRecordingsWithLabelsOrderDuration)
     }
 
-    private fun getFilterParam(param: String):List<String>{
-        return param.split(",").map { it.trim() }
+    private fun matchLabelsAndRecordings(recordingList: List<RecordingAndLabels>, params: List<String>): List<RecordingAndLabels>?{
+        if (params.isNotEmpty()){
+            var filteredRecordings = arrayListOf<RecordingAndLabels>()
+            recordingList.forEach {recording ->
+                filteredRecordings.add(recording)
+                if (recording.labels != null){
+                    params.forEach {param ->
+                        if (!recording.labels.contains(param)){
+                            filteredRecordings.remove(recording)
+                        }
+                    }
+                } else {filteredRecordings.remove(recording)}
+            }
+            return filteredRecordings
+        } else { return null }
     }
 
-    private fun matchParamAndRecordings(recordingList: List<RecordingAndLabels>, params: List<String>): List<RecordingAndLabels>{
+    private fun adaptRecordingMarkLiveData(reference: List<RecordingAndMarkTuple>): List<Pair<Int, MutableList<String>>>?{
+        if (reference.isNotEmpty()){
+            val refList = mutableListOf<Pair<Int, MutableList<String>>>()
+            var alreadyInList: Boolean
+            reference.forEach { ref ->
+                val pair = Pair(ref.recordingId, mutableListOf(ref.markerName))
+                if (refList.isEmpty()){
+                    refList.add(pair)
+                }else{
+                    alreadyInList = false
+                    refList.forEach {
+                        if (it.first == ref.recordingId){
+                            it.second.add(ref.markerName)
+                            alreadyInList = true
+                        }
+                    }
+                    if (!alreadyInList){ refList.add(pair) }
+                }
+            }
+            return refList
+        } else { return null }
+    }
 
-        var filteredRecordings = arrayListOf<RecordingAndLabels>()
-        recordingList.forEach {recording ->
-            filteredRecordings.add(recording)
-            if (recording.labels != null){
-                params.forEach {param ->
-                    if (!recording.labels.contains(param)){
-                        filteredRecordings.remove(recording)
+    private fun matchMarksAndRecordings(params: List<String>): List<Int>?{
+        val filteredRef = arrayListOf<Int>()
+        val list = adaptRecordingMarkLiveData(allRecordingsWithMarker.value!!)
+        if (params.isNotEmpty()){
+            list?.forEach{recMarkTuple ->
+                filteredRef.add(recMarkTuple.first)
+                params.forEach{param ->
+                    if (!recMarkTuple.second.contains(param)){
+                        filteredRef.remove(recMarkTuple.first)
                     }
                 }
-            } else {filteredRecordings.remove(recording)}
-        }
-        return filteredRecordings
+            }
+            return filteredRef
+        } else { return null }
     }
 
-    fun setFilterResult(labels: List<String>){
-        removeSortedRecordingSources()
-        println("SET Filter RESULT")
-        println(allRecordingsWithMarker.value)
-        displayRecordings.addSource(allRecordingsWithLabels){
-            var displayList = allRecordingsWithLabels.value!!
-
-            if(labels.isNotEmpty()) {
-                displayList = matchParamAndRecordings(allRecordingsWithLabels.value!!, labels)
+    private fun combineFilterParams(matchedLabels:List<RecordingAndLabels>?, matchedMarkers: List<Int>?,
+                                    nameInput: String?): List<RecordingAndLabels> {
+        var filteredResult = allRecordingsWithLabels.value!!
+        var matchedList = mutableListOf<RecordingAndLabels>()
+        matchedLabels?.let { filteredResult = matchedLabels }
+        matchedMarkers?.let {
+            filteredResult.forEach { rec ->
+                if (matchedMarkers.contains(rec.uid)) {
+                    matchedList.add(rec)
+                }
             }
-            displayRecordings.value = displayList
+            filteredResult = matchedList
+        }
+        nameInput?.let {
+            matchedList = mutableListOf<RecordingAndLabels>()
+            filteredResult.forEach {
+                if(it.recordingName.contains(nameInput,true)){
+                    matchedList.add(it)
+                }
+            }
+            filteredResult = matchedList
+        }
+        return filteredResult
+    }
+
+    fun setFilterResult(labels: List<String>, marks: List<String>, nameInput: String?){
+        removeSortedRecordingSources()
+        displayRecordings.addSource(allRecordingsWithLabels){
+            if (!labels.isEmpty() || !marks.isEmpty() || !nameInput.isNullOrEmpty()){
+                val matchedLabels = matchLabelsAndRecordings(allRecordingsWithLabels.value!!, labels)
+                val matchedMarks = matchMarksAndRecordings(marks)
+                var displayList = combineFilterParams(matchedLabels, matchedMarks, nameInput)
+                displayRecordings.value = displayList
+            }else{
+                displayRecordings.value = allRecordingsWithLabels.value!!
+            }
         }
     }
 
