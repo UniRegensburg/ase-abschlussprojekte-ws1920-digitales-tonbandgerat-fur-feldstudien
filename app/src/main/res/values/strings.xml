@@ -86,6 +86,7 @@
     <string name="sample_comment">Sample comment</string>
     <string name="sample_mark">Mark</string>
     <string name="mark_deleted">Mark deleted</string>
+    <string name="wave_pic">WavePic</string>
 
     <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>
