@@ -6,7 +6,8 @@
         android:id="@+id/action_search"
         android:title="@string/menu_search"
         android:icon="@drawable/ic_search"
-        app:showAsAction="collapseActionView|ifRoom"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
         app:actionViewClass="android.widget.SearchView" />
 
     <item
@@ -14,7 +15,7 @@
         android:icon="@drawable/ic_sort"
         android:orderInCategory="100"
         android:title="@string/action_sort_by"
-        app:showAsAction="always">
+        app:showAsAction="ifRoom">
         <menu>
             <item
                 android:id="@+id/action_sort_name"
