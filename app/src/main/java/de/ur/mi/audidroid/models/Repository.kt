@@ -184,13 +184,11 @@ class Repository(application: Application) : CoroutineScope {
     /** MarkTimestamp */
 
     fun insertMarkTimestamp(marker: MarkTimestamp) {
-        CoroutineScope(coroutineContext).launch {
-            markerDao.insertMark(marker)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                markerDao.insertMark(marker)
+            }
         }
-    }
-
-    fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
-        return markerDao.getMarksById(uid)
     }
 
     fun updateMarkTimestamp(markTimestamp: MarkTimestamp) {
@@ -200,8 +198,10 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun deleteMarkTimestamp(mid: Int) {
-        CoroutineScope(coroutineContext).launch {
-            markerDao.deleteMark(mid)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                markerDao.deleteMark(mid)
+            }
         }
     }
 
@@ -209,5 +209,9 @@ class Repository(application: Application) : CoroutineScope {
         CoroutineScope(coroutineContext).launch {
             markerDao.deleteRecMarks(uid)
         }
+    }
+
+    fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
+        return markerDao.getMarksById(uid)
     }
 }
