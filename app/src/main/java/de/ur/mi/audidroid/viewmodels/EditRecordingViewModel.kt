@@ -23,7 +23,7 @@ import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.FFmpeg
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.RecordingEntity
 import de.ur.mi.audidroid.models.LabelAssignmentEntity
 import de.ur.mi.audidroid.models.MarkAndTimestamp
 import de.ur.mi.audidroid.models.Repository
@@ -56,7 +56,7 @@ class EditRecordingViewModel(
     private lateinit var rangeBar: MultiSlider
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    val recording: LiveData<EntryEntity> = repository.getRecordingById(recordingId)
+    val recording: LiveData<RecordingEntity> = repository.getRecordingById(recordingId)
     val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
@@ -425,7 +425,7 @@ class EditRecordingViewModel(
 
         val recordingDuration = getRecordingDuration(File(tempFile))
         val audio =
-            EntryEntity(
+            RecordingEntity(
                 uid = 0,
                 recordingName = name,
                 recordingPath = path,
@@ -437,7 +437,7 @@ class EditRecordingViewModel(
         saveErrorMessage = null
     }
 
-    private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
+    private fun saveRecordInDB(audio: RecordingEntity, labels: ArrayList<Int>?) {
         val uid = repository.insertRecording(audio).toInt()
         if (labels != null) {
             for (i in labels.indices) {

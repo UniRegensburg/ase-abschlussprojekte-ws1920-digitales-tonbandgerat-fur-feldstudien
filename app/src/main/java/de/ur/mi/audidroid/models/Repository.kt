@@ -12,11 +12,11 @@ import kotlin.coroutines.CoroutineContext
 
 class Repository(application: Application) : CoroutineScope {
 
-    private var entryDao: EntryDao
+    private var recordingDao: RecordingDao
     private var labelDao: LabelDao
     private var labelAssignmentDao: LabelAssignmentDao
     private var markerDao: MarkerDao
-    private var allRecordings: LiveData<List<EntryEntity>>
+    private var allRecordings: LiveData<List<RecordingEntity>>
 
     private val job = Job()
     override val coroutineContext: CoroutineContext
@@ -26,14 +26,14 @@ class Repository(application: Application) : CoroutineScope {
         val database: RecorderDatabase = RecorderDatabase.getInstance(
             application.applicationContext
         )
-        entryDao = database.entryDao()
+        recordingDao = database.recordingDao()
         labelDao = database.labelDao()
         labelAssignmentDao = database.labelAssignmentDao()
         markerDao = database.markerDao()
-        allRecordings = entryDao.getAllRecordings()
+        allRecordings = recordingDao.getAllRecordings()
     }
 
-    fun getAllRecordings(): LiveData<List<EntryEntity>> {
+    fun getAllRecordings(): LiveData<List<RecordingEntity>> {
         return allRecordings
     }
 
@@ -56,36 +56,44 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun deleteRecording(uid: Int) {
-        CoroutineScope(coroutineContext).launch {
-            entryDao.delete(uid)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                recordingDao.delete(uid)
+            }
         }
     }
 
     fun deleteLabel(labelEntity: LabelEntity) {
-        CoroutineScope(coroutineContext).launch {
-            labelDao.delete(labelEntity)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                labelDao.delete(labelEntity)
+            }
         }
     }
 
     fun deleteMarker(markerEntity: MarkerEntity) {
-        CoroutineScope(coroutineContext).launch {
-            markerDao.deleteMarker(markerEntity)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                markerDao.deleteMarker(markerEntity)
+            }
         }
     }
 
-    fun insertRecording(entryEntity: EntryEntity): Long {
+    fun insertRecording(recordingEntity: RecordingEntity): Long {
         var temp: Long? = null
         runBlocking {
             CoroutineScope(coroutineContext).launch {
-                temp = entryDao.insert(entryEntity)
+                temp = recordingDao.insert(recordingEntity)
             }
         }
         return temp!!
     }
 
     fun insertMarker(markerEntity: MarkerEntity) {
-        CoroutineScope(coroutineContext).launch {
-            markerDao.insertMarker(markerEntity)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                markerDao.insertMarker(markerEntity)
+            }
         }
     }
 
@@ -96,20 +104,26 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun insertLabel(labelEntity: LabelEntity) {
-        CoroutineScope(coroutineContext).launch {
-            labelDao.insert(labelEntity)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                labelDao.insert(labelEntity)
+            }
         }
     }
 
     fun updateLabel(labelEntity: LabelEntity) {
-        CoroutineScope(coroutineContext).launch {
-            labelDao.update(labelEntity)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                labelDao.update(labelEntity)
+            }
         }
     }
 
     fun updateMarker(markerEntity: MarkerEntity) {
-        CoroutineScope(coroutineContext).launch {
-            markerDao.updateMarker(markerEntity)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                markerDao.updateMarker(markerEntity)
+            }
         }
     }
 
@@ -137,8 +151,8 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getRecLabelsById(uid)
     }
 
-    fun getRecordingById(uid: Int): LiveData<EntryEntity> {
-        return entryDao.getRecordingById(uid)
+    fun getRecordingById(uid: Int): LiveData<RecordingEntity> {
+        return recordingDao.getRecordingById(uid)
     }
 
     fun getLabelByName(name: String): List<LabelEntity> {

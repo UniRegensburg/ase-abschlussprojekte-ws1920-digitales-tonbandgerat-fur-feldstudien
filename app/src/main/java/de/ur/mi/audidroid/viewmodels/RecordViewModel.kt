@@ -240,7 +240,7 @@ class RecordViewModel(
 
         val recordingDuration = getRecordingDuration() ?: currentRecordTime
         val audio =
-            EntryEntity(
+            RecordingEntity(
                 uid = 0,
                 recordingName = name,
                 recordingPath = path,
@@ -253,7 +253,7 @@ class RecordViewModel(
         errorMessage = null
     }
 
-    private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
+    private fun saveRecordInDB(audio: RecordingEntity, labels: ArrayList<Int>?) {
         val uid = dataSource.insertRecording(audio).toInt()
         if (labels != null) {
             for (i in labels.indices) {

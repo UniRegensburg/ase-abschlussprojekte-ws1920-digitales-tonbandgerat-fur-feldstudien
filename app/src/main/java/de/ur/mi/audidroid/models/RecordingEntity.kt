@@ -5,12 +5,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * The EntryEntity represents the table within the database and sets the field values
+ * The RecordingEntity represents the table within the database and sets the field values
  * @author: Sabine Roth
  */
 
 @Entity(tableName = "recordingsTable")
-data class EntryEntity(
+data class RecordingEntity(
     @PrimaryKey(autoGenerate = true) val uid: Int,
     @ColumnInfo(name = "recordingName") val recordingName: String,
     @ColumnInfo(name = "recordingPath") val recordingPath: String,
