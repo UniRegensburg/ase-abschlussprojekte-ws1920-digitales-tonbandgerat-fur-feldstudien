@@ -507,7 +507,7 @@ class EditRecordingViewModel(
     }
 
     fun deleteMark(mid: Int) {
-        repository.deleteMark(mid)
+        repository.deleteMarkTimestamp(mid)
         _createConfirmDialog.value = false
         showSnackBar(R.string.mark_deleted)
     }
