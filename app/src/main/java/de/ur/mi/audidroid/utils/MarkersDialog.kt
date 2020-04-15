@@ -8,8 +8,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.viewmodels.EditMarkersViewModel
-import kotlinx.android.synthetic.main.comment_dialog.*
 import kotlinx.android.synthetic.main.markers_dialog.*
+
+/**
+ * Dialog to enter a new [MarkerEntity].
+ * @author: Jonas Puchinger
+ */
 
 object MarkersDialog {
 

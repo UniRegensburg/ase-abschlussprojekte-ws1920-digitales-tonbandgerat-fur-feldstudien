@@ -6,7 +6,7 @@ import de.ur.mi.audidroid.BR
 
 /**
  * Extension class to make [MarkAndTimestamp] keep track of expanded UI state.
- * Uses [Bindable] decorator.
+ * Uses [Bindable] decorator to enable data binding.
  * @author: Jonas Puchinger
  */
 

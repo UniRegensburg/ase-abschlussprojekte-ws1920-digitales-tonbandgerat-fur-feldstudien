@@ -13,7 +13,7 @@ class AudioEditor {
     private var duration = ""
     private var outputPath = ""
     private var outputFileName = ""
-    private var callback: FFMpegCallback? = null
+    private var callback: FFMPEGCallback? = null
 
     fun setFile(originalFile: File) {
         this.audio = originalFile
@@ -39,7 +39,7 @@ class AudioEditor {
         this.outputFileName = output
     }
 
-    fun setCallback(callback: FFMpegCallback) {
+    fun setCallback(callback: FFMPEGCallback) {
         this.callback = callback
     }
 

@@ -13,17 +13,19 @@ import java.io.File
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 
+/**
+ * Utility class to handle the process of converting recordings to other file formats and sharing them to other apps.
+ * [AudioConverter] is used for conversion. Available formats: AAC, MP3, M4A, WMA, WAV, FLAC.
+ * @author: Jonas Puchinger
+ */
+
 object ShareHelper {
 
-    fun shareAudio(
-        recording: RecordingAndLabels,
-        convertFormat: String,
-        context: Context
-    ) {
+    fun shareAudio(recording: RecordingAndLabels, convertFormat: String, context: Context) {
         convertFile(recording.recordingPath, convertFormat, context)
     }
 
-    fun convertFile(filename: String, convertFormat: String, context: Context) {
+    private fun convertFile(filename: String, convertFormat: String, context: Context) {
         val file = File(filename)
 
         val cb = object : IConvertCallback {
@@ -55,7 +57,7 @@ object ShareHelper {
         }
     }
 
-    fun getUriFromFile(file: File, context: Context): Uri {
+    private fun getUriFromFile(file: File, context: Context): Uri {
         val fileUri: Uri? = try {
             FileProvider.getUriForFile(
                 context,

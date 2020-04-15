@@ -12,7 +12,6 @@ import java.io.IOException
  * The AudioConverter creates converted audio files.
  * Available formats: AAC, MP3, M4A, WMA, WAV, FLAC.
  * Result of the conversion is communicated with a callback.
- *
  * @author: Jonas Puchinger
  * Adapted from: https://github.com/adrielcafe/AndroidAudioConverter
  */
@@ -23,21 +22,15 @@ class AudioConverter {
     private var audioFormat: AudioFormat? = null
     private var callback: IConvertCallback? = null
 
-    fun setFile(
-        originalFile: File
-    ) {
+    fun setFile(originalFile: File) {
         audioFile = originalFile
     }
 
-    fun setFormat(
-        format: AudioFormat
-    ) {
+    fun setFormat(format: AudioFormat) {
         audioFormat = format
     }
 
-    fun setCallback(
-        cb: IConvertCallback
-    ) {
+    fun setCallback(cb: IConvertCallback) {
         callback = cb
     }
 
@@ -67,10 +60,7 @@ class AudioConverter {
         }
     }
 
-    private fun getConvertedFile(
-        orgFile: File,
-        convertFormat: AudioFormat
-    ): File {
+    private fun getConvertedFile(orgFile: File, convertFormat: AudioFormat): File {
         val f: List<String> = orgFile.absolutePath.split(".")
         val filePath: String = orgFile.absolutePath.replace(f[f.size - 1], convertFormat.format)
         return File(filePath)

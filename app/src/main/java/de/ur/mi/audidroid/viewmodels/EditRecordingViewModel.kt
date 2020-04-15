@@ -19,7 +19,7 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.*
 import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 import de.ur.mi.audidroid.utils.AudioEditor
-import de.ur.mi.audidroid.utils.FFMpegCallback
+import de.ur.mi.audidroid.utils.FFMPEGCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
@@ -265,7 +265,7 @@ class EditRecordingViewModel(
         }
     }
 
-    val callback = object : FFMpegCallback {
+    val callback = object : FFMPEGCallback {
         override fun onSuccess(convertedFile: File) {
             audioInProgress.value = false
             tempFile = convertedFile.path

@@ -10,6 +10,11 @@ import de.ur.mi.audidroid.models.LabelEntity
 import de.ur.mi.audidroid.viewmodels.EditLabelsViewModel
 import kotlinx.android.synthetic.main.labels_dialog.*
 
+/**
+ * Dialog to enter a new [LabelEntity].
+ * @author: Jonas Puchinger
+ */
+
 object LabelsDialog {
 
     private lateinit var dialog: androidx.appcompat.app.AlertDialog

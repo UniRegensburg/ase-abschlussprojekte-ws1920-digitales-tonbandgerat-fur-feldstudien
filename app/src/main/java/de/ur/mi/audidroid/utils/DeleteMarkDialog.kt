@@ -4,7 +4,13 @@ import android.content.Context
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.MarkAndTimestamp
+import de.ur.mi.audidroid.models.MarkTimestamp
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
+
+/**
+ * Dialog to delete a [MarkTimestamp].
+ * @author: Jonas Puchinger
+ */
 
 object DeleteMarkDialog {
 
