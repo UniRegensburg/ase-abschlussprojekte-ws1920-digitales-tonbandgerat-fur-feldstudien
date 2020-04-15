@@ -7,8 +7,8 @@ import android.widget.EditText
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
-import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 import de.ur.mi.audidroid.models.MarkTimestamp
+import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 import kotlinx.android.synthetic.main.comment_dialog.*
 
 /**

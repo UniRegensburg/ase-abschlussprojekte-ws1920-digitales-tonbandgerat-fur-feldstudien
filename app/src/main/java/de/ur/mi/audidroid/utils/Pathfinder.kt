@@ -103,10 +103,10 @@ object Pathfinder {
         return "com.android.externalstorage.documents" == uri.authority
     }
 
-    fun getShortenedPath(realPath: String): String{
+    fun getShortenedPath(realPath: String): String {
         var shortenedPath = realPath
-        if(shortenedPath.contains("/")){
-            for(i in 0..3){
+        if (shortenedPath.contains("/")) {
+            for (i in 0..3) {
                 shortenedPath = shortenedPath.substringAfter("/")
             }
         }

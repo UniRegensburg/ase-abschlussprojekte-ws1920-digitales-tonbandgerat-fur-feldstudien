@@ -88,7 +88,7 @@ object SaveRecordingDialog {
         }
     }
 
-    private fun cancelSaving(){
+    private fun cancelSaving() {
         selectedLabels.clear()
         viewModel.cancelDialog()
     }
@@ -128,7 +128,7 @@ object SaveRecordingDialog {
     }
 
     fun resultPathfinder(treePath: Uri) {
-        if(treePath.toString().contains(context.packageName)){
+        if (treePath.toString().contains(context.packageName)) {
             selectedPath = null
             updateTextView(context.getString(R.string.default_storage_location))
             return
@@ -234,7 +234,7 @@ object SaveRecordingDialog {
         editText.setSelection(storedName.length)
     }
 
-    private fun checkVariables(nameParam: String): String{
+    private fun checkVariables(nameParam: String): String {
         var name = nameParam
         if (name.contains("{date}")) {
             name = name.replace(

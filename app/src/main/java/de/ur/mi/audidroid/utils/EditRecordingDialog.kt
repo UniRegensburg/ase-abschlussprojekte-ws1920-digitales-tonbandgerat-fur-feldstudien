@@ -54,7 +54,7 @@ object EditRecordingDialog {
         setDialogButtons(builder)
 
         dialog = builder.create()
-        dialog.setOnCancelListener{
+        dialog.setOnCancelListener {
             cancelSaving()
         }
         dialog.show()
@@ -92,7 +92,7 @@ object EditRecordingDialog {
         }
     }
 
-    private fun cancelSaving(){
+    private fun cancelSaving() {
         selectedLabels.clear()
         viewModel.cancelSaving()
     }
