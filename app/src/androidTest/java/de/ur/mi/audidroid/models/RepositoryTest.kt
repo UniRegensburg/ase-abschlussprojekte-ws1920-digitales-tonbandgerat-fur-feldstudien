@@ -8,7 +8,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jraska.livedata.test
 import org.junit.After
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -35,6 +35,7 @@ class RepositoryTest {
     private val testLabelName = "testLabelName"
     private val testMarkerName = "testMarkerName"
     private lateinit var testLabelAssignmentEntity: LabelAssignmentEntity
+    private lateinit var testMarkTimestamp: MarkTimestamp
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -50,11 +51,13 @@ class RepositoryTest {
         testLabel = LabelEntity(testUid, testLabelName)
         testMarker = MarkerEntity(testUid, testMarkerName)
         testLabelAssignmentEntity = LabelAssignmentEntity(testUid, testRecording.uid, testLabel.uid)
+        testMarkTimestamp = MarkTimestamp(testUid, testRecording.uid, testMarker.uid, markTime = "test")
         repository = Repository(context as Application)
         repository.insertRecording(testRecording)
         repository.insertLabel(testLabel)
         repository.insertMarker(testMarker)
         repository.insertRecLabels(testLabelAssignmentEntity)
+        repository.insertMarkTimestamp(testMarkTimestamp)
     }
 
 
@@ -148,7 +151,38 @@ class RepositoryTest {
     }
 
 
-    /** Marks */
+    /** Recordinglabels */
+
+    @Test
+    @Throws(Exception::class)
+    fun testGetRecLabel() {
+        val byIdLiveDataRecLabels = repository.getRecLabelsById(testLabelAssignmentEntity.recordingId)
+        byIdLiveDataRecLabels.test()
+            .awaitValue()
+            .assertHasValue()
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testInsertRecLabel() {
+        val testInsertLabelAssignmentEntity = LabelAssignmentEntity(2, testRecording.uid, testLabel.uid)
+        repository.insertRecLabels(testInsertLabelAssignmentEntity)
+        val byIdLiveDataRecLabels = repository.getRecLabelsById(testLabelAssignmentEntity.recordingId)
+        byIdLiveDataRecLabels.test()
+            .awaitValue()
+            .assertHasValue()
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testDeleteRecLabel() {
+        repository.deleteRecLabels(testLabelAssignmentEntity.primaryKey)
+        val byIdLiveDataRecLabels = repository.getRecLabelsById(testLabelAssignmentEntity.recordingId)
+        assertNull(byIdLiveDataRecLabels.value)
+    }
+
+
+    /** Markers */
 
     @Test
     @Throws(Exception::class)
@@ -186,7 +220,27 @@ class RepositoryTest {
         assertTrue(byNameLiveDataMarker.isEmpty())
     }
 
-    
+
+    /** MarkTimestamp */
+
+    @Test
+    @Throws(Exception::class)
+    fun testInsertMarkTimestamp(){
+        val testInsertMarkTimestamp = MarkTimestamp(2, testRecording.uid + 1, testMarker.uid, markTime = "test")
+        repository.insertMarkTimestamp(testInsertMarkTimestamp)
+        val byIdLiveDataMarks = repository.getAllMarks(testMarkTimestamp.recordingId + 1)
+        byIdLiveDataMarks.test()
+            .awaitValue()
+            .assertHasValue()
+    }
+
+    fun testDeleteMarkTimestamp(){
+        repository.deleteMarkTimestamp(testMarkTimestamp.mid)
+        val byIdLiveDataMarks = repository.getAllMarks(testMarkTimestamp.recordingId)
+        assertNull(byIdLiveDataMarks)
+    }
+
+
     @After
     @Throws(IOException::class)
     fun closeDb() {
