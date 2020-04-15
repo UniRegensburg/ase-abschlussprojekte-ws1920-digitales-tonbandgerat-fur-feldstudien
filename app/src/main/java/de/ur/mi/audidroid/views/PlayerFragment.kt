@@ -141,6 +141,12 @@ class PlayerFragment : Fragment() {
         )
     }
 
+    override fun onPause() {
+        super.onPause()
+        playerViewModel.fragmentOnPause()
+
+    }
+
     /**
      * Provides the Repository, recordingId and context to the PlayerViewModel.
      */

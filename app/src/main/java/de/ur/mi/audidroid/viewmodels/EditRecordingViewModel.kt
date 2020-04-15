@@ -624,6 +624,10 @@ class EditRecordingViewModel(
         showSnackBar(R.string.mark_deleted)
     }
 
+    fun onMarkTimeClicked(markTime: Int) {
+        mediaPlayer.seekTo(markTime)
+    }
+
     fun onBackPressed() {
         if (recordingEdited.value!!) {
             _createCancelEditingDialog.value = true

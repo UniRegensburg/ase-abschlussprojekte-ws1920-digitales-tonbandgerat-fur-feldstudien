@@ -168,8 +168,16 @@ class PlayerViewModel(
         mediaPlayer.release()
     }
 
+    fun fragmentOnPause() {
+        mediaPlayer.stop()
+    }
+
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
+    }
+
+    fun onMarkTimeClicked(markTime: Int) {
+        mediaPlayer.seekTo(markTime)
     }
 
     fun skipPlaying() {
