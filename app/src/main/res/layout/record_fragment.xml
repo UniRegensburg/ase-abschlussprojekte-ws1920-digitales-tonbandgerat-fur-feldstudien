@@ -23,11 +23,11 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/chronometer"
+                android:id="@+id/stopwatch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AudidroidTheme.Chronometer"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Stopwatch"
                 android:textColor="@color/color_on_background"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -56,7 +56,7 @@
         <item name="android:textSize">17sp</item>
     </style>
 
-    <style name="TextAppearance.AudidroidTheme.Chronometer" parent="TextAppearance.AudidroidTheme.Headline2">
+    <style name="TextAppearance.AudidroidTheme.Stopwatch" parent="TextAppearance.AudidroidTheme.Headline2">
         <item name="fontFamily">monospace</item>
     </style>
 

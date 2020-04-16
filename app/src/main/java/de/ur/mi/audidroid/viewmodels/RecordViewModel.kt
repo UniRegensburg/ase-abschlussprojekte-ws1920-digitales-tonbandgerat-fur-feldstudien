@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.res.Resources
 import android.media.MediaRecorder
 import android.text.format.DateUtils
-import android.util.Log
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.lifecycle.AndroidViewModel
@@ -48,7 +47,7 @@ class RecordViewModel(
     var isRecording = MutableLiveData<Boolean>()
     var buttonsVisible = MutableLiveData<Boolean>()
     val res: Resources = context.resources
-    lateinit var chronometer: TextView
+    lateinit var stopwatchTextView: TextView
     private val _createDialog = MutableLiveData<Boolean>()
     var errorMessage: String? = null
     val createDialog: MutableLiveData<Boolean>
@@ -60,13 +59,13 @@ class RecordViewModel(
         createDialog.value = false
     }
 
-    fun initializeTimer(chronometer: TextView) {
-        this.chronometer = chronometer
+    fun initializeStopwatch(stopwatchTextView: TextView) {
+        this.stopwatchTextView = stopwatchTextView
         stopwatch.clockDelay = (res.getInteger(
             R.integer.one_second
         )).toLong()
         stopwatch.setOnTickListener(this)
-        chronometer.text = res.getString(R.string.start_time)
+        stopwatchTextView.text = res.getString(R.string.start_time)
     }
 
     fun initializeLayout(frameLayout: FrameLayout) {
@@ -135,7 +134,7 @@ class RecordViewModel(
     }
 
     fun fragmentOnPause() {
-        if (recorderInitialized && createDialog.value == false && chronometer.text != res.getString(
+        if (recorderInitialized && createDialog.value == false && stopwatchTextView.text != res.getString(
                 R.string.start_time
             )
         ) deleteRecord()
@@ -198,7 +197,7 @@ class RecordViewModel(
         buttonsVisible.value = false
         isRecording.value = false
         resumeRecord = false
-        resetTimer()
+        resetStopwatch()
     }
 
     private fun startRecording() {
@@ -321,14 +320,14 @@ class RecordViewModel(
         Snackbar.make(frameLayout, text, res.getInteger(R.integer.snackbar_quite_short)).show()
     }
 
-    /** Resets timer to 00:00 */
-    private fun resetTimer() {
+    /** Resets stopwatch to 00:00 */
+    private fun resetStopwatch() {
         stopwatch.stop()
-        chronometer.text = res.getString(R.string.start_time)
+        stopwatchTextView.text = res.getString(R.string.start_time)
     }
 
     override fun onTick(stopwatch: Stopwatch?) {
-        chronometer.text = DateUtils.formatElapsedTime(
+        stopwatchTextView.text = DateUtils.formatElapsedTime(
             stopwatch!!.elapsedTime / (res.getInteger(
                 R.integer.one_second
             )).toLong()
