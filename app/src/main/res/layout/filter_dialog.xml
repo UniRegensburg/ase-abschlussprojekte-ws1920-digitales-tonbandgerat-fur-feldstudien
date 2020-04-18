@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dialog_margin_small"
-            android:hint="@string/dialog_save_recording_name_hint"
+            android:hint="@string/dialog_filter_name_hint"
             android:importantForAutofill="no"
             android:inputType="text"
             android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />

@@ -182,6 +182,7 @@
     <string name="popup_menu_sort_duration">Duration</string>
     <string name="menu_search">Search</string>
     <string name="menu_filter">Filter</string>
+    <string name="dialog_filter_name_hint">Filter by name</string>
 
     <!--Sharing-->
     <string name="popup_menu_option_share">Share</string>
