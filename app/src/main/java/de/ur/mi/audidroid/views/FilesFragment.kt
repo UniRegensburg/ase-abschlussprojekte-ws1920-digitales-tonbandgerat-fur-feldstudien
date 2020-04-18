@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -20,7 +21,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.adapter.ExternalFolderAdapter
 import de.ur.mi.audidroid.adapter.FolderAdapter
 import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
@@ -36,6 +36,7 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
 import kotlinx.android.synthetic.main.folder_item.*
+import kotlinx.android.synthetic.main.folder_item.view.*
 import org.jetbrains.anko.childrenSequence
 
 /**
@@ -47,7 +48,6 @@ class FilesFragment : Fragment() {
 
     private lateinit var folderAdapter: FolderAdapter
     private lateinit var recordingAdapter: RecordingItemAdapter
-    private lateinit var externalFolderAdapter: ExternalFolderAdapter
     private lateinit var binding: FilesFragmentBinding
     private lateinit var folderViewModel: FolderViewModel
     private lateinit var filesViewModel: FilesViewModel
@@ -154,9 +154,7 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
-    fun expandFolder(folder: FolderEntity, view: View){
-        println("TEST TEST TEST")
-    }
+
     fun addFolderPopupMenu(view: View){
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu_add_folder, popupMenu.menu)
@@ -193,7 +191,6 @@ class FilesFragment : Fragment() {
         if (filesViewModel != null && folderViewModel != null) {
             recordingAdapter = RecordingItemAdapter(this, filesViewModel)
             folderAdapter = FolderAdapter(this, filesViewModel, folderViewModel)
-            externalFolderAdapter = ExternalFolderAdapter(this, filesViewModel, folderViewModel)
 
             binding.recordingListDisplay.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter

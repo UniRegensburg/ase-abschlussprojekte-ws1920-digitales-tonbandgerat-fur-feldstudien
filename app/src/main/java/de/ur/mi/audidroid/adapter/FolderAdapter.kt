@@ -1,11 +1,11 @@
 package de.ur.mi.audidroid.adapter
 
 import android.content.Context
+import android.telecom.RemoteConference
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +26,14 @@ class FolderAdapter(
     private lateinit var recordingAdapter: RecordingItemAdapter
     private lateinit var folderItem: FolderEntity
     private var isSubfolder: Boolean = false
+    private lateinit var folderToBeUpdated: FolderEntity
+    private var _isExpanded = MutableLiveData<Boolean>()
+    val isExpanded: LiveData<Boolean>
+        get() = _isExpanded
+
+    private var _updateContent = MutableLiveData<Boolean>()
+    val updateContent: LiveData<Boolean>
+        get() = _updateContent
 
     private val folderUserActionsListener = object : FolderUserActionsListener {
         override fun onAddFolderClicked(folderEntity: FolderEntity?, view: View) {
@@ -36,11 +44,30 @@ class FolderAdapter(
             filesFragment.openFolderPopupMenu(folderEntity, view)
         }
 
-    }
+        override fun changeFolderExpansion(folderEntity: FolderEntity, view: View) {
+            println("Expansion wird geändert")
+            folderToBeUpdated = folderEntity
+            _isExpanded.value = !isExpanded.value!!
+            println(isExpanded.value!!)
+            println("______________________________")
+            folderViewModel.invalidateFolderView(view)
+        }
 
+    }
+/*External Folder Adapter
+ val recordings = filesViewModel.getAllRecordingsByFolder(folderItem)
+        recordingAdapter = RecordingItemAdapter(filesFragment, filesViewModel)
+        recordings.observe( holder.itemView.context as LifecycleOwner, Observer {
+            it?.let {
+                //recordingAdapter.submitList(it)
+            }
+        })
+* */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         folderItem = getItem(position)
         isSubfolder = folderViewModel.isSubfolder(folderItem)
+        _isExpanded.value = true
+        _updateContent.value = true
         setUpRecordingAdapter(holder)
         holder.bind(getItem(position)!!, recordingAdapter, folderUserActionsListener, isSubfolder)
     }
@@ -79,14 +106,50 @@ class FolderAdapter(
     private fun setUpRecordingAdapter(holder: ViewHolder) {
         recordingAdapter = RecordingItemAdapter(filesFragment, filesViewModel)
         val recordingsWithLabels = filesViewModel.allRecordingsWithLabels
+        val recordingList = mutableListOf<RecordingAndLabels>()
 
         recordingsWithLabels.observe(holder.itemView.context as LifecycleOwner, Observer {
-            val recordingList = mutableListOf<RecordingAndLabels>()
+            //println("RECORDINGS WITH LABEls")
             recordingsWithLabels.value!!.forEach {
                 if (it.folder == folderItem.uid){recordingList.add(it)}
             }
+            //println(updateContent.value)
+            _updateContent.value = !_updateContent.value!!
+            // println(updateContent.value)
+        })
+
+        isExpanded.observe(holder.itemView.context as LifecycleOwner, Observer {
+            //  println("UPDATE CONTENT ")
+            //   println(folderItem)
+            // println(updateContent.value)
+            _updateContent.value = !_updateContent.value!!
+            // println(updateContent.value)
+        })
+
+        updateContent.observe(holder.itemView.context as LifecycleOwner, Observer {
+            // println("INHALT MUSS GEÄNDERT WERDEN")
+            if (isExpanded.value!!){
+                //  println("IST AUSGEKLAPPT: "+ recordingList)
+
+                recordingAdapter.submitList(recordingList)
+
+            }else{
+                val empty = listOf<RecordingAndLabels>()
+                // println("IST EINGEKLAPPT: "+ empty)
+
+                recordingAdapter.submitList(empty)
+
+            }
+        })
+        /*
+        recordingsWithLabels.observe(holder.itemView.context as LifecycleOwner, Observer {
+            println("hier")
+            recordingsWithLabels.value!!.forEach {
+                if (it.folder == folderItem.uid){recordingList.add(it)} }
             recordingAdapter.submitList(recordingList)
         })
+        */
+
     }
 }
 

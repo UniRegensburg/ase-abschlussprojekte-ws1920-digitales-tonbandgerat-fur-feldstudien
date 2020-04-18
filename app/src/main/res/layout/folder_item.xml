@@ -47,7 +47,10 @@
                     <ImageButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        />
+                        android:contentDescription="@string/folder_expansion"
+                        android:onClick="@{(view) -> listener.changeFolderExpansion(folder, view)}"
+                        android:src="@drawable/ic_expand_more"
+                        android:tint="@color/color_on_surface" />
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
