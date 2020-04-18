@@ -112,6 +112,9 @@ class FilesFragment : Fragment() {
         
         val searchItem: MenuItem = menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView
+        searchView.queryHint = context!!.resources.getString(R.string.menu_search_hint)
+
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -138,6 +141,9 @@ class FilesFragment : Fragment() {
             }
             R.id.action_sort_duration -> {
                 filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_duration)
+                true
+            }
+            R.id.action_search ->{
                 true
             }
             else -> super.onOptionsItemSelected(item)
