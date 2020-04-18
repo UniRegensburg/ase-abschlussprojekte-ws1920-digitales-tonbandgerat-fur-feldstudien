@@ -111,12 +111,21 @@ class FilesFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_files, menu)
-
         val searchItem = menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView
+        val sortItem = menu.findItem(R.id.action_sort)
 
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener{
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                sortItem.isVisible = false
+                return true
+            }
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                sortItem.isVisible = true
+                return true
+            }
+        })
 
-        
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -129,6 +138,7 @@ class FilesFragment : Fragment() {
             }
         })
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_sort_name -> {
