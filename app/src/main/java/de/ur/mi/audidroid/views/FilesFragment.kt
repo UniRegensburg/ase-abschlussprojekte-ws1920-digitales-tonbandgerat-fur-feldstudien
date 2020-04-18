@@ -24,7 +24,6 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.FolderAdapter
 import de.ur.mi.audidroid.adapter.RecordingItemAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
-import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
@@ -35,9 +34,6 @@ import de.ur.mi.audidroid.utils.StorageHelper
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
-import kotlinx.android.synthetic.main.folder_item.*
-import kotlinx.android.synthetic.main.folder_item.view.*
-import org.jetbrains.anko.childrenSequence
 
 /**
  * The fragment displays all recordings and folders.
@@ -153,7 +149,6 @@ class FilesFragment : Fragment() {
         }
         popupMenu.show()
     }
-
 
     fun addFolderPopupMenu(view: View){
         val popupMenu = PopupMenu(context, view)
