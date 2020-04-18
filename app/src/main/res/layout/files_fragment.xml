@@ -78,7 +78,8 @@
                         android:contentDescription="@string/sad_face"
                         android:scaleType="center"
                         android:src="@drawable/ic_sentiment_dissatisfied"
-                        android:layout_marginBottom="@dimen/keyline_5"/>
+                        android:layout_marginBottom="@dimen/keyline_5"
+                        android:tint="@color/color_on_surface"/>
 
                     <TextView
                         android:layout_width="wrap_content"

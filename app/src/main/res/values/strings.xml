@@ -72,7 +72,7 @@
     <string name="popup_menu_option_delete">Delete</string>
     <string name="popup_menu_option_edit">Edit</string>
     <string name="popup_menu_cancel">Cancel</string>
-    <string name="popup_menu_option_add_folder">Add Folder</string>
+    <string name="popup_menu_option_add_folder">Add Subfolder</string>
     <string name="popup_menu_option_move_file">Move to Folder</string>
     <string name="folder_created">Folder created</string>
     <string name="folder_deleted">Folder deleted</string>
@@ -162,6 +162,7 @@
     <string name="move_file_dialog_header">Folders</string>
     <string name="dialog_missing_folder_name">The folder must be named.</string>
     <string name="dialog_invalide_enty_move">External files can\'t be moved to the app internal storage.</string>
+    <string name="folder_expansion">expand folder</string>
 
 
     <!-- User Feedback Recording -->

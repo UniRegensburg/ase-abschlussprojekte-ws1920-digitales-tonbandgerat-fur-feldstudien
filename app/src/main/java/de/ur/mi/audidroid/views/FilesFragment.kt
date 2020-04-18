@@ -154,6 +154,9 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
+    fun expandFolder(folder: FolderEntity, view: View){
+        println("TEST TEST TEST")
+    }
     fun addFolderPopupMenu(view: View){
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu_add_folder, popupMenu.menu)

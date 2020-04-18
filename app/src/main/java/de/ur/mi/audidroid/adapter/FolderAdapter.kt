@@ -35,6 +35,7 @@ class FolderAdapter(
         override fun openFolderPopupMenu(folderEntity: FolderEntity, view: View) {
             filesFragment.openFolderPopupMenu(folderEntity, view)
         }
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
