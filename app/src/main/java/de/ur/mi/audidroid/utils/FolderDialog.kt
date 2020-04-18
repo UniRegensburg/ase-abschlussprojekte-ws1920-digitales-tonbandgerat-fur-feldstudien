@@ -73,42 +73,35 @@ object FolderDialog {
 
             //Dialog for the move of a recording to another folder.
             if (recordingToBeMoved != null){
-                if (listOfAvailableFolders!!.isNotEmpty()) {
-                    var position = -1
-                    val folderOptions = getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
-                    if (folderOptions.isNotEmpty()) {
-                        val folderNameArray = getFolderNames(folderOptions)
-                        builder.setTitle(R.string.move_file_dialog_header)
-                        with(builder) {
-                            builder.setSingleChoiceItems(folderNameArray, position) { _, which ->
-                                position = which
-                            }
-                            setPositiveButton(R.string.popup_menu_option_move_file) { _, _ ->
-                                if (position != -1) {
-                                    filesViewModel.recordingMoveValid(
-                                        recordingToBeMoved,
-                                        folderOptions[position].uid
-                                    )
-                                    folderViewModel.onMoveRecordingToFolder(
-                                        recordingToBeMoved,
-                                        folderOptions[position]
-                                    )
-                                } else { filesViewModel.cancelFolderDialog() }
-                            }
-                            setNeutralButton(R.string.popup_menu_cancel) { _, _ ->
-                                filesViewModel.cancelFolderDialog()
-                            }
-                            setNegativeButton(R.string.dialog_no_folder) { _, _ ->
-                                filesViewModel.recordingMoveValid(recordingToBeMoved, null)
-                                folderViewModel.onMoveRecordingToFolder(recordingToBeMoved, null)
-
-                            }
+                var position = -1
+                val folderOptions = getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
+                if (folderOptions.isNotEmpty()) {
+                    val folderNameArray = getFolderNames(folderOptions)
+                    builder.setTitle(R.string.move_file_dialog_header)
+                    with(builder) {
+                        builder.setSingleChoiceItems(folderNameArray, position) { _, which ->
+                            position = which
+                        }
+                        setPositiveButton(R.string.popup_menu_option_move_file) { _, _ ->
+                            if (position != -1) {
+                                filesViewModel.recordingMoveValid(
+                                    recordingToBeMoved,
+                                    folderOptions[position].uid
+                                )
+                                folderViewModel.onMoveRecordingToFolder(
+                                    recordingToBeMoved,
+                                    folderOptions[position]
+                                )
+                            } else { filesViewModel.cancelFolderDialog() }
+                        }
+                        setNeutralButton(R.string.popup_menu_cancel) { _, _ ->
+                            filesViewModel.cancelFolderDialog()
+                        }
+                        setNegativeButton(R.string.dialog_no_folder) { _, _ ->
+                            filesViewModel.recordingMoveValid(recordingToBeMoved, null)
+                            folderViewModel.onMoveRecordingToFolder(recordingToBeMoved, null)
                         }
                     }
-                }else{
-                    //Shows Snackbar if no Folders exist.
-                    folderViewModel.noFolderAvailable()
-                    filesViewModel.cancelFolderDialog()
                 }
             }
         }

@@ -120,8 +120,12 @@ class FilesFragment : Fragment() {
                     filesViewModel.recordingToBeExported = recordingAndLabels
                     filesViewModel.createAlertConvertDialog.value = true}
                 R.id.action_move_recording -> {
-                    filesViewModel.recordingToBeMoved = recordingAndLabels
-                    filesViewModel.createAlertFolderDialog.value = true
+                    if ( folderViewModel.allFolders.value!!.isEmpty()){
+                        folderViewModel.noFolderAvailable()
+                    }else{
+                        filesViewModel.recordingToBeMoved = recordingAndLabels
+                        filesViewModel.createAlertFolderDialog.value = true
+                    }
                 }
             }
             true
