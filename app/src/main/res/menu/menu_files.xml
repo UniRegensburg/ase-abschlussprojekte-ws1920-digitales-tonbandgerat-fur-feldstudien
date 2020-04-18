@@ -3,6 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_search"
+        android:title="@string/menu_search"
+        android:icon="@drawable/ic_search"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
+
+    <item
         android:id="@+id/action_sort"
         android:icon="@drawable/ic_sort"
         android:orderInCategory="100"
@@ -20,13 +28,5 @@
                 android:title="@string/popup_menu_sort_duration" />
         </menu>
     </item>
-   
-    <item
-        android:id="@+id/action_search"
-        android:title="@string/menu_search"
-        android:icon="@drawable/ic_search"
-        android:orderInCategory="100"
-        app:showAsAction="ifRoom"
-        app:actionViewClass="android.widget.SearchView" />
 
 </menu>
