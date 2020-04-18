@@ -42,9 +42,6 @@ object FolderDialog {
                 val inflater: LayoutInflater = LayoutInflater.from(context)
                 val dialogView: View = inflater.inflate(layoutId!!, null)
                 val editText: EditText = dialogView.findViewById(R.id.dialog_add_folder_edit_text)
-                if (folderToBeEdited != null) {
-                    editText.setText(folderToBeEdited.folderName)
-                }
                 val pos: Int = editText.text.length
                 editText.requestFocus()
                 editText.setSelection(pos)
