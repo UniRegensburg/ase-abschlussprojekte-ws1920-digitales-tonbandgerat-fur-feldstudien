@@ -135,9 +135,9 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun updatePreviousRecording(copiedRecordingId: Int, recordingId: Int, path: String) {
+    fun updatePreviousRecording(copiedRecordingId: Int, name: String, path: String) {
         CoroutineScope(coroutineContext).launch {
-            entryDao.updatePreviousRecording(copiedRecordingId, recordingId, path)
+            entryDao.updatePreviousRecording(copiedRecordingId, name, path)
         }
     }
 

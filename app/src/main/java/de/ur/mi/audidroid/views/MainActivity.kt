@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == resources.getInteger(R.integer.activity_request_code_preference_storage) &&
+        if (requestCode == resources.getInteger(R.integer.request_code_preference_storage_preference_fragment) &&
             resultCode == Activity.RESULT_OK
         ) {
             if (Pathfinder.preference != null) {
@@ -104,7 +104,17 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
                     data,
                     this.window.decorView
                 )
-            } else SaveRecordingDialog.resultPathfinder(data!!.data!!)
+            }
+        }
+        if (requestCode == resources.getInteger(R.integer.request_code_preference_storage_record_fragment) &&
+            resultCode == Activity.RESULT_OK
+        ) {
+            SaveRecordingDialog.resultPathfinder(data!!.data!!)
+        }
+        if (requestCode == resources.getInteger(R.integer.request_code_preference_storage_edit_recording_fragment) &&
+            resultCode == Activity.RESULT_OK
+        ) {
+            EditRecordingDialog.resultPathfinder(data!!.data!!)
         }
     }
 

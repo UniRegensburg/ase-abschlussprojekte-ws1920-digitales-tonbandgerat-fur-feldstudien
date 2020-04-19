@@ -4,6 +4,7 @@ package de.ur.mi.audidroid.utils
 import android.content.Context
 import android.content.DialogInterface
 import android.content.res.ColorStateList
+import android.net.Uri
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -42,6 +43,7 @@ object EditRecordingDialog {
     private var layoutId: Int? = null
     private var recordingId: Int? = null
     private var previousRecordingName: String = ""
+    private var previousPath: String = ""
     private lateinit var errorTextView: TextView
     private var previousName = MutableLiveData<Boolean>()
 
@@ -76,6 +78,7 @@ object EditRecordingDialog {
     private fun prepareDataSourceAndDialog(errorMessage: String?) {
         dataSource.getRecordingById(recordingId!!).observe(fragment, Observer {
             previousRecordingName = it.recordingName
+            previousPath = it.recordingPath
         })
         dataSource.getRecLabelsById(recordingId!!).observe(fragment, Observer {
             for (i in it.indices) {
@@ -92,7 +95,12 @@ object EditRecordingDialog {
 
     private fun initializeDialog(errorMessage: String?) {
         pathTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_textview_path)!!
-        selectedPath = getStoragePreference()
+        if (previousPath.contains(context.packageName)) {
+            pathTextView.text = context.getString(R.string.default_storage_location)
+        } else {
+            pathTextView.text = previousPath.replace("/$previousRecordingName.aac", "")
+        }
+        selectedPath = previousPath.replace("/$previousRecordingName.aac", "")
         dialog.findViewById<ImageButton>(R.id.dialog_save_recording_path_button)!!
             .setOnClickListener {
                 pathButtonClicked()
@@ -149,6 +157,7 @@ object EditRecordingDialog {
             dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!.text.toString()
         viewModel.updatePreviousRecording(
             nameInput,
+            previousPath,
             selectedPath,
             getLabelIdFromName()
         )
@@ -156,24 +165,22 @@ object EditRecordingDialog {
         previousLabels.clear()
     }
 
-    private fun getStoragePreference(): String? {
-        val preferences = context.getSharedPreferences(
-            context.getString(R.string.storage_preference_key),
-            Context.MODE_PRIVATE
-        )
-        val storedPathString = preferences.getString(
-            context.getString(R.string.storage_preference_key),
-            context.getString(R.string.default_storage_location)
-        )!!
-        updateTextView(storedPathString)
-        return when (storedPathString == context.getString(R.string.default_storage_location)) {
-            true -> null
-            false -> storedPathString
-        }
+    private fun pathButtonClicked() {
+        Pathfinder.openPathDialog(null, context, "EditRecordingFragment")
     }
 
-    private fun pathButtonClicked() {
-        Pathfinder.openPathDialog(null, context)
+    fun resultPathfinder(treePath: Uri) {
+        val realPath = Pathfinder.getRealPath(context, treePath)
+        if (realPath == null) {
+            Snackbar.make(
+                fragment.requireView(),
+                context.resources.getString(R.string.external_sd_card_error),
+                Snackbar.LENGTH_LONG
+            ).show()
+            return
+        }
+        selectedPath = realPath
+        updateTextView(Pathfinder.getShortenedPath(realPath))
     }
 
     private fun updateTextView(path: String) {

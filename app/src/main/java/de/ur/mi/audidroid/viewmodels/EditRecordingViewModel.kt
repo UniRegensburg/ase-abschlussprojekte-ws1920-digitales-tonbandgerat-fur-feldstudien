@@ -52,9 +52,9 @@ class EditRecordingViewModel(
     private var createdFiles = ArrayList<File>()
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    private val copiedRecording: Long = repository.getCopiedRecordingById(recordingId)
-    val recording: LiveData<EntryEntity> = repository.getRecordingById(copiedRecording.toInt())
-    val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(copiedRecording.toInt())
+    private val copiedRecording: Int = repository.getCopiedRecordingById(recordingId).toInt()
+    val recording: LiveData<EntryEntity> = repository.getRecordingById(copiedRecording)
+    val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(copiedRecording)
     val allMarkers: LiveData<List<MarkerEntity>> = repository.getAllMarkers()
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
@@ -150,7 +150,7 @@ class EditRecordingViewModel(
     }
 
     fun copyMarks() {
-        repository.copyMarks(recordingId, copiedRecording.toInt())
+        repository.copyMarks(recordingId, copiedRecording)
     }
 
     fun initializeMediaPlayer() {
@@ -404,7 +404,7 @@ class EditRecordingViewModel(
         val recordingDuration = getRecordingDuration(convertedFile)
         val audio =
             EntryEntity(
-                uid = copiedRecording.toInt(),
+                uid = copiedRecording,
                 recordingName = convertedFile.name,
                 recordingPath = convertedFile.path,
                 date = getDate(),
@@ -415,12 +415,12 @@ class EditRecordingViewModel(
 
     private fun updateMarks(type: String, startTimeInMilli: Int, endTimeInMilli: Int) {
         if (type == "cutInner") {
-            repository.deleteOuterMarks(copiedRecording.toInt(), startTimeInMilli, endTimeInMilli)
-            repository.updateInnerMarks(copiedRecording.toInt(), startTimeInMilli)
+            repository.deleteOuterMarks(copiedRecording, startTimeInMilli, endTimeInMilli)
+            repository.updateInnerMarks(copiedRecording, startTimeInMilli)
         }
         if (type == "cutOuter") {
-            repository.deleteInnerMarks(copiedRecording.toInt(), startTimeInMilli, endTimeInMilli)
-            repository.updateOuterMarks(copiedRecording.toInt(), endTimeInMilli - startTimeInMilli)
+            repository.deleteInnerMarks(copiedRecording, startTimeInMilli, endTimeInMilli)
+            repository.updateOuterMarks(copiedRecording, endTimeInMilli - startTimeInMilli)
         }
     }
 
@@ -494,13 +494,13 @@ class EditRecordingViewModel(
         }
         File(tempFile).copyTo(newFile)
 
-        repository.updateNameAndPath(copiedRecording.toInt(), name, path, getDate())
+        repository.updateNameAndPath(copiedRecording, name, path, getDate())
         if (labels != null) {
             for (i in labels.indices) {
                 repository.insertRecLabels(
                     LabelAssignmentEntity(
                         0,
-                        copiedRecording.toInt(),
+                        copiedRecording,
                         labels[i]
                     )
                 )
@@ -513,6 +513,7 @@ class EditRecordingViewModel(
 
     fun updatePreviousRecording(
         name: String,
+        previousPath: String,
         pathInput: String?,
         labels: ArrayList<Int>?
     ) {
@@ -527,15 +528,39 @@ class EditRecordingViewModel(
         repository.deleteRecLabels(recordingId)
         if (labels != null) {
             for (i in labels.indices) {
-                repository.updatePreviousLabel(LabelAssignmentEntity(0, recordingId, labels[i]))
+                repository.updatePreviousLabel(LabelAssignmentEntity(0, copiedRecording, labels[i]))
             }
         }
 
         repository.deleteRecMarks(recordingId)
-        repository.updateMarks(recordingId, copiedRecording.toInt())
 
         repository.deleteRecording(recordingId)
-        repository.updatePreviousRecording(copiedRecording.toInt(), recordingId, path)
+
+        if (previousPath != path && tempFile.contains("trimmed")) {
+            File(previousPath).delete()
+            File(tempFile).copyTo(File(path))
+            repository.updatePreviousRecording(copiedRecording, name, path)
+        }
+
+        if (previousPath == path && tempFile.contains("trimmed")) {
+            File(previousPath).delete()
+            File(tempFile).copyTo(File(path))
+            repository.updatePreviousRecording(copiedRecording, name, path)
+        }
+
+        if (previousPath != path && !tempFile.contains("trimmed")) {
+            val newFile = File(path)
+            if (newFile.exists()) {
+                errorDialog(res.getString(R.string.dialog_already_exist))
+                return
+            }
+            File(tempFile).copyTo(newFile)
+            repository.updatePreviousRecording(copiedRecording, name, path)
+        }
+
+        if (previousPath == path && !tempFile.contains("trimmed")) {
+            repository.updatePreviousRecording(copiedRecording, name, path)
+        }
 
         _navigateToFilesFragment.value = true
         showSnackBar(R.string.record_saved)
@@ -589,7 +614,7 @@ class EditRecordingViewModel(
         val mark =
             MarkTimestamp(
                 0,
-                copiedRecording.toInt(),
+                copiedRecording,
                 markerEntity.uid,
                 null,
                 mediaPlayer.currentPosition
@@ -601,7 +626,7 @@ class EditRecordingViewModel(
     private fun updateMarkAndTimestampInDB(newComment: String?, markTimestamp: MarkTimestamp) {
         val updatedMarkTimestamp = MarkTimestamp(
             markTimestamp.mid,
-            copiedRecording.toInt(),
+            copiedRecording,
             markTimestamp.markerId,
             newComment,
             markTimestamp.markTimeInMilli
@@ -637,8 +662,9 @@ class EditRecordingViewModel(
     }
 
     fun deleteEditedRecording() {
-        repository.deleteRecording(copiedRecording.toInt())
-        repository.deleteRecMarks(copiedRecording.toInt())
+        //TODO: delete file
+        repository.deleteRecording(copiedRecording)
+        repository.deleteRecMarks(copiedRecording)
         _navigateToPreviousFragment.value = true
         _createCancelEditingDialog.value = false
     }
@@ -649,7 +675,7 @@ class EditRecordingViewModel(
 
     private fun deleteCreatedFiles() {
         for (file in createdFiles) {
-            file.delete()
+            //TODO: file.delete()
         }
     }
 
