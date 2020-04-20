@@ -143,7 +143,7 @@ object EditRecordingDialog {
                 .text.toString()
         nameInput = if (nameInput == "") null
         else checkVariables(nameInput!!)
-        viewModel.getNewFileFromUserInput(
+        viewModel.saveNewRecording(
             nameInput,
             selectedPath,
             getLabelIdFromName()

@@ -238,11 +238,6 @@ class EditRecordingFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        editRecordingViewModel.fragmentOnPause()
-    }
-
     /**
      * Provides the Repository, recordingPath and context to the EditRecordingViewModel.
      */

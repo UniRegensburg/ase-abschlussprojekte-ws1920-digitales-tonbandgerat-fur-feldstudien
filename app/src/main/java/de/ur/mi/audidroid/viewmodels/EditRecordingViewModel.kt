@@ -18,6 +18,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
+import com.amitshekhar.DebugDB
 import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.FFmpeg
 import com.google.android.material.snackbar.Snackbar
@@ -145,6 +146,7 @@ class EditRecordingViewModel(
     }
 
     init {
+        Log.d("browser", DebugDB.getAddressLog())
         buttonsVisible.value = false
         recordingEdited.value = false
     }
@@ -301,12 +303,6 @@ class EditRecordingViewModel(
         mediaPlayer.release()
     }
 
-    fun fragmentOnPause() {
-        if (recordingEdited.value!!) {
-            deleteCreatedFiles()
-        }
-    }
-
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
@@ -460,7 +456,7 @@ class EditRecordingViewModel(
         }
     }
 
-    fun getNewFileFromUserInput(
+    fun saveNewRecording(
         nameInput: String?,
         pathInput: String?,
         labels: ArrayList<Int>?
@@ -665,7 +661,6 @@ class EditRecordingViewModel(
     }
 
     fun deleteEditedRecording() {
-        //TODO: delete file
         repository.deleteRecording(copiedRecording)
         repository.deleteRecMarks(copiedRecording)
         _navigateToPreviousFragment.value = true
@@ -675,13 +670,6 @@ class EditRecordingViewModel(
     fun cancelDialog() {
         _createCancelEditingDialog.value = false
     }
-
-    private fun deleteCreatedFiles() {
-        for (file in createdFiles) {
-            //TODO: file.delete()
-        }
-    }
-
 
     private fun getRecordingDuration(file: File): String? {
         val uri: Uri = Uri.fromFile(file)
