@@ -429,6 +429,7 @@ class EditRecordingViewModel(
     }
 
     fun cutInner() {
+        onStopPlayer()
         audioInProgress.value = true
         val editor = AudioEditor()
         with(editor) {
@@ -443,6 +444,7 @@ class EditRecordingViewModel(
     }
 
     fun cutOuter() {
+        onStopPlayer()
         audioInProgress.value = true
         val duration = mediaPlayer.duration / oneSecond
         val editor = AudioEditor()
@@ -572,6 +574,7 @@ class EditRecordingViewModel(
     }
 
     fun saveRecording() {
+        onStopPlayer()
         _createSaveDialog.value = true
     }
 
