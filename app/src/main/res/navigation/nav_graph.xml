@@ -48,7 +48,9 @@
             app:argType="integer" />
         <action
             android:id="@+id/action_edit_to_files"
-            app:destination="@id/files" />
+            app:destination="@id/files"
+            app:popUpTo="@id/edit"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/editLabelsFragment"

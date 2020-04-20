@@ -170,6 +170,11 @@ object EditRecordingDialog {
     }
 
     fun resultPathfinder(treePath: Uri) {
+        if (treePath.toString().contains(context.packageName)) {
+            selectedPath = null
+            updateTextView(context.getString(R.string.default_storage_location))
+            return
+        }
         val realPath = Pathfinder.getRealPath(context, treePath)
         if (realPath == null) {
             Snackbar.make(
@@ -179,6 +184,7 @@ object EditRecordingDialog {
             ).show()
             return
         }
+
         selectedPath = realPath
         updateTextView(Pathfinder.getShortenedPath(realPath))
     }
