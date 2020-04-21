@@ -191,9 +191,11 @@ class FilesFragment : Fragment() {
             binding.folderList.adapter = folderAdapter
 
             filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
+                val recordings = arrayListOf<RecordingAndLabels>()
                 it?.let {
-                    recordingAdapter.submitList(it)
+                   it.forEach { recording -> if (recording.folder == null){recordings.add(recording)} }
                 }
+                recordingAdapter.submitList(recordings)
             })
 
             folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {

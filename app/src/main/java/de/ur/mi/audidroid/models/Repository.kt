@@ -194,7 +194,7 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getAllRecordingsWithLabels()
     }
 
-    fun getRecordingsWithLabelsByFolder(folderUid: Int): LiveData<List<RecordingAndLabels>>{
+    fun getRecordingsWithLabelsByFolder(folderUid: Int?): LiveData<List<RecordingAndLabels>>{
         return labelDao.getRecordingsWithLabelsByFolder(folderUid)
     }
 
