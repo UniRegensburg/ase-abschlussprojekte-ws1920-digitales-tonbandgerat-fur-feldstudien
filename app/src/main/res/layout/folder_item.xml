@@ -71,8 +71,14 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="@{folder.folderName}"
+                                android:visibility="@{isSubfolder ? View.GONE : View.VISIBLE}"
                                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline7"  />
-
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{folder.folderName}"
+                                android:visibility="@{isSubfolder ? View.VISIBLE : View.GONE}"
+                                android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2"  />
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
