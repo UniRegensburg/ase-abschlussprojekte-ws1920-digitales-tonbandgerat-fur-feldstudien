@@ -22,73 +22,82 @@
             name="listener"
             type="de.ur.mi.audidroid.adapter.FolderUserActionsListener" />
     </data>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@{isSubfolder ? @dimen/keyline_7 : @dimen/keyline_0}"
-        tools:context=".views.FilesFragment">
         <LinearLayout
             android:id="@+id/recycler_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="@{isSubfolder ? @dimen/keyline_7 : @dimen/keyline_0}"
+            tools:context=".views.FilesFragment"
             android:orientation="vertical">
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/card_view_margin"
                 android:layout_marginTop="@dimen/card_view_margin"
                 android:layout_marginEnd="@dimen/keyline_1">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/folder_created"
-                        android:tint="@color/color_on_surface"
-                        android:layout_gravity="center_vertical"
-                        android:paddingHorizontal="@dimen/keyline_4"
-                        app:srcCompat="@drawable/ic_folder"/>
+                    android:paddingStart="0dp"
+                    android:paddingTop="@dimen/constraint_layout_padding"
+                    android:paddingEnd="@dimen/constraint_layout_padding"
+                    android:paddingBottom="@dimen/constraint_layout_padding">
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/keyline_2"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@{folder.folderName}"
-                            android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline7"/>
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@{folder.nestingDescr}"
-                            android:layout_marginTop="@dimen/keyline_0"
-                            android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2"/>
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/folder_created"
+                            android:tint="@color/color_on_surface"
+                            android:layout_gravity="center_vertical"
+                            android:paddingStart="@dimen/keyline_4"
+                            android:paddingEnd="@dimen/keyline_4"
+                            app:srcCompat="@drawable/ic_folder"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/keyline_2"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{folder.folderName}"
+                                android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline7"  />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@{folder.nestingDescr}"
+                                android:layout_marginTop="@dimen/keyline_0"
+                                android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2"/>
+                        </LinearLayout>
                     </LinearLayout>
-                </LinearLayout>
 
-                <ImageButton
-                    android:id="@+id/button_popup_menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:contentDescription="@string/popup_menu_button"
-                    android:onClick="@{(view) -> listener.openFolderPopupMenu(folder, view)}"
-                    android:src="@drawable/ic_popup_menu"
-                    android:tint="@color/color_on_surface"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:padding="@dimen/keyline_2"
-                    android:paddingEnd="@dimen/keyline_5"
-                    android:layout_gravity="right"
-                    app:layout_constraintVertical_bias="0.016" />
-            </androidx.cardview.widget.CardView>
+                    <ImageButton
+                        android:id="@+id/button_popup_menu"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:contentDescription="@string/popup_menu_button"
+                        android:onClick="@{(view) -> listener.openFolderPopupMenu(folder, view)}"
+                        android:padding="@dimen/keyline_2"
+                        android:src="@drawable/ic_popup_menu"
+                        android:tint="@color/color_on_surface"
+                        android:layout_gravity="center_vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recording_list"
@@ -98,5 +107,4 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/recording_item" />
         </LinearLayout>
-    </FrameLayout>
 </layout>
