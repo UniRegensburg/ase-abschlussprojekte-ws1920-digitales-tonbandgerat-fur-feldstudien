@@ -16,11 +16,13 @@
                     <item
                         android:id="@+id/action_sort_name_asc"
                         android:title="@string/menu_sort_asc"
-                        android:icon="@drawable/ic_sort_asc" />
+                        android:icon="@drawable/ic_sort_asc"
+                        app:iconTint="@color/color_on_surface" />
                     <item
                         android:id="@+id/action_sort_name_desc"
                         android:title="@string/menu_sort_desc"
-                        android:icon="@drawable/ic_sort_desc"/>
+                        android:icon="@drawable/ic_sort_desc"
+                        app:iconTint="@color/color_on_surface" />
                 </menu>
             </item>
             <item
@@ -30,11 +32,13 @@
                     <item
                         android:id="@+id/action_sort_date_asc"
                         android:title="@string/menu_sort_asc"
-                        android:icon="@drawable/ic_sort_asc"/>
+                        android:icon="@drawable/ic_sort_asc"
+                        app:iconTint="@color/color_on_surface"/>
                     <item
                         android:id="@+id/action_sort_date_desc"
                         android:title="@string/menu_sort_desc"
-                        android:icon="@drawable/ic_sort_desc" />
+                        android:icon="@drawable/ic_sort_desc"
+                        app:iconTint="@color/color_on_surface" />
                 </menu>
             </item>
             <item
@@ -44,11 +48,13 @@
                     <item
                         android:id="@+id/action_sort_duration_asc"
                         android:title="@string/menu_sort_asc"
-                        android:icon="@drawable/ic_sort_asc"/>
+                        android:icon="@drawable/ic_sort_asc"
+                        app:iconTint="@color/color_on_surface" />
                     <item
                         android:id="@+id/action_sort_duration_desc"
                         android:title="@string/menu_sort_desc"
-                        android:icon="@drawable/ic_sort_desc" />
+                        android:icon="@drawable/ic_sort_desc"
+                        app:iconTint="@color/color_on_surface"  />
                 </menu>
             </item>
         </menu>

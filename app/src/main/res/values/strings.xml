@@ -180,8 +180,8 @@
     <string name="popup_menu_sort_name">Name</string>
     <string name="popup_menu_sort_date">Date</string>
     <string name="popup_menu_sort_duration">Duration</string>
-    <string name="menu_sort_desc">descending</string>
-    <string name="menu_sort_asc">ascending</string>
+    <string name="menu_sort_desc">Descending</string>
+    <string name="menu_sort_asc">Ascending</string>
 
     <!--Sharing-->
     <string name="popup_menu_option_share">Share</string>
