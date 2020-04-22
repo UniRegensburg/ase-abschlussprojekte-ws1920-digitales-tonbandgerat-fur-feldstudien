@@ -130,10 +130,6 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun getFolderById(folderUid: Int): LiveData<FolderEntity>{
-        return folderDao.getFolderById(folderUid)
-    }
-
     fun updateFolderCount(folderUid: Int, count: Int){
         CoroutineScope(coroutineContext).launch {
             folderDao.updateFolderCount(folderUid, count)
@@ -200,10 +196,6 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getAllRecordingsWithLabels()
     }
 
-    fun getRecordingsWithLabelsByFolder(folderUid: Int?): LiveData<List<RecordingAndLabels>>{
-        return labelDao.getRecordingsWithLabelsByFolder(folderUid)
-    }
-
     fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {
         CoroutineScope(coroutineContext).launch {
             labelAssignmentDao.insertRecLabels(labelAssignment)
@@ -220,14 +212,6 @@ class Repository(application: Application) : CoroutineScope {
         CoroutineScope(coroutineContext).launch {
             markerDao.deleteMark(mid)
         }
-    }
-
-    fun getRecordingByFolder(uid: Int?): LiveData<List<EntryEntity>>{
-        return entryDao.getRecordingByFolder(uid)
-    }
-
-    fun getRecordingWithNoFolder(): LiveData<List<EntryEntity>>{
-        return entryDao.getRecordingWithNoFolder()
     }
 
     fun deleteRecLabels(uid: Int) {

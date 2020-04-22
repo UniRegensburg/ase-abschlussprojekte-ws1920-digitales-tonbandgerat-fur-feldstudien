@@ -215,12 +215,12 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-    private fun updateFolderCount(oldFolderRef: Int?, folderUid: Int?){
+    fun updateFolderCount(oldFolderRef: Int?, newFolderRef: Int?){
         var oldFolder: FolderEntity? = null
         var newFolder: FolderEntity? = null
         allFolders.value!!.forEach {folder ->
            oldFolderRef?.let { if(folder.uid == it){ oldFolder = folder } }
-           folderUid?.let { if(folder.uid == it){ newFolder = folder } }
+            newFolderRef?.let { if(folder.uid == it){ newFolder = folder } }
         }
         oldFolder?.let {
             val count = it.contentCount - 1
@@ -250,4 +250,5 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             }
         }
     }
+
 }

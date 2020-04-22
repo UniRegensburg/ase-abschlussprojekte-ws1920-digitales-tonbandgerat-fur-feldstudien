@@ -21,9 +21,6 @@ interface FolderDao {
     @Query("SELECT * FROM foldersTable WHERE isExternal =:isExternal")
     fun getFolderByStorage(isExternal : Boolean): LiveData<List<FolderEntity>>
 
-    @Query("UPDATE foldersTable SET content = :folderContent WHERE uid = :key")
-    suspend fun updateFolderContent(key: Int, folderContent: String)
-
     @Query("UPDATE foldersTable SET contentCount = :count WHERE uid = :key")
     suspend fun updateFolderCount(key:Int, count: Int)
 

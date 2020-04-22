@@ -108,8 +108,10 @@ class FilesFragment : Fragment() {
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
-                R.id.action_delete_recording ->
+                R.id.action_delete_recording ->{
                     filesViewModel.delete(recordingAndLabels)
+                    recordingAndLabels.folder?.let { folderViewModel.updateFolderCount(recordingAndLabels.folder,null) }
+                }
                 R.id.action_edit_recording ->
                     navigateToEditFragment(recordingAndLabels)
                 R.id.action_share_recording -> {
