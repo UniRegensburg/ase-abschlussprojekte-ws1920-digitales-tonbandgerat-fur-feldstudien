@@ -23,6 +23,19 @@ interface RecordingDao {
     @Insert(onConflict = REPLACE)
     suspend fun insert(recordingEntity: RecordingEntity): Long
 
+    @Query("INSERT INTO recordingsTable (uid, recordingName, recordingPath, date, duration) SELECT null, recordingName, recordingPath, date, duration FROM recordingsTable WHERE uid = :key")
+    suspend fun getCopiedRecordingById(key: Int): Long
+
+    @Query("UPDATE recordingsTable SET recordingName = :name, recordingPath = :path WHERE uid = :copiedRecordingId")
+    suspend fun updatePreviousRecording(copiedRecordingId: Int, name: String, path: String)
+
+    @Update
+    suspend fun updateRecording(entryEntity: RecordingEntity)
+
+    @Query("UPDATE recordingsTable SET recordingName = :name, recordingPath = :path, date = :date WHERE uid = :key")
+    suspend fun updateNameAndPath(key: Int, name: String, path: String, date: String)
+
+
     @Query("DELETE FROM recordingsTable WHERE uid = :key")
     suspend fun delete(key: Int)
 

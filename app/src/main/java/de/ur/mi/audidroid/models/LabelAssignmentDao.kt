@@ -18,6 +18,9 @@ interface LabelAssignmentDao {
     @Insert(onConflict = REPLACE)
     suspend fun insertRecLabels(labelAssignmentEntity: LabelAssignmentEntity)
 
+    @Insert
+    suspend fun updatePreviousLabel(labelAssignmentEntity: LabelAssignmentEntity)
+
     @Query("DELETE FROM labelAssignmentTable WHERE recordingId = :key")
     suspend fun deleteRecLabels(key: Int)
 }
