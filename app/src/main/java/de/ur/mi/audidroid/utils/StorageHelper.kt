@@ -81,9 +81,12 @@ object StorageHelper {
 
         if (parentFolder != null){
             nestingDescr = internalFolderDescr(parentFolder.folderName, parentFolder.nestingDescr)
-            parentFolderRef = parentFolder.uid
+            if (parentFolder.parentDir != null){
+                parentFolderRef = parentFolder.parentDir
+            }else{
+                parentFolderRef = parentFolder.uid
+            }
         }
-
         return  FolderEntity(0, name,null,
             false, parentFolderRef , nestingDescr)
     }
