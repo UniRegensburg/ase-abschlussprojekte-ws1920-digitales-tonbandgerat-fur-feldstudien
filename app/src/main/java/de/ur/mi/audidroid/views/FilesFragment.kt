@@ -120,6 +120,7 @@ class FilesFragment : Fragment() {
                         folderViewModel.noFolderAvailable()
                     }else{
                         filesViewModel.recordingToBeMoved = recordingAndLabels
+                        recordingAndLabels.folder?.let { folderViewModel.getOldFolder(recordingAndLabels.folder) }
                         filesViewModel.createAlertFolderDialog.value = true
                     }
                 }
@@ -156,7 +157,7 @@ class FilesFragment : Fragment() {
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId){
                 R.id.action_add_folder_int ->
-                   folderViewModel.onAddInternalFolderClicked()
+                    folderViewModel.onAddInternalFolderClicked()
                 R.id.action_add_folder_ext ->
                     onClickAddExternalFolder()
             }
@@ -240,6 +241,7 @@ class FilesFragment : Fragment() {
                     filesViewModel = filesViewModel,
                     errorMessage = filesViewModel.errorMessage,
                     layoutId = R.layout.folder_dialog,
+                    folderToBeEdited = folderViewModel.folderToBeEdited,
                     recordingToBeMoved = filesViewModel.recordingToBeMoved,
                     listOfAvailableFolders = folderViewModel.allFolders.value
                 )

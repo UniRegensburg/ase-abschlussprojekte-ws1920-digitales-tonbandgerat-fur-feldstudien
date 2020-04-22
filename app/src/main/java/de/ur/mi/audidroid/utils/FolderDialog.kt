@@ -72,7 +72,7 @@ object FolderDialog {
             if (recordingToBeMoved != null){
                 var position = -1
                 val folderOptions = getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
-                if (folderOptions.isNotEmpty()) {
+                if (folderOptions.isNotEmpty()||folderToBeEdited != null) {
                     val folderNameArray = getFolderNames(folderOptions)
                     builder.setTitle(R.string.move_file_dialog_header)
                     with(builder) {

@@ -30,6 +30,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     var errorMessage: String? = null
     var addFolder: Boolean? = null
     var folderToBeEdited: FolderEntity? = null
+
     private var folderView: View? = null
 
     private var _showSnackbarEvent = MutableLiveData<String>()
@@ -218,12 +219,8 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         var oldFolder: FolderEntity? = null
         var newFolder: FolderEntity? = null
         allFolders.value!!.forEach {folder ->
-           oldFolderRef?.let {
-               if(folder.uid == it){ oldFolder = folder }
-           }
-           folderUid?.let {
-               if(folder.uid == it){ newFolder = folder }
-           }
+           oldFolderRef?.let { if(folder.uid == it){ oldFolder = folder } }
+           folderUid?.let { if(folder.uid == it){ newFolder = folder } }
         }
         oldFolder?.let {
             val count = it.contentCount - 1
@@ -244,5 +241,13 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     fun toggleFolderExpansion(folder: FolderEntity){
        val isExpanded = !folder.isExpanded
         repository.updateFolderExpansion(folder.uid, isExpanded)
+    }
+
+    fun getOldFolder(uid: Int) {
+        allFolders.value!!.forEach { if (it.uid == uid){
+            folderToBeEdited = it
+            return
+            }
+        }
     }
 }

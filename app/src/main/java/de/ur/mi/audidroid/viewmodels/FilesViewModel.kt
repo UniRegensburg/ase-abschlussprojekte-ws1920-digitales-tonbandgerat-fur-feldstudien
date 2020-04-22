@@ -14,7 +14,6 @@ import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
 import de.ur.mi.audidroid.utils.StorageHelper
-import java.io.File
 
 /**
  * ViewModel for FilesFragment.
@@ -157,10 +156,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 }
             }
         }
-    }
-
-    fun getAllRecordingsByFolder(folder : FolderEntity): LiveData<List<EntryEntity>>{
-        return repository.getRecordingByFolder(folder.uid)
     }
 
     // Navigation to the PlayerFragment
