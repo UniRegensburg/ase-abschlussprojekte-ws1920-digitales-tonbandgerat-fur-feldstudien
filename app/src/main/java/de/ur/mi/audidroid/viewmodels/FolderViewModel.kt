@@ -54,8 +54,8 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         folderView = null
     }
 
-    fun isSubfolder(folder: FolderEntity): Boolean{
-        folder.parentDir?.let { return true }
+    fun isSubfolder(folderRef: Int?): Boolean{
+        folderRef?.let { return true }
         return false
     }
 
@@ -239,5 +239,10 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         var recordingPath = entryEntity.recordingPath
         if (newPath != null){ recordingPath = newPath}
         repository.updateFolderRef(entryEntity.uid, folderUid, recordingPath)
+    }
+
+    fun toggleFolderExpansion(folder: FolderEntity){
+       val isExpanded = !folder.isExpanded
+        repository.updateFolderExpansion(folder.uid, isExpanded)
     }
 }

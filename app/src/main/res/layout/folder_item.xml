@@ -21,12 +21,15 @@
         <variable
             name="listener"
             type="de.ur.mi.audidroid.adapter.FolderUserActionsListener" />
+        <variable
+            name="isExpanded"
+            type="Boolean" />
     </data>
         <LinearLayout
             android:id="@+id/recycler_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@{isSubfolder ? @dimen/keyline_7 : @dimen/keyline_0}"
+            android:paddingStart="@{isSubfolder ? @dimen/keyline_7 : @dimen/keyline_0}"
             tools:context=".views.FilesFragment"
             android:orientation="vertical">
             <com.google.android.material.card.MaterialCardView
@@ -50,7 +53,19 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent">
-
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:tint="@color/color_on_surface"
+                            android:contentDescription="@string/folder_expansion"
+                            android:layout_gravity="center_vertical"
+                            android:src="@{isExpanded ? @drawable/ic_expand_more : @drawable/ic_expand_less}"
+                            android:padding="@dimen/keyline_4"
+                            android:onClick="@{(view) -> listener.toggleFolderExpansion(folder, view)}"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            />
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -109,6 +124,7 @@
                 android:id="@+id/recording_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:visibility="@{isExpanded ? View.VISIBLE : View.GONE}"
                 android:adapter="@{recordingAdapter}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/recording_item" />

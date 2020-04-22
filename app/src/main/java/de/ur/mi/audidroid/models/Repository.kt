@@ -140,6 +140,12 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun updateFolderExpansion(folderUid: Int, isExpanded: Boolean){
+        CoroutineScope(coroutineContext).launch {
+            folderDao.updateFolderExpansion(folderUid, isExpanded)
+        }
+    }
+
     fun updateLabel(labelEntity: LabelEntity) {
         CoroutineScope(coroutineContext).launch {
             labelDao.update(labelEntity)

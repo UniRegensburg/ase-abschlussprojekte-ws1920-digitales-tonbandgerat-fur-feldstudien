@@ -35,13 +35,17 @@ class FolderAdapter(
         override fun openFolderPopupMenu(folderEntity: FolderEntity, view: View) {
             filesFragment.openFolderPopupMenu(folderEntity, view)
         }
+
+        override fun toggleFolderExpansion(folderEntity: FolderEntity, view: View) {
+            folderViewModel.toggleFolderExpansion(folderEntity)
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         folderItem = getItem(position)
-        isSubfolder = folderViewModel.isSubfolder(folderItem)
+        isSubfolder = folderViewModel.isSubfolder(folderItem.parentDir)
         setUpRecordingAdapter(holder)
-        holder.bind(getItem(position)!!, recordingAdapter, folderUserActionsListener, isSubfolder)
+        holder.bind(getItem(position)!!, recordingAdapter, folderUserActionsListener, isSubfolder, folderItem.isExpanded )
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -56,12 +60,14 @@ class FolderAdapter(
             item: FolderEntity,
             adapter: RecordingItemAdapter,
             listener: FolderUserActionsListener,
-            boolean: Boolean
+            subFolderBoolean: Boolean,
+            expandBoolean: Boolean
         ) {
             binding.folder = item
             binding.recordingAdapter = adapter
             binding.listener = listener
-            binding.isSubfolder = boolean
+            binding.isSubfolder = subFolderBoolean
+            binding.isExpanded = expandBoolean
             binding.executePendingBindings()
         }
 
