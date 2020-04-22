@@ -210,26 +210,28 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         }
         if (moveSuccessful){
             updateFolderReference(recording, folderRef , newRecordingPath)
-            updateFolderContent(recording, allFolders, destFolder)
+            updateFolderCount(recording.folder, folderRef)
         }
     }
 
-    private fun updateFolderContent(recording: RecordingAndLabels, folders: LiveData<List<FolderEntity>>, destFolder: FolderEntity?){
-        var srcFolder: FolderEntity? = null
-        val folders = folders.value
-        var content = ""
-        recording.folder?.let {
-            folders!!.forEach { if (it.uid == recording.folder){srcFolder = it} }
-            var list  = srcFolder!!.content.split(",")
-            list = list.filter { s -> s.isNotEmpty() }
-            list = list.filter { s -> !s.equals(recording.uid.toString()) }
-            list.forEach { content = content + it + "," }
-            repository.updateFolderContent(srcFolder!!.uid, content)
+    private fun updateFolderCount(oldFolderRef: Int?, folderUid: Int?){
+        var oldFolder: FolderEntity? = null
+        var newFolder: FolderEntity? = null
+        allFolders.value!!.forEach {folder ->
+           oldFolderRef?.let {
+               if(folder.uid == it){ oldFolder = folder }
+           }
+           folderUid?.let {
+               if(folder.uid == it){ newFolder = folder }
+           }
         }
-        destFolder?.let {
-            content = destFolder.content
-            content = content + recording.uid.toString() + ","
-            repository.updateFolderContent(destFolder.uid, content)
+        oldFolder?.let {
+            val count = it.contentCount - 1
+            repository.updateFolderCount(oldFolder!!.uid, count)
+        }
+        newFolder?.let {
+            val count = it.contentCount + 1
+            repository.updateFolderCount(newFolder!!.uid, count)
         }
     }
 

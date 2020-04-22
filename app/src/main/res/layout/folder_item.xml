@@ -82,7 +82,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="@{folder.nestingDescr}"
+                                android:text="@{String.format(@string/folder_content_count,Integer.toString(folder.contentCount))}"
                                 android:layout_marginTop="@dimen/keyline_0"
                                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2"/>
                         </LinearLayout>

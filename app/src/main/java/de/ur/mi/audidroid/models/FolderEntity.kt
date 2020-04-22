@@ -13,5 +13,6 @@ data class FolderEntity(
     @ColumnInfo(name = "isExternal") val isExternal: Boolean = false,
     @ColumnInfo(name = "parentDir") val parentDir: Int? = null,
     @ColumnInfo(name = "nestingDescr") val nestingDescr: String? = null,
-    @ColumnInfo(name = "content") val content: String = ""
+    @ColumnInfo(name = "content") val content: String = "",
+    @ColumnInfo(name = "contentCount") val contentCount: Int = 0
 )

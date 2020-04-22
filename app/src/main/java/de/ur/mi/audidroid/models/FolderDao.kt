@@ -24,6 +24,9 @@ interface FolderDao {
     @Query("UPDATE foldersTable SET content = :folderContent WHERE uid = :key")
     suspend fun updateFolderContent(key: Int, folderContent: String)
 
+    @Query("UPDATE foldersTable SET contentCount = :count WHERE uid = :key")
+    suspend fun updateFolderCount(key:Int, count: Int)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(folderEntity: FolderEntity): Long
 

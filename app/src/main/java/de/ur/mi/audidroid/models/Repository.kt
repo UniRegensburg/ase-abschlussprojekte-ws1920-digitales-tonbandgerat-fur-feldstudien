@@ -134,9 +134,9 @@ class Repository(application: Application) : CoroutineScope {
         return folderDao.getFolderById(folderUid)
     }
 
-    fun updateFolderContent(folderUid: Int, content: String){
+    fun updateFolderCount(folderUid: Int, count: Int){
         CoroutineScope(coroutineContext).launch {
-            folderDao.updateFolderContent(folderUid, content)
+            folderDao.updateFolderCount(folderUid, count)
         }
     }
 
