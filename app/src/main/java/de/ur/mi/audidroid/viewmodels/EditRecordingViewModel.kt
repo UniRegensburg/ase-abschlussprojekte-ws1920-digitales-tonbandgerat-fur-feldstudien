@@ -557,6 +557,7 @@ class EditRecordingViewModel(
         _navigateToFilesFragment.value = true
         showSnackBar(R.string.record_saved)
         saveErrorMessage = null
+        deleteCreatedFiles()
     }
 
     private fun updateDatabase(copiedRecording: Int, name: String, path: String) {
@@ -665,8 +666,15 @@ class EditRecordingViewModel(
     fun deleteEditedRecording() {
         repository.deleteRecording(copiedRecording)
         repository.deleteRecMarks(copiedRecording)
+        deleteCreatedFiles()
         _navigateToPreviousFragment.value = true
         _createCancelEditingDialog.value = false
+    }
+
+    private fun deleteCreatedFiles(){
+        for(file in createdFiles){
+            file.delete()
+        }
     }
 
     fun cancelDialog() {
