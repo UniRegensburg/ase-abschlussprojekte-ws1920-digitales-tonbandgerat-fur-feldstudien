@@ -60,6 +60,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
 
+    private var _filterEmpty = MutableLiveData<Boolean>()
+    val filterEmpty: LiveData<Boolean>
+        get() = _filterEmpty
+
+
     fun doneShowingSnackbar() {
         _showSnackbarEvent.value = null
     }
@@ -231,6 +236,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             }else{
                 displayRecordings.value = allRecordingsWithLabels.value!!
             }
+            _filterEmpty.value = displayRecordings.value!!.isEmpty()
         }
     }
 

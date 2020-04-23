@@ -48,5 +48,27 @@
                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
 
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:visibility="@{filesViewModel.filterEmpty ? View.VISIBLE : View.GONE}">
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/keyline_5"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/sad_face"
+                android:scaleType="center"
+                android:src="@drawable/ic_sentiment_dissatisfied"
+                android:tint="@color/color_on_surface" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filter_no_results"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
+        </LinearLayout>
     </FrameLayout>
 </layout>
