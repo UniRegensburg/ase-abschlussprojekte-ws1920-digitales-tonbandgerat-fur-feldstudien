@@ -100,6 +100,14 @@ object FilterDialog {
                         R.color.grayed_out
                     )
                 )
+            setTextColor(
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.color_on_background
+                    )
+                )
+            )
             if (type == R.integer.chip_type_label){
                 setOnClickListener {
                     labelClicked(chip) }
@@ -107,7 +115,6 @@ object FilterDialog {
                 setOnClickListener {
                     markClicked(chip) }
             }
-
         }
         return chip
     }
@@ -136,6 +143,14 @@ object FilterDialog {
         if (selectedLabels.size < context.resources.getInteger(R.integer.max_label_size)) {
             clickedLabel.chipBackgroundColor =
                 ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
+            clickedLabel.setTextColor(
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.color_on_primary
+                    )
+                )
+            )
             selectedLabels.add((clickedLabel).text.toString())
         } else Snackbar.make(
             fragment.requireView(),
@@ -147,18 +162,42 @@ object FilterDialog {
     private fun addClickedMark(clickedMark: Chip) {
         clickedMark.chipBackgroundColor =
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
+        clickedMark.setTextColor(
+            ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_on_primary
+                )
+            )
+        )
         selectedMarks.add((clickedMark).text.toString())
     }
 
     private fun removeClickedLabel(clickedLabel: Chip) {
         clickedLabel.chipBackgroundColor =
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
+        clickedLabel.setTextColor(
+            ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_on_background
+                )
+            )
+        )
         selectedLabels.remove((clickedLabel).text.toString())
     }
 
     private fun removeClickedMark(clickedMark: Chip) {
         clickedMark.chipBackgroundColor =
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
+        clickedMark.setTextColor(
+            ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_on_background
+                )
+            )
+        )
         selectedMarks.remove((clickedMark).text.toString())
     }
 
