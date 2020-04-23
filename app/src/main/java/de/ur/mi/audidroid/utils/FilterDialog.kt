@@ -24,15 +24,12 @@ import de.ur.mi.audidroid.views.RecordFragment
 object FilterDialog {
 
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
-    private lateinit var pathTextView: TextView
     private lateinit var context: Context
     private var selectedLabels = ArrayList<String>()
     private var selectedMarks = ArrayList<String>()
-    private var selectedPath: String? = null
     private lateinit var fragment: FilesFragment
     private lateinit var labelEntities: List<LabelEntity>
     private lateinit var markEntities: List<MarkerEntity>
-    private lateinit var errorTextView: TextView
     private lateinit var viewModel: FilesViewModel
 
     fun createDialog(
@@ -54,6 +51,10 @@ object FilterDialog {
                         .text.toString()
                 viewModel.setFilterResult(selectedLabels, selectedMarks, nameInput)
                 cancelDialog()
+            }
+            setNegativeButton(R.string.dialog_cancel_button_text){_,_->
+                cancelDialog()
+                viewModel.setFilterResult(selectedLabels, selectedMarks, null)
             }
         }
 
