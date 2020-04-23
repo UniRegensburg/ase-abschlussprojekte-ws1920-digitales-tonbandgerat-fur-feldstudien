@@ -35,7 +35,6 @@ class RecordViewModel(
     AndroidViewModel(application), Stopwatch.OnTickListener {
 
     private val repository = dataSource
-    private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
     private var tempFile = ""
     private var stopwatch: Stopwatch = Stopwatch()
@@ -172,7 +171,6 @@ class RecordViewModel(
         _createDialog.value = false
         buttonsVisible.value = true
         isRecording.value = false
-        resumeRecord = true
     }
 
     fun confirmRecord() {
@@ -181,9 +179,11 @@ class RecordViewModel(
     }
 
     private fun prepareForPossResume() {
-        mediaRecorder.pause()
-        if (!stopwatch.isPaused) {
-            stopwatch.pause()
+        if (isRecording.value!!) {
+            mediaRecorder.pause()
+            if (!stopwatch.isPaused) {
+                stopwatch.pause()
+            }
         }
     }
 
@@ -196,7 +196,6 @@ class RecordViewModel(
     private fun resetView() {
         buttonsVisible.value = false
         isRecording.value = false
-        resumeRecord = false
         resetStopwatch()
     }
 
