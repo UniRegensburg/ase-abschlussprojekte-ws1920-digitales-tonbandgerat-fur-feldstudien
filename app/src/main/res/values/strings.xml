@@ -89,6 +89,7 @@
     <string name="mark_deleted">Mark deleted</string>
     <string name="cancel_editing">Do you really want to delete the edited recording?</string>
     <string name="wave_pic">WavePic</string>
+    <string name="filename_trimmed_recording">(trimmed)_ </string>
 
     <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>

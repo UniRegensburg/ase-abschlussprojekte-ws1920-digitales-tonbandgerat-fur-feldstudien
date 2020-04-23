@@ -39,8 +39,8 @@ class EditRecordingFragment : Fragment() {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.edit_recording_fragment, container, false)
 
-        val application = this.activity!!.application
-        args = EditRecordingFragmentArgs.fromBundle(arguments!!)
+        val application = this.requireActivity().application
+        args = EditRecordingFragmentArgs.fromBundle(requireArguments())
 
         dataSource = Repository(application)
         val handlePlayerBar = initHandler()
@@ -105,11 +105,13 @@ class EditRecordingFragment : Fragment() {
     }
 
     private fun onBackButtonPressed() {
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                editRecordingViewModel.onBackPressed()
-            }
-        })
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    editRecordingViewModel.onBackPressed()
+                }
+            })
     }
 
     private fun navigateToPreviousFragment() {
@@ -135,7 +137,7 @@ class EditRecordingFragment : Fragment() {
         editRecordingViewModel.createSaveDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 de.ur.mi.audidroid.utils.EditRecordingDialog.createDialog(
-                    paramContext = context!!,
+                    paramContext = requireContext(),
                     layoutId = R.layout.save_dialog,
                     recordingId = args.recordingId,
                     viewModel = editRecordingViewModel,
@@ -151,7 +153,7 @@ class EditRecordingFragment : Fragment() {
         editRecordingViewModel.createCommentDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 de.ur.mi.audidroid.utils.CommentDialog.createDialog(
-                    context = context!!,
+                    context = requireContext(),
                     markTimestampToBeEdited = editRecordingViewModel.markTimestampToBeEdited,
                     layoutId = R.layout.comment_dialog,
                     viewModel = editRecordingViewModel,
@@ -165,7 +167,7 @@ class EditRecordingFragment : Fragment() {
         editRecordingViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 de.ur.mi.audidroid.utils.DeleteMarkDialog.createDialog(
-                    context = context!!,
+                    context = requireContext(),
                     markToBeEdited = editRecordingViewModel.markToBeDeleted,
                     viewModel = editRecordingViewModel
                 )
@@ -177,7 +179,7 @@ class EditRecordingFragment : Fragment() {
         editRecordingViewModel.createCancelEditingDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 de.ur.mi.audidroid.utils.CancelEditingDialog.createDialog(
-                    context = context!!,
+                    context = requireContext(),
                     viewModel = editRecordingViewModel
                 )
             }
@@ -231,7 +233,7 @@ class EditRecordingFragment : Fragment() {
                 true
             }
             android.R.id.home -> {
-                activity!!.onBackPressed()
+                requireActivity().onBackPressed()
                 true
             }
             else -> super.onOptionsItemSelected(item)

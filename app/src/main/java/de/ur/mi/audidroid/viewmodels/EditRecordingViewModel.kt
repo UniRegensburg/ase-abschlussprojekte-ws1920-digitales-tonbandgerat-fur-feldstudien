@@ -18,7 +18,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.amitshekhar.DebugDB
 import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.FFmpeg
 import com.google.android.material.snackbar.Snackbar
@@ -53,7 +52,12 @@ class EditRecordingViewModel(
     private var createdFiles = ArrayList<File>()
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    private val copiedRecording: Int = repository.getCopiedRecordingById(recordingId).toInt()
+    private val copiedRecording: Int =
+        repository.getCopiedRecordingById(
+            recordingId,
+            res.getString(R.string.filename_trimmed_recording) + System.currentTimeMillis()
+        )
+            .toInt()
     val recording: LiveData<EntryEntity> = repository.getRecordingById(copiedRecording)
     val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(copiedRecording)
     val allMarkers: LiveData<List<MarkerEntity>> = repository.getAllMarkers()
@@ -146,7 +150,6 @@ class EditRecordingViewModel(
     }
 
     init {
-        Log.d("browser", DebugDB.getAddressLog())
         buttonsVisible.value = false
         recordingEdited.value = false
     }
@@ -433,7 +436,11 @@ class EditRecordingViewModel(
             setStartTime(curPosThumb1String.value!!, curPosThumb1InMilli.value!!)
             setEndTime(curPosThumb2String.value!!, curPosThumb2InMilli.value!!)
             setOutputPath(getOutputPath())
-            setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
+            setOutputFileName(
+                res.getString(R.string.filename_trimmed_recording) + System.currentTimeMillis() + res.getString(
+                    R.string.suffix_audio_file
+                )
+            )
             setCallback(callback)
             cut("cutInner")
         }
@@ -450,7 +457,11 @@ class EditRecordingViewModel(
             setEndTime(curPosThumb2.value.toString(), curPosThumb2InMilli.value!!)
             setDuration(duration.toString())
             setOutputPath(getOutputPath())
-            setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
+            setOutputFileName(
+                res.getString(R.string.filename_trimmed_recording) + System.currentTimeMillis() + res.getString(
+                    R.string.suffix_audio_file
+                )
+            )
             setCallback(callback)
             cut("cutOuter")
         }
@@ -516,48 +527,31 @@ class EditRecordingViewModel(
         labels: ArrayList<Int>?
     ) {
         _createSaveDialog.value = false
-
         val path = java.lang.String.format(
             "%s/$name%s",
             (pathInput ?: context.filesDir.absolutePath),
             res.getString(R.string.suffix_audio_file)
         )
 
-        repository.deleteRecLabels(recordingId)
         if (labels != null) {
             for (i in labels.indices) {
                 repository.updatePreviousLabel(LabelAssignmentEntity(0, copiedRecording, labels[i]))
             }
         }
 
-        repository.deleteRecMarks(recordingId)
-
-        repository.deleteRecording(recordingId)
-
-        if (previousPath != path && tempFile.contains("trimmed")) {
-            File(previousPath).delete()
-            File(tempFile).copyTo(File(path))
-            repository.updatePreviousRecording(copiedRecording, name, path)
-        }
-
-        if (previousPath == path && tempFile.contains("trimmed")) {
-            File(previousPath).delete()
-            File(tempFile).copyTo(File(path))
-            repository.updatePreviousRecording(copiedRecording, name, path)
-        }
-
-        if (previousPath != path && !tempFile.contains("trimmed")) {
-            val newFile = File(path)
-            if (newFile.exists()) {
-                errorDialog(res.getString(R.string.dialog_already_exist))
-                return
+        if (path == previousPath) {
+            if (tempFile.contains(res.getString(R.string.filename_trimmed_recording))) {
+                File(tempFile).copyTo(File(path), true)
+                updateDatabase(copiedRecording, name, path)
             }
-            File(tempFile).copyTo(newFile)
-            repository.updatePreviousRecording(copiedRecording, name, path)
-        }
-
-        if (previousPath == path && !tempFile.contains("trimmed")) {
-            repository.updatePreviousRecording(copiedRecording, name, path)
+        } else {
+            if (tempFile.contains(res.getString(R.string.filename_trimmed_recording))) {
+                File(tempFile).copyTo(File(path))
+                updateDatabase(copiedRecording, name, path)
+            } else {
+                File(previousPath).copyTo(File(path))
+                updateDatabase(copiedRecording, name, path)
+            }
         }
 
         _navigateToFilesFragment.value = true
@@ -565,7 +559,15 @@ class EditRecordingViewModel(
         saveErrorMessage = null
     }
 
+    private fun updateDatabase(copiedRecording: Int, name: String, path: String) {
+        repository.updatePreviousRecording(copiedRecording, name, path)
+        repository.deleteRecLabels(recordingId)
+        repository.deleteRecMarks(recordingId)
+        repository.deleteRecording(recordingId)
+    }
+
     fun onFilesFragmentNavigated() {
+        _createSaveDialog.value = false
         _navigateToFilesFragment.value = false
     }
 

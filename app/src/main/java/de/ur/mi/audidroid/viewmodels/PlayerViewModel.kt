@@ -164,8 +164,7 @@ class PlayerViewModel(
     override fun onCleared() {
         super.onCleared()
         handler.removeCallbacks(runnable)
-        mediaPlayer.reset()
-        mediaPlayer.release()
+        mediaPlayer.stop()
     }
 
     fun fragmentOnPause() {
