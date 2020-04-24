@@ -186,6 +186,12 @@ class EditRecordingViewModel(
         initializeVisualizer()
     }
 
+
+    /**
+     * Visualizing the sound track of the recording through creating an image of the audio waves using FFMPEG
+     * @author: Sabine Roth
+     */
+
     private fun initializeVisualizer(size: String = "640x120") {
         val internalAudioCopy = File(context.filesDir, "internalCopy")
         File(tempFile).copyTo(internalAudioCopy)
