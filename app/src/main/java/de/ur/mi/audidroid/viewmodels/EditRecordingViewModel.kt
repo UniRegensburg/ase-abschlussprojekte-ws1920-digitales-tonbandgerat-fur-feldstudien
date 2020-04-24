@@ -547,9 +547,11 @@ class EditRecordingViewModel(
         } else {
             if (tempFile.contains(res.getString(R.string.filename_trimmed_recording))) {
                 File(tempFile).copyTo(File(path))
+                File(previousPath).delete()
                 updateDatabase(copiedRecording, name, path)
             } else {
                 File(previousPath).copyTo(File(path))
+                File(previousPath).delete()
                 updateDatabase(copiedRecording, name, path)
             }
         }
