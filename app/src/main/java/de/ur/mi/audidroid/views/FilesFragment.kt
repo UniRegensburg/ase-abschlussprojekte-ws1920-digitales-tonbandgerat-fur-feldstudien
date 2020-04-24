@@ -40,7 +40,7 @@ class FilesFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
-        val application = this.activity!!.application
+        val application = this.requireActivity().application
         val dataSource = Repository(application)
 
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
@@ -52,7 +52,8 @@ class FilesFragment : Fragment() {
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                Snackbar.make(view!!, R.string.recording_deleted, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), R.string.recording_deleted, Snackbar.LENGTH_SHORT)
+                    .show()
                 filesViewModel.doneShowingSnackbar()
             }
         })
@@ -64,7 +65,11 @@ class FilesFragment : Fragment() {
                 recordingId?.let {
                     this.findNavController().navigate(
                         FilesFragmentDirections
-                            .actionFilesToPlayer(recordingId)
+                            .actionFilesToPlayer(
+                                recordingId[0].toInt(),
+                                recordingId[1],
+                                recordingId[2]
+                            )
                     )
                     filesViewModel.onPlayerFragmentNavigated()
                 }
@@ -73,7 +78,7 @@ class FilesFragment : Fragment() {
         filesViewModel.createAlertDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 ConvertDialog.createDialog(
-                    context = context!!,
+                    context = requireContext(),
                     layoutId = R.layout.convert_dialog,
                     viewModel = filesViewModel
                 )
@@ -105,7 +110,11 @@ class FilesFragment : Fragment() {
 
     private fun navigateToEditFragment(recordingAndLabels: RecordingAndLabels) {
         this.findNavController().navigate(
-            FilesFragmentDirections.actionFilesToEdit(recordingAndLabels.uid)
+            FilesFragmentDirections.actionFilesToEdit(
+                recordingAndLabels.uid,
+                recordingAndLabels.recordingName,
+                recordingAndLabels.recordingPath
+            )
         )
     }
 
@@ -134,7 +143,7 @@ class FilesFragment : Fragment() {
         filesViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 FilesDialog.createDialog(
-                    context = context!!,
+                    context = requireContext(),
                     type = R.string.confirm_dialog,
                     recording = filesViewModel.recording,
                     viewModel = filesViewModel,

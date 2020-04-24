@@ -526,6 +526,7 @@ class EditRecordingViewModel(
         pathInput: String?,
         labels: ArrayList<Int>?
     ) {
+
         _createSaveDialog.value = false
         val path = java.lang.String.format(
             "%s/$name%s",
@@ -533,26 +534,29 @@ class EditRecordingViewModel(
             res.getString(R.string.suffix_audio_file)
         )
 
-        if (labels != null) {
-            for (i in labels.indices) {
-                repository.updatePreviousLabel(LabelAssignmentEntity(0, copiedRecording, labels[i]))
-            }
-        }
-
         if (path == previousPath) {
             if (tempFile.contains(res.getString(R.string.filename_trimmed_recording))) {
                 File(tempFile).copyTo(File(path), true)
-                updateDatabase(copiedRecording, name, path)
+                updateDatabase(copiedRecording, name, path, labels)
+            } else {
+                if (labels != null) {
+                    repository.deleteRecLabels(recordingId)
+                    for (i in labels.indices) {
+                        repository.insertRecLabels(LabelAssignmentEntity(0, recordingId, labels[i]))
+                    }
+                } else {
+                    repository.deleteRecLabels(recordingId)
+                }
             }
         } else {
             if (tempFile.contains(res.getString(R.string.filename_trimmed_recording))) {
                 File(tempFile).copyTo(File(path))
                 File(previousPath).delete()
-                updateDatabase(copiedRecording, name, path)
+                updateDatabase(copiedRecording, name, path, labels)
             } else {
                 File(previousPath).copyTo(File(path))
                 File(previousPath).delete()
-                updateDatabase(copiedRecording, name, path)
+                updateDatabase(copiedRecording, name, path, labels)
             }
         }
 
@@ -562,8 +566,24 @@ class EditRecordingViewModel(
         deleteCreatedFiles()
     }
 
-    private fun updateDatabase(copiedRecording: Int, name: String, path: String) {
+    private fun updateDatabase(
+        copiedRecording: Int,
+        name: String,
+        path: String,
+        labels: ArrayList<Int>?
+    ) {
         repository.updatePreviousRecording(copiedRecording, name, path)
+        if (labels != null) {
+            for (i in labels.indices) {
+                repository.insertRecLabels(
+                    LabelAssignmentEntity(
+                        0,
+                        copiedRecording,
+                        labels[i]
+                    )
+                )
+            }
+        }
         repository.deleteRecLabels(recordingId)
         repository.deleteRecMarks(recordingId)
         repository.deleteRecording(recordingId)
@@ -673,8 +693,8 @@ class EditRecordingViewModel(
         _createCancelEditingDialog.value = false
     }
 
-    private fun deleteCreatedFiles(){
-        for(file in createdFiles){
+    private fun deleteCreatedFiles() {
+        for (file in createdFiles) {
             file.delete()
         }
     }

@@ -13,7 +13,6 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -45,12 +44,13 @@ object EditRecordingDialog {
     private var previousRecordingName: String = ""
     private var previousPath: String = ""
     private lateinit var errorTextView: TextView
-    private var previousName = MutableLiveData<Boolean>()
 
     fun createDialog(
         paramContext: Context,
         layoutId: Int,
         recordingId: Int,
+        recordingName: String,
+        recordingPath: String,
         viewModel: EditRecordingViewModel,
         errorMessage: String? = null,
         editRecordingFragment: EditRecordingFragment,
@@ -60,10 +60,11 @@ object EditRecordingDialog {
         this.dataSource = dataSource
         this.layoutId = layoutId
         this.recordingId = recordingId
+        this.previousRecordingName = recordingName
+        this.previousPath = recordingPath
         this.viewModel = viewModel
         builder = MaterialAlertDialogBuilder(context)
         fragment = editRecordingFragment
-        previousName.value = true
         builder.setView(layoutId)
         prepareDataSourceAndDialog(errorMessage)
         setDialogButtons(builder)
@@ -76,10 +77,6 @@ object EditRecordingDialog {
     }
 
     private fun prepareDataSourceAndDialog(errorMessage: String?) {
-        dataSource.getRecordingById(recordingId!!).observe(fragment, Observer {
-            previousRecordingName = it.recordingName
-            previousPath = it.recordingPath
-        })
         dataSource.getRecLabelsById(recordingId!!).observe(fragment, Observer {
             for (i in it.indices) {
                 previousLabels.add(it[i].labelName)
@@ -98,7 +95,14 @@ object EditRecordingDialog {
         if (previousPath.contains(context.packageName)) {
             pathTextView.text = context.getString(R.string.default_storage_location)
         } else {
-            pathTextView.text = previousPath.replace("/$previousRecordingName.aac", "")
+            updateTextView(
+                Pathfinder.getShortenedPath(
+                    previousPath.replace(
+                        "/$previousRecordingName.aac",
+                        ""
+                    )
+                )
+            )
         }
         selectedPath = previousPath.replace("/$previousRecordingName.aac", "")
         dialog.findViewById<ImageButton>(R.id.dialog_save_recording_path_button)!!

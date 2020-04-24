@@ -53,9 +53,6 @@ interface MarkerDao {
     @Query("DELETE FROM markerTimeTable WHERE recordingId = :key")
     suspend fun deleteRecMarks(key: Int)
 
-    @Query("UPDATE markerTimeTable SET recordingId = :recordingId WHERE recordingId = :copiedRecordingId")
-    suspend fun updateMarks(recordingId: Int, copiedRecordingId: Int)
-
     @Query("DELETE FROM markerTimeTable WHERE mid = :key")
     suspend fun deleteMark(key: Int)
 }

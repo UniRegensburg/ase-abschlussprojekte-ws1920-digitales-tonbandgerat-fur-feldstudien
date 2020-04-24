@@ -199,7 +199,6 @@ class Repository(application: Application) : CoroutineScope {
         return entryDao.getRecordingById(uid)
     }
 
-
     fun getLabelByName(name: String): List<LabelEntity> {
         var list: List<LabelEntity>? = null
         runBlocking {
@@ -220,21 +219,9 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun updatePreviousLabel(labelAssignment: LabelAssignmentEntity) {
-        CoroutineScope(coroutineContext).launch {
-            labelAssignmentDao.updatePreviousLabel(labelAssignment)
-        }
-    }
-
     fun deleteRecMarks(uid: Int) {
         CoroutineScope(coroutineContext).launch {
             markerDao.deleteRecMarks(uid)
-        }
-    }
-
-    fun updateMarks(recordingId: Int, copiedRecording: Int) {
-        CoroutineScope(coroutineContext).launch {
-            markerDao.updateMarks(recordingId, copiedRecording)
         }
     }
 

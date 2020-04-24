@@ -112,12 +112,16 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     // Navigation to the PlayerFragment
-    private val _navigateToPlayerFragment = MutableLiveData<Int>()
+    private val _navigateToPlayerFragment = MutableLiveData<MutableList<String>>()
     val navigateToPlayerFragment
         get() = _navigateToPlayerFragment
 
-    fun onRecordingClicked(recordingId: Int) {
-        _navigateToPlayerFragment.value = recordingId
+    fun onRecordingClicked(recordingId: Int, recordingName: String, recordingPath: String) {
+        val recording = mutableListOf<String>()
+        recording.add(0, recordingId.toString())
+        recording.add(1, recordingName)
+        recording.add(2, recordingPath)
+        _navigateToPlayerFragment.value = recording
     }
 
     fun onPlayerFragmentNavigated() {

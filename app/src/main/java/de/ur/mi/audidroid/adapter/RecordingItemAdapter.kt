@@ -26,7 +26,11 @@ class RecordingItemAdapter(
 
     val userActionsListener = object : RecordingUserActionsListener {
         override fun onRecordingClicked(recordingAndLabels: RecordingAndLabels) {
-            filesViewModel.onRecordingClicked(recordingAndLabels.uid)
+            filesViewModel.onRecordingClicked(
+                recordingAndLabels.uid,
+                recordingAndLabels.recordingName,
+                recordingAndLabels.recordingPath
+            )
         }
 
         override fun onButtonClicked(recordingAndLabels: RecordingAndLabels, view: View) {

@@ -140,6 +140,8 @@ class EditRecordingFragment : Fragment() {
                     paramContext = requireContext(),
                     layoutId = R.layout.save_dialog,
                     recordingId = args.recordingId,
+                    recordingName = args.recordingName,
+                    recordingPath = args.recordingPath,
                     viewModel = editRecordingViewModel,
                     errorMessage = editRecordingViewModel.saveErrorMessage,
                     editRecordingFragment = this,
