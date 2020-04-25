@@ -547,6 +547,8 @@ class EditRecordingViewModel(
                 } else {
                     repository.deleteRecLabels(recordingId)
                 }
+                repository.deleteRecMarks(recordingId)
+                repository.updateMarks(recordingId, copiedRecording)
             }
         } else {
             if (tempFile.contains(res.getString(R.string.filename_trimmed_recording))) {

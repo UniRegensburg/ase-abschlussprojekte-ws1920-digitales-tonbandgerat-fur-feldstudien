@@ -225,6 +225,12 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun updateMarks(recordingId: Int, copiedRecordingId: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.updateMarks(recordingId, copiedRecordingId)
+        }
+    }
+
     fun deleteMark(mid: Int) {
         CoroutineScope(coroutineContext).launch {
             markerDao.deleteMark(mid)
