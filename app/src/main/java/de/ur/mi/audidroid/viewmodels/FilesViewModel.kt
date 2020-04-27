@@ -23,7 +23,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
-    val allRecordings: LiveData<List<RecordingEntity>> = repository.getAllRecordings()
+    private val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
         repository.getAllRecordingsWithLabels()
     private lateinit var frameLayout: FrameLayout
@@ -67,6 +67,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         if (file.delete()) {
             repository.deleteRecording(recordingAndLabels.uid)
             repository.deleteRecMarks(recordingAndLabels.uid)
+            repository.deleteRecLabels(recordingAndLabels.uid)
             showSnackBar(
                 String.format(
                     context.getString(R.string.recording_deleted),
@@ -99,7 +100,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     ): ArrayList<RecordingAndLabels> {
         for (i in it.indices) {
             val file = File(it[i].recordingPath)
-            if (file.exists()) {
+            if (file.exists() && !it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
                 array.add(it[i])
             } else {
                 repository.deleteRecording(it[i].uid)
@@ -111,12 +112,16 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     // Navigation to the PlayerFragment
-    private val _navigateToPlayerFragment = MutableLiveData<Int>()
+    private val _navigateToPlayerFragment = MutableLiveData<MutableList<String>>()
     val navigateToPlayerFragment
         get() = _navigateToPlayerFragment
 
-    fun onRecordingClicked(recordingId: Int) {
-        _navigateToPlayerFragment.value = recordingId
+    fun onRecordingClicked(recordingId: Int, recordingName: String, recordingPath: String) {
+        val recording = mutableListOf<String>()
+        recording.add(0, recordingId.toString())
+        recording.add(1, recordingName)
+        recording.add(2, recordingPath)
+        _navigateToPlayerFragment.value = recording
     }
 
     fun onPlayerFragmentNavigated() {

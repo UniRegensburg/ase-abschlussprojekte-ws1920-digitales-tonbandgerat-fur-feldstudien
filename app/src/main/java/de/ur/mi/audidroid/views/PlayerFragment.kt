@@ -4,7 +4,6 @@ package de.ur.mi.audidroid.views
 import android.app.Application
 import android.os.Bundle
 import android.view.*
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,10 +40,10 @@ class PlayerFragment : Fragment() {
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
-        val application = this.activity!!.application
+        val application = this.requireActivity().application
         val dataSource = Repository(application)
 
-        args = PlayerFragmentArgs.fromBundle(arguments!!)
+        args = PlayerFragmentArgs.fromBundle(requireArguments())
         val handlePlayerBar = initHandler()
         val viewModelFactory =
             PlayerViewModelFactory(args.recordingId, dataSource, application, handlePlayerBar)
@@ -137,8 +136,18 @@ class PlayerFragment : Fragment() {
 
     private fun navigateToEditFragment() {
         this.findNavController().navigate(
-            PlayerFragmentDirections.actionPlayerToEdit(args.recordingId)
+            PlayerFragmentDirections.actionPlayerToEdit(
+                args.recordingId,
+                args.recordingName,
+                args.recordingPath
+            )
         )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        playerViewModel.fragmentOnPause()
+
     }
 
     /**

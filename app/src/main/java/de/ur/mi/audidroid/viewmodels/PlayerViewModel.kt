@@ -164,12 +164,19 @@ class PlayerViewModel(
     override fun onCleared() {
         super.onCleared()
         handler.removeCallbacks(runnable)
-        mediaPlayer.reset()
-        mediaPlayer.release()
+        mediaPlayer.stop()
+    }
+
+    fun fragmentOnPause() {
+        mediaPlayer.stop()
     }
 
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
+    }
+
+    fun onMarkTimeClicked(markTime: Int) {
+        mediaPlayer.seekTo(markTime)
     }
 
     fun skipPlaying() {
