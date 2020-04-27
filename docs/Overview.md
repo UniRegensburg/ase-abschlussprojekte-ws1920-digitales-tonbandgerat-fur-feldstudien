@@ -1,25 +1,23 @@
 # Audidroid
 
-Das Aufzeichnen von Audio ist ein etabliertes und wichtiges Werkzeug der wissenschaftlichen Forschung. Jedoch bringt ein solches Vorgehen auch eine relativ intensive Nachbearbeitung mit sich. Zum Beispiel können verschiedene Stellen einen unterschiedlichen Informationsgehalt oder verschiedenste Themenfelder beinhalten. Zudem sind zusätzliche Annotationen zumeist von der eigentlichen Datei getrennt oder ganze Sammlungen müssen verwaltet werden. 
+The recording of audio is a tried and tested method in scientific research. The usual downside of this is the relatively intensive postprocessing of audio files. Interviews, for example, can contain very different information and subject areas. Further, annotations are usually separated from the original recording, which makes it difficult to efficiently organize bigger collections of recordings.
 
-Um diese Aufgaben etwas zu erleichtern, soll in der vorgestellten Anwendung Audidroid das unmittelbare Verknüpfen von Toninformation mit Metadaten ermöglicht werden. Ihr Kern ist das eigentliche Erfassen und Speichern von Audio. Jedoch soll ein Nutzer die Möglichkeit haben, ausgesuchte Stellen hervorzuheben, allgemeinere Informationen den Dateien anzuheften und die entstehende Sammlung verwalten zu können. Der Nutzer soll diese Annotation bis zu einem gewissen Grad auf seine Bedürfnisse anpassen können, z. B. durch eigene Kategorien. 
+To make these tasks more bearable, Audidroid was developed to connect metadata directly to the recording audio. At its core, the app focuses on recording and saving audio files. But what makes Audidroid unique are the possibilities of marking important and interesting points in a recording, appending general information to files, and organizing the created collection. The user should be able to configure these annotations to their personal preferences.
 
-So soll die Verwaltung von Audiodateien erleichtert und deren Nutzung effizienter gestaltet werden.
+Through these methods, the organization and usage of audio files should be made more efficient and usable.
 
-## NutzerInnen
+## Users
 
-Einerseits kann die Audidroid-App von Privatpersonen für den persönlichen Gebrauch verwendet werden, um im persönlichen Umfeld Tondokumente zu erstellen und besonders erinnerungswürdige oder lustige Momente im Privatleben zu sichern und möglicherweise zu exportieren und teilen. Zusätzlich wäre eine Art akustisches Tonbandtagebuch mit einer Sammlung von Sprachaufnahmen denkbar. Die einfache Verwaltung der Daten ermöglicht auch unerfahrenen Nutzern die Verwendung der App.
+On the one hand, Audidroid can just be used to create and share audio recordings of any kind, and further as a tool to organize those recordings. The intuitive design of the app enables this functionality to all users.
 
-Andererseits stellt die App die Möglichkeit zur Aufzeichnung von Tondokumenten im wissenschaftlichen Kontext zur Verfügung. Interviews und die Sammlung von Forschungsdaten können gespeichert, wiederholt abgespielt und editiert werden. Nicht nur Wissenschaftler, auch Schüler und Studenten können die App u.a. zur Aufzeichnung von Experimenten bei Studien verwenden. Auch im Bereich der Psychotherapie kann die App von großem Nutzen sein, da die Einzelgespräche ein wichtiger Bestandteil der Sitzungen sind und die Möglichkeit der wiederholten Abspielung essentiell ist.
+On the other hand, Audidroid shines the most if its advanced features are used in a scientific and research context. Interviews and voice notes can be saved, organized, played back, annotated and edited, all directly within the app. This can not only be used by researchers and students conducting user-based research, but also in other branches like psychotherapy, where the analysis of conversations is vital.  
 
-Zusammengefasst richtet sich diese App an StudentInnen, ForscherInnen und InterviewerInnen, die Interviews oder eigene Aufnahmen mit Anmerkungen anreichern wollen. Dies ermöglicht effizienteres Durchsuchen von Tondateien, und somit eine bessere Nachbearbeitung und Auswertung.
+In general, the app is made for students, researchers, and interviewers, who want to quickly annotate recorded audio. This allows for efficient organization and postprocessing, enabling a fast and reliable workflow.
 
+## Features / Use Cases
 
-## Funktionen/Szenarien
+Using Audidroid, users are able to quickly and easily record audio files. During recording, it is possible to highlight important and interesting points, thereby annotating recordings on the fly. After that, users can choose a filename, a storage location, and configurable labels to save their recordings. This, along with the options to create folders, search, filter and sort recordings makes it easy to keep all files organized. The recordings can be played back, and it is possible to skip to the previously marked points. Another feature is editing files right in the app. Users are able to trim and cut recordings, as well as editing labels, marks, and even attaching comments to specific marks. Lastly, files can be shared to other apps, and converted to other audio file formats before that.
 
-Mithilfe der Audidroid-App kann der Nutzer schnell und einfach Tondokumente aufzeichnen. Während des Aufnehmens ist die Markierung mit verschiedenen Labels und das Hinzufügen von Annotationen möglich. Die App liefert darüber hinaus permanentes Feedback über die Aufnahmequalität. Die Aufzeichnungen bleiben in der App gespeichert und können beliebig oft abgespielt werden. Als zusätzliches Feature können die Tondokumente im Nachhinein zugeschnitten werden. Hierbei ist es nicht relevant an welcher Stelle sich die Passagen befinden, die herausgeschnitten werden sollen. Vor allem für die Aufnahme von Interviews ist diese App besonders hilfreich, da wichtige Stellen während der Aufzeichnung markiert werden können. Somit werden auch bei umfangreichen Aufnahmen besonders relevante Passagen schnell wiedergefunden. Dadurch wird diese App zusätzlich zum privaten Gebrauch auch für die Verwendung im beruflichen Bereich interessant.  Außerdem ist das exportieren der Tondokumente möglich, welches in allen genannten Nutzungsbereichen nicht unwichtig ist. Die Sprachaufnahme kann inklusive der Kommentare durch den share dialog von Android mit der präferierten Anwendung verschickt werden.
+## Data source
 
-
-## Datengrundlage
-
-Für die App ist keine externe Datenquelle nötig, da die Dateien lokal auf dem jeweiligen Gerät gespeichert und verarbeitet werden.
+The app has no need for external data sources, as the files get saved and processed locally on the Android device.

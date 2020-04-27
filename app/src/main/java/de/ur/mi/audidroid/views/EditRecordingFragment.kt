@@ -59,7 +59,7 @@ class EditRecordingFragment : Fragment() {
         editRecordingViewModel.recording.observe(viewLifecycleOwner, Observer {
             it?.let {
                 editRecordingViewModel.tempFile = it.recordingPath
-                editRecordingViewModel.initializeFrameLayout(player_layout)
+                editRecordingViewModel.initializeLayout(player_layout)
                 editRecordingViewModel.initializeMediaPlayer()
                 editRecordingViewModel.initializeSeekBar(binding.seekBar)
                 editRecordingViewModel.initializeRangeBar(binding.rangeBar)

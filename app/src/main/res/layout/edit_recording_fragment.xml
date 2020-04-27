@@ -24,18 +24,38 @@
         tools:context=".views.EditRecordingFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/waveView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="90dp"
+                android:layout_marginEnd="90dp"
+                android:alpha="0.4"
+                android:contentDescription="@string/wave_pic"
+                android:elevation="-1dp"
+                android:scaleType="fitXY"
+                android:translationZ="-1dp"
+                app:layout_constraintBottom_toBottomOf="@+id/rangeBarLayout"
+                app:layout_constraintEnd_toEndOf="@+id/seekBarLayout"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/seekBarLayout"
+                app:layout_constraintTop_toTopOf="@+id/seekBarLayout" />
 
             <LinearLayout
                 android:id="@+id/seekBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:paddingTop="@dimen/keyline_2"
                 android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.10"
+                app:layout_constraintVertical_bias="0.09"
+
                 tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
 
                 <TextView
@@ -68,10 +88,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:paddingTop="@dimen/keyline_2"
                 android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.15"
+                app:layout_constraintVertical_bias="0.16"
+
                 tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
 
                 <TextView
@@ -111,6 +133,7 @@
             </LinearLayout>
 
             <Button
+                android:id="@+id/button_cut_inner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@drawable/button_state"
@@ -140,6 +163,7 @@
                 app:layout_constraintVertical_bias="0.242" />
 
             <Button
+                android:id="@+id/button_cut_outer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@drawable/button_state"
@@ -197,6 +221,7 @@
                 tools:listitem="@layout/edit_mark_item" />
 
             <LinearLayout
+                android:id="@+id/marks_layout"
                 android:layout_width="@dimen/layout_width_edit_fragment"
                 android:layout_height="@dimen/layout_height_edit_fragment"
                 android:gravity="center"
