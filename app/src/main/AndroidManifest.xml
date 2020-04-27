@@ -17,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AudidroidTheme.DayNight"
-        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning,LockedOrientationActivity">
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -30,9 +30,9 @@
         </provider>
 
         <activity
-            android:name=".views.MainActivity"
-            android:screenOrientation="userPortrait"
-            tools:ignore="LockedOrientationActivity">
+            android:name=".views.SplashActivity"
+            android:theme="@style/AudidroidTheme.Splash"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -40,15 +40,19 @@
         </activity>
 
         <activity
+            android:name=".views.MainActivity"
+            android:screenOrientation="userPortrait">
+        </activity>
+
+        <activity
             android:name=".views.OnboardingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AudidroidTheme.OnBoarding"
-            tools:ignore="LockedOrientationActivity">
+            android:hardwareAccelerated="true">
         </activity>
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
-
 </manifest>

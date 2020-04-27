@@ -11,7 +11,6 @@ import androidx.leanback.app.OnboardingSupportFragment
 import androidx.preference.PreferenceManager
 import de.ur.mi.audidroid.R
 import pl.droidsonroids.gif.GifDrawable
-import pl.droidsonroids.gif.MultiCallback
 
 
 class OnboardingFragment : OnboardingSupportFragment() {
@@ -31,7 +30,6 @@ class OnboardingFragment : OnboardingSupportFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        logoResourceId = R.drawable.ic_launcher_round
         titleViewTextColor = ContextCompat.getColor(context!!, R.color.color_surface)
         descriptionViewTextColor = ContextCompat.getColor(context!!, R.color.color_surface)
     }
@@ -59,7 +57,7 @@ class OnboardingFragment : OnboardingSupportFragment() {
         return contentView
     }
 
-    private fun roundEdges(gifId: Int): GifDrawable{
+    private fun roundEdges(gifId: Int): GifDrawable {
         val gif = GifDrawable(resources, gifId)
         gif.cornerRadius = 80f
         return gif

@@ -64,7 +64,7 @@
         <item name="android:background">?colorOnBackground</item>
     </style>
 
-    <!-- Leanback-->
+    <!-- Onboarding-->
     <style name="AudidroidTheme.OnBoarding" parent="Theme.Leanback.Onboarding">
         <item name="fontFamily">@font/rubik</item>
         <item name="onboardingDescriptionStyle">@style/OptimizedOnboardingDescriptionStyle</item>
