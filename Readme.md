@@ -5,9 +5,7 @@
 <div align="center">
     <p><strong>Audidroid</strong></p>
     <p>A audio recorder for researchers</p>
-    <a href="#">
-        <img src="https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/workflows/build/badge.svg" alt="Current build status of Audidroid">
-    </a>
+    <img src="https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/workflows/Minimal%20Android%20CI%20Workflow/badge.svg" alt="Build Status" />
 </div>
 
 ---
@@ -18,6 +16,7 @@ Audidroid shines with features specifically designed for this use case.
 Other than the pure audio recording, you can also mark important positions while recording and edit files directly in the app.
 
 Technical information for Audidroid can be found [here](./docs/Setup.md), and a detailed overview of the requirements context can be found [here](./docs/Overview.md).
+Initial mockups and requirements for the app can be found [here](./requirements/Audidroid), tests of comparable existing apps can be found [here](./requirements/App-Tests), and interviews with potential users can be found [here](./requirements/Interviews).
 
 
 ## Team
@@ -31,9 +30,9 @@ Theresa Strohmeier, theresa.strohmeier@stud.uni-regensburg.de, @TheresaStrohmeie
 Lisa Sanladerer, lisa.sanladerer@stud.uni-regensburg.de, @sanlalala
 
 
-## Beschreibung
+## Description
 
-Currently, the following features are implemented:
+The following features are implemented:
 
 **Core features**
 
@@ -45,7 +44,7 @@ Currently, the following features are implemented:
 
 <div style="text-align:center"><img src="requirements/Screenshots/save.jpg" width=200 /></div>
 
-- Searchable and sortable view of all recorded files.
+- Searchable, filterable and sortable view of all recorded files. File organisation via custom folder structures.
 
 <div style="text-align:center"><img src="requirements/Screenshots/list.jpg" width=200 /></div>
 
@@ -79,3 +78,5 @@ Currently, the following features are implemented:
 - Selection of the preferred color scheme (available: light and dark).
 
 <div style="text-align:center"><img src="requirements/Screenshots/settings.jpg" width=200 /></div>
+
+- Rotate screen to improve audio quality of recording (microphone faces interviewee, user interface faces interviewer).
