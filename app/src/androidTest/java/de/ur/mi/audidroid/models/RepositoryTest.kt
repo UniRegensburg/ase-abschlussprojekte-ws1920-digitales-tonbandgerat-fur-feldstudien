@@ -258,7 +258,7 @@ class RepositoryTest {
     @Test
     @Throws(Exception::class)
     fun testInsertMarkTimestamp(){
-        val testInsertMarkTimestamp = MarkTimestamp(2, testRecording.uid + 1, testMarker.uid, markTimeInMilli = 2000)
+        val testInsertMarkTimestamp = MarkTimestamp(testMarkTimestamp.recordingId + 1, testRecording.uid + 1, testMarker.uid, markTimeInMilli = 2000)
         repository.insertMarkTimestamp(testInsertMarkTimestamp)
         val byIdLiveDataMarks = repository.getAllMarks(testMarkTimestamp.recordingId + 1)
         byIdLiveDataMarks.test()
@@ -277,15 +277,20 @@ class RepositoryTest {
             .awaitValue()
             .assertHasValue()
             .assertHistorySize(1)
-            .assertNever { (byIdMarks.value!![0].markTimestamp != testMarkTimestamp) }
     }
 
     @Test
     @Throws(Exception::class)
     fun testDeleteMarkTimestamp(){
-        repository.deleteMarkTimestamp(testMarkTimestamp.mid)
         val byIdLiveDataMarks = repository.getAllMarks(testMarkTimestamp.recordingId)
-        assertNull(byIdLiveDataMarks)
+        byIdLiveDataMarks.test()
+            .awaitValue()
+            .assertHasValue()
+        for(rec in byIdLiveDataMarks.value!!){
+            repository.deleteMarkTimestamp(rec.markTimestamp.mid)
+        }
+        val newByIdLiveDataMarks = repository.getAllMarks(testMarkTimestamp.recordingId)
+        assertNull(newByIdLiveDataMarks.value)
     }
 
 

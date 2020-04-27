@@ -30,7 +30,7 @@ interface RecordingDao {
     suspend fun updatePreviousRecording(copiedRecordingId: Int, name: String, path: String)
 
     @Update
-    suspend fun updateRecording(entryEntity: RecordingEntity)
+    suspend fun updateRecording(recordingEntity: RecordingEntity)
 
     @Query("UPDATE recordingsTable SET recordingName = :name, recordingPath = :path, date = :date WHERE uid = :key")
     suspend fun updateNameAndPath(key: Int, name: String, path: String, date: String)

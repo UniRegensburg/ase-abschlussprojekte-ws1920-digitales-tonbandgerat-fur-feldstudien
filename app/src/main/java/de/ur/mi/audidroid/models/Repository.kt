@@ -58,7 +58,7 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun getRecordingById(uid: Int): LiveData<RecordingEntity> {
-        return recordingDao.getRecordingById(uid)
+        return  recordingDao.getRecordingById(uid)
     }
 
     fun getCopiedRecordingById(recordingId: Int, recordingName: String): Long {
@@ -72,8 +72,10 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun updateRecording(recording: RecordingEntity) {
-        CoroutineScope(coroutineContext).launch {
-            recordingDao.updateRecording(recording)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                recordingDao.updateRecording(recording)
+            }
         }
     }
 
@@ -240,12 +242,20 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
-        return markerDao.getMarksById(uid)
+        var list: LiveData<List<MarkAndTimestamp>>? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                list = markerDao.getMarksById(uid)
+            }
+        }
+        return list!!
     }
 
     fun copyMarks(recordingId: Int, copiedRecordingId: Int) {
-        CoroutineScope(coroutineContext).launch {
-            markerDao.copyMarks(recordingId, copiedRecordingId)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                markerDao.copyMarks(recordingId, copiedRecordingId)
+            }
         }
     }
 

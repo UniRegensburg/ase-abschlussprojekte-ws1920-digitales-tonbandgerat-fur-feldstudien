@@ -22,10 +22,7 @@ import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.FFmpeg
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.RecordingEntity
-import de.ur.mi.audidroid.models.LabelAssignmentEntity
-import de.ur.mi.audidroid.models.MarkAndTimestamp
-import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.*
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
@@ -61,7 +58,7 @@ class EditRecordingViewModel(
             res.getString(R.string.filename_trimmed_recording) + System.currentTimeMillis()
         )
             .toInt()
-    val recording: LiveData<EntryEntity> = repository.getRecordingById(copiedRecording)
+    val recording: LiveData<RecordingEntity> = repository.getRecordingById(copiedRecording)
     val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(copiedRecording)
     val allMarkers: LiveData<List<MarkerEntity>> = repository.getAllMarkers()
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
@@ -405,7 +402,7 @@ class EditRecordingViewModel(
     private fun updateRecording(convertedFile: File) {
         val recordingDuration = getRecordingDuration(convertedFile)
         val audio =
-            EntryEntity(
+            RecordingEntity(
                 uid = copiedRecording,
                 recordingName = convertedFile.name,
                 recordingPath = convertedFile.path,
@@ -648,7 +645,7 @@ class EditRecordingViewModel(
                 null,
                 mediaPlayer.currentPosition
             )
-        repository.insertMark(mark)
+        repository.insertMarkTimestamp(mark)
         showSnackBar(R.string.mark_made)
     }
 
@@ -672,7 +669,7 @@ class EditRecordingViewModel(
     }
 
     fun deleteMark(mid: Int) {
-        repository.deleteMark(mid)
+        repository.deleteMarkTimestamp(mid)
         recordingEdited.value = true
         _createConfirmDialog.value = false
         showSnackBar(R.string.mark_deleted)
