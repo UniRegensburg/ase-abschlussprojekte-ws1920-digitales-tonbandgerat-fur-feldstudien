@@ -67,6 +67,8 @@ The following features are implemented:
 
 **Settings**
 
+- Definition of markers, to use for annotating recordings.
+
 - Definition of labels, to use for file organisation.
 
 <div style="text-align:center"><img src="requirements/Screenshots/labels.jpg" width=200 /></div>
@@ -75,7 +77,7 @@ The following features are implemented:
 
 - Selection of the preferred storage location on the device.
 
-- Selection of the preferred color scheme (available: light and dark).
+- Selection of the preferred color theme (available: light and dark).
 
 <div style="text-align:center"><img src="requirements/Screenshots/settings.jpg" width=200 /></div>
 
