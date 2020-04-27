@@ -51,7 +51,7 @@ class RepositoryTest {
         testLabel = LabelEntity(testUid, testLabelName)
         testMarker = MarkerEntity(testUid, testMarkerName)
         testLabelAssignmentEntity = LabelAssignmentEntity(testUid, testRecording.uid, testLabel.uid)
-        testMarkTimestamp = MarkTimestamp(testUid, testRecording.uid, testMarker.uid, markTime = "test")
+        testMarkTimestamp = MarkTimestamp(testUid, testRecording.uid, testMarker.uid, markTimeInMilli = 1000)
         repository = Repository(context as Application)
         repository.insertRecording(testRecording)
         repository.insertLabel(testLabel)
@@ -101,6 +101,18 @@ class RepositoryTest {
 
     @Test
     @Throws(Exception::class)
+    fun testUpdateRecording() {
+        val updatedRecording = RecordingEntity(testRecording.uid, "newRecName", testRecording.recordingPath, testRecording.date, testRecording.duration)
+        repository.updateRecording(updatedRecording)
+        val checkUpdated  = repository.getRecordingById(testRecording.uid)
+        checkUpdated.test()
+            .awaitValue()
+            .assertHasValue()
+            .assertValue(updatedRecording)
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun testDeleteRecording() {
         repository.deleteRecording(testUid)
         val byIdLiveDataEntity = repository.getRecordingById(testUid)
@@ -112,6 +124,16 @@ class RepositoryTest {
 
 
     /** Labels */
+
+    @Test
+    @Throws(Exception::class)
+    fun testGetAllLabels() {
+        val allLabels = repository.getAllLabels()
+        allLabels.test()
+            .awaitValue()
+            .assertHasValue()
+            .assertHistorySize(1)
+    }
 
     @Test
     @Throws(Exception::class)
@@ -186,6 +208,16 @@ class RepositoryTest {
 
     @Test
     @Throws(Exception::class)
+    fun testGetAllMarkers() {
+        val allLabels = repository.getAllMarkers()
+        allLabels.test()
+            .awaitValue()
+            .assertHasValue()
+            .assertHistorySize(1)
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun testInsertMarker() {
         val nameForInsertMarkerTest = "testInsertMarker"
         val currentList = ArrayList<RecordingEntity>()
@@ -226,7 +258,7 @@ class RepositoryTest {
     @Test
     @Throws(Exception::class)
     fun testInsertMarkTimestamp(){
-        val testInsertMarkTimestamp = MarkTimestamp(2, testRecording.uid + 1, testMarker.uid, markTime = "test")
+        val testInsertMarkTimestamp = MarkTimestamp(2, testRecording.uid + 1, testMarker.uid, markTimeInMilli = 2000)
         repository.insertMarkTimestamp(testInsertMarkTimestamp)
         val byIdLiveDataMarks = repository.getAllMarks(testMarkTimestamp.recordingId + 1)
         byIdLiveDataMarks.test()
@@ -234,6 +266,22 @@ class RepositoryTest {
             .assertHasValue()
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun testCopyMarks(){
+        val recWithoutMarks = RecordingEntity(5, "recWithoutMarks", "test", "test", "test")
+        repository.insertRecording(recWithoutMarks)
+        repository.copyMarks(testRecording.uid, recWithoutMarks.uid)
+        val byIdMarks = repository.getAllMarks(recWithoutMarks.uid)
+        byIdMarks.test()
+            .awaitValue()
+            .assertHasValue()
+            .assertHistorySize(1)
+            .assertNever { (byIdMarks.value!![0].markTimestamp != testMarkTimestamp) }
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun testDeleteMarkTimestamp(){
         repository.deleteMarkTimestamp(testMarkTimestamp.mid)
         val byIdLiveDataMarks = repository.getAllMarks(testMarkTimestamp.recordingId)

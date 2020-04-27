@@ -157,12 +157,6 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getAllRecordingsWithLabels()
     }
 
-    fun updatePreviousLabel(labelAssignment: LabelAssignmentEntity) {
-        CoroutineScope(coroutineContext).launch {
-            labelAssignmentDao.updatePreviousLabel(labelAssignment)
-        }
-    }
-
 
     /** Markers */
 

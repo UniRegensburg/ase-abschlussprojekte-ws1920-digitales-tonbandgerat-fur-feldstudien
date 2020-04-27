@@ -98,8 +98,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.20"
                     android:gravity="center_horizontal"
-                    android:text="@{mark.markAndTimestamp.markTimestamp.markTime}"
-                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2" />
+                    android:onClick="@{() -> listener.onMarkTimeClicked(mark.markAndTimestamp)}"
+                    android:textAppearance="@style/TextAppearance.AudidroidTheme.Body2"
+                    app:markTime="@{mark.markAndTimestamp.markTimestamp.markTimeInMilli}" />
 
                 <ImageButton
                     android:id="@+id/button_popup_menu"
