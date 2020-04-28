@@ -28,40 +28,34 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/waveViewLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/waveView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="90dp"
+                android:layout_marginEnd="90dp"
+                android:alpha="0.4"
+                android:contentDescription="@string/wave_pic"
                 android:elevation="-1dp"
-                android:gravity="center_horizontal"
+                android:scaleType="fitXY"
                 android:translationZ="-1dp"
-                android:weightSum="1"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.108"
-                tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
-
-                <ImageView
-                    android:id="@+id/waveView"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_weight="0.53"
-                    android:alpha="0.4"
-                    android:contentDescription="@string/wave_pic" />
-
-            </LinearLayout>
-
+                app:layout_constraintBottom_toBottomOf="@+id/rangeBarLayout"
+                app:layout_constraintEnd_toEndOf="@+id/seekBarLayout"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/seekBarLayout"
+                app:layout_constraintTop_toTopOf="@+id/seekBarLayout" />
 
             <LinearLayout
                 android:id="@+id/seekBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:paddingTop="@dimen/keyline_2"
                 android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.10"
+                app:layout_constraintVertical_bias="0.09"
+
                 tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
 
                 <TextView
@@ -94,10 +88,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:paddingTop="@dimen/keyline_2"
                 android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.15"
+                app:layout_constraintVertical_bias="0.16"
+
                 tools:layout_editor_absoluteX="@dimen/seek_bar_layout_absolute_x">
 
                 <TextView
