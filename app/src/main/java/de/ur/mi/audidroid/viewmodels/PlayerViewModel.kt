@@ -28,8 +28,7 @@ import java.io.IOException
 class PlayerViewModel(
     recordingId: Int,
     dataSource: Repository,
-    application: Application,
-    val handlePlayerBar: HandlePlayerBar
+    application: Application
 ) : AndroidViewModel(application) {
 
     private val repository = dataSource
@@ -173,10 +172,18 @@ class PlayerViewModel(
     }
 
     fun skipPlaying() {
-        handlePlayerBar.doSkippingPlaying(mediaPlayer, context)
+        HandlePlayerBar.skipPlaying(mediaPlayer, context)
     }
 
     fun returnPlaying() {
-        handlePlayerBar.doReturnPlaying(mediaPlayer, context)
+        HandlePlayerBar.returnPlaying(mediaPlayer, context)
+    }
+
+    fun fastForward(){
+        HandlePlayerBar.fastForward(mediaPlayer)
+    }
+
+    fun fastRewind(){
+        HandlePlayerBar.fastRewind(mediaPlayer)
     }
 }

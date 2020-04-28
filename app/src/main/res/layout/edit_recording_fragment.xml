@@ -13,8 +13,8 @@
             type="de.ur.mi.audidroid.viewmodels.EditRecordingViewModel" />
 
         <variable
-            name="handlePlayerBar"
-            type="de.ur.mi.audidroid.utils.HandlePlayerBar" />
+            name="playerBarListener"
+            type="de.ur.mi.audidroid.utils.PlayerBarListener" />
     </data>
 
     <FrameLayout
@@ -244,7 +244,7 @@
 
         <include
             layout="@layout/bottom_player_bar"
-            bind:handlePlayerBar="@{handlePlayerBar}"
+            bind:playerBarListener="@{playerBarListener}"
             bind:isPlaying="@{editRecordingViewModel.isPlaying()}" />
 
     </FrameLayout>

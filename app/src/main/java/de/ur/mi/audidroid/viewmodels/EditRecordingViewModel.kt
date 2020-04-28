@@ -42,8 +42,7 @@ import java.util.regex.Pattern
 class EditRecordingViewModel(
     recordingId: Int,
     dataSource: Repository,
-    application: Application,
-    val handlePlayerBar: HandlePlayerBar
+    application: Application
 ) :
     AndroidViewModel(application) {
 
@@ -510,11 +509,19 @@ class EditRecordingViewModel(
     }
 
     fun skipPlaying() {
-        handlePlayerBar.doSkippingPlaying(mediaPlayer, context)
+        HandlePlayerBar.skipPlaying(mediaPlayer, context)
     }
 
     fun returnPlaying() {
-        handlePlayerBar.doReturnPlaying(mediaPlayer, context)
+        HandlePlayerBar.returnPlaying(mediaPlayer, context)
+    }
+
+    fun fastForward(){
+        HandlePlayerBar.fastForward(mediaPlayer)
+    }
+
+    fun fastRewind(){
+        HandlePlayerBar.fastRewind(mediaPlayer)
     }
 
     fun cancelDelete() {
