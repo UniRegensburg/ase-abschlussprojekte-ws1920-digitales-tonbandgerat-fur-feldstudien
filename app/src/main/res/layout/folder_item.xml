@@ -35,6 +35,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/grayed_out"
                 android:layout_marginStart="@dimen/card_view_margin"
                 android:layout_marginTop="@dimen/card_view_margin"
                 android:layout_marginEnd="@dimen/keyline_1">
@@ -59,7 +60,7 @@
                             android:tint="@color/color_on_surface"
                             android:contentDescription="@string/folder_expansion"
                             android:layout_gravity="center_vertical"
-                            android:src="@{isExpanded ? @drawable/ic_expand_more : @drawable/ic_expand_less}"
+                            android:src="@{isExpanded ? @drawable/ic_expand_less : @drawable/ic_expand_more}"
                             android:padding="@dimen/keyline_4"
                             android:onClick="@{(view) -> listener.toggleFolderExpansion(folder, view)}"
                             app:layout_constraintBottom_toBottomOf="parent"

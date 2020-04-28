@@ -136,6 +136,7 @@ class FilesFragment : Fragment() {
         val popupMenu = PopupMenu(context, view)
         folderViewModel.folderToBeEdited = folder
         popupMenu.menuInflater.inflate(R.menu.popup_menu_folder, popupMenu.menu)
+        if(folder.parentDir != null){ popupMenu.menu.findItem(R.id.action_add_subfolder).isVisible = false }
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId){
                 R.id.action_add_subfolder ->{
