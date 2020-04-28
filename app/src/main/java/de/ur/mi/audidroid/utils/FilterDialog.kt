@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.google.android.material.chip.Chip
@@ -17,9 +16,7 @@ import de.ur.mi.audidroid.models.LabelEntity
 import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
-import de.ur.mi.audidroid.viewmodels.RecordViewModel
 import de.ur.mi.audidroid.views.FilesFragment
-import de.ur.mi.audidroid.views.RecordFragment
 
 object FilterDialog {
 
@@ -27,6 +24,7 @@ object FilterDialog {
     private lateinit var context: Context
     private var selectedLabels = ArrayList<String>()
     private var selectedMarks = ArrayList<String>()
+    private var nameInput : String? = null
     private lateinit var fragment: FilesFragment
     private lateinit var labelEntities: List<LabelEntity>
     private lateinit var markEntities: List<MarkerEntity>
@@ -42,18 +40,15 @@ object FilterDialog {
         this.viewModel = viewModel
         this.context = context
         val builder = MaterialAlertDialogBuilder(context).setView(layoutId)
-        selectedLabels.clear()
-        selectedMarks.clear()
         with(builder){
             setPositiveButton(context.getString(R.string.menu_filter)){_, _ ->
-                var nameInput: String? =
-                    dialog.findViewById<EditText>(R.id.dialog_filter_recording_edittext_name)!!
-                        .text.toString()
+                nameInput = dialog.findViewById<EditText>(R.id.dialog_filter_recording_edittext_name)!!.text.toString()
                 viewModel.setFilterResult(selectedLabels, selectedMarks, nameInput)
                 cancelDialog()
             }
             setNegativeButton(R.string.dialog_cancel_button_text){_,_->
                 cancelDialog()
+                clearDialog()
                 viewModel.setFilterResult(selectedLabels, selectedMarks, null)
             }
         }
@@ -61,10 +56,9 @@ object FilterDialog {
         dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
         dataSource.getAllMarkers().observe(fragment, Observer { getMarks(it) })
         dialog = builder.create()
-        dialog.setOnCancelListener {
-            cancelDialog()
-        }
+        dialog.setOnCancelListener { cancelDialog() }
         dialog.show()
+        nameInput?.let { dialog.findViewById<EditText>(R.id.dialog_filter_recording_edittext_name)!!.setText(nameInput) }
     }
 
     private fun getMarks(list: List<MarkerEntity>) {
@@ -85,6 +79,7 @@ object FilterDialog {
             for (label in list) {
                 chipGroup!!.addView(createChip(label.labelName, R.integer.chip_type_label))
             }
+
         } else dialog.findViewById<LinearLayout>(R.id.dialog_filter_recording_label_layout)!!.visibility =
             View.GONE
     }
@@ -93,30 +88,35 @@ object FilterDialog {
         val chip = Chip(context)
         with(chip) {
             text = name
-            chipBackgroundColor =
-                ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.grayed_out
-                    )
-                )
-            setTextColor(
-                ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        context,
-                        R.color.color_on_background
-                    )
-                )
-            )
             if (type == R.integer.chip_type_label){
+                chipBackgroundColor = setChipBackground(selectedLabels.contains(name))
+                setTextColor(setChipTextColor(selectedLabels.contains(name)))
                 setOnClickListener {
                     labelClicked(chip) }
             }else{
+                chipBackgroundColor = setChipBackground(selectedMarks.contains(name))
+                setTextColor(setChipTextColor(selectedMarks.contains(name)))
                 setOnClickListener {
                     markClicked(chip) }
             }
         }
         return chip
+    }
+
+    private fun setChipBackground(preSelected: Boolean):ColorStateList{
+        if (preSelected){
+            return ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
+        }else{
+            return ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
+        }
+    }
+
+    private fun setChipTextColor(preSelected: Boolean): ColorStateList{
+        if (preSelected){
+            return   ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_on_primary))
+        }else{
+            return  ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_on_background))
+        }
     }
 
     private fun markClicked(clickedMark: Chip) {
@@ -201,9 +201,12 @@ object FilterDialog {
         selectedMarks.remove((clickedMark).text.toString())
     }
 
-    private fun cancelDialog(){
+    private fun clearDialog(){
         selectedLabels.clear()
         selectedMarks.clear()
+        nameInput = null
+    }
+    private fun cancelDialog(){
         viewModel.cancelFilterDialog()
     }
 }
