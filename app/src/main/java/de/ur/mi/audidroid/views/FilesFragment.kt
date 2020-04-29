@@ -163,6 +163,7 @@ class FilesFragment : Fragment() {
         filesViewModel.setSorting(null)
         setupAdapter()
         createConfirmDialog()
+        FilterDialog.clearDialog()
     }
 
     private fun setupAdapter() {

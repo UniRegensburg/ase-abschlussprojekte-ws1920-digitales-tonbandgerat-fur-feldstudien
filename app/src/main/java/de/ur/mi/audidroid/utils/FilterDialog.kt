@@ -201,7 +201,7 @@ object FilterDialog {
         selectedMarks.remove((clickedMark).text.toString())
     }
 
-    private fun clearDialog(){
+    fun clearDialog(){
         selectedLabels.clear()
         selectedMarks.clear()
         nameInput = null
