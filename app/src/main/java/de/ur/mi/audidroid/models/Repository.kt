@@ -219,4 +219,8 @@ class Repository(application: Application) : CoroutineScope {
             labelAssignmentDao.deleteRecLabels(uid)
         }
     }
+
+    fun getExternalFolderCount(): LiveData<Int>{
+        return folderDao.getExternalFolderCount()
+    }
 }

@@ -27,6 +27,9 @@ interface FolderDao {
     @Query("UPDATE foldersTable SET isExpanded = :expansion WHERE uid = :key")
     suspend fun updateFolderExpansion(key:Int, expansion: Boolean)
 
+    @Query("SELECT COUNT(*) FROM foldersTable WHERE isExternal = 1 ")
+    fun getExternalFolderCount(): LiveData<Int>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(folderEntity: FolderEntity): Long
 

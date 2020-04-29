@@ -25,7 +25,8 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
     val allFoldersSorted = MediatorLiveData<List<FolderEntity>>()
-
+    val externalFolderLiveData: LiveData<Int> = repository.getExternalFolderCount()
+    var externalFolderCount = 0
     var dialogType: Int = R.string.confirm_dialog
     var errorMessage: String? = null
     var addFolder: Boolean? = null

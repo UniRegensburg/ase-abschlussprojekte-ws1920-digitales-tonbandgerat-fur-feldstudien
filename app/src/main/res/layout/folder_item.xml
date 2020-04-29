@@ -75,8 +75,18 @@
                             android:layout_gravity="center_vertical"
                             android:paddingStart="@dimen/keyline_4"
                             android:paddingEnd="@dimen/keyline_4"
+                            android:visibility="@{folder.external ? View.GONE : View.VISIBLE}"
                             app:srcCompat="@drawable/ic_folder"/>
-
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/folder_created"
+                            android:tint="@color/color_on_surface"
+                            android:layout_gravity="center_vertical"
+                            android:paddingStart="@dimen/keyline_4"
+                            android:paddingEnd="@dimen/keyline_4"
+                            android:visibility="@{folder.external ? View.VISIBLE : View.GONE}"
+                            app:srcCompat="@drawable/ic_folder_extern"/>
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

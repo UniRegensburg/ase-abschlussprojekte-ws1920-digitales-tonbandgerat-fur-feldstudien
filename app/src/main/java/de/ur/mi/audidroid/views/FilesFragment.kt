@@ -48,6 +48,7 @@ class FilesFragment : Fragment() {
     private lateinit var folderViewModel: FolderViewModel
     private lateinit var filesViewModel: FilesViewModel
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -70,6 +71,10 @@ class FilesFragment : Fragment() {
         folderViewModel.sortAllFolders()
 
         observeSnackBars()
+
+        folderViewModel.externalFolderLiveData.observe(viewLifecycleOwner, Observer {
+            folderViewModel.externalFolderCount = it
+        })
 
         // Observer on the state variable for navigating when a list-item is clicked.
         filesViewModel.navigateToPlayerFragment.observe(
@@ -141,14 +146,10 @@ class FilesFragment : Fragment() {
         }
 
         if (path.startsWith(context!!.resources.getString(R.string.content_uri_prefix))){
-            //Auslagern in Datenbank
-            var externalFolderCount = 0
-            folderViewModel.allFolders.value!!.forEach { if (it.isExternal){
-                externalFolderCount = externalFolderCount +1 }
-            }
+
+            val externalFolderCount = folderViewModel.externalFolderCount
             if (externalFolderCount <= 1){
-                popupMenu.menu.findItem(R.id.action_move_recording).isVisible = false
-            }
+                popupMenu.menu.findItem(R.id.action_move_recording).isVisible = false}
         }
     }
 
@@ -223,9 +224,9 @@ class FilesFragment : Fragment() {
             })
 
             folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {
-                it?.let {
-                    folderAdapter.submitList(it)
-                }
+                val folders = arrayListOf<FolderEntity>()
+                it?.let { folders.addAll(it) }
+                folderAdapter.submitList(folders)
             })
         }
     }
