@@ -48,7 +48,7 @@ The following features are implemented:
 
 <div style="text-align:center"><img src="requirements/screenshots/list.jpg" width=200 /></div>
 
-- Playback of recorded files. Skipping to marked positions.
+- Playback of recorded files. Skipping forward and backward, or also to marked positions. Changing the playback speed.
 
 <div style="text-align:center"><img src="requirements/screenshots/play.jpg" width=200 /></div>
 

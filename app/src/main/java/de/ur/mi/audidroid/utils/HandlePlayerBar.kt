@@ -33,7 +33,7 @@ object HandlePlayerBar {
     }
 
     fun fastForward(mediaPlayer: MediaPlayer) {
-        if (mediaPlayer.isPlaying) {
+        if (mediaPlayer.isPlaying && mediaPlayer.playbackParams.speed < 2.5f) {
             val newParams = mediaPlayer.playbackParams
             newParams.speed = mediaPlayer.playbackParams.speed + 0.25f
             mediaPlayer.playbackParams = newParams
