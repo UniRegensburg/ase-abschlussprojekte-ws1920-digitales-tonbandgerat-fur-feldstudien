@@ -44,6 +44,7 @@ object HandlePlayerBar {
         enableButton(buttonRewind, context)
     }
 
+    fun fastRewind(mediaPlayer: MediaPlayer, context: Context, buttonRewind: ImageButton, buttonForward: ImageButton) {
         if (mediaPlayer.isPlaying && mediaPlayer.playbackParams.speed > 0.25f) {
             val newParams = mediaPlayer.playbackParams
             newParams.speed = mediaPlayer.playbackParams.speed - 0.25f
