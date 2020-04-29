@@ -10,6 +10,7 @@ import android.text.format.DateUtils
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
@@ -49,6 +50,8 @@ class EditRecordingViewModel(
     private val repository = dataSource
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
+    private lateinit var buttonFastForward: ImageButton
+    private lateinit var buttonFastRewind: ImageButton
     private lateinit var seekBar: SeekBar
     private lateinit var rangeBar: MultiSlider
     private val context = getApplication<Application>().applicationContext
@@ -182,6 +185,8 @@ class EditRecordingViewModel(
 
     fun initializeLayout(frameLayout: FrameLayout) {
         this.frameLayout = frameLayout
+        buttonFastForward = frameLayout.findViewById(R.id.bar_fast_forward)
+        buttonFastRewind = frameLayout.findViewById(R.id.bar_fast_rewind)
         initializeVisualizer()
     }
 
@@ -243,6 +248,7 @@ class EditRecordingViewModel(
         isPlaying.value = mediaPlayer.isPlaying
         initializeMediaPlayer()
         initializeSeekBar(seekBar)
+        resetPlayerBar()
     }
 
     override fun onCleared() {
@@ -517,11 +523,16 @@ class EditRecordingViewModel(
     }
 
     fun fastForward(){
-        HandlePlayerBar.fastForward(mediaPlayer)
+        HandlePlayerBar.fastForward(mediaPlayer, context, buttonFastForward, buttonFastRewind)
     }
 
     fun fastRewind(){
-        HandlePlayerBar.fastRewind(mediaPlayer)
+        HandlePlayerBar.fastRewind(mediaPlayer, context, buttonFastRewind, buttonFastRewind)
+    }
+
+    private fun resetPlayerBar(){
+        buttonFastRewind.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
+        buttonFastForward.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
     }
 
     fun cancelDelete() {

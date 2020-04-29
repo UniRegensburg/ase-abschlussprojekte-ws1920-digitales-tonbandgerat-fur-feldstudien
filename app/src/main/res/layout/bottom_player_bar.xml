@@ -57,7 +57,7 @@
             android:onClick="@{() -> playerBarListener.skipPlaying()}"/>
 
         <ImageButton
-            android:id="@+id/bar_fast_forward"
+            android:id="@+id/bar_fast_rewind"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -70,7 +70,7 @@
             android:onClick="@{() -> playerBarListener.fastRewind()}"/>
 
         <ImageButton
-            android:id="@+id/bar_fast_rewind"
+            android:id="@+id/bar_fast_forward"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
