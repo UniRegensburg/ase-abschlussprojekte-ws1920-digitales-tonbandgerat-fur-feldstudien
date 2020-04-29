@@ -100,9 +100,17 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     ): ArrayList<RecordingAndLabels> {
         for (i in it.indices) {
             val file = File(it[i].recordingPath)
-            if (file.exists() && !it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
-                array.add(it[i])
-            } else {
+
+            if (file.exists()) {
+                if (!it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
+                    array.add(it[i])
+                } else if (it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
+                    File(it[i].recordingPath).delete()
+                    repository.deleteRecording(it[i].uid)
+                    repository.deleteRecMarks(it[i].uid)
+                    repository.deleteRecLabels(it[i].uid)
+                }
+            } else if (!file.exists() && !it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
                 repository.deleteRecording(it[i].uid)
                 repository.deleteRecMarks(it[i].uid)
                 repository.deleteRecLabels(it[i].uid)

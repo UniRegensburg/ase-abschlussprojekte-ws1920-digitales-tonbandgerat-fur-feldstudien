@@ -83,11 +83,11 @@ class Repository(application: Application) : CoroutineScope {
         return temp!!
     }
 
-    fun getCopiedRecordingById(recordingId: Int, recordingName: String): Long {
+    fun getCopiedRecordingById(recordingId: Int): Long {
         var temp: Long? = null
         runBlocking {
             CoroutineScope(coroutineContext).launch {
-                temp = entryDao.getCopiedRecordingById(recordingId, recordingName)
+                temp = entryDao.getCopiedRecordingById(recordingId)
             }
         }
         return temp!!

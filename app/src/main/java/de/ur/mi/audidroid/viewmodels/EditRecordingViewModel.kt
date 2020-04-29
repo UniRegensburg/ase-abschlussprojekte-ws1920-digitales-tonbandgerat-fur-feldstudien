@@ -58,8 +58,7 @@ class EditRecordingViewModel(
     private val res = context.resources
     private val copiedRecording: Int =
         repository.getCopiedRecordingById(
-            recordingId,
-            res.getString(R.string.filename_trimmed_recording) + System.currentTimeMillis()
+            recordingId
         )
             .toInt()
     val recording: LiveData<EntryEntity> = repository.getRecordingById(copiedRecording)
@@ -264,7 +263,7 @@ class EditRecordingViewModel(
             if (wavePic.exists()) wavePic.delete()
         }
     }
-    
+
     fun onStartPlayer() {
         mediaPlayer.start()
         handler.postDelayed(runnable, 0)
@@ -536,6 +535,7 @@ class EditRecordingViewModel(
                 }
                 repository.deleteRecMarks(recordingId)
                 repository.updateMarks(recordingId, copiedRecording)
+                repository.deleteRecording(copiedRecording)
             }
         } else {
             if (tempFile.contains(res.getString(R.string.filename_trimmed_recording))) {
@@ -576,6 +576,7 @@ class EditRecordingViewModel(
         repository.deleteRecLabels(recordingId)
         repository.deleteRecMarks(recordingId)
         repository.deleteRecording(recordingId)
+
     }
 
     fun onFilesFragmentNavigated() {
