@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
+import androidx.core.view.isVisible
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
@@ -19,6 +20,7 @@ import de.ur.mi.audidroid.viewmodels.FolderViewModel
 object FolderDialog {
 
     private lateinit var dialog: AlertDialog
+    private var folderOptions = listOf<FolderEntity>()
 
     fun createDialog(
         context: Context,
@@ -51,11 +53,7 @@ object FolderDialog {
                     builder.setMessage(errorMessage)
                 }
                 with(builder) {
-                    setTitle(
-                        String.format(
-                            context.getString(R.string.create_folder_dialog_header)
-                        )
-                    )
+                    setTitle( String.format(context.getString(R.string.create_folder_dialog_header)))
                     setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
                         val nameInput: String? = editText.text.toString()
                         folderViewModel.onFolderSaveClicked(nameInput!!, folderToBeEdited)
@@ -71,9 +69,10 @@ object FolderDialog {
             //Dialog for the move of a recording to another folder.
             if (recordingToBeMoved != null){
                 var position = -1
-                val folderOptions = getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
+                folderOptions = getFolderOptions(context, listOfAvailableFolders, recordingToBeMoved)
                 if (folderOptions.isNotEmpty()||folderToBeEdited != null) {
                     val folderNameArray = getFolderNames(folderOptions)
+                    var validMove: Boolean
                     builder.setTitle(R.string.move_file_dialog_header)
                     with(builder) {
                         builder.setSingleChoiceItems(folderNameArray, position) { _, which ->
@@ -81,22 +80,22 @@ object FolderDialog {
                         }
                         setPositiveButton(R.string.popup_menu_option_move_file) { _, _ ->
                             if (position != -1) {
-                                filesViewModel.recordingMoveValid(
-                                    recordingToBeMoved,
-                                    folderOptions[position].uid
-                                )
-                                folderViewModel.onMoveRecordingToFolder(
-                                    recordingToBeMoved,
-                                    folderOptions[position]
-                                )
+                                validMove = filesViewModel.recordingMoveValid(recordingToBeMoved,
+                                    folderOptions[position].uid)
+                                if (validMove){
+                                    folderViewModel.onMoveRecordingToFolder(recordingToBeMoved,
+                                        folderOptions[position])
+                                }
                             } else { filesViewModel.cancelFolderDialog() }
                         }
                         setNeutralButton(R.string.popup_menu_cancel) { _, _ ->
                             filesViewModel.cancelFolderDialog()
                         }
                         setNegativeButton(R.string.dialog_no_folder) { _, _ ->
-                            filesViewModel.recordingMoveValid(recordingToBeMoved, null)
-                            folderViewModel.onMoveRecordingToFolder(recordingToBeMoved, null)
+                            validMove = filesViewModel.recordingMoveValid(recordingToBeMoved, null)
+                            if (validMove){
+                                folderViewModel.onMoveRecordingToFolder(recordingToBeMoved, null)
+                            }
                         }
                     }
                 }
@@ -135,7 +134,7 @@ object FolderDialog {
         dialog = builder.create()
         dialog.show()
 
-        disableRemoveFromFolder(type, recordingToBeMoved)
+        recordingToBeMoved?.let { hideMoveRecordingButtons(context, recordingToBeMoved) }
 
         dialog.setCancelable(true)
         dialog.setOnDismissListener {
@@ -145,12 +144,13 @@ object FolderDialog {
         }
     }
 
-    private fun disableRemoveFromFolder(type: Int, recordingToBeMoved: RecordingAndLabels?){
+    private fun hideMoveRecordingButtons( context: Context, recordingToBeMoved: RecordingAndLabels){
         val removeFromFolderBtn = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-        if (type == R.string.alert_dialog && recordingToBeMoved != null){
-            if (recordingToBeMoved.folder == null){
-                removeFromFolderBtn.isEnabled = false
-            }
+        val moveToFolderBtn = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        if (recordingToBeMoved.folder == null){ removeFromFolderBtn.isVisible = false }
+        if (folderOptions.isEmpty()){ moveToFolderBtn.isVisible = false }
+        if (recordingToBeMoved.recordingPath.startsWith(context.resources.getString(R.string.content_uri_prefix))){
+            removeFromFolderBtn.isVisible = false
         }
     }
 

@@ -109,9 +109,6 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     fun noSubfolderPossible(){
         _showSnackbarEvent.value = res.getString(R.string.popup_menu_no_subfolder)
     }
-    fun noFolderAvailable(){
-        _showSnackbarEvent.value = res.getString(R.string.no_folder_available)
-    }
 
     private fun deleteFolderFromDB(folderList: List<FolderEntity>) {
         folderList.forEach { repository.deleteFolder(it) }

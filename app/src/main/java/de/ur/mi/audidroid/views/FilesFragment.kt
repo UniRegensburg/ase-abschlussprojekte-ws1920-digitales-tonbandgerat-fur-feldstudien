@@ -106,6 +106,7 @@ class FilesFragment : Fragment() {
     fun openRecordingPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
+        setRecordingMenuOptions(popupMenu, recordingAndLabels.folder, recordingAndLabels.recordingPath)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_delete_recording ->{
@@ -118,18 +119,37 @@ class FilesFragment : Fragment() {
                     filesViewModel.recordingToBeExported = recordingAndLabels
                     filesViewModel.createAlertConvertDialog.value = true}
                 R.id.action_move_recording -> {
-                    if ( folderViewModel.allFolders.value!!.isEmpty()){
-                        folderViewModel.noFolderAvailable()
-                    }else{
                         filesViewModel.recordingToBeMoved = recordingAndLabels
                         recordingAndLabels.folder?.let { folderViewModel.getOldFolder(recordingAndLabels.folder) }
                         filesViewModel.createAlertFolderDialog.value = true
-                    }
                 }
             }
             true
         }
         popupMenu.show()
+    }
+
+    private fun setRecordingMenuOptions(popupMenu: PopupMenu, folderRef: Int?, path: String){
+        val allFolders = folderViewModel.allFolders.value!!
+        if (allFolders.isEmpty()){
+            popupMenu.menu.findItem(R.id.action_move_recording).isVisible = false
+        }
+        folderRef?.let {
+            if (allFolders.size <= 1){
+                popupMenu.menu.findItem(R.id.action_move_recording).isVisible = false
+            }
+        }
+
+        if (path.startsWith(context!!.resources.getString(R.string.content_uri_prefix))){
+            //Auslagern in Datenbank
+            var externalFolderCount = 0
+            folderViewModel.allFolders.value!!.forEach { if (it.isExternal){
+                externalFolderCount = externalFolderCount +1 }
+            }
+            if (externalFolderCount <= 1){
+                popupMenu.menu.findItem(R.id.action_move_recording).isVisible = false
+            }
+        }
     }
 
     fun openFolderPopupMenu(folder: FolderEntity, view: View){
