@@ -125,8 +125,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _createRenameDialog.value = false
         this.recording = recording
         if (checkInput(nameInput)){
-
+            updateNameInDB(recording.uid, nameInput!!)
         }
+    }
+
+    private fun updateNameInDB(recordingId: Int, recordingName: String){
+        repository.updateRecordingName(recordingId, recordingName)
     }
 
     private fun checkInput(nameInput: String?): Boolean{

@@ -28,4 +28,7 @@ interface EntryDao {
 
     @Query("SELECT * FROM recordingsTable WHERE recordingName = :name")
     suspend fun getRecordingByName(name: String): List<EntryEntity>
+
+    @Query ("UPDATE recordingsTable SET recordingName = :name WHERE uid = :entryUid ")
+    suspend fun updateRecordingName(entryUid: Int, name: String)
 }

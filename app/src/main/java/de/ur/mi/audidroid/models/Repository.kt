@@ -113,6 +113,12 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun updateRecordingName(uid: Int, name: String){
+        CoroutineScope(coroutineContext).launch {
+            entryDao.updateRecordingName(uid, name)
+        }
+    }
+
     fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
         return markerDao.getMarksById(uid)
     }
