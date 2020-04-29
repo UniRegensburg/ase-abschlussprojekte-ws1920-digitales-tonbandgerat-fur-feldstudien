@@ -491,12 +491,12 @@ class EditRecordingViewModel(
 
         repository.updateNameAndPath(copiedRecording, name, path, getDate())
         if (labels != null) {
-            for (i in labels.indices) {
+            for (label in labels) {
                 repository.insertRecLabels(
                     LabelAssignmentEntity(
                         0,
                         copiedRecording,
-                        labels[i]
+                        label
                     )
                 )
             }

@@ -20,7 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/label_card_view_margin"
         android:layout_marginTop="@dimen/label_card_view_margin"
-        android:layout_marginEnd="@dimen/label_card_view_margin">
+        android:layout_marginEnd="@dimen/label_card_view_margin"
+        app:cardElevation="@dimen/keyline_1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
