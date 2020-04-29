@@ -20,6 +20,7 @@ import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
+import de.ur.mi.audidroid.utils.RenameRecordingDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
 
@@ -93,6 +94,10 @@ class FilesFragment : Fragment() {
                     filesViewModel.delete(recordingAndLabels)
                 R.id.action_edit_recording ->
                     navigateToEditFragment(recordingAndLabels)
+                R.id.action_rename_recording ->{
+                    filesViewModel.recording = recordingAndLabels
+                    filesViewModel._createRenameDialog.value = true
+                }
                 R.id.action_share_recording -> {
                     filesViewModel.recordingToBeExported = recordingAndLabels
                     filesViewModel._createAlertDialog.value = true
@@ -137,6 +142,18 @@ class FilesFragment : Fragment() {
                     context = context!!,
                     type = R.string.confirm_dialog,
                     recording = filesViewModel.recording,
+                    viewModel = filesViewModel,
+                    errorMessage = filesViewModel.errorMessage
+                )
+            }
+        })
+
+        filesViewModel.createRenameDialog.observe(viewLifecycleOwner, Observer {
+            if (it){
+                RenameRecordingDialog.createDialog(
+                    context = context!!,
+                    recording = filesViewModel.recording!!,
+                    layoutId = R.layout.name_recording_dialog,
                     viewModel = filesViewModel,
                     errorMessage = filesViewModel.errorMessage
                 )

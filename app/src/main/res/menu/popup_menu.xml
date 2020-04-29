@@ -8,9 +8,21 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_edit_recording"
-        android:title="@string/popup_menu_option_edit"
-        app:showAsAction="never" />
+        android:id="@+id/action_edit"
+        android:title="@string/popup_menu_option_edit">
+        <menu>
+
+            <item
+                android:id="@+id/action_rename_recording"
+                android:title="@string/popup_menu_option_name"
+                app:showAsAction="never"/>
+
+            <item
+                android:id="@+id/action_edit_recording"
+                android:title="@string/recording_file_name"
+                app:showAsAction="never"/>
+        </menu>
+    </item>
 
     <item
         android:id="@+id/action_share_recording"

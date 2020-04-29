@@ -26,4 +26,6 @@ interface EntryDao {
     @Query("DELETE FROM recordingsTable WHERE uid = :key")
     suspend fun delete(key: Int)
 
+    @Query("SELECT * FROM recordingsTable WHERE recordingName = :name")
+    suspend fun getRecordingByName(name: String): List<EntryEntity>
 }

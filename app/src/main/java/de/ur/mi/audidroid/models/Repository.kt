@@ -151,6 +151,16 @@ class Repository(application: Application) : CoroutineScope {
         return list!!
     }
 
+    fun getRecordingByName(name: String): List<EntryEntity> {
+        var list: List<EntryEntity>? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                list = entryDao.getRecordingByName(name)
+            }
+        }
+        return list!!
+    }
+
     fun getAllRecordingsWithLabels(): LiveData<List<RecordingAndLabels>> {
         return labelDao.getAllRecordingsWithLabels()
     }
