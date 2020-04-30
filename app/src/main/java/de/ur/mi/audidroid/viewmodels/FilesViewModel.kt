@@ -278,20 +278,37 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         return filteredResult
     }
 
+    private fun getFilteredRecordings(labels: List<String>, marks: List<String>, nameInput: String?):List<RecordingAndLabels>{
+        val matchedLabels = matchLabelsAndRecordings(allRecordingsWithLabels.value!!, labels)
+        val matchedMarks = matchMarksAndRecordings(marks)
+        return combineFilterParams(matchedLabels, matchedMarks, nameInput)
+    }
+
     fun setFilterResult(labels: List<String>, marks: List<String>, nameInput: String?){
+        val toBeFiltered = labels.isNotEmpty() || marks.isNotEmpty() || !nameInput.isNullOrEmpty()
+        var filteredRecordings = listOf<RecordingAndLabels>()
+        if (toBeFiltered) {
+            filteredRecordings = getFilteredRecordings(labels, marks, nameInput)
+        }
+
         removeSortedRecordingSources()
+        removeSortedFolderRecordingSources()
+
         displayRecordings.addSource(allRecordingsWithLabels){
-            if (!labels.isEmpty() || !marks.isEmpty() || !nameInput.isNullOrEmpty()){
-                val matchedLabels = matchLabelsAndRecordings(allRecordingsWithLabels.value!!, labels)
-                val matchedMarks = matchMarksAndRecordings(marks)
-                var displayList = combineFilterParams(matchedLabels, matchedMarks, nameInput)
-                displayRecordings.value = displayList
-                folderRecordings.value = displayList
+            if (toBeFiltered) {
+                displayRecordings.value = filteredRecordings
+                _filterEmpty.value = filteredRecordings.isEmpty()
             }else{
                 displayRecordings.value = allRecordingsWithLabels.value!!
+            }
+        }
+        folderRecordings.addSource(allRecordingsWithLabels){
+            if (toBeFiltered) {
+                folderRecordings.value = filteredRecordings
+                _filterEmpty.value = filteredRecordings.isEmpty()
+            }else{
                 folderRecordings.value = allRecordingsWithLabels.value!!
             }
-            _filterEmpty.value = displayRecordings.value!!.isEmpty()
         }
     }
 

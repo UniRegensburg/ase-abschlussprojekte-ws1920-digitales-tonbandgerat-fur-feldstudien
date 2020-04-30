@@ -82,7 +82,7 @@ class FolderAdapter(
     //Adapter, which is provided for the nested recyclerview
     private fun setUpRecordingAdapter(holder: ViewHolder) {
         recordingAdapter = RecordingItemAdapter(filesFragment, filesViewModel)
-        filesViewModel.allRecordingsWithLabels.observe(holder.itemView.context as LifecycleOwner, Observer {list ->
+        filesViewModel.folderRecordings.observe(holder.itemView.context as LifecycleOwner, Observer {list ->
             val recordingList = mutableListOf<RecordingAndLabels>()
             list.forEach { if (it.folder == folderItem.uid){recordingList.add(it)} }
             recordingAdapter.submitList(recordingList)
