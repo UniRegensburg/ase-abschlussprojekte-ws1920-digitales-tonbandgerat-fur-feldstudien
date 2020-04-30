@@ -2,10 +2,9 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.PopupMenu
+import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -20,6 +19,7 @@ import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
+import de.ur.mi.audidroid.utils.FilterDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
 
@@ -32,6 +32,7 @@ class FilesFragment : Fragment() {
     private lateinit var adapter: RecordingItemAdapter
     private lateinit var binding: FilesFragmentBinding
     private lateinit var filesViewModel: FilesViewModel
+    private lateinit var dataSource: Repository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,14 +42,20 @@ class FilesFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
         val application = this.activity!!.application
-        val dataSource = Repository(application)
+        dataSource = Repository(application)
 
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
         filesViewModel = ViewModelProvider(this, viewModelFactory).get(FilesViewModel::class.java)
 
         binding.filesViewModel = filesViewModel
         binding.lifecycleOwner = this
+        setHasOptionsMenu(true)
 
+        filesViewModel.allRecordingsWithMarker.observe(viewLifecycleOwner, Observer {})
+        //Observer on the state variable for the sorting of list-items.
+        filesViewModel.sortModus.observe(viewLifecycleOwner, Observer {
+            filesViewModel.setSorting(it)
+        })
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
@@ -103,6 +110,47 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_files, menu)
+        
+        val searchItem: MenuItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText!!.isNotEmpty()){
+                    filesViewModel.setSearchResult(newText)
+                }else{ filesViewModel._sortModus.value = null }
+                return true
+            }
+        })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_filter ->{
+                filesViewModel._createFilterDialog.value = true
+                true
+            }
+            R.id.action_sort_name -> {
+                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_name)
+                true
+            }
+            R.id.action_sort_date -> {
+                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_date)
+                true
+            }
+            R.id.action_sort_duration -> {
+                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_duration)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     private fun navigateToEditFragment(recordingAndLabels: RecordingAndLabels) {
         this.findNavController().navigate(
             FilesFragmentDirections.actionFilesToEdit(recordingAndLabels.uid)
@@ -112,16 +160,17 @@ class FilesFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         filesViewModel.initializeFrameLayout(files_layout)
-
+        filesViewModel.setSorting(null)
         setupAdapter()
         createConfirmDialog()
+        FilterDialog.clearDialog()
     }
 
     private fun setupAdapter() {
         adapter = RecordingItemAdapter(this, filesViewModel)
         binding.recordingList.adapter = adapter
 
-        filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
+        filesViewModel.displayRecordings.observe(viewLifecycleOwner, Observer {
             it?.let {
                 var array = arrayListOf<RecordingAndLabels>()
                 array = filesViewModel.checkExistence(it, array)
@@ -139,6 +188,18 @@ class FilesFragment : Fragment() {
                     recording = filesViewModel.recording,
                     viewModel = filesViewModel,
                     errorMessage = filesViewModel.errorMessage
+                )
+            }
+        })
+
+        filesViewModel.createFilterDialog.observe(viewLifecycleOwner, Observer {
+            if (it){
+                FilterDialog.createDialog(
+                    context = context!!,
+                    layoutId = R.layout.filter_dialog,
+                    viewModel = filesViewModel,
+                    dataSource = dataSource,
+                    fragment = this
                 )
             }
         })

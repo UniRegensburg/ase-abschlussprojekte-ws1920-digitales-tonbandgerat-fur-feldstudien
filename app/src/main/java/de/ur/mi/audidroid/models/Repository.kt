@@ -113,6 +113,10 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun getRecordingsAndMarkerType():LiveData<List<RecordingAndMarkTuple>>{
+        return markerDao.getRecordingsAndMarkerType()
+    }
+
     fun getAllMarks(uid: Int): LiveData<List<MarkAndTimestamp>> {
         return markerDao.getMarksById(uid)
     }
@@ -153,6 +157,18 @@ class Repository(application: Application) : CoroutineScope {
 
     fun getAllRecordingsWithLabels(): LiveData<List<RecordingAndLabels>> {
         return labelDao.getAllRecordingsWithLabels()
+    }
+
+    fun getAllRecWithLabelsOrderName(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderName()
+    }
+
+    fun getAllRecWithLabelsOrderDate(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDate()
+    }
+
+    fun getAllRecWithLabelsOrderDuration(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDuration()
     }
 
     fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {
