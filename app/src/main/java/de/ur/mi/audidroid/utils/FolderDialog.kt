@@ -65,7 +65,6 @@ object FolderDialog {
                     }
                 }
             }
-
             //Dialog for the move of a recording to another folder.
             if (recordingToBeMoved != null){
                 var position = -1
@@ -138,9 +137,7 @@ object FolderDialog {
 
         dialog.setCancelable(true)
         dialog.setOnDismissListener {
-            dialog.findViewById<EditText>(R.id.dialog_add_label_edit_text)?.let { editText ->
-                editText.hideKeyboard()
-            }
+            dialog.findViewById<EditText>(R.id.dialog_add_label_edit_text)?.hideKeyboard()
         }
     }
 

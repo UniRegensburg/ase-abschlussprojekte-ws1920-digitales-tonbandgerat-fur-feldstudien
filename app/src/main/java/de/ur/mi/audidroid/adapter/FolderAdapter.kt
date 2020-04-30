@@ -1,7 +1,6 @@
 package de.ur.mi.audidroid.adapter
 
 import android.content.Context
-import android.telecom.RemoteConference
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

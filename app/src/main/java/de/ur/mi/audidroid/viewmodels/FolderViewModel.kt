@@ -27,7 +27,7 @@ class FolderViewModel(dataSource: Repository, application: Application) :
     val allFoldersSorted = MediatorLiveData<List<FolderEntity>>()
     val externalFolderLiveData: LiveData<Int> = repository.getExternalFolderCount()
     var externalFolderCount = 0
-    var dialogType: Int = R.string.confirm_dialog
+    private var dialogType: Int = R.string.confirm_dialog
     var errorMessage: String? = null
     var addFolder: Boolean? = null
     var folderToBeEdited: FolderEntity? = null
@@ -105,10 +105,6 @@ class FolderViewModel(dataSource: Repository, application: Application) :
         if (existingFolder == null) {
             StorageHelper.createFolderFromUri(repository, result)
         }
-    }
-
-    fun noSubfolderPossible(){
-        _showSnackbarEvent.value = res.getString(R.string.popup_menu_no_subfolder)
     }
 
     private fun deleteFolderFromDB(folderList: List<FolderEntity>) {

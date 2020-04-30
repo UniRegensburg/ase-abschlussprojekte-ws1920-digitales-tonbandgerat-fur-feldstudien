@@ -4,17 +4,12 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.core.view.children
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -134,6 +129,7 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
+    //Modifies the folder options of a recording depending on the situation.
     private fun setRecordingMenuOptions(popupMenu: PopupMenu, folderRef: Int?, path: String){
         val allFolders = folderViewModel.allFolders.value!!
         if (allFolders.isEmpty()){
@@ -144,9 +140,7 @@ class FilesFragment : Fragment() {
                 popupMenu.menu.findItem(R.id.action_move_recording).isVisible = false
             }
         }
-
         if (path.startsWith(context!!.resources.getString(R.string.content_uri_prefix))){
-
             val externalFolderCount = folderViewModel.externalFolderCount
             if (externalFolderCount <= 1){
                 popupMenu.menu.findItem(R.id.action_move_recording).isVisible = false}
@@ -162,7 +156,7 @@ class FilesFragment : Fragment() {
             when (item.itemId){
                 R.id.action_add_subfolder ->{
                     if (folder.isExternal){
-                        folderViewModel.noSubfolderPossible()
+                        onClickAddExternalFolder()
                     }else{
                         folderViewModel.onAddFolderClicked(folder)
                     }
@@ -232,7 +226,6 @@ class FilesFragment : Fragment() {
     }
 
     private fun createConfirmDialog() {
-
         //Dialog for deletion of recording.
         filesViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
             if (it) {

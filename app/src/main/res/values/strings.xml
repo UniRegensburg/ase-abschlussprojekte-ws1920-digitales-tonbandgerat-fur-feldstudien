@@ -104,7 +104,6 @@
     <!-- FolderPopup -->
     <string name="popup_menu_folder_ext">External</string>
     <string name="popup_menu_folder_int">Internal</string>
-    <string name="popup_menu_no_subfolder">No subfolders possible.</string>
 
     <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>
