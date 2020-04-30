@@ -155,28 +155,28 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getAllRecordingsWithLabels()
     }
 
-    fun getAllRecWithLabelsOrderNameAsc(): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderNameASC()
+    fun getAllRecWithLabelsOrderName(isAsc: Boolean): LiveData<List<RecordingAndLabels>>{
+        if (isAsc){
+            return labelDao.getAllRecordingsWithLabelsOrderNameASC()
+        }else{
+            return labelDao.getAllRecordingsWithLabelsOrderNameDESC()
+        }
     }
 
-    fun getAllRecWithLabelsOrderDateAsc(): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderDateASC()
+    fun getAllRecWithLabelsOrderDate(isAsc: Boolean): LiveData<List<RecordingAndLabels>>{
+        if (isAsc){
+            return labelDao.getAllRecordingsWithLabelsOrderDateASC()
+        }else{
+            return labelDao.getAllRecordingsWithLabelsOrderDateDESC()
+        }
     }
 
-    fun getAllRecWithLabelsOrderDurationAsc(): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderDurationASC()
-    }
-
-    fun getAllRecWithLabelsOrderNameDesc(): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderNameDESC()
-    }
-
-    fun getAllRecWithLabelsOrderDateDesc(): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderDateDESC()
-    }
-
-    fun getAllRecWithLabelsOrderDurationDesc(): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderDurationDESC()
+    fun getAllRecWithLabelsOrderDuration(isAsc: Boolean): LiveData<List<RecordingAndLabels>>{
+        if (isAsc){
+            return labelDao.getAllRecordingsWithLabelsOrderDurationASC()
+        }else{
+            return labelDao.getAllRecordingsWithLabelsOrderDurationDESC()
+        }
     }
 
     fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {

@@ -25,18 +25,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
     private val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
         repository.getAllRecordingsWithLabels()
-    private val allRecordingsWithLabelsOrderNameAsc: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderNameAsc()
-    private val allRecordingsWithLabelsOrderDateAsc: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderDateAsc()
-    private val allRecordingsWithLabelsOrderDurationAsc: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderDurationAsc()
-    private val allRecordingsWithLabelsOrderNameDesc: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderNameDesc()
-    private val allRecordingsWithLabelsOrderDateDesc: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderDateDesc()
-    private val allRecordingsWithLabelsOrderDurationDesc: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderDurationDesc()
+    private var allRecordingsWithLabelsOrderName: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderName(true)
+    private var allRecordingsWithLabelsOrderDate: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderDate(true)
+    private var allRecordingsWithLabelsOrderDuration: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderDuration(true)
     val displayRecordings = MediatorLiveData<List<RecordingAndLabels>>()
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
@@ -129,45 +123,48 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     // Set sorted source for recording display
     private fun removeSortedRecordingSources(){
         displayRecordings.removeSource(allRecordingsWithLabels)
-        displayRecordings.removeSource(allRecordingsWithLabelsOrderNameAsc)
-        displayRecordings.removeSource(allRecordingsWithLabelsOrderDateAsc)
-        displayRecordings.removeSource(allRecordingsWithLabelsOrderDurationAsc)
-        displayRecordings.removeSource(allRecordingsWithLabelsOrderNameDesc)
-        displayRecordings.removeSource(allRecordingsWithLabelsOrderDateDesc)
-        displayRecordings.removeSource(allRecordingsWithLabelsOrderDurationDesc)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderName)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderDate)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderDuration)
     }
 
     fun setSorting(modus: Int?){
         removeSortedRecordingSources()
         when (modus){
             R.integer.sort_by_name_asc -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderNameAsc){
-                    displayRecordings.value = allRecordingsWithLabelsOrderNameAsc.value
+                allRecordingsWithLabelsOrderName = repository.getAllRecWithLabelsOrderName(true)
+                displayRecordings.addSource(allRecordingsWithLabelsOrderName){
+                    displayRecordings.value = allRecordingsWithLabelsOrderName.value
                 }
             }
             R.integer.sort_by_date_asc -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderDateAsc){
-                    displayRecordings.value = allRecordingsWithLabelsOrderDateAsc.value
+                allRecordingsWithLabelsOrderDate = repository.getAllRecWithLabelsOrderDate(true)
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDate){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDate.value
                 }
             }
             R.integer.sort_by_duration_asc -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderDurationAsc){
-                    displayRecordings.value = allRecordingsWithLabelsOrderDurationAsc.value
+                allRecordingsWithLabelsOrderDuration = repository.getAllRecWithLabelsOrderDuration(true)
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDuration){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDuration.value
                 }
             }
             R.integer.sort_by_name_desc -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderNameDesc){
-                    displayRecordings.value = allRecordingsWithLabelsOrderNameDesc.value
+                allRecordingsWithLabelsOrderName = repository.getAllRecWithLabelsOrderName(false)
+                displayRecordings.addSource(allRecordingsWithLabelsOrderName){
+                    displayRecordings.value = allRecordingsWithLabelsOrderName.value
                 }
             }
             R.integer.sort_by_date_desc -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderDateDesc){
-                    displayRecordings.value = allRecordingsWithLabelsOrderDateDesc.value
+                allRecordingsWithLabelsOrderDate = repository.getAllRecWithLabelsOrderDate(false)
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDate){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDate.value
                 }
             }
             R.integer.sort_by_duration_desc -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderDurationDesc){
-                    displayRecordings.value = allRecordingsWithLabelsOrderDurationDesc.value
+                allRecordingsWithLabelsOrderDuration = repository.getAllRecWithLabelsOrderDuration(false)
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDuration){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDuration.value
                 }
             }
             else -> {
