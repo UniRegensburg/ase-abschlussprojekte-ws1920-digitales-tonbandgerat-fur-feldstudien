@@ -117,8 +117,8 @@ object SaveRecordingDialog {
             context.getString(R.string.storage_preference_key),
             context.getString(R.string.default_storage_location)
         )!!
-        updateTextView(storedPathString)
-        return when (storedPathString == context.getString(R.string.default_storage_location)) {
+        updateTextView(Pathfinder.getShortenedPath(storedPathString))
+        return when (storedPathString == context.getString(R.string.default_storage_location) || storedPathString.contains(context.packageName)) {
             true -> null
             false -> storedPathString
         }
@@ -129,6 +129,11 @@ object SaveRecordingDialog {
     }
 
     fun resultPathfinder(treePath: Uri) {
+        if(treePath.toString().contains(context.packageName)){
+            selectedPath = null
+            updateTextView(context.getString(R.string.default_storage_location))
+            return
+        }
         val realPath = Pathfinder.getRealPath(context, treePath)
         if (realPath == null) {
             Snackbar.make(
@@ -139,7 +144,7 @@ object SaveRecordingDialog {
             return
         }
         selectedPath = realPath
-        updateTextView(realPath)
+        updateTextView(Pathfinder.getShortenedPath(realPath))
     }
 
     private fun updateTextView(path: String) {

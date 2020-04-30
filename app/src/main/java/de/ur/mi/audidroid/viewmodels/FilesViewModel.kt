@@ -2,17 +2,13 @@ package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
 import android.widget.FrameLayout
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.RecordingAndLabels
-import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.*
 import de.ur.mi.audidroid.utils.ShareHelper
 import de.ur.mi.audidroid.utils.StorageHelper
+import kotlin.collections.ArrayList
 
 /**
  * ViewModel for FilesFragment.
@@ -23,16 +19,27 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
+
+    private val res = context.resources
+    val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
+    val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecordingsWithLabels()
+    private val allRecordingsWithLabelsOrderName: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderName()
+    private val allRecordingsWithLabelsOrderDate: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderDate()
+    private val allRecordingsWithLabelsOrderDuration: LiveData<List<RecordingAndLabels>> =
+        repository.getAllRecWithLabelsOrderDuration()
+    val allRecordingsWithMarker: LiveData<List<RecordingAndMarkTuple>> =
+        repository.getRecordingsAndMarkerType()
+    val displayRecordings = MediatorLiveData<List<RecordingAndLabels>>()
+    val folderRecordings = MediatorLiveData<List<RecordingAndLabels>>()
+
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
     var recordingToBeMoved: RecordingAndLabels? = null
     var recording: RecordingAndLabels? = null
     var recordingToBeExported: RecordingAndLabels? = null
-
-    val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecordingsWithLabels()
-    val allRecordings: LiveData<List<EntryEntity>> =
-        repository.getAllRecordings()
 
     private val _createAlertConvertDialog = MutableLiveData<Boolean>()
     val createAlertConvertDialog: MutableLiveData<Boolean>
@@ -42,6 +49,15 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val createAlertFolderDialog: MutableLiveData<Boolean>
         get() = _createAlertFolderDialog
 
+    val _sortModus = MutableLiveData<Int?>()
+    val sortModus: LiveData<Int?>
+        get() = _sortModus
+
+    val _createFilterDialog = MutableLiveData<Boolean>()
+    val createFilterDialog: LiveData<Boolean>
+        get() = _createFilterDialog
+
+
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val createConfirmDialog: LiveData<Boolean>
         get() = _createConfirmDialog
@@ -49,6 +65,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private var _showSnackbarEvent = MutableLiveData<Boolean>()
     val showSnackbarEvent: LiveData<Boolean>
         get() = _showSnackbarEvent
+
+    private var _filterEmpty = MutableLiveData<Boolean>()
+    val filterEmpty: LiveData<Boolean>
+        get() = _filterEmpty
+
 
     fun doneShowingSnackbar() {
         _showSnackbarEvent.value = null
@@ -93,6 +114,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         } else {
             showSnackBar(R.string.error_message_file_cannot_be_deleted.toString())
         }
+    }
+
+    fun cancelFilterDialog(){
+        _createFilterDialog.value = false
     }
 
     fun cancelSaving() {
@@ -144,15 +169,179 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun deleteEntriesInFolders(folderRefs: List<Int>) {
-        if (folderRefs.isNotEmpty()){
-            folderRefs.forEach {ref ->
-                allRecordings.value!!.forEach {recording ->
+        if (folderRefs.isNotEmpty()) {
+            folderRefs.forEach { ref ->
+                allRecordings.value!!.forEach { recording ->
                     if (recording.folder == ref) {
                         val recordingWithLabel = allRecordingsWithLabels.value!!
                         recordingWithLabel.forEach {
-                            if (recording.uid == it.uid){ deleteRecording(it) }
+                            if (recording.uid == it.uid) {
+                                deleteRecording(it)
+                            }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    // Set sorted source for recording display
+    private fun removeSortedRecordingSources(){
+        displayRecordings.removeSource(allRecordingsWithLabels)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderName)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderDate)
+        displayRecordings.removeSource(allRecordingsWithLabelsOrderDuration)
+    }
+    private fun removeSortedFolderRecordingSources(){
+        folderRecordings.removeSource(allRecordingsWithLabels)
+        folderRecordings.removeSource(allRecordingsWithLabelsOrderName)
+        folderRecordings.removeSource(allRecordingsWithLabelsOrderDate)
+        folderRecordings.removeSource(allRecordingsWithLabelsOrderDuration)
+    }
+
+    private fun matchLabelsAndRecordings(recordingList: List<RecordingAndLabels>, params: List<String>): List<RecordingAndLabels>?{
+        if (params.isNotEmpty()){
+            var filteredRecordings = arrayListOf<RecordingAndLabels>()
+            recordingList.forEach {recording ->
+                filteredRecordings.add(recording)
+                if (recording.labels != null){
+                    params.forEach {param ->
+                        if (!recording.labels.contains(param)){
+                            filteredRecordings.remove(recording)
+                        }
+                    }
+                } else {filteredRecordings.remove(recording)}
+            }
+            return filteredRecordings
+        } else { return null }
+    }
+
+    private fun adaptRecordingMarkLiveData(reference: List<RecordingAndMarkTuple>): List<Pair<Int, MutableList<String>>>?{
+        if (reference.isNotEmpty()){
+            val refList = mutableListOf<Pair<Int, MutableList<String>>>()
+            var alreadyInList: Boolean
+            reference.forEach { ref ->
+                val pair = Pair(ref.recordingId, mutableListOf(ref.markerName))
+                if (refList.isEmpty()){
+                    refList.add(pair)
+                }else{
+                    alreadyInList = false
+                    refList.forEach {
+                        if (it.first == ref.recordingId){
+                            it.second.add(ref.markerName)
+                            alreadyInList = true
+                        }
+                    }
+                    if (!alreadyInList){ refList.add(pair) }
+                }
+            }
+            return refList
+        } else { return null }
+    }
+
+    private fun matchMarksAndRecordings(params: List<String>): List<Int>?{
+        val filteredRef = arrayListOf<Int>()
+        val list = adaptRecordingMarkLiveData(allRecordingsWithMarker.value!!)
+        if (params.isNotEmpty()){
+            list?.forEach{recMarkTuple ->
+                filteredRef.add(recMarkTuple.first)
+                params.forEach{param ->
+                    if (!recMarkTuple.second.contains(param)){
+                        filteredRef.remove(recMarkTuple.first)
+                    }
+                }
+            }
+            return filteredRef
+        } else { return null }
+    }
+
+    private fun combineFilterParams(matchedLabels:List<RecordingAndLabels>?, matchedMarkers: List<Int>?,
+                                    nameInput: String?): List<RecordingAndLabels> {
+        var filteredResult = allRecordingsWithLabels.value!!
+        var matchedList = mutableListOf<RecordingAndLabels>()
+        matchedLabels?.let { filteredResult = matchedLabels }
+        matchedMarkers?.let {
+            filteredResult.forEach { rec ->
+                if (matchedMarkers.contains(rec.uid)) { matchedList.add(rec) }
+            }
+            filteredResult = matchedList
+        }
+        nameInput?.let {
+            matchedList = mutableListOf<RecordingAndLabels>()
+            filteredResult.forEach {
+                if(it.recordingName.contains(nameInput,true)){
+                    matchedList.add(it)
+                }
+            }
+            filteredResult = matchedList
+        }
+        return filteredResult
+    }
+
+    fun setFilterResult(labels: List<String>, marks: List<String>, nameInput: String?){
+        removeSortedRecordingSources()
+        displayRecordings.addSource(allRecordingsWithLabels){
+            if (!labels.isEmpty() || !marks.isEmpty() || !nameInput.isNullOrEmpty()){
+                val matchedLabels = matchLabelsAndRecordings(allRecordingsWithLabels.value!!, labels)
+                val matchedMarks = matchMarksAndRecordings(marks)
+                var displayList = combineFilterParams(matchedLabels, matchedMarks, nameInput)
+                displayRecordings.value = displayList
+                folderRecordings.value = displayList
+            }else{
+                displayRecordings.value = allRecordingsWithLabels.value!!
+                folderRecordings.value = allRecordingsWithLabels.value!!
+            }
+            _filterEmpty.value = displayRecordings.value!!.isEmpty()
+        }
+    }
+
+    fun setSearchResult(search: String){
+        removeSortedRecordingSources()
+        displayRecordings.addSource(allRecordingsWithLabels){
+            val displayList = mutableListOf<RecordingAndLabels>()
+            allRecordingsWithLabels.value?.forEach { recording ->
+                if (recording.recordingName.contains(search,true)){
+                    displayList.add(recording)
+                }
+            }
+            displayRecordings.value = displayList
+        }
+    }
+
+    fun setSorting(modus: Int?){
+        removeSortedRecordingSources()
+        removeSortedFolderRecordingSources()
+        when (modus){
+            res.getInteger(R.integer.sort_by_name) -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderName){
+                    displayRecordings.value = allRecordingsWithLabelsOrderName.value
+                }
+                folderRecordings.addSource(allRecordingsWithLabelsOrderName){
+                    folderRecordings.value = allRecordingsWithLabelsOrderName.value
+                }
+            }
+            res.getInteger(R.integer.sort_by_date) -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDate){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDate.value
+                }
+                folderRecordings.addSource(allRecordingsWithLabelsOrderDate){
+                    folderRecordings.value = allRecordingsWithLabelsOrderDate.value
+                }
+            }
+            res.getInteger(R.integer.sort_by_duration) -> {
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDuration){
+                    displayRecordings.value = allRecordingsWithLabelsOrderDuration.value
+                }
+                folderRecordings.addSource(allRecordingsWithLabelsOrderDuration){
+                    folderRecordings.value = allRecordingsWithLabelsOrderDuration.value
+                }
+            }
+            else -> {
+                displayRecordings.addSource(allRecordingsWithLabels){
+                    displayRecordings.value = allRecordingsWithLabels.value
+                }
+                folderRecordings.addSource(allRecordingsWithLabels){
+                    folderRecordings.value = allRecordingsWithLabels.value
                 }
             }
         }

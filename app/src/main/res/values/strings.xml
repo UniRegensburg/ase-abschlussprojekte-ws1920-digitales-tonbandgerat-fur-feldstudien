@@ -100,6 +100,7 @@
     <string name="sample_comment">Sample comment</string>
     <string name="sample_mark">Mark</string>
     <string name="mark_deleted">Mark deleted</string>
+    <string name="wave_pic">WavePic</string>
 
     <!-- FolderPopup -->
     <string name="popup_menu_folder_ext">External</string>
@@ -208,6 +209,16 @@
     <string name="default_storage_location">internal</string>
     <string name="error_storage_location">Choose an other location</string>
     <string name="external_sd_card_error">Saving on an external sd card is not possible</string>
+
+    <!--Organisation-->
+    <string name="action_sort_by">Sort</string>
+    <string name="popup_menu_sort_name">Name</string>
+    <string name="popup_menu_sort_date">Date</string>
+    <string name="popup_menu_sort_duration">Duration</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_filter">Filter</string>
+    <string name="dialog_filter_name_hint">Filter by name</string>
+    <string name="filter_no_results">No results found. Try broadening your filters.</string>
 
     <!--Sharing-->
     <string name="popup_menu_option_share">Share</string>

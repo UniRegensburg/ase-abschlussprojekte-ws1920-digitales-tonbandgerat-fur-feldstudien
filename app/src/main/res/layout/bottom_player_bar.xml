@@ -8,8 +8,8 @@
         <import type="android.view.View" />
 
         <variable
-            name="handlePlayerBar"
-            type="de.ur.mi.audidroid.utils.HandlePlayerBar" />
+            name="playerBarListener"
+            type="de.ur.mi.audidroid.utils.PlayerBarListener" />
 
         <variable
             name="isPlaying"
@@ -35,26 +35,52 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginStart="@dimen/bar_margin_start_end"
+            android:layout_marginStart="@dimen/keyline_5"
             android:layout_marginBottom="@dimen/bar_margin_bottom"
             android:background="@drawable/ic_replay_5"
             android:padding="@dimen/keyline_4"
             android:backgroundTint="@color/color_on_surface"
             android:contentDescription="@string/player_bar_return_playing"
-            android:onClick="@{() -> handlePlayerBar.returnPlaying()}"/>
+            android:onClick="@{() -> playerBarListener.returnPlaying()}"/>
 
         <ImageButton
             android:id="@+id/bar_skip_playing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_marginEnd="@dimen/bar_margin_start_end"
+            android:layout_marginEnd="@dimen/keyline_5"
             android:layout_marginBottom="@dimen/bar_margin_bottom"
             android:padding="@dimen/keyline_4"
             android:background="@drawable/ic_forward_5"
             android:backgroundTint="@color/color_on_surface"
             android:contentDescription="@string/player_bar_skip_playing"
-            android:onClick="@{() -> handlePlayerBar.skipPlaying()}"/>
+            android:onClick="@{() -> playerBarListener.skipPlaying()}"/>
+
+        <ImageButton
+            android:id="@+id/bar_fast_rewind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="@dimen/bar_margin_image"
+            android:layout_marginBottom="@dimen/bar_margin_bottom"
+            android:background="@drawable/ic_fast_rewind"
+            android:padding="@dimen/keyline_4"
+            android:backgroundTint="@color/color_on_surface"
+            android:contentDescription="@string/player_bar_return_playing"
+            android:onClick="@{() -> playerBarListener.fastRewind()}"/>
+
+        <ImageButton
+            android:id="@+id/bar_fast_forward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="@dimen/bar_margin_image"
+            android:layout_marginBottom="@dimen/bar_margin_bottom"
+            android:padding="@dimen/keyline_4"
+            android:background="@drawable/ic_fast_forward"
+            android:backgroundTint="@color/color_on_surface"
+            android:contentDescription="@string/player_bar_skip_playing"
+            android:onClick="@{() -> playerBarListener.fastForward()}"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
@@ -63,7 +89,7 @@
             android:adjustViewBounds="true"
             android:background="@null"
             android:backgroundTint="@color/color_primary"
-            android:onClick="@{() -> isPlaying ? handlePlayerBar.pause() : handlePlayerBar.play()}"
+            android:onClick="@{() -> isPlaying ? playerBarListener.pause() : playerBarListener.play()}"
             android:scaleType="center"
             android:src="@{isPlaying ? @drawable/ic_pause : @drawable/ic_play_arrow, default = @drawable/ic_play_arrow}"
             app:fabCustomSize="@dimen/bar_size_fab"

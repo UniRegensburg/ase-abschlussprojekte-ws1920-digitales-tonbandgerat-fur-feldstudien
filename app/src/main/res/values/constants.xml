@@ -11,4 +11,9 @@
     <integer name="jump_amount">5000</integer>
     <integer name="snackbar_quite_short">700</integer>
     <integer name="max_label_size">3</integer>
+    <integer name="sort_by_name">0</integer>
+    <integer name="sort_by_date">1</integer>
+    <integer name="sort_by_duration">2</integer>
+    <integer name="chip_type_label">0</integer>
+    <integer name="chip_type_mark">1</integer>
 </resources>

@@ -1,72 +1,84 @@
-<img src="requirements/Audidroid/Icon_round.svg" width=100 />
+<div align="center">
+    <img src="requirements/mockups/Icon_round.svg" alt="Audidroid Logo" width=100 />
+</div>
 
-# Audidroid
+<div align="center">
+    <p><strong>Audidroid</strong></p>
+    <p>A audio recorder for researchers</p>
+    <img src="https://github.com/UniRegensburg/ase-abschlussprojekte-ws1920-digitales-tonbandgerat-fur-feldstudien/workflows/Minimal%20Android%20CI%20Workflow/badge.svg" alt="Build Status" />
+</div>
 
-Audidroid dient ForscherInnen und WissenschaftlerInnen als digitales Tonbandgerät für Feldstudien. 
-Der Fokus liegt hierbei auf Interviews und Sprachnotizen. 
-Audidroid zeichnet sich durch Features aus, die speziell für diesen Anwendungsfall konzipiert sind. 
-Dazu gehören neben dem reinen Aufnehmen von Audiodateien auch das Markieren wichtiger Stellen in den Dateien direkt in der App.
+---
 
-Technische Informationen zu Audidroid finden sich [hier](./docs/Setup.md), eine detaillierte Übersicht über den Anforderungskontext findet sich [hier](./docs/Overview.md).
+Audidroid serves researchers and scientists as a digital audio recorder for case studies.
+The focus lies on interviews and voice notes.
+Audidroid shines with features specifically designed for this use case.
+Other than the pure audio recording, you can also mark important positions while recording and edit files directly in the app.
+
+Technical information for Audidroid can be found [here](./docs/Setup.md), and a detailed overview of the requirements context can be found [here](./docs/Overview.md).
+Initial mockups and requirements for the app can be found [here](./requirements/mockups), tests of comparable existing apps can be found [here](./requirements/app-tests), and interviews with potential users can be found [here](./requirements/interviews).
 
 
 ## Team
 
 Sabine Roth, sabine.roth@stud.uni-regensburg.de, @SabiRoth
 
-Lisa Sanladerer, lisa.sanladerer@stud.uni-regensburg.de, @sanlalala
-
 Jonas Puchinger, jonas.puchinger@stud.uni-regensburg.de, @JonasPuchinger
 
 Theresa Strohmeier, theresa.strohmeier@stud.uni-regensburg.de, @TheresaStrohmeier
 
-
-## Beschreibung
-
-Aktuell sind folgende Features in Audidroid implementiert:
-
-**Kernfeatures**
-
-- Aufnahme von Audiodateien mit Optimierung von gesprochener Sprache. Während der Aufnahme können relevante Stellen markiert werden.
-
-<div style="text-align:center"><img src="requirements/Screenshots/rec.jpg" width=200 /></div>
-
-- Speichern der Aufnahme an einem beliebigen Speicherort mit bevorzugtem Namen und zugewiesenen Labels
-
-<div style="text-align:center"><img src="requirements/Screenshots/save.jpg" width=200 /></div>
-
-- Auswählen der Aufnahme aus der Liste der eigenen Audiodateien
-
-<div style="text-align:center"><img src="requirements/Screenshots/list.jpg" width=200 /></div>
-
-- Abspielen der aufgenommenen Audiodateien
-
-<div style="text-align:center"><img src="requirements/Screenshots/play.jpg" width=200 /></div>
-
-- Export der Aufnahmen mit der Möglichkeit, in andere Dateiformate zu konvertieren
-
-<div style="text-align:center"><img src="requirements/Screenshots/export.jpg" width=200 /></div>
-
-- Bearbeitung der Aufnahmen mit Möglichkeiten zum Zuschneiden der Audiodateien, sowie Editieren von Labels und Markierungen.
-
-<div style="text-align:center"><img src="requirements/Screenshots/edit.jpg" width=200 /></div>
-
-- Navigation in der App mit Hilfe eines Navigation Drawers
-
-<div style="text-align:center"><img src="requirements/Screenshots/nav.jpg" width=200 /></div>
+Lisa Sanladerer, lisa.sanladerer@stud.uni-regensburg.de, @sanlalala
 
 
+## Description
 
-**Einstellungen**
+The following features are implemented:
 
-- Definition von Labels, die später den Aufnahmen zugewiesen werden können
+**Core features**
 
-<div style="text-align:center"><img src="requirements/Screenshots/labels.jpg" width=200 /></div>
+- Recording of audio files, optimized for spoken language. Important points can be marked during recording.
 
-- Definition des gewünschten Standarddateinamens
+<div style="text-align:center"><img src="requirements/screenshots/rec.jpg" width=200 /></div>
 
-- Auswahl des präferierten Speicherorts auf dem Gerät
+- Saving of the recordings at any storage location, with configurable names and labels.
 
-- Auswahl des präferierten Farbschemas (verfügbar: hell und dunkel)
+<div style="text-align:center"><img src="requirements/screenshots/save.jpg" width=200 /></div>
 
-<div style="text-align:center"><img src="requirements/Screenshots/settings.jpg" width=200 /></div>
+- Searchable, filterable and sortable view of all recorded files. File organisation via custom folder structures.
+
+<div style="text-align:center"><img src="requirements/screenshots/list.jpg" width=200 /></div>
+
+- Playback of recorded files. Skipping forward and backward, or also to marked positions. Changing the playback speed.
+
+<div style="text-align:center"><img src="requirements/screenshots/play.jpg" width=200 /></div>
+
+- Sharing of recordings to other apps, and conversion to different audio formats.
+
+<div style="text-align:center"><img src="requirements/screenshots/export.jpg" width=200 /></div>
+
+- Cutting of recordings, and editing of labels and marks.
+
+<div style="text-align:center"><img src="requirements/screenshots/edit.jpg" width=200 /></div>
+
+- Navigation within the app via a NavigationDrawer.
+
+<div style="text-align:center"><img src="requirements/screenshots/nav.jpg" width=200 /></div>
+
+
+**Settings**
+
+- Definition of markers, to use for annotating recordings.
+
+- Definition of labels, to use for file organisation.
+
+<div style="text-align:center"><img src="requirements/screenshots/labels.jpg" width=200 /></div>
+
+- Definition of a standard filename template.
+
+- Selection of the preferred storage location on the device.
+
+- Selection of the preferred color theme (available: light and dark).
+
+<div style="text-align:center"><img src="requirements/screenshots/settings.jpg" width=200 /></div>
+
+- Rotate screen to improve audio quality of recording (microphone faces interviewee, user interface faces interviewer).

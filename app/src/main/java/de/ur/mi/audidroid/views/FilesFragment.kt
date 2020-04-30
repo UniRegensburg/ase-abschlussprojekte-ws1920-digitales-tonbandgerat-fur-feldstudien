@@ -4,10 +4,9 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.PopupMenu
+import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -26,6 +25,7 @@ import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
 import de.ur.mi.audidroid.utils.FolderDialog
 import de.ur.mi.audidroid.utils.StorageHelper
+import de.ur.mi.audidroid.utils.FilterDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
@@ -36,13 +36,12 @@ import kotlinx.android.synthetic.main.files_fragment.*
  */
 class FilesFragment : Fragment() {
 
-
     private lateinit var folderAdapter: FolderAdapter
     private lateinit var recordingAdapter: RecordingItemAdapter
     private lateinit var binding: FilesFragmentBinding
     private lateinit var folderViewModel: FolderViewModel
     private lateinit var filesViewModel: FilesViewModel
-
+    private lateinit var dataSource: Repository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,9 +49,8 @@ class FilesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val application = this.activity!!.application
-        val dataSource = Repository(application)
+        dataSource = Repository(application)
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
-
         val filesViewModelFactory = FilesViewModelFactory(dataSource, application)
         val folderViewModelFactory = FolderViewModelFactory(dataSource, application)
         filesViewModel = ViewModelProvider(this, filesViewModelFactory).get(FilesViewModel::class.java)
@@ -62,13 +60,19 @@ class FilesFragment : Fragment() {
         binding.filesViewModel = filesViewModel
         binding.filesFragment = this
         binding.lifecycleOwner = this
+        setHasOptionsMenu(true)
 
         folderViewModel.sortAllFolders()
-
         observeSnackBars()
 
         folderViewModel.externalFolderLiveData.observe(viewLifecycleOwner, Observer {
             folderViewModel.externalFolderCount = it
+        })
+
+        filesViewModel.allRecordingsWithMarker.observe(viewLifecycleOwner, Observer {})
+        //Observer on the state variable for the sorting of list-items.
+        filesViewModel.sortModus.observe(viewLifecycleOwner, Observer {
+            filesViewModel.setSorting(it)
         })
 
         // Observer on the state variable for navigating when a list-item is clicked.
@@ -93,7 +97,6 @@ class FilesFragment : Fragment() {
                 filesViewModel.doneShowingSnackbar()
             }
         })
-
         folderViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it.isNotEmpty()){
                 Snackbar.make(view!!, it, Snackbar.LENGTH_SHORT).show()
@@ -169,11 +172,11 @@ class FilesFragment : Fragment() {
         popupMenu.show()
     }
 
-    fun addFolderPopupMenu(view: View){
+    fun addFolderPopupMenu(view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu_add_folder, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId){
+            when (item.itemId) {
                 R.id.action_add_folder_int ->
                     folderViewModel.onAddInternalFolderClicked()
                 R.id.action_add_folder_ext ->
@@ -182,6 +185,48 @@ class FilesFragment : Fragment() {
             true
         }
         popupMenu.show()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_files, menu)
+        
+        val searchItem: MenuItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText!!.isNotEmpty()){
+                    filesViewModel.setSearchResult(newText)
+                }else{ filesViewModel._sortModus.value = null }
+                return true
+            }
+        })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_filter ->{
+                filesViewModel._createFilterDialog.value = true
+                true
+            }
+            R.id.action_sort_name -> {
+                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_name)
+                true
+            }
+            R.id.action_sort_date -> {
+                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_date)
+                true
+            }
+            R.id.action_sort_duration -> {
+                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_duration)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+
     }
 
     private fun navigateToEditFragment(recordingAndLabels: RecordingAndLabels) {
@@ -193,15 +238,15 @@ class FilesFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         filesViewModel.initializeFrameLayout(files_layout)
+        filesViewModel.setSorting(null)
         setupAdapter()
         createConfirmDialog()
+        FilterDialog.clearDialog()
     }
 
     private fun setupAdapter() {
-
         val filesViewModel = binding.filesViewModel
         val folderViewModel = binding.folderViewModel
-
         if (filesViewModel != null && folderViewModel != null) {
             recordingAdapter = RecordingItemAdapter(this, filesViewModel)
             folderAdapter = FolderAdapter(this, filesViewModel, folderViewModel)
@@ -209,14 +254,13 @@ class FilesFragment : Fragment() {
             binding.recordingListDisplay.adapter = recordingAdapter
             binding.folderList.adapter = folderAdapter
 
-            filesViewModel.allRecordingsWithLabels.observe(viewLifecycleOwner, Observer {
+            filesViewModel.displayRecordings.observe(viewLifecycleOwner, Observer {
                 val recordings = arrayListOf<RecordingAndLabels>()
                 it?.let {
-                   it.forEach { recording -> if (recording.folder == null){recordings.add(recording)} }
+                    it.forEach { recording -> if (recording.folder == null){ recordings.add(recording)} }
                 }
                 recordingAdapter.submitList(recordings)
             })
-
             folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {
                 val folders = arrayListOf<FolderEntity>()
                 it?.let { folders.addAll(it) }
@@ -293,6 +337,18 @@ class FilesFragment : Fragment() {
                 )
             }
         })
+        //Dialog for filtering recordings.
+        filesViewModel.createFilterDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                FilterDialog.createDialog(
+                    context = context!!,
+                    layoutId = R.layout.filter_dialog,
+                    viewModel = filesViewModel,
+                    dataSource = dataSource,
+                    fragment = this
+                )
+            }
+        })
     }
 
    //Allows the creation of a new external folder.
@@ -308,6 +364,8 @@ class FilesFragment : Fragment() {
             folderViewModel.handleActivityResult(data!!.dataString!!)
         }
     }
+
+
 
     /**
      * Provides the Repository and context to the FilesViewModel.

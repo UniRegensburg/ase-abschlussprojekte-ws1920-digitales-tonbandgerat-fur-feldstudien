@@ -33,6 +33,12 @@ data class RecordingAndMarks(
     val markList: List<MarkTimestamp>
 )
 
+data class RecordingAndMarkTuple(
+    @ColumnInfo(name = "recordingId") val recordingId: Int,
+    @ColumnInfo(name = "markerId") val markerId: Int,
+    @ColumnInfo(name = "markerName") val markerName: String
+)
+
 data class MarkAndTimestamp(
     @Embedded val marker: MarkerEntity,
     @Embedded val markTimestamp: MarkTimestamp
