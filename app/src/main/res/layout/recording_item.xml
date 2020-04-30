@@ -20,6 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/files_card_view_margin"
         android:layout_marginTop="@dimen/files_card_view_margin"
+        android:layout_marginBottom="@dimen/files_card_view_bottom_margin"
         android:layout_marginEnd="@dimen/files_card_view_margin">
 
         <androidx.constraintlayout.widget.ConstraintLayout
