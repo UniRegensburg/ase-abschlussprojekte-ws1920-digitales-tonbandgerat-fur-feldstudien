@@ -35,10 +35,10 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/grayed_out"
-                android:layout_marginStart="@dimen/card_view_margin"
-                android:layout_marginTop="@dimen/card_view_margin"
-                android:layout_marginEnd="@dimen/keyline_1">
+                android:backgroundTint="@color/color_folder_background"
+                android:layout_marginStart="@dimen/files_card_view_margin"
+                android:layout_marginTop="@dimen/files_card_view_margin"
+                android:layout_marginEnd="@dimen/files_card_view_margin">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
