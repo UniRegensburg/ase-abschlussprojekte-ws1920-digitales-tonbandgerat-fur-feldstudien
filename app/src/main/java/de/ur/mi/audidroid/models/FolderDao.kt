@@ -42,6 +42,4 @@ interface FolderDao {
     @Query("DELETE FROM foldersTable")
     suspend fun clearTable()
 
-    @Update
-    suspend fun update(entryEntity: EntryEntity)
 }

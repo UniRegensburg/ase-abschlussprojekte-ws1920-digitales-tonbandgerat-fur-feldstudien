@@ -48,13 +48,9 @@ object StorageHelper {
     }
 
     fun deleteFile(context: Context, recordingPath: String, recodingName: String): Boolean{
-        val deletedSuccessfully: Boolean
         if(recordingPath.startsWith(context.resources.getString(R.string.content_uri_prefix))){
-            deletedSuccessfully = deleteExternalFile(context, recordingPath, recodingName)
-        }else{
-            deletedSuccessfully = File(recordingPath).delete()
-        }
-        return deletedSuccessfully
+            return deleteExternalFile(context, recordingPath, recodingName)
+        }else{ return File(recordingPath).delete() }
     }
 
     private fun deleteExternalFile(context: Context, path: String, name: String): Boolean{
@@ -67,20 +63,10 @@ object StorageHelper {
         return false
     }
 
-    private fun internalFolderDescr(name: String, descr: String?):String{
-        var folderDescr = name
-        if (descr != null){
-            folderDescr = descr + "/" + name
-        }
-        return folderDescr
-    }
-
     fun createInternalFolderEntity(name: String, parentFolder: FolderEntity?): FolderEntity{
-        var nestingDescr: String? = null
         var parentFolderRef: Int? = null
 
         if (parentFolder != null){
-            nestingDescr = internalFolderDescr(parentFolder.folderName, parentFolder.nestingDescr)
             if (parentFolder.parentDir != null){
                 parentFolderRef = parentFolder.parentDir
             }else{
@@ -88,7 +74,7 @@ object StorageHelper {
             }
         }
         return  FolderEntity(0, name,null,
-            false, parentFolderRef , nestingDescr)
+            false, parentFolderRef)
     }
 
     //Returns the last component of the external folder (to be used as name).
@@ -108,9 +94,7 @@ object StorageHelper {
         if (allFolders != null && allFolders.isNotEmpty()) {
             val foldersSorted: MutableList<FolderEntity> = mutableListOf()
             allFolders.forEach {
-                if (it.parentDir == null) {
-                    foldersSorted.add(it)
-                }
+                if (it.parentDir == null) { foldersSorted.add(it) }
             }
             while (foldersSorted.size != allFolders.size){
                 for (i in 0 until foldersSorted.size){
@@ -209,7 +193,7 @@ object StorageHelper {
         val uri = Uri.parse(path)
         val name = getFolderName(uri.lastPathSegment.toString())
         val newFolderEntity = FolderEntity(0, name,
-            path, true, null, uri.lastPathSegment.toString())
+            path, true, null)
         return repository.insertFolder(newFolderEntity).toInt()
     }
 
@@ -233,10 +217,7 @@ object StorageHelper {
     private fun deleteExternalFolder(context: Context, path: String): Boolean{
         val treeUri = Uri.parse(path)
         val dir = DocumentFile.fromTreeUri(context,treeUri)
-
-        if (dir!!.isDirectory){
-            return dir.delete()
-        }
+        if (dir!!.isDirectory){ return dir.delete() }
         return false
     }
 
