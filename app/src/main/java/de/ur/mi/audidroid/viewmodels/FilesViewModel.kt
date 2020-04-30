@@ -1,7 +1,9 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.net.Uri
 import android.widget.FrameLayout
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -125,8 +127,19 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _createRenameDialog.value = false
         this.recording = recording
         if (checkInput(nameInput)){
+            if (recording.recordingPath.startsWith(res.getString(R.string.content_uri_prefix))){
+                renameExternalFile(recording.recordingPath, recording.recordingName, nameInput!!)
+            }
             updateNameInDB(recording.uid, nameInput!!)
         }
+    }
+
+    private fun renameExternalFile(path: String, name: String, userInput: String){
+        val treeUri = Uri.parse(path)
+        var fileName = name + res.getString(R.string.suffix_audio_file)
+        val file = DocumentFile.fromTreeUri(context, treeUri)!!.findFile(fileName)
+        fileName = userInput +  res.getString(R.string.suffix_audio_file)
+        file!!.renameTo(fileName)
     }
 
     private fun updateNameInDB(recordingId: Int, recordingName: String){

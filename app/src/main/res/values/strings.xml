@@ -180,6 +180,7 @@
     <string name="default_storage_location">internal</string>
     <string name="error_storage_location">Choose an other location</string>
     <string name="external_sd_card_error">Saving on an external sd card is not possible</string>
+    <string name="content_uri_prefix">content:</string>
 
     <!--Sharing-->
     <string name="popup_menu_option_share">Share</string>
