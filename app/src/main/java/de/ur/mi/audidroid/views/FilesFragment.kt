@@ -138,11 +138,6 @@ class FilesFragment : Fragment() {
         if (allFolders.isEmpty()){
             popupMenu.menu.findItem(R.id.action_move_recording).isVisible = false
         }
-        folderRef?.let {
-            if (allFolders.size <= 1){
-                popupMenu.menu.findItem(R.id.action_move_recording).isVisible = false
-            }
-        }
         if (path.startsWith(context!!.resources.getString(R.string.content_uri_prefix))){
             val externalFolderCount = folderViewModel.externalFolderCount
             if (externalFolderCount <= 1){
@@ -154,16 +149,13 @@ class FilesFragment : Fragment() {
         val popupMenu = PopupMenu(context, view)
         folderViewModel.folderToBeEdited = folder
         popupMenu.menuInflater.inflate(R.menu.popup_menu_folder, popupMenu.menu)
-        if(folder.parentDir != null){ popupMenu.menu.findItem(R.id.action_add_subfolder).isVisible = false }
+        if(folder.parentDir != null || folder.isExternal){
+            popupMenu.menu.findItem(R.id.action_add_subfolder).isVisible = false
+        }
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId){
-                R.id.action_add_subfolder ->{
-                    if (folder.isExternal){
-                        onClickAddExternalFolder()
-                    }else{
-                        folderViewModel.onAddFolderClicked(folder)
-                    }
-                }
+                R.id.action_add_subfolder ->
+                    folderViewModel.onAddFolderClicked(folder)
                 R.id.action_delete_folder ->
                     folderViewModel.onDeleteFolderClicked(folder, view)
             }
@@ -264,9 +256,7 @@ class FilesFragment : Fragment() {
             folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {values ->
                 val folders = arrayListOf<FolderEntity>()
                 values?.let { list ->
-                    list.forEach {
-                        if (it.isShown){folders.add(it)} }
-                //    folders.addAll(it)
+                    list.forEach { if (it.isShown){folders.add(it)} }
                 }
                 folderAdapter.submitList(folders)
             })
