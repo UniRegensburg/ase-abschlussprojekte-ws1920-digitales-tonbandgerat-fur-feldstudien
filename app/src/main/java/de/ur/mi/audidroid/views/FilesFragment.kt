@@ -41,6 +41,7 @@ class FilesFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
+
         val application = this.activity!!.application
         dataSource = Repository(application)
 
@@ -120,15 +121,17 @@ class FilesFragment : Fragment() {
 
         val searchItem: MenuItem = menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                if (newText!!.isNotEmpty()){
+                if (newText!!.isNotEmpty()) {
                     filesViewModel.setSearchResult(newText)
-                }else{ filesViewModel._sortModus.value = null }
+                } else {
+                    filesViewModel._sortModus.value = null
+                }
                 return true
             }
         })
@@ -136,20 +139,23 @@ class FilesFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_filter ->{
+            R.id.action_filter -> {
                 filesViewModel._createFilterDialog.value = true
                 true
             }
             R.id.action_sort_name -> {
-                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_name)
+                filesViewModel._sortModus.value =
+                    context!!.resources.getInteger(R.integer.sort_by_name)
                 true
             }
             R.id.action_sort_date -> {
-                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_date)
+                filesViewModel._sortModus.value =
+                    context!!.resources.getInteger(R.integer.sort_by_date)
                 true
             }
             R.id.action_sort_duration -> {
-                filesViewModel._sortModus.value = context!!.resources.getInteger(R.integer.sort_by_duration)
+                filesViewModel._sortModus.value =
+                    context!!.resources.getInteger(R.integer.sort_by_duration)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -202,7 +208,7 @@ class FilesFragment : Fragment() {
         })
 
         filesViewModel.createFilterDialog.observe(viewLifecycleOwner, Observer {
-            if (it){
+            if (it) {
                 FilterDialog.createDialog(
                     context = context!!,
                     layoutId = R.layout.filter_dialog,

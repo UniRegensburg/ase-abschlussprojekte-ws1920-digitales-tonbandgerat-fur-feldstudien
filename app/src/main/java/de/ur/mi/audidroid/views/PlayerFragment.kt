@@ -44,7 +44,8 @@ class PlayerFragment : Fragment() {
         val application = this.requireActivity().application
         val dataSource = Repository(application)
 
-        args = PlayerFragmentArgs.fromBundle(arguments!!)
+        args = PlayerFragmentArgs.fromBundle(requireArguments())
+
         val viewModelFactory =
             PlayerViewModelFactory(args.recordingId, dataSource, application)
 

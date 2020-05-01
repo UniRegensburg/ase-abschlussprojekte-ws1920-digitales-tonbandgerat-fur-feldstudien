@@ -27,6 +27,7 @@ import de.ur.mi.audidroid.models.MarkAndTimestamp
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 import de.ur.mi.audidroid.models.MarkTimestamp
+import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
@@ -38,6 +39,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 
 class EditRecordingViewModel(
     val recordingId: Int,
@@ -58,8 +60,7 @@ class EditRecordingViewModel(
     private val res = context.resources
     private val copiedRecording: Int =
         repository.getCopiedRecordingById(
-            recordingId,
-            res.getString(R.string.filename_trimmed_recording) + System.currentTimeMillis()
+            recordingId
         )
             .toInt()
     val recording: LiveData<RecordingEntity> = repository.getRecordingById(copiedRecording)
@@ -495,12 +496,12 @@ class EditRecordingViewModel(
 
         repository.updateNameAndPath(copiedRecording, name, path, getDate())
         if (labels != null) {
-            for (i in labels.indices) {
+            for (label in labels) {
                 repository.insertRecLabels(
                     LabelAssignmentEntity(
                         0,
                         copiedRecording,
-                        labels[i]
+                        label
                     )
                 )
             }
@@ -539,6 +540,7 @@ class EditRecordingViewModel(
                 }
                 repository.deleteRecMarks(recordingId)
                 repository.updateMarks(recordingId, copiedRecording)
+                repository.deleteRecording(copiedRecording)
             }
         } else {
             if (tempFile.contains(res.getString(R.string.filename_trimmed_recording))) {
@@ -579,6 +581,7 @@ class EditRecordingViewModel(
         repository.deleteRecLabels(recordingId)
         repository.deleteRecMarks(recordingId)
         repository.deleteRecording(recordingId)
+
     }
 
     fun onFilesFragmentNavigated() {

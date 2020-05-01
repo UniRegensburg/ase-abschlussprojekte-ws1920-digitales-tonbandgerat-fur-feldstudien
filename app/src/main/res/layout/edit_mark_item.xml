@@ -26,7 +26,8 @@
         android:layout_marginStart="@dimen/marks_card_view_margin"
         android:layout_marginTop="@dimen/marks_card_view_margin"
         android:layout_marginEnd="@dimen/marks_card_view_margin"
-        android:onClick="@{(view) -> listener.onMarkClicked(mark, view)}">
+        android:onClick="@{(view) -> listener.onMarkClicked(mark, view)}"
+        app:cardElevation="@dimen/keyline_1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

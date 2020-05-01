@@ -34,15 +34,15 @@ interface MarkerDao {
     @Query("DELETE FROM markerTimeTable WHERE recordingId = :copiedRecordingId AND markTimeInMilli NOT BETWEEN :startTimeInMilli AND :endTimeInMilli")
     suspend fun deleteOuterMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int)
 
-    @Transaction
-    @Query("SELECT DISTINCT R.recordingId, R.markerId, L.markerName FROM markerTimeTable R LEFT JOIN markerTable L ON R.markerId = L.uid")
-    fun getRecordingsAndMarkerType(): LiveData<List<RecordingAndMarkTuple>>
-
     @Query("UPDATE markerTimeTable SET markTimeInMilli = markTimeInMilli - :startTimeInMilli WHERE recordingId = :copiedRecordingId")
     suspend fun updateInnerMarks(copiedRecordingId: Int, startTimeInMilli: Int)
 
     @Query("DELETE FROM markerTimeTable WHERE recordingId = :copiedRecordingId AND markTimeInMilli BETWEEN :startTimeInMilli AND :endTimeInMilli")
     suspend fun deleteInnerMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int)
+
+    @Transaction
+    @Query("SELECT DISTINCT R.recordingId, R.markerId, L.markerName FROM markerTimeTable R LEFT JOIN markerTable L ON R.markerId = L.uid")
+    fun getRecordingsAndMarkerType(): LiveData<List<RecordingAndMarkTuple>>
 
     @Query("UPDATE markerTimeTable SET markTimeInMilli = markTimeInMilli - :durationInMilli WHERE recordingId = :copiedRecordingId AND markTimeInMilli > :durationInMilli")
     suspend fun updateOuterMarks(copiedRecordingId: Int, durationInMilli: Int)

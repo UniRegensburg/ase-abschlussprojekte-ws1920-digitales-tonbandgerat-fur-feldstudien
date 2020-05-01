@@ -1,9 +1,7 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
-import android.view.View
 import android.widget.FrameLayout
-import android.widget.PopupMenu
 import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
@@ -13,7 +11,6 @@ import de.ur.mi.audidroid.models.RecordingAndMarkTuple
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
-import java.util.*
 import kotlin.collections.ArrayList
 
 /**
@@ -105,7 +102,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-    fun cancelFilterDialog(){
+    fun cancelFilterDialog() {
         _createFilterDialog.value = false
     }
 
@@ -129,9 +126,17 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     ): ArrayList<RecordingAndLabels> {
         for (i in it.indices) {
             val file = File(it[i].recordingPath)
-            if (file.exists() && !it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
-                array.add(it[i])
-            } else {
+
+            if (file.exists()) {
+                if (!it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
+                    array.add(it[i])
+                } else if (it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
+                    File(it[i].recordingPath).delete()
+                    repository.deleteRecording(it[i].uid)
+                    repository.deleteRecMarks(it[i].uid)
+                    repository.deleteRecLabels(it[i].uid)
+                }
+            } else if (!file.exists() && !it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
                 repository.deleteRecording(it[i].uid)
                 repository.deleteRecMarks(it[i].uid)
                 repository.deleteRecLabels(it[i].uid)
@@ -141,71 +146,86 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     // Set sorted source for recording display
-    private fun removeSortedRecordingSources(){
+    private fun removeSortedRecordingSources() {
         displayRecordings.removeSource(allRecordingsWithLabels)
         displayRecordings.removeSource(allRecordingsWithLabelsOrderName)
         displayRecordings.removeSource(allRecordingsWithLabelsOrderDate)
         displayRecordings.removeSource(allRecordingsWithLabelsOrderDuration)
     }
 
-    private fun matchLabelsAndRecordings(recordingList: List<RecordingAndLabels>, params: List<String>): List<RecordingAndLabels>?{
-        if (params.isNotEmpty()){
+    private fun matchLabelsAndRecordings(
+        recordingList: List<RecordingAndLabels>,
+        params: List<String>
+    ): List<RecordingAndLabels>? {
+        if (params.isNotEmpty()) {
             var filteredRecordings = arrayListOf<RecordingAndLabels>()
-            recordingList.forEach {recording ->
+            recordingList.forEach { recording ->
                 filteredRecordings.add(recording)
-                if (recording.labels != null){
-                    params.forEach {param ->
-                        if (!recording.labels.contains(param)){
+                if (recording.labels != null) {
+                    params.forEach { param ->
+                        if (!recording.labels.contains(param)) {
                             filteredRecordings.remove(recording)
                         }
                     }
-                } else {filteredRecordings.remove(recording)}
+                } else {
+                    filteredRecordings.remove(recording)
+                }
             }
             return filteredRecordings
-        } else { return null }
+        } else {
+            return null
+        }
     }
 
-    private fun adaptRecordingMarkLiveData(reference: List<RecordingAndMarkTuple>): List<Pair<Int, MutableList<String>>>?{
-        if (reference.isNotEmpty()){
+    private fun adaptRecordingMarkLiveData(reference: List<RecordingAndMarkTuple>): List<Pair<Int, MutableList<String>>>? {
+        if (reference.isNotEmpty()) {
             val refList = mutableListOf<Pair<Int, MutableList<String>>>()
             var alreadyInList: Boolean
             reference.forEach { ref ->
                 val pair = Pair(ref.recordingId, mutableListOf(ref.markerName))
-                if (refList.isEmpty()){
+                if (refList.isEmpty()) {
                     refList.add(pair)
-                }else{
+                } else {
                     alreadyInList = false
                     refList.forEach {
-                        if (it.first == ref.recordingId){
+                        if (it.first == ref.recordingId) {
                             it.second.add(ref.markerName)
                             alreadyInList = true
                         }
                     }
-                    if (!alreadyInList){ refList.add(pair) }
+                    if (!alreadyInList) {
+                        refList.add(pair)
+                    }
                 }
             }
             return refList
-        } else { return null }
+        } else {
+            return null
+        }
     }
 
-    private fun matchMarksAndRecordings(params: List<String>): List<Int>?{
+    private fun matchMarksAndRecordings(params: List<String>): List<Int>? {
         val filteredRef = arrayListOf<Int>()
         val list = adaptRecordingMarkLiveData(allRecordingsWithMarker.value!!)
-        if (params.isNotEmpty()){
-            list?.forEach{recMarkTuple ->
+        if (params.isNotEmpty()) {
+            list?.forEach { recMarkTuple ->
                 filteredRef.add(recMarkTuple.first)
-                params.forEach{param ->
-                    if (!recMarkTuple.second.contains(param)){
+                params.forEach { param ->
+                    if (!recMarkTuple.second.contains(param)) {
                         filteredRef.remove(recMarkTuple.first)
                     }
                 }
             }
             return filteredRef
-        } else { return null }
+        } else {
+            return null
+        }
     }
 
-    private fun combineFilterParams(matchedLabels:List<RecordingAndLabels>?, matchedMarkers: List<Int>?,
-                                    nameInput: String?): List<RecordingAndLabels> {
+    private fun combineFilterParams(
+        matchedLabels: List<RecordingAndLabels>?, matchedMarkers: List<Int>?,
+        nameInput: String?
+    ): List<RecordingAndLabels> {
         var filteredResult = allRecordingsWithLabels.value!!
         var matchedList = mutableListOf<RecordingAndLabels>()
         matchedLabels?.let { filteredResult = matchedLabels }
@@ -220,7 +240,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         nameInput?.let {
             matchedList = mutableListOf<RecordingAndLabels>()
             filteredResult.forEach {
-                if(it.recordingName.contains(nameInput,true)){
+                if (it.recordingName.contains(nameInput, true)) {
                     matchedList.add(it)
                 }
             }
@@ -229,27 +249,28 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         return filteredResult
     }
 
-    fun setFilterResult(labels: List<String>, marks: List<String>, nameInput: String?){
+    fun setFilterResult(labels: List<String>, marks: List<String>, nameInput: String?) {
         removeSortedRecordingSources()
-        displayRecordings.addSource(allRecordingsWithLabels){
-            if (!labels.isEmpty() || !marks.isEmpty() || !nameInput.isNullOrEmpty()){
-                val matchedLabels = matchLabelsAndRecordings(allRecordingsWithLabels.value!!, labels)
+        displayRecordings.addSource(allRecordingsWithLabels) {
+            if (!labels.isEmpty() || !marks.isEmpty() || !nameInput.isNullOrEmpty()) {
+                val matchedLabels =
+                    matchLabelsAndRecordings(allRecordingsWithLabels.value!!, labels)
                 val matchedMarks = matchMarksAndRecordings(marks)
                 var displayList = combineFilterParams(matchedLabels, matchedMarks, nameInput)
                 displayRecordings.value = displayList
-            }else{
+            } else {
                 displayRecordings.value = allRecordingsWithLabels.value!!
             }
             _filterEmpty.value = displayRecordings.value!!.isEmpty()
         }
     }
 
-    fun setSearchResult(search: String){
+    fun setSearchResult(search: String) {
         removeSortedRecordingSources()
-        displayRecordings.addSource(allRecordingsWithLabels){
+        displayRecordings.addSource(allRecordingsWithLabels) {
             val displayList = mutableListOf<RecordingAndLabels>()
             allRecordingsWithLabels.value?.forEach { recording ->
-                if (recording.recordingName.contains(search,true)){
+                if (recording.recordingName.contains(search, true)) {
                     displayList.add(recording)
                 }
             }
@@ -257,26 +278,26 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-    fun setSorting(modus: Int?){
+    fun setSorting(modus: Int?) {
         removeSortedRecordingSources()
-        when (modus){
+        when (modus) {
             res.getInteger(R.integer.sort_by_name) -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderName){
+                displayRecordings.addSource(allRecordingsWithLabelsOrderName) {
                     displayRecordings.value = allRecordingsWithLabelsOrderName.value
                 }
             }
             res.getInteger(R.integer.sort_by_date) -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderDate){
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDate) {
                     displayRecordings.value = allRecordingsWithLabelsOrderDate.value
                 }
             }
             res.getInteger(R.integer.sort_by_duration) -> {
-                displayRecordings.addSource(allRecordingsWithLabelsOrderDuration){
+                displayRecordings.addSource(allRecordingsWithLabelsOrderDuration) {
                     displayRecordings.value = allRecordingsWithLabelsOrderDuration.value
                 }
             }
             else -> {
-                displayRecordings.addSource(allRecordingsWithLabels){
+                displayRecordings.addSource(allRecordingsWithLabels) {
                     displayRecordings.value = allRecordingsWithLabels.value
                 }
             }
