@@ -20,23 +20,14 @@ interface LabelDao {
     @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid")
     fun getAllRecordingsWithLabels(): LiveData<List<RecordingAndLabels>>
 
-    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY R.recordingName")
-    fun getAllRecordingsWithLabelsOrderNameASC(): LiveData<List<RecordingAndLabels>>
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.recordingName END ASC, CASE WHEN :isAsc = 0 THEN R.recordingName END DESC")
+    fun getAllRecordingsWithLabelsOrderName(isAsc: Boolean): LiveData<List<RecordingAndLabels>>
 
-    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY R.duration")
-    fun getAllRecordingsWithLabelsOrderDurationASC(): LiveData<List<RecordingAndLabels>>
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.duration END ASC, CASE WHEN :isAsc = 0 THEN R.duration END DESC")
+    fun getAllRecordingsWithLabelsOrderDuration(isAsc: Boolean): LiveData<List<RecordingAndLabels>>
 
-    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY R.duration")
-    fun getAllRecordingsWithLabelsOrderDateASC(): LiveData<List<RecordingAndLabels>>
-
-    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY R.recordingName DESC")
-    fun getAllRecordingsWithLabelsOrderNameDESC(): LiveData<List<RecordingAndLabels>>
-
-    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY R.duration DESC")
-    fun getAllRecordingsWithLabelsOrderDurationDESC(): LiveData<List<RecordingAndLabels>>
-
-    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY R.duration DESC")
-    fun getAllRecordingsWithLabelsOrderDateDESC(): LiveData<List<RecordingAndLabels>>
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.date END ASC, CASE WHEN :isAsc = 0 THEN R.date END DESC")
+    fun getAllRecordingsWithLabelsOrderDate(isAsc: Boolean): LiveData<List<RecordingAndLabels>>
 
     @Query("SELECT * FROM labelsTable WHERE uid IN (SELECT DISTINCT(labelId) FROM labelAssignmentTable WHERE recordingId = :key)")
     fun getRecLabelsById(key: Int): LiveData<List<LabelEntity>>

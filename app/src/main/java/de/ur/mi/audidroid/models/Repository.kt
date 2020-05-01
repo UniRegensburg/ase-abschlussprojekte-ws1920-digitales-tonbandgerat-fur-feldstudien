@@ -156,27 +156,15 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun getAllRecWithLabelsOrderName(isAsc: Boolean): LiveData<List<RecordingAndLabels>>{
-        if (isAsc){
-            return labelDao.getAllRecordingsWithLabelsOrderNameASC()
-        }else{
-            return labelDao.getAllRecordingsWithLabelsOrderNameDESC()
-        }
+        return labelDao.getAllRecordingsWithLabelsOrderName(isAsc)
     }
 
     fun getAllRecWithLabelsOrderDate(isAsc: Boolean): LiveData<List<RecordingAndLabels>>{
-        if (isAsc){
-            return labelDao.getAllRecordingsWithLabelsOrderDateASC()
-        }else{
-            return labelDao.getAllRecordingsWithLabelsOrderDateDESC()
-        }
+        return labelDao.getAllRecordingsWithLabelsOrderDate(isAsc)
     }
 
     fun getAllRecWithLabelsOrderDuration(isAsc: Boolean): LiveData<List<RecordingAndLabels>>{
-        if (isAsc){
-            return labelDao.getAllRecordingsWithLabelsOrderDurationASC()
-        }else{
-            return labelDao.getAllRecordingsWithLabelsOrderDurationDESC()
-        }
+        return labelDao.getAllRecordingsWithLabelsOrderDuration(isAsc)
     }
 
     fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {
