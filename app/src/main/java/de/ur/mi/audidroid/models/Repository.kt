@@ -72,8 +72,10 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun updateRecording(recording: RecordingEntity) {
-        CoroutineScope(coroutineContext).launch {
-            recordingDao.updateRecording(recording)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                recordingDao.updateRecording(recording)
+            }
         }
     }
 
