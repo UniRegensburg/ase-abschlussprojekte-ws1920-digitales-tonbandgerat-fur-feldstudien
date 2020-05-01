@@ -111,26 +111,31 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun saveRename(rec: RecordingAndLabels, newName: String){
+        _createRenameDialog.value = false
         if (!validNameInput(newName)) {
-            errorMessage = (res.getString(R.string.dialog_invalid_name))
+            errorMessage = res.getString(R.string.dialog_invalid_name)
             _createRenameDialog.value = true
             return
         }
         if (newName.length > res.getInteger(R.integer.max_name_length)) {
-            errorMessage = (res.getString(R.string.dialog_name_length))
+            errorMessage = res.getString(R.string.dialog_name_length)
             _createRenameDialog.value = true
             return
         }
         val name = checkVariables(newName)
         if(name != rec.recordingName){
-            val renamedRecording = EntryEntity(rec.uid, name, rec.recordingPath, rec.date, rec.duration)
-            repository.updateRecording(renamedRecording)
-            val prevFile = File(rec.recordingPath)
-            if(prevFile.exists() && prevFile.path != context.resources.getString(R.string.default_storage_location)) {
-                val saveLocation = rec.recordingPath.subSequence(0, rec.recordingPath.length - rec.recordingName.length - 5).toString()
-                prevFile.renameTo(File(saveLocation, name + context.getString(R.string.suffix_audio_file)))
+            val newPath = rec.recordingPath.subSequence(0, rec.recordingPath.length - (rec.recordingName.length + context.getString(R.string.suffix_audio_file).length)).toString() + name + context.getString(R.string.suffix_audio_file)
+            if(File(newPath).exists()){
+                errorMessage = res.getString(R.string.rename_dialog_error_already_exist)
+                _createRenameDialog.value = true
+                return
             }
+            val newFile = File(newPath)
+            File(rec.recordingPath).copyTo(newFile)
+            File(rec.recordingPath).delete()
+            repository.updateNameAndPath(rec.uid, name, newPath, rec.date)
         }
+        recording = null
     }
 
     private fun validNameInput(name: String): Boolean {
@@ -171,6 +176,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun cancelFilterDialog(){
+        recording = null
         _createFilterDialog.value = false
     }
 

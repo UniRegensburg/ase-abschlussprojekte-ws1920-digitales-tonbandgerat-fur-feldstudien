@@ -75,7 +75,6 @@
     <string name="error_message_path_does_not_exist">File cannot be deleted. File path does not exist.</string>
     <string name="delete_recording_dialog_header">Delete recording \'%1$s\'?</string>
     <string name="content_description_audio_files">Audio files icon</string>
-    <string name="rename_hint">Rename recording</string>
 
     <!-- EditRecordingFragment -->
     <string name="cut_inner_button">Cut inner</string>
@@ -161,6 +160,10 @@
     <string name="dialog_already_exist">Duplication error. Change the name or the path.</string>
     <string name="dialog_name_length">Enter a maximum of thirty characters.</string>
     <string name="dialog_just_three_labels">Select a maximum of three labels.</string>
+
+    <!-- Rename recordings dialog -->
+    <string name="rename_dialog_title">Rename recording</string>
+    <string name="rename_dialog_error_already_exist">Duplication error. Choose an other name.</string>
 
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>

@@ -213,7 +213,7 @@ class FilesFragment : Fragment() {
         filesViewModel.createFilterDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 FilterDialog.createDialog(
-                    context = context!!,
+                    context = requireContext(),
                     layoutId = R.layout.filter_dialog,
                     viewModel = filesViewModel,
                     dataSource = dataSource,
@@ -225,9 +225,10 @@ class FilesFragment : Fragment() {
         filesViewModel.createRenameDialog.observe(viewLifecycleOwner, Observer {
             if (it){
                 RenameDialog.createDialog(
-                    context = context!!,
+                    context = requireContext(),
                     viewModel = filesViewModel,
-                    recording = filesViewModel.recording
+                    recording = filesViewModel.recording,
+                    errorMessage = filesViewModel.errorMessage
                 )
             }
         })

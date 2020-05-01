@@ -23,8 +23,8 @@ object RenameDialog {
             builder.setMessage(errorMessage)
         }
         with(builder) {
-            setMessage(
-                context.getString(R.string.rename_hint)
+            setTitle(
+                context.getString(R.string.rename_dialog_title)
             )
             setView(R.layout.rename_dialog)
             setPositiveButton(context.getString(R.string.popup_menu_option_rename)) { _, _ ->
