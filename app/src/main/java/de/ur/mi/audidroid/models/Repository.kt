@@ -142,6 +142,12 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
+    fun updateFolderVisibility(folderUid: Int, isShown: Boolean){
+        CoroutineScope(coroutineContext).launch {
+            folderDao.updateFolderVisibility(folderUid, isShown)
+        }
+    }
+
     fun updateLabel(labelEntity: LabelEntity) {
         CoroutineScope(coroutineContext).launch {
             labelDao.update(labelEntity)

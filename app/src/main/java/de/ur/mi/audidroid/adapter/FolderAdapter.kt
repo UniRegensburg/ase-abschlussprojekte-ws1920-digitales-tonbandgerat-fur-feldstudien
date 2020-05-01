@@ -14,6 +14,7 @@ import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import de.ur.mi.audidroid.viewmodels.FolderViewModel
 import de.ur.mi.audidroid.views.FilesFragment
+import kotlinx.android.synthetic.main.folder_item.view.*
 
 class FolderAdapter(
     private val filesFragment: FilesFragment,
@@ -36,7 +37,7 @@ class FolderAdapter(
         }
 
         override fun toggleFolderExpansion(folderEntity: FolderEntity, view: View) {
-            folderViewModel.toggleFolderExpansion(folderEntity)
+            folderViewModel.toggleFolderExpansion(folderEntity, view)
         }
     }
 
@@ -44,9 +45,9 @@ class FolderAdapter(
         folderItem = getItem(position)
         isSubfolder = folderViewModel.isSubfolder(folderItem.parentDir)
         setUpRecordingAdapter(holder)
-        holder.bind(getItem(position)!!, recordingAdapter, folderUserActionsListener, isSubfolder, folderItem.isExpanded )
+        holder.bind(getItem(position)!!, recordingAdapter, folderUserActionsListener,
+            isSubfolder, folderItem.isExpanded)
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         holderContext = parent.context
         return ViewHolder.from(parent) as ViewHolder

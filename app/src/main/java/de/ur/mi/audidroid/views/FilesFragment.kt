@@ -261,9 +261,13 @@ class FilesFragment : Fragment() {
                 }
                 recordingAdapter.submitList(recordings)
             })
-            folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {
+            folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {values ->
                 val folders = arrayListOf<FolderEntity>()
-                it?.let { folders.addAll(it) }
+                values?.let { list ->
+                    list.forEach {
+                        if (it.isShown){folders.add(it)} }
+                //    folders.addAll(it)
+                }
                 folderAdapter.submitList(folders)
             })
         }

@@ -27,6 +27,9 @@ interface FolderDao {
     @Query("UPDATE foldersTable SET isExpanded = :expansion WHERE uid = :key")
     suspend fun updateFolderExpansion(key:Int, expansion: Boolean)
 
+    @Query("UPDATE foldersTable SET isShown = :shown WHERE uid = :key")
+    suspend fun updateFolderVisibility(key:Int, shown: Boolean)
+
     @Query("SELECT COUNT(*) FROM foldersTable WHERE isExternal = 1 ")
     fun getExternalFolderCount(): LiveData<Int>
 

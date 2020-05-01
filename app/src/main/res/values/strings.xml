@@ -157,7 +157,7 @@
     <string name="rename_folder">Rename</string>
     <string name="move_file">Move</string>
     <string name="no_folder_available">There are no folders.</string>
-    <string name="dialog_no_folder">Remove from folder</string>
+    <string name="dialog_no_folder">Remove from current folder</string>
     <string name="create_folder">Create folder</string>
     <string name="update_folder">Update folder</string>
     <string name="move_file_dialog_header">Folders</string>
