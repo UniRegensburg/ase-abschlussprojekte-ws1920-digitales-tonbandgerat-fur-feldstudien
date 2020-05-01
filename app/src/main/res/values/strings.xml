@@ -66,14 +66,16 @@
     <!-- FilesFragment -->
     <string name="recording_file_name">Recording</string>
     <string name="popup_menu_button">Popup Menu</string>
-    <string name="popup_menu_option_delete">Delete</string>
+    <string name="popup_menu_option_rename">Rename</string>
     <string name="popup_menu_option_edit">Edit</string>
+    <string name="popup_menu_option_delete">Delete</string>
     <string name="recording_deleted">Recording \'%1$s\' deleted</string>
     <string name="no_recordings">No recordings saved</string>
     <string name="error_message_file_cannot_be_deleted">File cannot be deleted.</string>
     <string name="error_message_path_does_not_exist">File cannot be deleted. File path does not exist.</string>
     <string name="delete_recording_dialog_header">Delete recording \'%1$s\'?</string>
     <string name="content_description_audio_files">Audio files icon</string>
+    <string name="rename_hint">Rename recording</string>
 
     <!-- EditRecordingFragment -->
     <string name="cut_inner_button">Cut inner</string>

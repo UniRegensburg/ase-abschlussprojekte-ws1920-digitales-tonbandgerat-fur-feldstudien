@@ -20,6 +20,7 @@ import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
 import de.ur.mi.audidroid.utils.FilterDialog
+import de.ur.mi.audidroid.utils.RenameDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
 
@@ -96,6 +97,8 @@ class FilesFragment : Fragment() {
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+                R.id.action_rename_recording ->
+                    filesViewModel.rename(recordingAndLabels)
                 R.id.action_delete_recording ->
                     filesViewModel.delete(recordingAndLabels)
                 R.id.action_edit_recording ->
@@ -162,7 +165,7 @@ class FilesFragment : Fragment() {
         filesViewModel.initializeFrameLayout(files_layout)
         filesViewModel.setSorting(null)
         setupAdapter()
-        createConfirmDialog()
+        adaptObservers()
         FilterDialog.clearDialog()
     }
 
@@ -179,7 +182,7 @@ class FilesFragment : Fragment() {
         })
     }
 
-    private fun createConfirmDialog() {
+    private fun adaptObservers() {
         filesViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 FilesDialog.createDialog(
@@ -200,6 +203,16 @@ class FilesFragment : Fragment() {
                     viewModel = filesViewModel,
                     dataSource = dataSource,
                     fragment = this
+                )
+            }
+        })
+
+        filesViewModel.createRenameDialog.observe(viewLifecycleOwner, Observer {
+            if (it){
+                RenameDialog.createDialog(
+                    context = context!!,
+                    viewModel = filesViewModel,
+                    recording = filesViewModel.recording
                 )
             }
         })

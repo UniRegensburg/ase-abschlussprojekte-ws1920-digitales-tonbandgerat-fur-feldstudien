@@ -11,6 +11,7 @@ import de.ur.mi.audidroid.models.*
 import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
 import java.util.*
+import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 /**
@@ -51,6 +52,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val createConfirmDialog: LiveData<Boolean>
         get() = _createConfirmDialog
+
+    private val _createRenameDialog = MutableLiveData<Boolean>()
+    val createRenameDialog: LiveData<Boolean>
+        get() = _createRenameDialog
 
     val _createAlertDialog = MutableLiveData<Boolean>()
     val createAlertDialog: MutableLiveData<Boolean>
@@ -99,6 +104,71 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         } else {
             showSnackBar(R.string.error_message_file_cannot_be_deleted.toString())
         }
+    }
+
+    fun rename(recordingAndLabels: RecordingAndLabels){
+        recording = recordingAndLabels
+        _createRenameDialog.value = true
+    }
+
+    fun saveRename(rec: RecordingAndLabels, newName: String){
+        if (!validNameInput(newName)) {
+            errorMessage = (res.getString(R.string.dialog_invalid_name))
+            _createRenameDialog.value = true
+            return
+        }
+        if (newName.length > res.getInteger(R.integer.max_name_length)) {
+            errorMessage = (res.getString(R.string.dialog_name_length))
+            _createRenameDialog.value = true
+            return
+        }
+        val name = checkVariables(newName)
+        if(name != rec.recordingName){
+            val renamedRecording = EntryEntity(rec.uid, name, rec.recordingPath, rec.date, rec.duration)
+            repository.updateRecording(renamedRecording)
+            val prevFile = File(rec.recordingPath)
+            if(prevFile.exists() && prevFile.path != context.resources.getString(R.string.default_storage_location)) {
+                val saveLocation = rec.recordingPath.subSequence(0, rec.recordingPath.length - rec.recordingName.length - 5).toString()
+                prevFile.renameTo(File(saveLocation, name + context.getString(R.string.suffix_audio_file)))
+            }
+        }
+    }
+
+    private fun validNameInput(name: String): Boolean {
+        return Pattern.compile("^[a-zA-Z0-9_{}-]+$").matcher(name).matches()
+    }
+
+    private fun checkVariables(nameParam: String): String{
+        var name = nameParam
+        if (name.contains("{date}")) {
+            name = name.replace(
+                "{date}", java.lang.String.format(
+                    "%s",
+                    android.text.format.DateFormat.format(
+                        "yyyy-MM-dd",
+                        Calendar.getInstance(Locale.getDefault())
+                    )
+                )
+            )
+        }
+        if (name.contains("{time}")) {
+            name = name.replace(
+                "{time}", java.lang.String.format(
+                    "%s",
+                    android.text.format.DateFormat.format(
+                        "HH-mm",
+                        Calendar.getInstance(Locale.getDefault())
+                    )
+                )
+            )
+        }
+        return name
+    }
+
+    fun cancelRename(){
+        errorMessage = null
+        recording = null
+        _createRenameDialog.value = false
     }
 
     fun cancelFilterDialog(){

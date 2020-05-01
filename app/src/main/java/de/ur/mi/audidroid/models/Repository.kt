@@ -130,6 +130,11 @@ class Repository(application: Application) : CoroutineScope {
         }
         return list!!
     }
+    fun updateRecording(recording: EntryEntity) {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.updateRecording(recording)
+        }
+    }
 
     fun updateMarkTimestamp(markTimestamp: MarkTimestamp) {
         CoroutineScope(coroutineContext).launch {
