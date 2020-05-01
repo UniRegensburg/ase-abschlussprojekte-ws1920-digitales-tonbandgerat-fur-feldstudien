@@ -275,7 +275,7 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-fun deleteOuterMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int) {
+    fun deleteOuterMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int) {
         CoroutineScope(coroutineContext).launch {
             markerDao.deleteOuterMarks(copiedRecordingId, startTimeInMilli, endTimeInMilli)
         }
