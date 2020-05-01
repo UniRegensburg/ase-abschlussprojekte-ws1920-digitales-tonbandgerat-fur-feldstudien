@@ -88,7 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="@dimen/keyline_2"
+                android:paddingBottom="@dimen/keyline_2"
                 android:weightSum="1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -197,8 +197,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/color_primary"
-                android:onClick="@{(view) -> editRecordingViewModel.addMark(view)}"
-                android:text="@string/add_marks_button"
+                android:onClick="@{() -> editRecordingViewModel.addMark()}"
+                app:buttonText="@{editRecordingViewModel.buttonsVisible}"
                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -207,6 +207,24 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.386" />
 
+            <LinearLayout
+                android:id="@+id/markers_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical"
+                android:visibility="@{editRecordingViewModel.buttonsVisible ? View.VISIBLE : View.GONE, default=gone}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/button_add_mark">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/marker_button_list1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/marker_button_edit_rec" />
+
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/marker_list"
@@ -217,20 +235,21 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/button_add_mark"
+                app:layout_constraintTop_toBottomOf="@id/markers_layout"
                 tools:listitem="@layout/edit_mark_item" />
 
             <LinearLayout
                 android:id="@+id/marks_layout"
                 android:layout_width="@dimen/layout_width_edit_fragment"
                 android:layout_height="@dimen/layout_height_edit_fragment"
+                android:layout_marginBottom="@dimen/keyline_9"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="@{editRecordingViewModel.empty ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/button_add_mark">
+                app:layout_constraintTop_toBottomOf="@id/markers_layout">
 
                 <TextView
                     android:layout_width="wrap_content"

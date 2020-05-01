@@ -41,10 +41,11 @@ class PlayerFragment : Fragment() {
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
-        val application = this.activity!!.application
+        val application = this.requireActivity().application
         val dataSource = Repository(application)
 
-        args = PlayerFragmentArgs.fromBundle(arguments!!)
+        args = PlayerFragmentArgs.fromBundle(requireArguments())
+
         val viewModelFactory =
             PlayerViewModelFactory(args.recordingId, dataSource, application)
 
@@ -144,8 +145,18 @@ class PlayerFragment : Fragment() {
 
     private fun navigateToEditFragment() {
         this.findNavController().navigate(
-            PlayerFragmentDirections.actionPlayerToEdit(args.recordingId)
+            PlayerFragmentDirections.actionPlayerToEdit(
+                args.recordingId,
+                args.recordingName,
+                args.recordingPath
+            )
         )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        playerViewModel.fragmentOnPause()
+
     }
 
     /**

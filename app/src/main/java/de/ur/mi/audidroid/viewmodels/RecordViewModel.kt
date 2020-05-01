@@ -3,18 +3,18 @@ package de.ur.mi.audidroid.viewmodels
 import android.app.Application
 import android.content.Context
 import android.content.res.Resources
-import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.net.Uri
 import android.os.SystemClock
 import android.text.format.DateUtils
-import android.widget.Chronometer
 import android.widget.FrameLayout
 import androidx.documentfile.provider.DocumentFile
+import android.widget.TextView
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
+import com.yashovardhan99.timeit.Stopwatch
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.EntryEntity
 import de.ur.mi.audidroid.models.FolderEntity
@@ -28,6 +28,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 
 /**
  * The ViewModel handles the changes to the view's data and the event logic for the user interaction referring to the RecordFragment
@@ -39,28 +40,25 @@ class RecordViewModel(
     application: Application,
     private val activityContext: Context
 ) :
-    AndroidViewModel(application) {
+    AndroidViewModel(application), Stopwatch.OnTickListener {
 
     private val repository = dataSource
-    private var resumeRecord = false
     private val mediaRecorder: MediaRecorder = MediaRecorder()
     private var tempFile = ""
-    private lateinit var timer: Chronometer
-    private var currentRecordTime: String = ""
+    private var stopwatch: Stopwatch = Stopwatch()
     private lateinit var frameLayout: FrameLayout
     private var recorderInitialized = false
     private val context = getApplication<Application>().applicationContext
 
-    //private var markList = mutableListOf<Pair<String, String>>()
     var allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
-
     val allMarkers: LiveData<List<MarkerEntity>> = repository.getAllMarkers()
-    private var markList = mutableListOf<Pair<MarkerEntity, String>>()
+    //private var markList = mutableListOf<Pair<MarkerEntity, String>>()
 
-
+    private var markList = ArrayList<ArrayList<String>>()
     var isRecording = MutableLiveData<Boolean>()
     var buttonsVisible = MutableLiveData<Boolean>()
     val res: Resources = context.resources
+    lateinit var stopwatchTextView: TextView
     private val _createDialog = MutableLiveData<Boolean>()
     var errorMessage: String? = null
     val createDialog: MutableLiveData<Boolean>
@@ -72,8 +70,13 @@ class RecordViewModel(
         createDialog.value = false
     }
 
-    fun initializeTimer(chronometer: Chronometer) {
-        timer = chronometer
+    fun initializeStopwatch(stopwatchTextView: TextView) {
+        this.stopwatchTextView = stopwatchTextView
+        stopwatch.clockDelay = (res.getInteger(
+            R.integer.one_second
+        )).toLong()
+        stopwatch.setOnTickListener(this)
+        stopwatchTextView.text = res.getString(R.string.start_time)
     }
 
 
@@ -108,29 +111,35 @@ class RecordViewModel(
     }
 
     fun recordPauseButtonClicked() {
-        when (isRecording.value) {
+        when (stopwatch.isStarted) {
             false -> {
                 recordButtonClicked()
                 buttonsVisible.value = true
                 isRecording.value = true
             }
             true -> {
-                pauseButtonClicked()
-                isRecording.value = false
+                when (stopwatch.isPaused) {
+                    false -> {
+                        pauseButtonClicked()
+                        isRecording.value = false
+                    }
+                    true -> {
+                        recordButtonClicked()
+                        isRecording.value = true
+                    }
+                }
             }
         }
     }
 
     private fun recordButtonClicked() {
-        when (resumeRecord) {
+        when (stopwatch.isPaused) {
             true -> {
-                timer.base = SystemClock.elapsedRealtime() - getStoppedTime()
-                timer.start()
+                stopwatch.resume()
                 resumeRecording()
             }
             false -> {
-                resetTimer()
-                timer.start()
+                stopwatch.start()
                 initializeRecorder()
                 startRecording()
             }
@@ -138,22 +147,22 @@ class RecordViewModel(
     }
 
     private fun pauseButtonClicked() {
-        resumeRecord = true
         pauseRecording()
-        timer.stop()
-        currentRecordTime = timer.text.toString()
+        stopwatch.pause()
     }
 
-
     fun fragmentOnPause() {
-        if (recorderInitialized && createDialog.value == false && timer.text.toString() != res.getString(
+        if (recorderInitialized && createDialog.value == false && stopwatchTextView.text != res.getString(
                 R.string.start_time
             )
         ) deleteRecord()
     }
 
     fun onMarkerButtonClicked(markerEntity: MarkerEntity) {
-        val markEntry = Pair(markerEntity, timer.text.toString())
+        val elapsedTimeInMilli = stopwatch.elapsedTime
+        val markEntry = ArrayList<String>()
+        markEntry.add(markerEntity.uid.toString())
+        markEntry.add(elapsedTimeInMilli.toString())
         markList.add(markEntry)
         showSnackBarShort(R.string.mark_made)
     }
@@ -181,7 +190,6 @@ class RecordViewModel(
         _createDialog.value = false
         buttonsVisible.value = true
         isRecording.value = false
-        resumeRecord = true
     }
 
     fun confirmRecord() {
@@ -192,9 +200,10 @@ class RecordViewModel(
     private fun prepareForPossResume() {
         if (isRecording.value!!) {
             mediaRecorder.pause()
+            if (!stopwatch.isPaused) {
+                stopwatch.pause()
+            }
         }
-        timer.stop()
-        currentRecordTime = timer.text.toString()
     }
 
     private fun endRecordSession() {
@@ -206,8 +215,7 @@ class RecordViewModel(
     private fun resetView() {
         buttonsVisible.value = false
         isRecording.value = false
-        resumeRecord = false
-        resetTimer()
+        resetStopwatch()
     }
 
     private fun startRecording() {
@@ -302,7 +310,6 @@ class RecordViewModel(
             )
             newFile.delete()
         }
-        val recordingDuration = getRecordingDuration() ?: currentRecordTime
 
         var folderRef: Int? = null
         if (!fileIsInternal) {
@@ -313,15 +320,15 @@ class RecordViewModel(
                 repository
             )
         }
-
+        val recordingDuration = getRecordingDuration()
         val audio =
             EntryEntity(
                 uid = 0,
                 recordingName = name,
                 recordingPath = path,
                 date = getDate(),
-                duration = recordingDuration,
-                folder = folderRef
+                folder = folderRef,
+                duration = recordingDuration!!
             )
         saveRecordInDB(audio, labels)
         File(tempFile).delete()
@@ -352,22 +359,20 @@ class RecordViewModel(
     }
 
     private fun getRecordingDuration(): String? {
-        val metaRetriever = MediaMetadataRetriever()
-        metaRetriever.setDataSource(tempFile)
+        val duration = stopwatch.elapsedTime
         return DateUtils.formatElapsedTime(
-            metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                .toLong() / (res.getInteger(
+            duration / (res.getInteger(
                 R.integer.one_second
-            ).toLong())
+            )).toLong()
         )
     }
 
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
-            val mark = MarkTimestamp(0, recordingId, it.first.uid, null, it.second)
+            val mark = MarkTimestamp(0, recordingId, it[0].toInt(), null, it[1].toInt())
             dataSource.insertMark(mark)
         }
-        markList = mutableListOf()
+        markList.clear()
     }
 
     /**
@@ -388,27 +393,17 @@ class RecordViewModel(
         Snackbar.make(frameLayout, text, res.getInteger(R.integer.snackbar_quite_short)).show()
     }
 
-    /** Returns the last stopped time as an Integer value */
-    private fun getStoppedTime(): Int {
-        val timeArray = currentRecordTime.split(":")
-        return if (timeArray.size == 2) {
-            (Integer.parseInt(timeArray[0]) * res.getInteger(R.integer.counter_divider_minutes_hours) * res.getInteger(
-                R.integer.counter_multiplier
-            )) + (Integer.parseInt(timeArray[1]) * res.getInteger(R.integer.counter_multiplier))
-        } else {
-            (Integer.parseInt(timeArray[0]) * res.getInteger(R.integer.counter_divider_minutes_hours) * res.getInteger(
-                R.integer.counter_divider_minutes_hours
-            ) * res.getInteger(R.integer.counter_multiplier)) + (Integer.parseInt(timeArray[1]) * res.getInteger(
-                R.integer.counter_divider_minutes_hours
-            ) * res.getInteger(R.integer.counter_multiplier)) + (Integer.parseInt(
-                timeArray[2]
-            ) * res.getInteger(R.integer.counter_multiplier))
-        }
+    /** Resets stopwatch to 00:00 */
+    private fun resetStopwatch() {
+        stopwatch.stop()
+        stopwatchTextView.text = res.getString(R.string.start_time)
     }
 
-    /** Resets timer to 00:00 */
-    private fun resetTimer() {
-        timer.stop()
-        timer.base = SystemClock.elapsedRealtime()
+    override fun onTick(stopwatch: Stopwatch?) {
+        stopwatchTextView.text = DateUtils.formatElapsedTime(
+            stopwatch!!.elapsedTime / (res.getInteger(
+                R.integer.one_second
+            )).toLong()
+        )
     }
 }

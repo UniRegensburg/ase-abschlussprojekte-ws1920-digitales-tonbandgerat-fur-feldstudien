@@ -27,8 +27,6 @@ Jonas Puchinger, jonas.puchinger@stud.uni-regensburg.de, @JonasPuchinger
 
 Theresa Strohmeier, theresa.strohmeier@stud.uni-regensburg.de, @TheresaStrohmeier
 
-Lisa Sanladerer, lisa.sanladerer@stud.uni-regensburg.de, @sanlalala
-
 
 ## Description
 
@@ -38,31 +36,31 @@ The following features are implemented:
 
 - Recording of audio files, optimized for spoken language. Important points can be marked during recording.
 
-<div style="text-align:center"><img src="requirements/screenshots/rec.jpg" width=200 /></div>
+<div style="text-align:center"><img src="requirements/Screenshots/rec.jpg" width=200 /></div>
 
 - Saving of the recordings at any storage location, with configurable names and labels.
 
-<div style="text-align:center"><img src="requirements/screenshots/save.jpg" width=200 /></div>
+<div style="text-align:center"><img src="requirements/Screenshots/save.jpg" width=200 /></div>
 
 - Searchable, filterable and sortable view of all recorded files. File organisation via custom folder structures.
 
-<div style="text-align:center"><img src="requirements/screenshots/list.jpg" width=200 /></div>
+<div style="text-align:center"><img src="requirements/Screenshots/list.jpg" width=200 /></div>
 
 - Playback of recorded files. Skipping forward and backward, or also to marked positions. Changing the playback speed.
 
-<div style="text-align:center"><img src="requirements/screenshots/play.jpg" width=200 /></div>
+<div style="text-align:center"><img src="requirements/Screenshots/play.jpg" width=200 /></div>
 
 - Sharing of recordings to other apps, and conversion to different audio formats.
 
-<div style="text-align:center"><img src="requirements/screenshots/export.jpg" width=200 /></div>
+<div style="text-align:center"><img src="requirements/Screenshots/export.jpg" width=200 /></div>
 
 - Cutting of recordings, and editing of labels and marks.
 
-<div style="text-align:center"><img src="requirements/screenshots/edit.jpg" width=200 /></div>
+<div style="text-align:center"><img src="requirements/Screenshots/edit.jpg" width=200 /></div>
 
 - Navigation within the app via a NavigationDrawer.
 
-<div style="text-align:center"><img src="requirements/screenshots/nav.jpg" width=200 /></div>
+<div style="text-align:center"><img src="requirements/Screenshots/nav.jpg" width=200 /></div>
 
 
 **Settings**
@@ -71,7 +69,7 @@ The following features are implemented:
 
 - Definition of labels, to use for file organisation.
 
-<div style="text-align:center"><img src="requirements/screenshots/labels.jpg" width=200 /></div>
+<div style="text-align:center"><img src="requirements/Screenshots/labels.jpg" width=200 /></div>
 
 - Definition of a standard filename template.
 
@@ -79,6 +77,6 @@ The following features are implemented:
 
 - Selection of the preferred color theme (available: light and dark).
 
-<div style="text-align:center"><img src="requirements/screenshots/settings.jpg" width=200 /></div>
+<div style="text-align:center"><img src="requirements/Screenshots/settings.jpg" width=200 /></div>
 
 - Rotate screen to improve audio quality of recording (microphone faces interviewee, user interface faces interviewer).

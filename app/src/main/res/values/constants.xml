@@ -6,6 +6,9 @@
     <integer name="one_second">1000</integer>
     <integer name="activity_request_code_external_folder">2</integer>
     <integer name="activity_request_code_preference_storage">80</integer>
+    <integer name="request_code_preference_storage_record_fragment">80</integer>
+    <integer name="request_code_preference_storage_edit_recording_fragment">90</integer>
+    <integer name="request_code_preference_storage_preference_fragment">100</integer>
     <integer name="max_name_length">30</integer>
     <integer name="max_label_mark_length">10</integer>
     <integer name="jump_amount">5000</integer>
