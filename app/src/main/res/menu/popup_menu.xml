@@ -18,7 +18,6 @@
                 app:showAsAction="never"/>
         </menu>
     </item>
-
     <item
         android:id="@+id/action_share_recording"
         android:title="@string/popup_menu_option_share"

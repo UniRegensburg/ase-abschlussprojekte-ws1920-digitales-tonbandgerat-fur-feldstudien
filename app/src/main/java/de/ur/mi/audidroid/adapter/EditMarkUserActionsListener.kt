@@ -10,4 +10,6 @@ interface EditMarkUserActionsListener {
     fun onEditCommentClicked(mark: ExpandableMarkAndTimestamp, view: View)
 
     fun onMarkDeleteClicked(mark: MarkAndTimestamp)
+
+    fun onMarkTimeClicked(mark: MarkAndTimestamp)
 }

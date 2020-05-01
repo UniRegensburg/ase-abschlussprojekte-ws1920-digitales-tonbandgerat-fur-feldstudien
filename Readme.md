@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="requirements/Audidroid/Icon_round.svg" alt="Audidroid Logo" width=100 />
+    <img src="requirements/mockups/Icon_round.svg" alt="Audidroid Logo" width=100 />
 </div>
 
 <div align="center">
@@ -16,7 +16,7 @@ Audidroid shines with features specifically designed for this use case.
 Other than the pure audio recording, you can also mark important positions while recording and edit files directly in the app.
 
 Technical information for Audidroid can be found [here](./docs/Setup.md), and a detailed overview of the requirements context can be found [here](./docs/Overview.md).
-Initial mockups and requirements for the app can be found [here](./requirements/Audidroid), tests of comparable existing apps can be found [here](./requirements/App-Tests), and interviews with potential users can be found [here](./requirements/Interviews).
+Initial mockups and requirements for the app can be found [here](./requirements/mockups), tests of comparable existing apps can be found [here](./requirements/app-tests), and interviews with potential users can be found [here](./requirements/interviews).
 
 
 ## Team
@@ -26,8 +26,6 @@ Sabine Roth, sabine.roth@stud.uni-regensburg.de, @SabiRoth
 Jonas Puchinger, jonas.puchinger@stud.uni-regensburg.de, @JonasPuchinger
 
 Theresa Strohmeier, theresa.strohmeier@stud.uni-regensburg.de, @TheresaStrohmeier
-
-Lisa Sanladerer, lisa.sanladerer@stud.uni-regensburg.de, @sanlalala
 
 
 ## Description
@@ -48,7 +46,7 @@ The following features are implemented:
 
 <div style="text-align:center"><img src="requirements/Screenshots/list.jpg" width=200 /></div>
 
-- Playback of recorded files. Skipping to marked positions.
+- Playback of recorded files. Skipping forward and backward, or also to marked positions. Changing the playback speed.
 
 <div style="text-align:center"><img src="requirements/Screenshots/play.jpg" width=200 /></div>
 
