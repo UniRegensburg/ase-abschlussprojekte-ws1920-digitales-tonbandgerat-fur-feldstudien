@@ -70,7 +70,7 @@ class RecordFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.initializeTimer(chronometer)
+        viewModel.initializeStopwatch(binding.stopwatch)
         viewModel.initializeLayout(frameLayout)
         setupAdapter()
         viewModel.createDialog.observe(viewLifecycleOwner, Observer {

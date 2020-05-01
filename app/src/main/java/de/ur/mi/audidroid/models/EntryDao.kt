@@ -35,7 +35,6 @@ interface EntryDao {
     @Query("UPDATE recordingsTable SET recordingName = :name, recordingPath = :path, date = :date WHERE uid = :key")
     suspend fun updateNameAndPath(key: Int, name: String, path: String, date: String)
 
-
     @Query("DELETE FROM recordingsTable WHERE uid = :key")
     suspend fun delete(key: Int)
 

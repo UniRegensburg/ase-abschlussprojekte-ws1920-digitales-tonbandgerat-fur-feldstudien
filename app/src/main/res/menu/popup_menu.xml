@@ -22,4 +22,9 @@
         android:title="@string/popup_menu_option_share"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_delete_recording"
+        android:title="@string/popup_menu_option_delete"
+        app:showAsAction="never" />
+
 </menu>
