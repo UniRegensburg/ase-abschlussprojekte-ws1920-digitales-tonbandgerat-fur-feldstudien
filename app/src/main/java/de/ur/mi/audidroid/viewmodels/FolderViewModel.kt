@@ -13,7 +13,6 @@ import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.StorageHelper
-import de.ur.mi.audidroid.views.FilesFragment
 import java.util.regex.Pattern
 
 class FolderViewModel(dataSource: Repository, application: Application) :
@@ -235,16 +234,18 @@ class FolderViewModel(dataSource: Repository, application: Application) :
 
     fun toggleFolderExpansion(folder: FolderEntity, view: View){
         val isExpanded = !folder.isExpanded
+        repository.updateFolderExpansion(folder.uid, isExpanded)
+        hideSubfolders(folder)
+    }
+
+    private fun hideSubfolders(folder:FolderEntity){
         val allSubfolders = StorageHelper.getAllInternalSubFolders(allFolders.value!!, mutableListOf(folder))
         allSubfolders.remove(folder)
         if (allSubfolders.isNotEmpty()){
-           allSubfolders.forEach {
-               val isShown = !it.isShown
-               repository.updateFolderVisibility(it.uid, isShown) }
-            view.parent.requestLayout()
+            allSubfolders.forEach {
+                val isShown = !it.isShown
+                repository.updateFolderVisibility(it.uid, isShown) }
         }
-        repository.updateFolderExpansion(folder.uid, isExpanded)
-
     }
 
     fun getOldFolder(uid: Int) {
@@ -254,5 +255,4 @@ class FolderViewModel(dataSource: Repository, application: Application) :
             }
         }
     }
-
 }

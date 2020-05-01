@@ -62,19 +62,14 @@ class FilesFragment : Fragment() {
         binding.lifecycleOwner = this
         setHasOptionsMenu(true)
 
-        folderViewModel.sortAllFolders()
         observeSnackBars()
+        observeMinutiaeData()
+        observeNavigation()
 
-        folderViewModel.externalFolderLiveData.observe(viewLifecycleOwner, Observer {
-            folderViewModel.externalFolderCount = it
-        })
+        return binding.root
+    }
 
-        filesViewModel.allRecordingsWithMarker.observe(viewLifecycleOwner, Observer {})
-        //Observer on the state variable for the sorting of list-items.
-        filesViewModel.sortModus.observe(viewLifecycleOwner, Observer {
-            filesViewModel.setSorting(it)
-        })
-
+    private fun observeNavigation(){
         // Observer on the state variable for navigating when a list-item is clicked.
         filesViewModel.navigateToPlayerFragment.observe(
             viewLifecycleOwner,
@@ -87,7 +82,18 @@ class FilesFragment : Fragment() {
                     filesViewModel.onPlayerFragmentNavigated()
                 }
             })
-        return binding.root
+    }
+
+    private fun observeMinutiaeData(){
+        filesViewModel.allRecordingsWithMarker.observe(viewLifecycleOwner, Observer {})
+        //Observer on the circumstances regarding the move between external folders.
+        folderViewModel.externalFolderLiveData.observe(viewLifecycleOwner, Observer {
+            folderViewModel.externalFolderCount = it
+        })
+        //Observer on the state variable for the sorting of list-items.
+        filesViewModel.sortModus.observe(viewLifecycleOwner, Observer {
+            filesViewModel.setSorting(it)
+        })
     }
 
     private fun observeSnackBars(){
@@ -105,11 +111,12 @@ class FilesFragment : Fragment() {
         })
     }
 
+
     // When the ImageButton is clicked, a PopupMenu opens.
     fun openRecordingPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
-        setRecordingMenuOptions(popupMenu, recordingAndLabels.folder, recordingAndLabels.recordingPath)
+        setRecordingMenuOptions(popupMenu, recordingAndLabels.recordingPath)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_delete_recording ->{
@@ -133,7 +140,7 @@ class FilesFragment : Fragment() {
     }
 
     //Modifies the folder options of a recording depending on the situation.
-    private fun setRecordingMenuOptions(popupMenu: PopupMenu, folderRef: Int?, path: String){
+    private fun setRecordingMenuOptions(popupMenu: PopupMenu,  path: String){
         val allFolders = folderViewModel.allFolders.value!!
         if (allFolders.isEmpty()){
             popupMenu.menu.findItem(R.id.action_move_recording).isVisible = false
@@ -231,6 +238,7 @@ class FilesFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         filesViewModel.initializeFrameLayout(files_layout)
         filesViewModel.setSorting(null)
+        folderViewModel.sortAllFolders()
         setupAdapter()
         createConfirmDialog()
         FilterDialog.clearDialog()
@@ -255,9 +263,7 @@ class FilesFragment : Fragment() {
             })
             folderViewModel.allFoldersSorted.observe(viewLifecycleOwner, Observer {values ->
                 val folders = arrayListOf<FolderEntity>()
-                values?.let { list ->
-                    list.forEach { if (it.isShown){folders.add(it)} }
-                }
+                values?.let { list -> list.forEach { if (it.isShown){folders.add(it)} } }
                 folderAdapter.submitList(folders)
             })
         }
