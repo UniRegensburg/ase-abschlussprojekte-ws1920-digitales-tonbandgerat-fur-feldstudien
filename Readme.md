@@ -27,8 +27,6 @@ Jonas Puchinger, jonas.puchinger@stud.uni-regensburg.de, @JonasPuchinger
 
 Theresa Strohmeier, theresa.strohmeier@stud.uni-regensburg.de, @TheresaStrohmeier
 
-Lisa Sanladerer, lisa.sanladerer@stud.uni-regensburg.de, @sanlalala
-
 
 ## Description
 
