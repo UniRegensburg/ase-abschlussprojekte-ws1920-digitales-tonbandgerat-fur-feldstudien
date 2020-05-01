@@ -30,6 +30,10 @@ class EditMarkerItemAdapter(
         override fun onMarkDeleteClicked(mark: MarkAndTimestamp) {
             editRecordingViewModel.onMarkDeleteClicked(mark)
         }
+
+        override fun onMarkTimeClicked(mark: MarkAndTimestamp) {
+            editRecordingViewModel.onMarkTimeClicked(mark.markTimestamp.markTimeInMilli)
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -55,7 +59,8 @@ class EditMarkerItemAdapter(
         companion object {
             fun from(parent: ViewGroup): RecyclerView.ViewHolder {
                 val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
-                val binding: EditMarkItemBinding = EditMarkItemBinding.inflate(layoutInflater, parent, false)
+                val binding: EditMarkItemBinding =
+                    EditMarkItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }

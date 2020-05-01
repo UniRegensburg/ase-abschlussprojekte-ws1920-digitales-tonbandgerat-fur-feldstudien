@@ -83,6 +83,22 @@ class Repository(application: Application) : CoroutineScope {
         return temp!!
     }
 
+    fun getCopiedRecordingById(recordingId: Int): Long {
+        var temp: Long? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                temp = entryDao.getCopiedRecordingById(recordingId)
+            }
+        }
+        return temp!!
+    }
+
+    fun copyMarks(recordingId: Int, copiedRecordingId: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.copyMarks(recordingId, copiedRecordingId)
+        }
+    }
+
     fun insertMarker(markerEntity: MarkerEntity) {
         CoroutineScope(coroutineContext).launch {
             markerDao.insertMarker(markerEntity)
@@ -113,7 +129,49 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun getRecordingsAndMarkerType():LiveData<List<RecordingAndMarkTuple>>{
+    fun updateRecording(recording: EntryEntity) {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.updateRecording(recording)
+        }
+    }
+
+    fun updatePreviousRecording(copiedRecordingId: Int, name: String, path: String) {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.updatePreviousRecording(copiedRecordingId, name, path)
+        }
+    }
+
+    fun updateNameAndPath(uid: Int, name: String, path: String, date: String) {
+        CoroutineScope(coroutineContext).launch {
+            entryDao.updateNameAndPath(uid, name, path, date)
+        }
+    }
+
+    fun deleteOuterMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.deleteOuterMarks(copiedRecordingId, startTimeInMilli, endTimeInMilli)
+        }
+    }
+
+    fun updateInnerMarks(copiedRecordingId: Int, startTimeInMilli: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.updateInnerMarks(copiedRecordingId, startTimeInMilli)
+        }
+    }
+
+    fun deleteInnerMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.deleteInnerMarks(copiedRecordingId, startTimeInMilli, endTimeInMilli)
+        }
+    }
+
+    fun updateOuterMarks(copiedRecordingId: Int, durationInMilli: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.updateOuterMarks(copiedRecordingId, durationInMilli)
+        }
+    }
+
+    fun getRecordingsAndMarkerType(): LiveData<List<RecordingAndMarkTuple>> {
         return markerDao.getRecordingsAndMarkerType()
     }
 
@@ -180,6 +238,12 @@ class Repository(application: Application) : CoroutineScope {
     fun deleteRecMarks(uid: Int) {
         CoroutineScope(coroutineContext).launch {
             markerDao.deleteRecMarks(uid)
+        }
+    }
+
+    fun updateMarks(recordingId: Int, copiedRecordingId: Int) {
+        CoroutineScope(coroutineContext).launch {
+            markerDao.updateMarks(recordingId, copiedRecordingId)
         }
     }
 
