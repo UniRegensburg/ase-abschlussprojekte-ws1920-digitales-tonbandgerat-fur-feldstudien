@@ -17,6 +17,7 @@ import de.ur.mi.audidroid.adapter.MarkerButtonEditRecAdapter
 import de.ur.mi.audidroid.databinding.EditRecordingFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.HandlePlayerBar
+import de.ur.mi.audidroid.utils.PlayerBarListener
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 import kotlinx.android.synthetic.main.edit_recording_fragment.*
 import kotlinx.android.synthetic.main.player_fragment.player_layout
@@ -43,16 +44,15 @@ class EditRecordingFragment : Fragment() {
         args = EditRecordingFragmentArgs.fromBundle(requireArguments())
 
         dataSource = Repository(application)
-        val handlePlayerBar = initHandler()
         val viewModelFactory =
-            EditViewModelFactory(args.recordingId, dataSource, application, handlePlayerBar)
+            EditViewModelFactory(args.recordingId, dataSource, application)
 
         editRecordingViewModel =
             ViewModelProvider(this, viewModelFactory).get(EditRecordingViewModel::class.java)
 
         binding.editRecordingViewModel = editRecordingViewModel
 
-        binding.handlePlayerBar = handlePlayerBar
+        binding.playerBarListener = initPlayerBarListener()
 
         binding.lifecycleOwner = this
         setHasOptionsMenu(true)
@@ -84,8 +84,8 @@ class EditRecordingFragment : Fragment() {
         setupMarkerButtonAdapter()
     }
 
-    private fun initHandler(): HandlePlayerBar {
-        return object : HandlePlayerBar {
+    private fun initPlayerBarListener(): PlayerBarListener {
+        return object : PlayerBarListener {
             override fun pause() {
                 editRecordingViewModel.onPausePlayer()
             }
@@ -100,6 +100,14 @@ class EditRecordingFragment : Fragment() {
 
             override fun returnPlaying() {
                 editRecordingViewModel.returnPlaying()
+            }
+
+            override fun fastForward() {
+                editRecordingViewModel.fastForward()
+            }
+
+            override fun fastRewind() {
+                editRecordingViewModel.fastRewind()
             }
         }
     }
@@ -248,8 +256,7 @@ class EditRecordingFragment : Fragment() {
     class EditViewModelFactory(
         private val recordingId: Int,
         private val dataSource: Repository,
-        private val application: Application,
-        private val handlePlayerBar: HandlePlayerBar
+        private val application: Application
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -257,8 +264,7 @@ class EditRecordingFragment : Fragment() {
                 return EditRecordingViewModel(
                     recordingId,
                     dataSource,
-                    application,
-                    handlePlayerBar
+                    application
                 ) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")

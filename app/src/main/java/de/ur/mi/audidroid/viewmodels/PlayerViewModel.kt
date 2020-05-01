@@ -8,7 +8,9 @@ import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.SeekBar
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -28,13 +30,14 @@ import java.io.IOException
 class PlayerViewModel(
     recordingId: Int,
     dataSource: Repository,
-    application: Application,
-    val handlePlayerBar: HandlePlayerBar
+    application: Application
 ) : AndroidViewModel(application) {
 
     private val repository = dataSource
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
+    private lateinit var buttonFastForward: ImageButton
+    private lateinit var buttonFastRewind: ImageButton
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
@@ -138,6 +141,8 @@ class PlayerViewModel(
 
     fun initializeFrameLayout(frameLayout: FrameLayout) {
         this.frameLayout = frameLayout
+        buttonFastForward = frameLayout.findViewById(R.id.bar_fast_forward)
+        buttonFastRewind = frameLayout.findViewById(R.id.bar_fast_rewind)
     }
 
     fun onStartPlayer() {
@@ -159,6 +164,7 @@ class PlayerViewModel(
         isPlaying.value = mediaPlayer.isPlaying
         initializeMediaPlayer()
         initializeSeekBar(seekBar)
+        resetPlayerBar()
     }
 
     override fun onCleared() {
@@ -180,10 +186,23 @@ class PlayerViewModel(
     }
 
     fun skipPlaying() {
-        handlePlayerBar.doSkippingPlaying(mediaPlayer, context)
+        HandlePlayerBar.skipPlaying(mediaPlayer, context)
     }
 
     fun returnPlaying() {
-        handlePlayerBar.doReturnPlaying(mediaPlayer, context)
+        HandlePlayerBar.returnPlaying(mediaPlayer, context)
+    }
+
+    fun fastForward(){
+        HandlePlayerBar.fastForward(mediaPlayer, context, buttonFastForward, buttonFastRewind)
+    }
+
+    fun fastRewind(){
+        HandlePlayerBar.fastRewind(mediaPlayer, context, buttonFastRewind, buttonFastForward)
+    }
+
+    private fun resetPlayerBar(){
+        buttonFastRewind.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
+        buttonFastForward.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
     }
 }

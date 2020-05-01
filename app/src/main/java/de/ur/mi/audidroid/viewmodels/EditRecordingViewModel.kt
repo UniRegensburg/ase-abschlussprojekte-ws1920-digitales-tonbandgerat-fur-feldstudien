@@ -9,10 +9,9 @@ import android.os.Handler
 import android.text.format.DateUtils
 import android.util.Log
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -22,7 +21,12 @@ import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.FFmpeg
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.LabelAssignmentEntity
+import de.ur.mi.audidroid.models.MarkAndTimestamp
+import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
+import de.ur.mi.audidroid.models.MarkTimestamp
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
@@ -34,19 +38,19 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.collections.ArrayList
 
 class EditRecordingViewModel(
     val recordingId: Int,
     dataSource: Repository,
-    application: Application,
-    val handlePlayerBar: HandlePlayerBar
+    application: Application
 ) :
     AndroidViewModel(application) {
 
     private val repository = dataSource
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
+    private lateinit var buttonFastForward: ImageButton
+    private lateinit var buttonFastRewind: ImageButton
     private lateinit var seekBar: SeekBar
     private lateinit var rangeBar: MultiSlider
     private var createdFiles = ArrayList<File>()
@@ -73,7 +77,6 @@ class EditRecordingViewModel(
     var commentErrorMessage: String? = null
     var markTimestampToBeEdited: ExpandableMarkAndTimestamp? = null
     var markToBeDeleted: MarkAndTimestamp? = null
-    private var imagechecked = false
 
 
     private lateinit var runnable: Runnable
@@ -220,8 +223,16 @@ class EditRecordingViewModel(
 
     fun initializeLayout(frameLayout: FrameLayout) {
         this.frameLayout = frameLayout
+        buttonFastForward = frameLayout.findViewById(R.id.bar_fast_forward)
+        buttonFastRewind = frameLayout.findViewById(R.id.bar_fast_rewind)
         initializeVisualizer()
     }
+
+
+    /**
+     * Visualizing the sound track of the recording through creating an image of the audio waves using FFMPEG
+     * @author: Sabine Roth
+     */
 
     private fun initializeVisualizer(size: String = "640x120") {
         val internalAudioCopy = File(context.filesDir, "internalCopy")
@@ -235,7 +246,7 @@ class EditRecordingViewModel(
             ) and 0x00ffffff
         )
         val command =
-            "-i ${internalAudioCopy.path} -filter_complex \"compand=attacks=0:points=15/30:gain=5,showwavespic=s=$size:colors=$colorHex\" -frames:v 1 ${wavePic.path}"
+            "-i ${internalAudioCopy.path} -filter_complex \"compand=attacks=0:points=25/35:gain=4,showwavespic=s=$size:colors=$colorHex\" -frames:v 1 ${wavePic.path}"
 
         try {
             when (FFmpeg.execute(command)) {
@@ -246,36 +257,14 @@ class EditRecordingViewModel(
                         image.setImageURI(Uri.fromFile(wavePic))
                         wavePic.delete()
                         internalAudioCopy.delete()
-                        checkImageHeight(image)
                     }
                 }
             }
         } catch (e: Exception) {
             Log.e("WavePic", "preparation failed")
             internalAudioCopy.delete()
+            if (wavePic.exists()) wavePic.delete()
         }
-    }
-
-    private fun checkImageHeight(image: ImageView) {
-        if (!imagechecked) {
-            imagechecked = true
-            val imageXY = IntArray(2)
-            image.getLocationOnScreen(imageXY)
-            val seekBarXY = IntArray(2)
-            frameLayout.findViewById<SeekBar>(R.id.seekBar).getLocationOnScreen(seekBarXY)
-            if (imageXY[1] > seekBarXY[1]) {
-                increaseImageHeight()
-                initializeVisualizer("640x240")
-            }
-        }
-    }
-
-    private fun increaseImageHeight() {
-        val cs = ConstraintSet()
-        val constraintLayout = frameLayout.findViewById<ConstraintLayout>(R.id.constraintLayout)
-        cs.clone(constraintLayout)
-        cs.setVerticalBias(R.id.waveViewLayout, 0.075f)
-        cs.applyTo(constraintLayout)
     }
 
     fun onStartPlayer() {
@@ -297,6 +286,7 @@ class EditRecordingViewModel(
         isPlaying.value = mediaPlayer.isPlaying
         initializeMediaPlayer()
         initializeSeekBar(seekBar)
+        resetPlayerBar()
     }
 
     override fun onCleared() {
@@ -722,11 +712,24 @@ class EditRecordingViewModel(
     }
 
     fun skipPlaying() {
-        handlePlayerBar.doSkippingPlaying(mediaPlayer, context)
+        HandlePlayerBar.skipPlaying(mediaPlayer, context)
     }
 
     fun returnPlaying() {
-        handlePlayerBar.doReturnPlaying(mediaPlayer, context)
+        HandlePlayerBar.returnPlaying(mediaPlayer, context)
+    }
+
+    fun fastForward(){
+        HandlePlayerBar.fastForward(mediaPlayer, context, buttonFastForward, buttonFastRewind)
+    }
+
+    fun fastRewind(){
+        HandlePlayerBar.fastRewind(mediaPlayer, context, buttonFastRewind, buttonFastRewind)
+    }
+
+    private fun resetPlayerBar(){
+        buttonFastRewind.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
+        buttonFastForward.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
     }
 
     fun cancelDelete() {

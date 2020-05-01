@@ -159,6 +159,18 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getAllRecordingsWithLabels()
     }
 
+    fun getAllRecWithLabelsOrderName(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderName()
+    }
+
+    fun getAllRecWithLabelsOrderDate(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDate()
+    }
+
+    fun getAllRecWithLabelsOrderDuration(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDuration()
+    }
+
 
     /** Markers */
 
@@ -188,6 +200,10 @@ class Repository(application: Application) : CoroutineScope {
 
     fun getAllMarkers(): LiveData<List<MarkerEntity>> {
         return markerDao.getAllMarkers()
+    }
+
+    fun getRecordingsAndMarkerType():LiveData<List<RecordingAndMarkTuple>>{
+        return markerDao.getRecordingsAndMarkerType()
     }
 
     fun getMarkerByName(name: String): List<MarkerEntity> {
@@ -259,7 +275,7 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun deleteOuterMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int) {
+fun deleteOuterMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMilli: Int) {
         CoroutineScope(coroutineContext).launch {
             markerDao.deleteOuterMarks(copiedRecordingId, startTimeInMilli, endTimeInMilli)
         }
