@@ -304,5 +304,4 @@ fun deleteOuterMarks(copiedRecordingId: Int, startTimeInMilli: Int, endTimeInMil
             markerDao.updateMarks(recordingId, copiedRecording)
         }
     }
-
 }
