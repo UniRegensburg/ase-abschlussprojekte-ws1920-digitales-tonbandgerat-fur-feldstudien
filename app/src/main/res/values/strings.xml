@@ -66,8 +66,9 @@
     <!-- FilesFragment -->
     <string name="recording_file_name">Recording</string>
     <string name="popup_menu_button">Popup Menu</string>
-    <string name="popup_menu_option_delete">Delete</string>
+    <string name="popup_menu_option_rename">Rename</string>
     <string name="popup_menu_option_edit">Edit</string>
+    <string name="popup_menu_option_delete">Delete</string>
     <string name="recording_deleted">Recording \'%1$s\' deleted</string>
     <string name="no_recordings">No recordings saved</string>
     <string name="error_message_file_cannot_be_deleted">File cannot be deleted.</string>
@@ -79,13 +80,17 @@
     <string name="cut_inner_button">Cut inner</string>
     <string name="cut_outer_button">Cut outer</string>
     <string name="marks_text_view">Marks</string>
-    <string name="add_marks_button">Add mark</string>
+    <string name="show_markers_button">Hide markers</string>
+    <string name="hide_markers_button">Show markers</string>
     <string name="no_marks">No marks saved</string>
     <string name="recording_cut">Recording changed</string>
     <string name="error_message_cut">Cut recording failed</string>
     <string name="sample_comment">Sample comment</string>
     <string name="sample_mark">Mark</string>
     <string name="mark_deleted">Mark deleted</string>
+    <string name="cancel_editing">Do you really want to delete the edited recording?</string>
+    <string name="wave_pic">WavePic</string>
+    <string name="filename_trimmed_recording">(trimmed)_ </string>
 
     <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>
@@ -149,11 +154,16 @@
     <string name="dialog_save_recording_path_hint">Choose a path</string>
     <string name="dialog_save_recording_label">Labels</string>
     <string name="dialog_save_button_text">Save</string>
+    <string name="dialog_update_button_text">Update</string>
     <string name="dialog_cancel_button_text">Cancel</string>
     <string name="dialog_invalid_name">Just use letters, numbers and _-{}.</string>
     <string name="dialog_already_exist">Duplication error. Change the name or the path.</string>
     <string name="dialog_name_length">Enter a maximum of thirty characters.</string>
     <string name="dialog_just_three_labels">Select a maximum of three labels.</string>
+
+    <!-- Rename recordings dialog -->
+    <string name="rename_dialog_title">Rename recording</string>
+    <string name="rename_dialog_error_already_exist">Duplication error. Choose an other name.</string>
 
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
@@ -182,6 +192,10 @@
     <string name="popup_menu_sort_duration">Duration</string>
     <string name="menu_sort_desc">Descending</string>
     <string name="menu_sort_asc">Ascending</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_filter">Filter</string>
+    <string name="dialog_filter_name_hint">Filter by name</string>
+    <string name="filter_no_results">No results found. Try broadening your filters.</string>
 
     <!--Sharing-->
     <string name="popup_menu_option_share">Share</string>

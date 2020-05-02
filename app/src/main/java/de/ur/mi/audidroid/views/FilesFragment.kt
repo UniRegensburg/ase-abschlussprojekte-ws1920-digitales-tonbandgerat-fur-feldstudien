@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
+import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -18,6 +19,8 @@ import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
+import de.ur.mi.audidroid.utils.FilterDialog
+import de.ur.mi.audidroid.utils.RenameDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
 
@@ -30,6 +33,7 @@ class FilesFragment : Fragment() {
     private lateinit var adapter: RecordingItemAdapter
     private lateinit var binding: FilesFragmentBinding
     private lateinit var filesViewModel: FilesViewModel
+    private lateinit var dataSource: Repository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,8 +42,9 @@ class FilesFragment : Fragment() {
     ): View? {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
+
         val application = this.activity!!.application
-        val dataSource = Repository(application)
+        dataSource = Repository(application)
 
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
         filesViewModel = ViewModelProvider(this, viewModelFactory).get(FilesViewModel::class.java)
@@ -48,6 +53,7 @@ class FilesFragment : Fragment() {
         binding.lifecycleOwner = this
         setHasOptionsMenu(true)
 
+        filesViewModel.allRecordingsWithMarker.observe(viewLifecycleOwner, Observer {})
         //Observer on the state variable for the sorting of list-items.
         filesViewModel.sortModus.observe(viewLifecycleOwner, Observer {
             filesViewModel.setSorting(it)
@@ -55,7 +61,8 @@ class FilesFragment : Fragment() {
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-                Snackbar.make(view!!, R.string.recording_deleted, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), R.string.recording_deleted, Snackbar.LENGTH_SHORT)
+                    .show()
                 filesViewModel.doneShowingSnackbar()
             }
         })
@@ -67,7 +74,11 @@ class FilesFragment : Fragment() {
                 recordingId?.let {
                     this.findNavController().navigate(
                         FilesFragmentDirections
-                            .actionFilesToPlayer(recordingId)
+                            .actionFilesToPlayer(
+                                recordingId[0].toInt(),
+                                recordingId[1],
+                                recordingId[2]
+                            )
                     )
                     filesViewModel.onPlayerFragmentNavigated()
                 }
@@ -76,7 +87,7 @@ class FilesFragment : Fragment() {
         filesViewModel.createAlertDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 ConvertDialog.createDialog(
-                    context = context!!,
+                    context = requireContext(),
                     layoutId = R.layout.convert_dialog,
                     viewModel = filesViewModel
                 )
@@ -92,6 +103,8 @@ class FilesFragment : Fragment() {
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+                R.id.action_rename_recording ->
+                    filesViewModel.rename(recordingAndLabels)
                 R.id.action_delete_recording ->
                     filesViewModel.delete(recordingAndLabels)
                 R.id.action_edit_recording ->
@@ -108,6 +121,23 @@ class FilesFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_files, menu)
+
+        val searchItem: MenuItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText!!.isNotEmpty()) {
+                    filesViewModel.setSearchResult(newText)
+                } else {
+                    filesViewModel._sortModus.value = null
+                }
+                return true
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -142,7 +172,11 @@ class FilesFragment : Fragment() {
 
     private fun navigateToEditFragment(recordingAndLabels: RecordingAndLabels) {
         this.findNavController().navigate(
-            FilesFragmentDirections.actionFilesToEdit(recordingAndLabels.uid)
+            FilesFragmentDirections.actionFilesToEdit(
+                recordingAndLabels.uid,
+                recordingAndLabels.recordingName,
+                recordingAndLabels.recordingPath
+            )
         )
     }
 
@@ -151,7 +185,8 @@ class FilesFragment : Fragment() {
         filesViewModel.initializeFrameLayout(files_layout)
         filesViewModel.setSorting(null)
         setupAdapter()
-        createConfirmDialog()
+        adaptObservers()
+        FilterDialog.clearDialog()
     }
 
     private fun setupAdapter() {
@@ -167,14 +202,37 @@ class FilesFragment : Fragment() {
         })
     }
 
-    private fun createConfirmDialog() {
+    private fun adaptObservers() {
         filesViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 FilesDialog.createDialog(
-                    context = context!!,
+                    context = requireContext(),
                     type = R.string.confirm_dialog,
                     recording = filesViewModel.recording,
                     viewModel = filesViewModel,
+                    errorMessage = filesViewModel.errorMessage
+                )
+            }
+        })
+
+        filesViewModel.createFilterDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                FilterDialog.createDialog(
+                    context = requireContext(),
+                    layoutId = R.layout.filter_dialog,
+                    viewModel = filesViewModel,
+                    dataSource = dataSource,
+                    fragment = this
+                )
+            }
+        })
+
+        filesViewModel.createRenameDialog.observe(viewLifecycleOwner, Observer {
+            if (it){
+                RenameDialog.createDialog(
+                    context = requireContext(),
+                    viewModel = filesViewModel,
+                    recording = filesViewModel.recording,
                     errorMessage = filesViewModel.errorMessage
                 )
             }

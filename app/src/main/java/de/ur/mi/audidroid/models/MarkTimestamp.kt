@@ -21,7 +21,7 @@ data class MarkTimestamp(
     @ColumnInfo(name = "recordingId") val recordingId: Int,
     @ColumnInfo(name = "markerId") val markerId: Int,
     @ColumnInfo(name = "markComment") val markComment: String? = null,
-    @ColumnInfo(name = "markTime") val markTime: String
+    @ColumnInfo(name = "markTimeInMilli") val markTimeInMilli: Int
 )
 
 data class RecordingAndMarks(
@@ -31,6 +31,12 @@ data class RecordingAndMarks(
         entityColumn = "recordingId"
     )
     val markList: List<MarkTimestamp>
+)
+
+data class RecordingAndMarkTuple(
+    @ColumnInfo(name = "recordingId") val recordingId: Int,
+    @ColumnInfo(name = "markerId") val markerId: Int,
+    @ColumnInfo(name = "markerName") val markerName: String
 )
 
 data class MarkAndTimestamp(

@@ -1,12 +1,12 @@
 # Setup 
 
-Dieses Repository nutzt Github Actions als CI-Tool.
-Eine Action wird ausgelöst, wenn ein Push in dem Master-Branch erfolgt.
-Diese Action startet Unitests, statische Codeanalyse, und erstellt im Fall erfolgreicher Tests eine APK, die den aktuellen Stand der App darstellt und heruntergleaden werden kann.
-Bei Bedarf kann über die Action auch ein release erstellt werden.
+This project/repository uses Github Actions as a CI tool.
+The default action gets triggered by a push into the master branch.
+This action calls the defined unit tests, static code analysis, and, given the successful passing of these tests, generates an APK, which represents the current implementation of the app, for download.
+Given the need, the action can also create a release of the software.
 
-Zur vollständigen Nutzung der App ist ein physisches Androidgerät mit Android 7.0 Nougat und funktionierendem Mikrofon nötig.
-Die App benötigt folgende Permissions:
+The app can be used in its entirety with a physical Android device (Android 7.0 Nougat +) with a working microphone (internal or external).
+The app uses the following permissions:
 
 - android.permission.RECORD_AUDIO
 
@@ -16,22 +16,22 @@ Die App benötigt folgende Permissions:
 
 - android.permission.READ_EXTERNAL_STORAGE
 
-# Abhängigkeiten
+# Dependencies
 
 - Kotlin 1.3.61
 
 - Material Design Components
 
-- Room für Datenbankzugriff
+- Room for database access
 
-- JUnit für Unittests
+- JUnit for unit tests
 
-- jraska/livedata-testing für Unittests der Datenbank mit LiveData Rückgabewerten
+- jraska/livedata-testing for unit tests of the database with LiveData return values
 
-- Ktlint für statische Codeanalyse
+- Ktlint for static code analysis
 
-- arthenica/mobile-ffmpeg-full zur Bereitstellung von FFMPEG-Funktionaliäten für Konvertieren und Bearbeiten der Audiodateien
+- arthenica/mobile-ffmpeg-full for FFMPEG-functionality to convert and edit audio files
 
-- adrielcafe/AndroidAudioConverter zum Konvertieren der Audiodateien
+- adrielcafe/AndroidAudioConverter for conversion of audio files
 
-- apptik.widget/multislider für die Darstellung von Seekbars mit mehreren Zeigern, um die Audiodateien zuzuschneiden
+- apptik.widget/multislider for the display of seekbars with multiple thumbs
