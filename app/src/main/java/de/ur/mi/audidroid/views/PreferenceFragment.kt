@@ -126,7 +126,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         val storagePreference =
             findPreference<Preference>(getString(R.string.storage_preference_key))!!
         storagePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            Pathfinder.openPathDialog(storagePreference, context!!)
+            Pathfinder.openPathDialog(storagePreference, context!!, "PreferenceFragment")
             true
         }
         storagePreference.summary = getSummary()
@@ -139,8 +139,10 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         )
         val path = data!!.dataString!!
         val realPath =
-            when (path == context.resources.getString(R.string.default_storage_location)) {
-                true -> path
+            when (path == context.resources.getString(R.string.default_storage_location) || path.contains(
+                context.packageName
+            )) {
+                true -> context.resources.getString(R.string.default_storage_location)
                 false -> Pathfinder.getRealPath(context, Uri.parse(path))
             }
         if (realPath == null) {
@@ -151,7 +153,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             ).show()
             return
         }
-        preference.summary = realPath
+        preference.summary = Pathfinder.getShortenedPath(realPath)
         with(preferences.edit()) {
             putString(context.resources.getString(R.string.storage_preference_key), realPath)
             commit()
@@ -171,6 +173,6 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             putString(getString(R.string.storage_preference_key), storedPathString)
             commit()
         }
-        return storedPathString
+        return Pathfinder.getShortenedPath(storedPathString)
     }
 }

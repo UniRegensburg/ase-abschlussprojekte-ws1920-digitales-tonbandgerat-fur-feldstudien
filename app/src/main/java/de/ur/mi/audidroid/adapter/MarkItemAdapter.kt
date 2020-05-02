@@ -24,6 +24,10 @@ class MarkItemAdapter(
             }
         }
 
+        override fun onMarkTimeClicked(mark: MarkAndTimestamp) {
+            playerViewModel.onMarkTimeClicked(mark.markTimestamp.markTimeInMilli)
+        }
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
