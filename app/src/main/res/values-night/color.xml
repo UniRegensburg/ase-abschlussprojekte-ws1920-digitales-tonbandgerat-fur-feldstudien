@@ -21,4 +21,6 @@
 
     <color name="grayed_out">#6D6D6D</color>
 
+    <color name="color_folder_background">#505050</color>
+
 </resources>

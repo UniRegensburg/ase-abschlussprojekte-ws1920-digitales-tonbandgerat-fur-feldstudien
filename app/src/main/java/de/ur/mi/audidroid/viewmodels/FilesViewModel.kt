@@ -1,14 +1,22 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.widget.FrameLayout
+import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.models.EntryEntity
+import de.ur.mi.audidroid.models.RecordingAndLabels
+import de.ur.mi.audidroid.models.RecordingAndMarkTuple
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
-import kotlin.collections.ArrayList
+
 
 /**
  * ViewModel for FilesFragment.
@@ -40,6 +48,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val _sortMode = MutableLiveData<Int?>()
     val sortMode: LiveData<Int?>
         get() = _sortMode
+
+    private val _createFolderDialog = MutableLiveData<Boolean>()
+    val createFolderDialog: LiveData<Boolean>
+        get() = _createFolderDialog
 
     val _createFilterDialog = MutableLiveData<Boolean>()
     val createFilterDialog: LiveData<Boolean>
@@ -299,6 +311,35 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 }
             }
         }
+    }
+
+    fun openFolderMenu(view: View) = PopupMenu(view.context, view).run {
+            menuInflater.inflate(R.menu.popup_menu_add_folder, menu)
+            setOnMenuItemClickListener { item ->
+                when (item.toString()) {
+                    context.getString(R.string.folder_internal) -> _createFolderDialog.value = true
+                    context.getString(R.string.folder_external) -> createExternalFolder()
+                }
+               true
+            }
+        show()
+    }
+
+    fun createFolder(folderName : String){
+        _createFolderDialog.value = false
+        if(folderName.isEmpty()){
+            errorMessage = context.getString(R.string.folder_dialog_error_no_name)
+            _createFolderDialog.value = true
+            return
+        }
+
+    }
+
+    private fun createExternalFolder(){
+        //TODO: Use Pathfinder
+    }
+
+    private fun createInternalFolder(){
     }
 
     // Navigation to the PlayerFragment

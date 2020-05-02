@@ -19,6 +19,7 @@ import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
+import de.ur.mi.audidroid.utils.CreateFolderDialog
 import de.ur.mi.audidroid.utils.FilterDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import kotlinx.android.synthetic.main.files_fragment.*
@@ -42,7 +43,7 @@ class FilesFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
 
-        val application = this.activity!!.application
+        val application = requireActivity().application
         dataSource = Repository(application)
 
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
@@ -177,7 +178,7 @@ class FilesFragment : Fragment() {
         filesViewModel.initializeFrameLayout(files_layout)
         filesViewModel.setSorting(null)
         setupAdapter()
-        createConfirmDialog()
+        adaptObservers()
         FilterDialog.clearDialog()
     }
 
@@ -194,7 +195,7 @@ class FilesFragment : Fragment() {
         })
     }
 
-    private fun createConfirmDialog() {
+    private fun adaptObservers() {
         filesViewModel.createConfirmDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 FilesDialog.createDialog(
@@ -210,11 +211,21 @@ class FilesFragment : Fragment() {
         filesViewModel.createFilterDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 FilterDialog.createDialog(
-                    context = context!!,
+                    context = requireContext(),
                     layoutId = R.layout.filter_dialog,
                     viewModel = filesViewModel,
                     dataSource = dataSource,
                     fragment = this
+                )
+            }
+        })
+
+        filesViewModel.createFolderDialog.observe(viewLifecycleOwner, Observer {
+            if(it){
+                CreateFolderDialog.createDialog(
+                    context = requireContext(),
+                    viewModel = filesViewModel,
+                    errorMessage = filesViewModel.errorMessage
                 )
             }
         })
