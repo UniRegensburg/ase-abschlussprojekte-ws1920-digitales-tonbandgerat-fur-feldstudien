@@ -54,7 +54,7 @@ class FilesFragment : Fragment() {
 
         filesViewModel.allRecordingsWithMarker.observe(viewLifecycleOwner, Observer {})
         //Observer on the state variable for the sorting of list-items.
-        filesViewModel.sortModus.observe(viewLifecycleOwner, Observer {
+        filesViewModel.sortMode.observe(viewLifecycleOwner, Observer {
             filesViewModel.setSorting(it)
         })
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
@@ -130,7 +130,7 @@ class FilesFragment : Fragment() {
                 if (newText!!.isNotEmpty()) {
                     filesViewModel.setSearchResult(newText)
                 } else {
-                    filesViewModel._sortModus.value = null
+                    filesViewModel._sortMode.value = null
                 }
                 return true
             }
@@ -144,18 +144,18 @@ class FilesFragment : Fragment() {
                 true
             }
             R.id.action_sort_name -> {
-                filesViewModel._sortModus.value =
-                    context!!.resources.getInteger(R.integer.sort_by_name)
+                filesViewModel._sortMode.value =
+                    requireContext().resources.getInteger(R.integer.sort_by_name)
                 true
             }
             R.id.action_sort_date -> {
-                filesViewModel._sortModus.value =
-                    context!!.resources.getInteger(R.integer.sort_by_date)
+                filesViewModel._sortMode.value =
+                    requireContext().resources.getInteger(R.integer.sort_by_date)
                 true
             }
             R.id.action_sort_duration -> {
-                filesViewModel._sortModus.value =
-                    context!!.resources.getInteger(R.integer.sort_by_duration)
+                filesViewModel._sortMode.value =
+                    requireContext().resources.getInteger(R.integer.sort_by_duration)
                 true
             }
             else -> super.onOptionsItemSelected(item)

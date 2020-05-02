@@ -37,9 +37,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     var recording: RecordingAndLabels? = null
     var recordingToBeExported: RecordingAndLabels? = null
 
-    val _sortModus = MutableLiveData<Int?>()
-    val sortModus: LiveData<Int?>
-        get() = _sortModus
+    val _sortMode = MutableLiveData<Int?>()
+    val sortMode: LiveData<Int?>
+        get() = _sortMode
 
     val _createFilterDialog = MutableLiveData<Boolean>()
     val createFilterDialog: LiveData<Boolean>
@@ -155,7 +155,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         params: List<String>
     ): List<RecordingAndLabels>? {
         if (params.isNotEmpty()) {
-            var filteredRecordings = arrayListOf<RecordingAndLabels>()
+            val filteredRecordings = arrayListOf<RecordingAndLabels>()
             recordingList.forEach { recording ->
                 filteredRecordings.add(recording)
                 if (recording.labels != null) {
@@ -204,7 +204,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private fun matchMarksAndRecordings(params: List<String>): List<Int>? {
         val filteredRef = arrayListOf<Int>()
         val list = adaptRecordingMarkLiveData(allRecordingsWithMarker.value!!)
-        if (params.isNotEmpty()) {
+        return if (params.isNotEmpty()) {
             list?.forEach { recMarkTuple ->
                 filteredRef.add(recMarkTuple.first)
                 params.forEach { param ->
@@ -213,9 +213,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                     }
                 }
             }
-            return filteredRef
+            filteredRef
         } else {
-            return null
+            null
         }
     }
 
@@ -249,11 +249,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     fun setFilterResult(labels: List<String>, marks: List<String>, nameInput: String?) {
         removeSortedRecordingSources()
         displayRecordings.addSource(allRecordingsWithLabels) {
-            if (!labels.isEmpty() || !marks.isEmpty() || !nameInput.isNullOrEmpty()) {
+            if (labels.isNotEmpty() || marks.isNotEmpty() || !nameInput.isNullOrEmpty()) {
                 val matchedLabels =
                     matchLabelsAndRecordings(allRecordingsWithLabels.value!!, labels)
                 val matchedMarks = matchMarksAndRecordings(marks)
-                var displayList = combineFilterParams(matchedLabels, matchedMarks, nameInput)
+                val displayList = combineFilterParams(matchedLabels, matchedMarks, nameInput)
                 displayRecordings.value = displayList
             } else {
                 displayRecordings.value = allRecordingsWithLabels.value!!
@@ -275,9 +275,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-    fun setSorting(modus: Int?) {
+    fun setSorting(mode: Int?) {
         removeSortedRecordingSources()
-        when (modus) {
+        when (mode) {
             res.getInteger(R.integer.sort_by_name) -> {
                 displayRecordings.addSource(allRecordingsWithLabelsOrderName) {
                     displayRecordings.value = allRecordingsWithLabelsOrderName.value
