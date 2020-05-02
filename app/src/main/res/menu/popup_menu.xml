@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_rename_recording"
+        android:title="@string/popup_menu_option_rename"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_edit_recording"
         android:title="@string/popup_menu_option_edit"
         app:showAsAction="never" />
