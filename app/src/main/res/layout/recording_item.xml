@@ -19,8 +19,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/files_card_view_margin"
-        android:layout_marginTop="@dimen/files_card_view_margin"
+        android:layout_marginTop="@dimen/files_card_view_margin_top_bottom"
         android:layout_marginEnd="@dimen/files_card_view_margin"
+        android:layout_marginBottom="@dimen/files_card_view_margin_top_bottom"
         app:cardElevation="@dimen/keyline_1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
