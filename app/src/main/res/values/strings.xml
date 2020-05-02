@@ -66,8 +66,9 @@
     <!-- FilesFragment -->
     <string name="recording_file_name">Recording</string>
     <string name="popup_menu_button">Popup Menu</string>
-    <string name="popup_menu_option_delete">Delete</string>
+    <string name="popup_menu_option_rename">Rename</string>
     <string name="popup_menu_option_edit">Edit</string>
+    <string name="popup_menu_option_delete">Delete</string>
     <string name="recording_deleted">Recording \'%1$s\' deleted</string>
     <string name="no_recordings">No recordings saved</string>
     <string name="error_message_file_cannot_be_deleted">File cannot be deleted.</string>
@@ -159,6 +160,10 @@
     <string name="dialog_already_exist">Duplication error. Change the name or the path.</string>
     <string name="dialog_name_length">Enter a maximum of thirty characters.</string>
     <string name="dialog_just_three_labels">Select a maximum of three labels.</string>
+
+    <!-- Rename recordings dialog -->
+    <string name="rename_dialog_title">Rename recording</string>
+    <string name="rename_dialog_error_already_exist">Duplication error. Choose an other name.</string>
 
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
