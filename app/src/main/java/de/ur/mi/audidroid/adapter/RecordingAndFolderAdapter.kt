@@ -21,7 +21,6 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
  */
 
 class RecordingAndFolderAdapter(
-    private val filesViewModel: FilesViewModel,
     listener: RecordingAndFolderActionsListener
 ) :
     ListAdapter<Any, RecordingAndFolderAdapter.BaseViewHolder<*>>(RecordingAndFolderDiffCallback()) {

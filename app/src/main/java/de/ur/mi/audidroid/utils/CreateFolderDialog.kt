@@ -17,7 +17,7 @@ object CreateFolderDialog{
         val builder = MaterialAlertDialogBuilder(context)
         val inflater: LayoutInflater = LayoutInflater.from(context)
         val dialogView: View = inflater.inflate(layoutId, null)
-
+        builder.setView(dialogView)
         if (errorMessage != null) {
             builder.setMessage(errorMessage)
         }

@@ -102,6 +102,7 @@ class FilesFragment : Fragment() {
 
     // When the ImageButton is clicked, a PopupMenu opens.
     fun openRecordingPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
+        //TODO: Evtl ändern zu drag&drop für verschieben -> dann ist pop up immer gleich
         val menu = if(filesViewModel.allFolders.value != null) R.menu.popup_menu else R.menu.popup_menu_extended
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(menu, popupMenu.menu)
@@ -190,21 +191,13 @@ class FilesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = RecordingAndFolderAdapter(filesViewModel, userActionsListener)
+        adapter = RecordingAndFolderAdapter(userActionsListener)
         binding.recordingList.adapter = adapter
 
-//        TODO: [displayRecordings] should probably include all folder as well
-//        This can be done with the help of MediatorLiveData in FilesViewModel
-//        By doing this, the code below can be shortened to just passing [it] to submitList
-        filesViewModel.displayRecordings.observe(viewLifecycleOwner, Observer {
+        filesViewModel.displayRecordingsAndFolders.observe(viewLifecycleOwner, Observer {
             it?.let {
-                val recordingsArray = filesViewModel.getRecordings(it, arrayListOf<RecordingAndLabels>())
-                val foldersArray = filesViewModel.getFolders()
-                val adapterDataList = mutableListOf<Any>()
-                adapterDataList.addAll(recordingsArray)
-                adapterDataList.addAll(foldersArray)
-
-                adapter.submitList(adapterDataList)
+                val filterEntries = filesViewModel.getCorrectList(it)
+                adapter.submitList(filterEntries)
             }
         })
     }
