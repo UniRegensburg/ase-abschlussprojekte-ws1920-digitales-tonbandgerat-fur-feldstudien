@@ -78,7 +78,7 @@
             android:layout_gravity="end|bottom"
             android:layout_margin="@dimen/keyline_3"
             android:contentDescription="@string/folder_add_button_content_description"
-            android:onClick="@{(view) -> filesViewModel.openFolderMenu(view)}"
+            android:onClick="@{(view) -> filesViewModel.openCreateFolderDialog()}"
             android:src="@drawable/ic_create_new_folder"
             app:tint="@color/color_on_secondary" />
 

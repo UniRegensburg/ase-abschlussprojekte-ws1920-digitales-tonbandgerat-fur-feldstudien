@@ -17,7 +17,7 @@ import de.ur.mi.audidroid.utils.Converters
  */
 
 @Database(
-    entities = [EntryEntity::class, MarkTimestamp::class, MarkerEntity::class, LabelEntity::class, LabelAssignmentEntity::class],
+    entities = [EntryEntity::class, MarkTimestamp::class, MarkerEntity::class, LabelEntity::class, LabelAssignmentEntity::class, FolderEntity::class, FolderAssignmentEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -29,6 +29,8 @@ abstract class RecorderDatabase : RoomDatabase() {
     abstract fun labelDao(): LabelDao
     abstract fun labelAssignmentDao(): LabelAssignmentDao
     abstract fun markerDao(): MarkerDao
+    abstract fun folderDao(): FolderDao
+    abstract fun folderAssignmentDao(): FolderAssignmentDao
 
     companion object {
         private var INSTANCE: RecorderDatabase? = null

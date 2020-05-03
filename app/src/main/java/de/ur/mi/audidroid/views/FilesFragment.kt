@@ -13,8 +13,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.adapter.RecordingItemAdapter
+import de.ur.mi.audidroid.adapter.RecordingAndFolderActionsListener
+import de.ur.mi.audidroid.adapter.RecordingAndFolderAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
+import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
@@ -31,7 +33,7 @@ import kotlinx.android.synthetic.main.files_fragment.*
  */
 class FilesFragment : Fragment() {
 
-    private lateinit var adapter: RecordingItemAdapter
+    private lateinit var adapter: RecordingAndFolderAdapter
     private lateinit var binding: FilesFragmentBinding
     private lateinit var filesViewModel: FilesViewModel
     private lateinit var dataSource: Repository
@@ -99,9 +101,10 @@ class FilesFragment : Fragment() {
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.
-    fun openPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
+    fun openRecordingPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
+        val menu = if(filesViewModel.allFolders.value != null) R.menu.popup_menu else R.menu.popup_menu_extended
         val popupMenu = PopupMenu(context, view)
-        popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
+        popupMenu.menuInflater.inflate(menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_rename_recording ->
@@ -114,6 +117,7 @@ class FilesFragment : Fragment() {
                     filesViewModel.recordingToBeExported = recordingAndLabels
                     filesViewModel._createAlertDialog.value = true
                 }
+                R.id.action_move_recording -> filesViewModel.moveRecording(recordingAndLabels)
             }
             true
         }
@@ -186,16 +190,26 @@ class FilesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = RecordingItemAdapter(this, filesViewModel)
-        binding.recordingList.adapter = adapter
 
         filesViewModel.displayRecordings.observe(viewLifecycleOwner, Observer {
             it?.let {
-                var array = arrayListOf<RecordingAndLabels>()
-                array = filesViewModel.checkExistence(it, array)
-                adapter.submitList(array)
+                val recordingsArray = filesViewModel.getRecordings(it, arrayListOf<RecordingAndLabels>())
+                val foldersArray = filesViewModel.getFolders()
+                val adapterDataList = mutableListOf<Any>()
+                adapterDataList.add(recordingsArray)
+                adapterDataList.add(foldersArray)
+
+                adapter = RecordingAndFolderAdapter(requireContext(), adapterDataList)
+                //binding.recordingList.adapter = adapter
+                //adapter.submitList(recordingsArray)
             }
         })
+        /*filesViewModel.allFolders.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                var allFolders = filesViewModel.getFolders()
+            }
+        })
+        var adapterDataList: MutableList<Any> = MutableList<Any>()*/
     }
 
     private fun adaptObservers() {
@@ -228,7 +242,9 @@ class FilesFragment : Fragment() {
                 CreateFolderDialog.createDialog(
                     context = requireContext(),
                     viewModel = filesViewModel,
-                    errorMessage = filesViewModel.errorMessage
+                    errorMessage = filesViewModel.errorMessage,
+                    layoutId = R.layout.create_folder_dialog,
+                    folderToBeEdited = filesViewModel.folderToBeEdited
                 )
             }
         })
@@ -243,6 +259,24 @@ class FilesFragment : Fragment() {
                 )
             }
         })
+    }
+
+    val userActionsListener = object : RecordingAndFolderActionsListener {
+        override fun onRecordingClicked(recordingAndLabels: RecordingAndLabels) {
+            filesViewModel.onRecordingClicked(recordingAndLabels.uid, recordingAndLabels.recordingName, recordingAndLabels.recordingPath)
+        }
+
+        override fun popUpRecording(recordingAndLabels: RecordingAndLabels, view: View) {
+            openRecordingPopupMenu(recordingAndLabels, view)
+        }
+
+        override fun onFolderClicked(folder: FolderEntity) {
+            filesViewModel.onFolderClicked(folder)
+        }
+
+        override fun popUpFolder(folder: FolderEntity, view: View) {
+            filesViewModel.openFolderMenu(folder, view)
+        }
     }
 
     /**

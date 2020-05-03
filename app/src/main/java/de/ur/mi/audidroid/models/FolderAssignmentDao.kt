@@ -18,4 +18,10 @@ interface FolderAssignmentDao {
 
     @Query("DELETE FROM folderAssignmentTable WHERE recordingId = :key")
     suspend fun deleteFolderAssignment(key: Int)
+
+    @Query("UPDATE folderAssignmentTable SET folderId = :folderId WHERE primaryKey = :key")
+    suspend fun updateFolderAssignment(key: Int, folderId: Int)
+
+    @Query("SELECT * FROM folderAssignmentTable WHERE recordingId = :recId")
+    suspend fun getFolderOfRecording(recId: Int): FolderAssignmentEntity
 }

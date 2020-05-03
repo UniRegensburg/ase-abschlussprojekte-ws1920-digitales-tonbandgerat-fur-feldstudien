@@ -8,12 +8,11 @@ import android.widget.FrameLayout
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.lifecycle.*
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.RecordingAndLabels
-import de.ur.mi.audidroid.models.RecordingAndMarkTuple
-import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.adapter.RecordingAndFolderActionsListener
+import de.ur.mi.audidroid.models.*
 import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
 import java.util.*
@@ -42,6 +41,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val allRecordingsWithMarker: LiveData<List<RecordingAndMarkTuple>> =
         repository.getRecordingsAndMarkerType()
     val displayRecordings = MediatorLiveData<List<RecordingAndLabels>>()
+    val allFolders : LiveData<List<FolderEntity>> = repository.getAllFolders()
+    var folderToBeEdited : FolderEntity? = null
+
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
     var recording: RecordingAndLabels? = null
@@ -206,29 +208,44 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 
-    fun checkExistence(
+    fun getRecordings(
         it: List<RecordingAndLabels>,
         array: ArrayList<RecordingAndLabels>
     ): ArrayList<RecordingAndLabels> {
-        for (i in it.indices) {
-            val file = File(it[i].recordingPath)
+        for (rec in it.indices) {
+            val file = File(it[rec].recordingPath)
 
             if (file.exists()) {
-                if (!it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
-                    array.add(it[i])
-                } else if (it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
-                    File(it[i].recordingPath).delete()
-                    repository.deleteRecording(it[i].uid)
-                    repository.deleteRecMarks(it[i].uid)
-                    repository.deleteRecLabels(it[i].uid)
+                if (!it[rec].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
+                    if(notInFolder(it[rec]))array.add(it[rec])
+                } else if (it[rec].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
+                    File(it[rec].recordingPath).delete()
+                    repository.deleteRecording(it[rec].uid)
+                    repository.deleteRecMarks(it[rec].uid)
+                    repository.deleteRecLabels(it[rec].uid)
                 }
-            } else if (!file.exists() && !it[i].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
-                repository.deleteRecording(it[i].uid)
-                repository.deleteRecMarks(it[i].uid)
-                repository.deleteRecLabels(it[i].uid)
+            } else if (!file.exists() && !it[rec].recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
+                repository.deleteRecording(it[rec].uid)
+                repository.deleteRecMarks(it[rec].uid)
+                repository.deleteRecLabels(it[rec].uid)
             }
+
         }
         return array
+    }
+
+    private fun notInFolder(rec: RecordingAndLabels): Boolean {
+        return repository.getFolderOfRecording(rec.uid) == null
+    }
+
+    fun getFolders(): ArrayList<FolderEntity>{
+        val allFoldersArray = arrayListOf<FolderEntity>()
+        val allFoldersList = repository.getAllFolders()
+        if(allFoldersList.value != null){
+            for(rec in allFoldersList.value!!)
+            allFoldersArray.add(rec)
+        }
+        return allFoldersArray
     }
 
     // Set sorted source for recording display
@@ -390,33 +407,62 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-    fun openFolderMenu(view: View) = PopupMenu(view.context, view).run {
-            menuInflater.inflate(R.menu.popup_menu_add_folder, menu)
+    fun openCreateFolderDialog(){
+        _createFolderDialog.value = true
+    }
+
+    fun openFolderMenu(folder: FolderEntity, view: View) = PopupMenu(view.context, view).run {
+            menuInflater.inflate(R.menu.popup_menu_folder, menu)
             setOnMenuItemClickListener { item ->
                 when (item.toString()) {
-                    context.getString(R.string.folder_internal) -> _createFolderDialog.value = true
-                    context.getString(R.string.folder_external) -> createExternalFolder()
+                    context.getString(R.string.folder_rename_folder) -> {
+                        folderToBeEdited = folder
+                        _createFolderDialog.value = true
+                    }
+                    context.getString(R.string.folder_add_subfolder) -> _createFolderDialog.value = true
+                    context.getString(R.string.folder_delete_folder) -> deleteFolder(folder)
                 }
                true
             }
         show()
     }
 
+    fun renameFolder(folder: FolderEntity, newName: String){
+        _createFolderDialog.value = false
+        folderToBeEdited = null
+        errorMessage = null
+        if(newName.isEmpty()){
+            errorMessage = context.getString(R.string.folder_dialog_error_no_name)
+            _createFolderDialog.value = true
+            return
+        }
+        repository.updateFolder(FolderEntity(folder.uid, newName))
+    }
+
     fun createFolder(folderName : String){
         _createFolderDialog.value = false
+        errorMessage = null
         if(folderName.isEmpty()){
             errorMessage = context.getString(R.string.folder_dialog_error_no_name)
             _createFolderDialog.value = true
             return
         }
+        repository.insertFolder(FolderEntity(0, folderName))
+        showSnackBar(context.getString(R.string.folder_created))
+    }
+
+    private fun deleteFolder(folder: FolderEntity){
+        repository.deleteFolder(folder)
+        showSnackBar(context.getString(R.string.folder_deleted))
+        //TODO: Delete Entries in Folder or delete relation so they appear in "no folders"?
+    }
+
+    fun moveRecording(rec: RecordingAndLabels){
 
     }
 
-    private fun createExternalFolder(){
-        //TODO: Use Pathfinder
-    }
-
-    private fun createInternalFolder(){
+    fun onFolderClicked(folder: FolderEntity){
+        //TODO: update displayed list
     }
 
     // Navigation to the PlayerFragment

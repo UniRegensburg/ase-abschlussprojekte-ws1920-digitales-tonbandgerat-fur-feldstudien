@@ -16,6 +16,8 @@ class Repository(application: Application) : CoroutineScope {
     private var labelDao: LabelDao
     private var labelAssignmentDao: LabelAssignmentDao
     private var markerDao: MarkerDao
+    private var folderDao: FolderDao
+    private var folderAssignmentDao: FolderAssignmentDao
     private var allRecordings: LiveData<List<EntryEntity>>
 
     private val job = Job()
@@ -30,6 +32,8 @@ class Repository(application: Application) : CoroutineScope {
         labelDao = database.labelDao()
         labelAssignmentDao = database.labelAssignmentDao()
         markerDao = database.markerDao()
+        folderDao = database.folderDao()
+        folderAssignmentDao = database.folderAssignmentDao()
         allRecordings = entryDao.getAllRecordings()
     }
 
@@ -257,5 +261,66 @@ class Repository(application: Application) : CoroutineScope {
         CoroutineScope(coroutineContext).launch {
             labelAssignmentDao.deleteRecLabels(uid)
         }
+    }
+
+    /** Folders **/
+
+    fun insertFolder(folderEntity: FolderEntity){
+        CoroutineScope(coroutineContext).launch {
+            folderDao.insertFolder(folderEntity)
+        }
+    }
+
+    fun deleteFolder(folderEntity: FolderEntity){
+        CoroutineScope(coroutineContext).launch {
+            folderDao.deleteFolder(folderEntity)
+        }
+    }
+
+    fun updateFolder(folderEntity: FolderEntity){
+        CoroutineScope(coroutineContext).launch {
+            folderDao.updateFolder(folderEntity)
+        }
+    }
+
+    fun getAllFolders(): LiveData<List<FolderEntity>>{
+        var temp: LiveData<List<FolderEntity>>? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                temp = folderDao.getAllFolders()
+            }
+        }
+        return temp!!
+    }
+
+
+    /** FolderAssignment **/
+
+    fun insertFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity){
+        CoroutineScope(coroutineContext).launch {
+            folderAssignmentDao.insertFolderAssignment(folderAssignmentEntity)
+        }
+    }
+
+    fun deleteFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity){
+        CoroutineScope(coroutineContext).launch {
+            folderAssignmentDao.deleteFolderAssignment(folderAssignmentEntity.primaryKey)
+        }
+    }
+
+    fun updateFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity){
+        CoroutineScope(coroutineContext).launch {
+            folderAssignmentDao.updateFolderAssignment(folderAssignmentEntity.primaryKey, folderAssignmentEntity.folderId)
+        }
+    }
+
+    fun getFolderOfRecording(recordingId: Int): FolderAssignmentEntity?{
+        var temp: FolderAssignmentEntity? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                temp = folderAssignmentDao.getFolderOfRecording(recordingId)
+            }
+        }
+        return temp
     }
 }
