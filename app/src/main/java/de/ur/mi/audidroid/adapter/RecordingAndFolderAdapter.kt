@@ -74,6 +74,14 @@ class RecordingAndFolderAdapter(
         }
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is RecordingAndLabels -> 0
+            is FolderEntity -> 1
+            else -> throw IllegalArgumentException()
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
         return when (viewType) {
             TYPE_RECORDING -> {
