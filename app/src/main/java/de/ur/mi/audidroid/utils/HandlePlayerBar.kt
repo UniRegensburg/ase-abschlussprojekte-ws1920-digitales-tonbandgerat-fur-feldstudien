@@ -9,7 +9,7 @@ import de.ur.mi.audidroid.R
 
 /**
  * [HandlePlayerBar] executes the actions of the player-bar
- * @author: Sabine Roth
+ * @author: Sabine Roth, Jonas Puchinger
  */
 
 object HandlePlayerBar {
@@ -34,7 +34,12 @@ object HandlePlayerBar {
         ) else mediaPlayer.seekTo(moveTime.toInt())
     }
 
-    fun fastForward(mediaPlayer: MediaPlayer, context: Context, buttonForward: ImageButton, buttonRewind: ImageButton) {
+    fun fastForward(
+        mediaPlayer: MediaPlayer,
+        context: Context,
+        buttonForward: ImageButton,
+        buttonRewind: ImageButton
+    ) {
         if (mediaPlayer.isPlaying && mediaPlayer.playbackParams.speed < 2.5f) {
             val newParams = mediaPlayer.playbackParams
             newParams.speed = mediaPlayer.playbackParams.speed + 0.25f
@@ -44,7 +49,12 @@ object HandlePlayerBar {
         enableButton(buttonRewind, context)
     }
 
-    fun fastRewind(mediaPlayer: MediaPlayer, context: Context, buttonRewind: ImageButton, buttonForward: ImageButton) {
+    fun fastRewind(
+        mediaPlayer: MediaPlayer,
+        context: Context,
+        buttonRewind: ImageButton,
+        buttonForward: ImageButton
+    ) {
         if (mediaPlayer.isPlaying && mediaPlayer.playbackParams.speed > 0.25f) {
             val newParams = mediaPlayer.playbackParams
             newParams.speed = mediaPlayer.playbackParams.speed - 0.25f
@@ -56,10 +66,14 @@ object HandlePlayerBar {
 
     private fun disableButton(button: ImageButton, context: Context) {
         button.backgroundTintList = ContextCompat.getColorStateList(context, R.color.grayed_out)
+        button.isEnabled = false
     }
 
     private fun enableButton(button: ImageButton, context: Context) {
-        if (button.backgroundTintList == ContextCompat.getColorStateList(context, R.color.grayed_out))
-            button.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
+        if (!button.isEnabled) {
+            button.backgroundTintList =
+                ContextCompat.getColorStateList(context, ColorHelper.getThemedIconColor())
+            button.isEnabled = true
+        }
     }
 }
