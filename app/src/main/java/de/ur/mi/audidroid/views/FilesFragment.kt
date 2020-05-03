@@ -190,26 +190,23 @@ class FilesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
+        adapter = RecordingAndFolderAdapter(filesViewModel, userActionsListener)
+        binding.recordingList.adapter = adapter
 
+//        TODO: [displayRecordings] should probably include all folder as well
+//        This can be done with the help of MediatorLiveData in FilesViewModel
+//        By doing this, the code below can be shortened to just passing [it] to submitList
         filesViewModel.displayRecordings.observe(viewLifecycleOwner, Observer {
             it?.let {
                 val recordingsArray = filesViewModel.getRecordings(it, arrayListOf<RecordingAndLabels>())
                 val foldersArray = filesViewModel.getFolders()
                 val adapterDataList = mutableListOf<Any>()
-                adapterDataList.add(recordingsArray)
-                adapterDataList.add(foldersArray)
+                adapterDataList.addAll(recordingsArray)
+                adapterDataList.addAll(foldersArray)
 
-                adapter = RecordingAndFolderAdapter(requireContext(), adapterDataList)
-                //binding.recordingList.adapter = adapter
-                //adapter.submitList(recordingsArray)
+                adapter.submitList(adapterDataList)
             }
         })
-        /*filesViewModel.allFolders.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                var allFolders = filesViewModel.getFolders()
-            }
-        })
-        var adapterDataList: MutableList<Any> = MutableList<Any>()*/
     }
 
     private fun adaptObservers() {

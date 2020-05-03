@@ -1,16 +1,17 @@
 package de.ur.mi.audidroid.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.databinding.FolderItemBinding
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.views.FilesFragment
+import de.ur.mi.audidroid.databinding.RecordingItemBinding
+import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
 /**
  * Adapter for the [RecyclerView] in [FilesFragment].
@@ -20,108 +21,115 @@ import de.ur.mi.audidroid.views.FilesFragment
  */
 
 class RecordingAndFolderAdapter(
-    private val context: Context,
-    completeList: MutableList<Any>
+    private val filesViewModel: FilesViewModel,
+    listener: RecordingAndFolderActionsListener
 ) :
-    RecyclerView.Adapter<RecordingAndFolderAdapter.BaseViewHolder<*>>() {
-    private var adapterDataList = completeList
+    ListAdapter<Any, RecordingAndFolderAdapter.BaseViewHolder<*>>(RecordingAndFolderDiffCallback()) {
 
     companion object {
         private const val TYPE_RECORDING = 0
         private const val TYPE_FOLDER = 1
     }
 
-    inner class RecordingViewHolder(itemView: View) : BaseViewHolder<RecordingAndLabels>(itemView) {
+    private val userActionsListener = listener
 
-        override fun bind(item: RecordingAndLabels) {
-            //TODO: Binding?!
+    class RecordingViewHolder(private val binding: RecordingItemBinding) : BaseViewHolder<RecordingAndLabels>(binding.root) {
+
+        override fun bind(
+            item: RecordingAndLabels,
+            listener: RecordingAndFolderActionsListener
+        ) {
+            binding.recording = item
+            binding.listener = listener
+            binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): RecyclerView.ViewHolder {
+                val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
+                val binding: RecordingItemBinding =
+                    RecordingItemBinding.inflate(layoutInflater, parent, false)
+                return RecordingViewHolder(binding)
+            }
         }
     }
 
-    inner class FolderViewHolder(itemView: View) : BaseViewHolder<FolderEntity>(itemView) {
+    class FolderViewHolder(private val binding: FolderItemBinding) : BaseViewHolder<FolderEntity>(binding.root) {
 
-        override fun bind(item: FolderEntity) {
-            //TODO: Binding?!
+        override fun bind(
+            item: FolderEntity,
+            listener: RecordingAndFolderActionsListener
+        ) {
+            binding.folder = item
+            binding.listener = listener
+            binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): RecyclerView.ViewHolder {
+                val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
+                val binding: FolderItemBinding =
+                    FolderItemBinding.inflate(layoutInflater, parent, false)
+                return FolderViewHolder(binding)
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
         return when (viewType) {
             TYPE_RECORDING -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.recording_item, parent, false)
-                RecordingViewHolder(view)
+                RecordingViewHolder.from(parent) as RecordingViewHolder
             }
             TYPE_FOLDER -> {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.folder_item, parent, false)
-                FolderViewHolder(view)
+                FolderViewHolder.from(parent) as FolderViewHolder
             }
             else -> throw IllegalArgumentException("Invalid view type")
         }
 
     }
 
-    override fun getItemCount(): Int {
-        TODO("Not yet implemented")
-    }
-
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
-        val element = adapterDataList[position]
+        val element = getItem(position)
         when (holder) {
-            is RecordingViewHolder -> holder.bind(element as RecordingAndLabels)
-            is FolderViewHolder -> holder.bind(element as FolderEntity)
+            is RecordingViewHolder -> holder.bind(element as RecordingAndLabels, userActionsListener)
+            is FolderViewHolder -> holder.bind(element as FolderEntity, userActionsListener)
             else -> throw IllegalArgumentException()
         }
     }
 
-
-    /* override fun getItemViewType(position: Int): Int {
-         val comparable = data[position]
-         return when (comparable) {
-             is String -> TYPE_FAMILY
-             is Trailer -> TYPE_FRIEND
-             is Review -> TYPE_COLLEAGUE
-             else -> throw IllegalArgumentException("Invalid type of data " + position)
-         }
-     }
- */
-
-    abstract class BaseViewHolder<T>(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        abstract fun bind(item: T)
+    abstract class BaseViewHolder<T>(item: View) : RecyclerView.ViewHolder(item) {
+        abstract fun bind(item: T, listener: RecordingAndFolderActionsListener)
     }
 }
 
-class RecordingDiffCallback : DiffUtil.ItemCallback<RecordingAndLabels>() {
+class RecordingAndFolderDiffCallback : DiffUtil.ItemCallback<Any>() {
 
     override fun areItemsTheSame(
-        oldItem: RecordingAndLabels,
-        newItem: RecordingAndLabels
+        oldItem: Any,
+        newItem: Any
     ): Boolean {
-        return oldItem.uid == newItem.uid
+        var itemsAreSame = false
+        if (oldItem is RecordingAndLabels && newItem is RecordingAndLabels) {
+            itemsAreSame = oldItem.uid == newItem.uid
+        } else if (oldItem is FolderEntity && newItem is FolderEntity) {
+            itemsAreSame = oldItem.uid == newItem.uid
+        }
+        return itemsAreSame
     }
 
+    /**
+     * Cast are needed despite the warning to remove them.
+     */
     override fun areContentsTheSame(
-        oldItem: RecordingAndLabels,
-        newItem: RecordingAndLabels
+        oldItem: Any,
+        newItem: Any
     ): Boolean {
-        return oldItem == newItem
-    }
-}
-
-class FolderDiffCallback : DiffUtil.ItemCallback<FolderEntity>() {
-
-    override fun areItemsTheSame(
-        oldItem: FolderEntity,
-        newItem: FolderEntity
-    ): Boolean {
-        return oldItem.uid == newItem.uid
-    }
-
-    override fun areContentsTheSame(
-        oldItem: FolderEntity,
-        newItem: FolderEntity
-    ): Boolean {
-        return oldItem == newItem
+        var contentsAreSame = false
+        if (oldItem is RecordingAndLabels && newItem is RecordingAndLabels) {
+            contentsAreSame = oldItem as RecordingAndLabels == newItem as RecordingAndLabels
+        } else if (oldItem is FolderEntity && newItem is FolderEntity) {
+            contentsAreSame = oldItem as FolderEntity == newItem as FolderEntity
+        }
+        return contentsAreSame
     }
 }
