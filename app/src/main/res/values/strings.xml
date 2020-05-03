@@ -233,5 +233,6 @@
     <string name="folder_dialog_ok">OK</string>
     <string name="folder_dialog_error_no_name">Choose a name</string>
     <string name="folder_popup_title">Move</string>
+    <string name="folder_icon">Folder icon</string>
 
 </resources>

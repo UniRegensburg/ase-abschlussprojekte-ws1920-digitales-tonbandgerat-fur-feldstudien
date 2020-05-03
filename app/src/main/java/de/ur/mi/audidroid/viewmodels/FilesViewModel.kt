@@ -82,7 +82,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     // If there are no recordings in the database, a TextView is displayed.
-    val empty: LiveData<Boolean> = Transformations.map(allRecordings) {
+    val empty: LiveData<Boolean> = Transformations.map(displayRecordingsAndFolders) {
         it.isEmpty()
     }
 
@@ -205,7 +205,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun getCorrectList(
         it: List<Any>
-    ): ArrayList<Any> {
+    ): List<Any> {
         val recordings = ArrayList<RecordingAndLabels>()
         val folders = ArrayList<FolderEntity>()
         for (item in it) {
@@ -232,7 +232,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         val all = ArrayList<Any>()
         all.addAll(recordings)
         all.addAll(folders)
-        return all
+        return all.toList()
     }
 
     private fun notInFolder(rec: RecordingAndLabels): Boolean {
@@ -255,6 +255,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         displayRecordingsAndFolders.removeSource(allRecordingsWithLabelsOrderName)
         displayRecordingsAndFolders.removeSource(allRecordingsWithLabelsOrderDate)
         displayRecordingsAndFolders.removeSource(allRecordingsWithLabelsOrderDuration)
+        displayRecordingsAndFolders.removeSource(allFolders)
     }
 
     private fun matchLabelsAndRecordings(
@@ -447,7 +448,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                         folderToBeEdited = folder
                         _createFolderDialog.value = true
                     }
-                    context.getString(R.string.folder_add_subfolder) -> _createFolderDialog.value = true
+                    context.getString(R.string.folder_add_subfolder) -> {
+                        //TODO: Übergeben dass es ein subfolder
+                        _createFolderDialog.value = true
+                    }
                     context.getString(R.string.folder_delete_folder) -> deleteFolder(folder)
                 }
                true
@@ -490,7 +494,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onFolderClicked(folder: FolderEntity){
-        //TODO: update displayed list
+        //TODO: View recordings and subfolder
     }
 
     // Navigation to the PlayerFragment

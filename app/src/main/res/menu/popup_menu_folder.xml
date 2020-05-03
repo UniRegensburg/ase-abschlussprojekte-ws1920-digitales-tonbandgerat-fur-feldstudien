@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_rename_folder"
-        android:title="@string/folder_add_subfolder"
+        android:title="@string/folder_rename_folder"
         app:showAsAction="never" />
 
     <item

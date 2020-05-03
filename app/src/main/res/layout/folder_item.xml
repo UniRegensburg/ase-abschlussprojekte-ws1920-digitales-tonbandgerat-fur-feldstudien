@@ -23,7 +23,8 @@
     android:layout_marginTop="@dimen/files_card_view_margin_top_bottom"
     android:layout_marginEnd="@dimen/files_card_view_margin"
     android:layout_marginBottom="@dimen/files_card_view_margin_top_bottom"
-    app:cardElevation="@dimen/keyline_1">
+    app:cardElevation="@dimen/keyline_1"
+    app:cardBackgroundColor="@color/color_folder_background">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,29 +36,19 @@
             android:paddingEnd="@dimen/constraint_layout_padding"
             android:paddingBottom="@dimen/constraint_layout_padding">
 
-          <!--  <LinearLayout
-                android:id="@+id/layout_folder_card_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="1"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-            </LinearLayout>-->
-
             <ImageView
                 android:id="@+id/icon_folder"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.15"
-                android:padding="@dimen/keyline_4"
+                android:paddingStart="@dimen/keyline_4"
                 android:tint="@color/color_on_surface"
+                android:contentDescription="@string/folder_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/ic_folder" />
+                app:srcCompat="@drawable/ic_folder"
+                tools:ignore="RtlSymmetry" />
 
             <TextView
                 android:id="@+id/folder_name"
@@ -67,7 +58,7 @@
                 android:maxLines="1"
                 android:text="@{folder.folderName}"
                 android:textAlignment="viewStart"
-                android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline6"
+                android:textAppearance="@style/TextAppearance.AudidroidTheme.Headline7"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/button_popup_menu_folder"
                 app:layout_constraintStart_toEndOf="@+id/icon_folder"
@@ -82,12 +73,13 @@
                 android:background="@null"
                 android:contentDescription="@string/popup_menu_button"
                 android:onClick="@{(view) -> listener.popUpFolder(folder, view)}"
-                android:padding="@dimen/keyline_2"
+                android:paddingEnd="@dimen/keyline_2"
                 android:src="@drawable/ic_popup_menu"
                 android:tint="@color/color_on_surface"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="RtlSymmetry" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
