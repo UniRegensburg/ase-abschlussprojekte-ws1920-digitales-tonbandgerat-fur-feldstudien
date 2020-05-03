@@ -1,5 +1,6 @@
 package de.ur.mi.audidroid.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -92,7 +93,6 @@ class RecordingAndFolderAdapter(
             }
             else -> throw IllegalArgumentException("Invalid view type")
         }
-
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
@@ -124,18 +124,16 @@ class RecordingAndFolderDiffCallback : DiffUtil.ItemCallback<Any>() {
         return itemsAreSame
     }
 
-    /**
-     * Cast are needed despite the warning to remove them.
-     */
+    @SuppressLint("DiffUtilEquals")
     override fun areContentsTheSame(
         oldItem: Any,
         newItem: Any
     ): Boolean {
         var contentsAreSame = false
         if (oldItem is RecordingAndLabels && newItem is RecordingAndLabels) {
-            contentsAreSame = oldItem as RecordingAndLabels == newItem as RecordingAndLabels
+            contentsAreSame = oldItem == newItem
         } else if (oldItem is FolderEntity && newItem is FolderEntity) {
-            contentsAreSame = oldItem as FolderEntity == newItem as FolderEntity
+            contentsAreSame = oldItem == newItem
         }
         return contentsAreSame
     }

@@ -11,6 +11,7 @@ import de.ur.mi.audidroid.models.RecordingEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.RecordingAndMarkTuple
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
 import java.util.*
