@@ -25,7 +25,7 @@ import de.ur.mi.audidroid.utils.Converters
 
 abstract class RecorderDatabase : RoomDatabase() {
 
-    abstract fun entryDao(): EntryDao
+    abstract fun recordingDao(): RecordingDao
     abstract fun labelDao(): LabelDao
     abstract fun labelAssignmentDao(): LabelAssignmentDao
     abstract fun markerDao(): MarkerDao

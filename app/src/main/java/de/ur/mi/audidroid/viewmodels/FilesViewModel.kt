@@ -7,7 +7,10 @@ import android.widget.PopupMenu
 import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.models.RecordingEntity
+import de.ur.mi.audidroid.models.RecordingAndLabels
+import de.ur.mi.audidroid.models.RecordingAndMarkTuple
+import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
 import java.util.*
@@ -24,7 +27,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    private val allRecordings: LiveData<List<EntryEntity>> = repository.getAllRecordings()
+    private val allRecordings: LiveData<List<RecordingEntity>> = repository.getAllRecordings()
     private val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
         repository.getAllRecordingsWithLabels()
     private val allRecordingsWithLabelsOrderName: LiveData<List<RecordingAndLabels>> =

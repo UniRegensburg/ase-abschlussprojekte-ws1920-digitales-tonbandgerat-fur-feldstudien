@@ -41,11 +41,11 @@ class RecordFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val application = this.activity!!.application
+        val application = requireActivity().application
         dataSource = Repository(application)
         binding = DataBindingUtil.inflate(inflater, R.layout.record_fragment, container, false)
 
-        val viewModelFactory = RecordViewModelFactory(dataSource, application, context!!)
+        val viewModelFactory = RecordViewModelFactory(dataSource, application, requireContext())
         viewModel = ViewModelProvider(this, viewModelFactory).get(RecordViewModel::class.java)
 
         binding.recordViewModel = viewModel
@@ -76,7 +76,7 @@ class RecordFragment : Fragment() {
         viewModel.createDialog.observe(viewLifecycleOwner, Observer {
             if (it) {
                 de.ur.mi.audidroid.utils.SaveRecordingDialog.createDialog(
-                    paramContext = context!!,
+                    paramContext = requireContext(),
                     layoutId = R.layout.save_dialog,
                     errorMessage = viewModel.errorMessage,
                     dataSource = dataSource,
