@@ -18,6 +18,7 @@ import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.utils.ColorHelper
 import de.ur.mi.audidroid.utils.HandlePlayerBar
 import java.io.File
 import java.io.IOException
@@ -41,7 +42,7 @@ class PlayerViewModel(
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
-    val recording: LiveData<EntryEntity> =
+    val recording: LiveData<RecordingEntity> =
         repository.getRecordingById(recordingId)
     val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
     val allLabels: LiveData<List<LabelEntity>> = repository.getRecLabelsById(recordingId)
@@ -193,16 +194,18 @@ class PlayerViewModel(
         HandlePlayerBar.returnPlaying(mediaPlayer, context)
     }
 
-    fun fastForward(){
+    fun fastForward() {
         HandlePlayerBar.fastForward(mediaPlayer, context, buttonFastForward, buttonFastRewind)
     }
 
-    fun fastRewind(){
+    fun fastRewind() {
         HandlePlayerBar.fastRewind(mediaPlayer, context, buttonFastRewind, buttonFastForward)
     }
 
-    private fun resetPlayerBar(){
-        buttonFastRewind.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
-        buttonFastForward.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
+    private fun resetPlayerBar() {
+        buttonFastRewind.backgroundTintList =
+            ContextCompat.getColorStateList(context, ColorHelper.getThemedIconColor())
+        buttonFastForward.backgroundTintList =
+            ContextCompat.getColorStateList(context, ColorHelper.getThemedIconColor())
     }
 }

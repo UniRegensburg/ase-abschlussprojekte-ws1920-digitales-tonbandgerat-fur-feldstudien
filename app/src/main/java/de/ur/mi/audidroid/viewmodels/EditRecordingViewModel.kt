@@ -21,14 +21,8 @@ import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.FFmpeg
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.LabelAssignmentEntity
-import de.ur.mi.audidroid.models.MarkAndTimestamp
-import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
-import de.ur.mi.audidroid.models.MarkTimestamp
-import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.utils.AudioEditor
+import de.ur.mi.audidroid.utils.ColorHelper
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
 import io.apptik.widget.MultiSlider
@@ -37,6 +31,13 @@ import io.apptik.widget.MultiSlider.Thumb
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
+import de.ur.mi.audidroid.models.RecordingEntity
+import de.ur.mi.audidroid.models.LabelAssignmentEntity
+import de.ur.mi.audidroid.models.MarkAndTimestamp
+import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
+import de.ur.mi.audidroid.models.MarkTimestamp
+import de.ur.mi.audidroid.models.MarkerEntity
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
@@ -63,7 +64,7 @@ class EditRecordingViewModel(
             recordingId
         )
             .toInt()
-    val recording: LiveData<EntryEntity> = repository.getRecordingById(copiedRecording)
+    val recording: LiveData<RecordingEntity> = repository.getRecordingById(copiedRecording)
     val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(copiedRecording)
     val allMarkers: LiveData<List<MarkerEntity>> = repository.getAllMarkers()
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
@@ -393,7 +394,7 @@ class EditRecordingViewModel(
     private fun updateRecording(convertedFile: File) {
         val recordingDuration = getRecordingDuration(convertedFile)
         val audio =
-            EntryEntity(
+            RecordingEntity(
                 uid = copiedRecording,
                 recordingName = convertedFile.name,
                 recordingPath = convertedFile.path,
@@ -638,7 +639,7 @@ class EditRecordingViewModel(
                 null,
                 mediaPlayer.currentPosition
             )
-        repository.insertMark(mark)
+        repository.insertMarkTimestamp(mark)
         showSnackBar(R.string.mark_made)
     }
 
@@ -662,7 +663,7 @@ class EditRecordingViewModel(
     }
 
     fun deleteMark(mid: Int) {
-        repository.deleteMark(mid)
+        repository.deleteMarkTimestamp(mid)
         recordingEdited.value = true
         _createConfirmDialog.value = false
         showSnackBar(R.string.mark_deleted)
@@ -722,17 +723,19 @@ class EditRecordingViewModel(
         HandlePlayerBar.returnPlaying(mediaPlayer, context)
     }
 
-    fun fastForward(){
+    fun fastForward() {
         HandlePlayerBar.fastForward(mediaPlayer, context, buttonFastForward, buttonFastRewind)
     }
 
-    fun fastRewind(){
-        HandlePlayerBar.fastRewind(mediaPlayer, context, buttonFastRewind, buttonFastRewind)
+    fun fastRewind() {
+        HandlePlayerBar.fastRewind(mediaPlayer, context, buttonFastRewind, buttonFastForward)
     }
 
-    private fun resetPlayerBar(){
-        buttonFastRewind.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
-        buttonFastForward.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
+    private fun resetPlayerBar() {
+        buttonFastRewind.backgroundTintList =
+            ContextCompat.getColorStateList(context, ColorHelper.getThemedIconColor())
+        buttonFastForward.backgroundTintList =
+            ContextCompat.getColorStateList(context, ColorHelper.getThemedIconColor())
     }
 
     fun cancelDelete() {
