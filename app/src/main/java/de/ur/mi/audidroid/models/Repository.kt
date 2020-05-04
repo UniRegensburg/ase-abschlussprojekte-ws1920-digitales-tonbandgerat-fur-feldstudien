@@ -176,7 +176,13 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun getRecordingsByFolder(folderId: Int): LiveData<List<RecordingAndLabels>> {
-        return folderAssignmentDao.getAllRecordingsOfFolder(folderId)
+        var list: LiveData<List<RecordingAndLabels>>? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                list = folderAssignmentDao.getAllRecordingsOfFolder(folderId)
+            }
+        }
+        return list!!
     }
 
 
