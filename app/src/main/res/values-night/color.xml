@@ -18,9 +18,9 @@
 
     <color name="icon_color_on_background">#ffffff</color>
     <color name="button_disabled_background">#63ffffff</color>
+    <color name="color_folder_background">#505050</color>
+    <color name="chip_background">#6d6d6d</color>
 
     <color name="grayed_out">#6D6D6D</color>
-
-    <color name="color_folder_background">#505050</color>
 
 </resources>
