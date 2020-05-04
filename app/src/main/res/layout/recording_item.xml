@@ -98,18 +98,23 @@
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            app:chipBackgroundColor="@color/chip_background"
                             android:clickable="false"
                             app:label1="@{recording}" />
 
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            app:chipBackgroundColor="@color/chip_background"
+                            android:checked="true"
                             android:clickable="false"
                             app:label2="@{recording}" />
 
                         <com.google.android.material.chip.Chip
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            app:chipBackgroundColor="@color/chip_background"
+                            android:checked="true"
                             android:clickable="false"
                             app:label3="@{recording}" />
 
