@@ -30,21 +30,25 @@ object Pathfinder {
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        if (fragment == "RecordFragment") {
-            (context as Activity).startActivityForResult(
-                intent,
-                context.resources.getInteger(R.integer.request_code_preference_storage_record_fragment)
-            )
-        } else if (fragment == "EditRecordingFragment") {
-            (context as Activity).startActivityForResult(
-                intent,
-                context.resources.getInteger(R.integer.request_code_preference_storage_edit_recording_fragment)
-            )
-        } else if (fragment == "PreferenceFragment") {
-            (context as Activity).startActivityForResult(
-                intent,
-                context.resources.getInteger(R.integer.request_code_preference_storage_preference_fragment)
-            )
+        when (fragment) {
+            "RecordFragment" -> {
+                (context as Activity).startActivityForResult(
+                    intent,
+                    context.resources.getInteger(R.integer.request_code_preference_storage_record_fragment)
+                )
+            }
+            "EditRecordingFragment" -> {
+                (context as Activity).startActivityForResult(
+                    intent,
+                    context.resources.getInteger(R.integer.request_code_preference_storage_edit_recording_fragment)
+                )
+            }
+            "PreferenceFragment" -> {
+                (context as Activity).startActivityForResult(
+                    intent,
+                    context.resources.getInteger(R.integer.request_code_preference_storage_preference_fragment)
+                )
+            }
         }
     }
 
@@ -56,6 +60,7 @@ object Pathfinder {
         return getPath(context, docUri)
     }
 
+    @Suppress("DEPRECATION")
     private fun getPath(context: Context, uri: Uri): String? {
         if (DocumentsContract.isDocumentUri(context, uri)) {
             if (isExternalStorageDocument(uri)) {

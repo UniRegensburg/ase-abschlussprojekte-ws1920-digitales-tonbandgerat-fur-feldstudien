@@ -23,8 +23,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/marks_card_view_margin"
-        android:layout_marginTop="@dimen/marks_card_view_margin"
+        android:layout_marginTop="@dimen/marks_card_view_margin_top_bottom"
         android:layout_marginEnd="@dimen/marks_card_view_margin"
+        android:layout_marginBottom="@dimen/marks_card_view_margin_top_bottom"
         android:onClick="@{(view) -> listener.onMarkClicked(mark, view)}"
         app:cardElevation="@dimen/keyline_1">
 

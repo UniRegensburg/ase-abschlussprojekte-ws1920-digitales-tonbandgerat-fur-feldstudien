@@ -16,7 +16,7 @@ Audidroid shines with features specifically designed for this use case.
 Other than the pure audio recording, you can also mark important positions while recording and edit files directly in the app.
 
 Technical information for Audidroid can be found [here](./docs/Setup.md), and a detailed overview of the requirements context can be found [here](./docs/Overview.md).
-Initial mockups and requirements for the app can be found [here](./requirements/mockups), tests of comparable existing apps can be found [here](./requirements/app-tests), and interviews with potential users can be found [here](./requirements/interviews).
+Initial mockups and requirements for the app can be found [here](./requirements/mockups), tests of comparable existing apps can be found [here](./requirements/App-Tests), and interviews with potential users can be found [here](./requirements/Interviews).
 
 
 ## Team
