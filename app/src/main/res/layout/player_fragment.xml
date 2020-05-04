@@ -162,8 +162,8 @@
 
         <include
             layout="@layout/bottom_player_bar"
-            bind:playerBarListener="@{playerBarListener}"
-            bind:isPlaying="@{playerViewModel.isPlaying()}" />
+            bind:isPlaying="@{playerViewModel.isPlaying()}"
+            bind:playerBarListener="@{playerBarListener}" />
 
     </FrameLayout>
 </layout>
