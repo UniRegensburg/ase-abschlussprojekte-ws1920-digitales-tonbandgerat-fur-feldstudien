@@ -1,7 +1,6 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupMenu
@@ -39,6 +38,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
     val displayRecordingsAndFolders = MediatorLiveData<List<Any>>()
     var folderToBeEdited: FolderEntity? = null
+    var deleteFolder = false
 
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
@@ -49,9 +49,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val sortMode: LiveData<Int?>
         get() = _sortMode
 
-    private val _createFolderDialog = MutableLiveData<Boolean>()
-    val createFolderDialog: LiveData<Boolean>
-        get() = _createFolderDialog
+    private val _folderDialog = MutableLiveData<Boolean>()
+    val folderDialog: LiveData<Boolean>
+        get() = _folderDialog
 
     val _createFilterDialog = MutableLiveData<Boolean>()
     val createFilterDialog: LiveData<Boolean>
@@ -449,7 +449,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun openCreateFolderDialog() {
-        _createFolderDialog.value = true
+        _folderDialog.value = true
     }
 
     fun openFolderMenu(folder: FolderEntity, view: View) = PopupMenu(view.context, view).run {
@@ -458,47 +458,50 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             when (item.toString()) {
                 context.getString(R.string.folder_rename_folder) -> {
                     folderToBeEdited = folder
-                    _createFolderDialog.value = true
+                    _folderDialog.value = true
                 }
-                context.getString(R.string.folder_add_subfolder) -> {
-                    //TODO: Übergeben dass es ein subfolder
-                    _createFolderDialog.value = true
+                context.getString(R.string.folder_delete_folder) -> {
+                    folderToBeEdited = folder
+                    deleteFolder = true
+                    _folderDialog.value = true
                 }
-                context.getString(R.string.folder_delete_folder) -> deleteFolder(folder)
             }
             true
         }
         show()
     }
 
-    fun renameFolder(folder: FolderEntity, newName: String) {
-        _createFolderDialog.value = false
+    fun cancelDialogs(){
+        _folderDialog.value = false
         folderToBeEdited = null
         errorMessage = null
+        deleteFolder = false
+    }
+
+    fun renameFolder(folder: FolderEntity, newName: String) {
+        cancelDialogs()
         if (newName.isEmpty()) {
             errorMessage = context.getString(R.string.folder_dialog_error_no_name)
-            _createFolderDialog.value = true
+            _folderDialog.value = true
             return
         }
         repository.updateFolder(FolderEntity(folder.uid, newName))
     }
 
     fun createFolder(folderName: String) {
-        _createFolderDialog.value = false
-        errorMessage = null
+        cancelDialogs()
         if (folderName.isEmpty()) {
             errorMessage = context.getString(R.string.folder_dialog_error_no_name)
-            _createFolderDialog.value = true
+            _folderDialog.value = true
             return
         }
         repository.insertFolder(FolderEntity(0, folderName))
-        showSnackBar(context.getString(R.string.folder_created))
     }
 
-    private fun deleteFolder(folder: FolderEntity) {
+    fun deleteFolder(folder: FolderEntity) {
+        cancelDialogs()
         repository.deleteFolder(folder)
-        showSnackBar(context.getString(R.string.folder_deleted))
-        //TODO: Delete Entries in Folder or delete relation so they appear in "no folders"?
+        //TODO: Delete Entries in Folder
     }
 
     fun moveRecording(recordingId: Int, destinationFolder: FolderEntity) {

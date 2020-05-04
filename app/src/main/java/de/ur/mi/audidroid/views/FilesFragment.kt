@@ -21,7 +21,7 @@ import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
-import de.ur.mi.audidroid.utils.CreateFolderDialog
+import de.ur.mi.audidroid.utils.FolderDialog
 import de.ur.mi.audidroid.utils.FilterDialog
 import de.ur.mi.audidroid.utils.RenameDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
@@ -102,10 +102,8 @@ class FilesFragment : Fragment() {
 
     // When the ImageButton is clicked, a PopupMenu opens.
     fun openRecordingPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
-        //TODO: Evtl ändern zu drag&drop für verschieben -> dann ist pop up immer gleich
-        val menu = if(filesViewModel.allFolders.value != null) R.menu.popup_menu else R.menu.popup_menu_extended
         val popupMenu = PopupMenu(context, view)
-        popupMenu.menuInflater.inflate(menu, popupMenu.menu)
+        popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_rename_recording ->
@@ -227,14 +225,15 @@ class FilesFragment : Fragment() {
             }
         })
 
-        filesViewModel.createFolderDialog.observe(viewLifecycleOwner, Observer {
+        filesViewModel.folderDialog.observe(viewLifecycleOwner, Observer {
             if(it){
-                CreateFolderDialog.createDialog(
+                FolderDialog.createDialog(
                     context = requireContext(),
                     viewModel = filesViewModel,
                     errorMessage = filesViewModel.errorMessage,
-                    layoutId = R.layout.create_folder_dialog,
-                    folderToBeEdited = filesViewModel.folderToBeEdited
+                    layoutId = R.layout.folder_dialog_create,
+                    folderToBeEdited = filesViewModel.folderToBeEdited,
+                    deleteFolder = filesViewModel.deleteFolder
                 )
             }
         })
