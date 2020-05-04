@@ -17,12 +17,32 @@
         android:layout_height="match_parent"
         tools:context=".views.FilesFragment">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recording_list"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/recording_item" />
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/folder_back_target"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_back"
+                android:tint="@color/color_on_surface"
+                android:padding="@dimen/keyline_3"
+                android:scaleType="fitStart"
+                android:onClick="@{() -> filesViewModel.onLeaveFolderClicked()}"
+                android:visibility="@{filesViewModel.currentlyInFolder ? View.VISIBLE : View.GONE}"
+                android:contentDescription="@string/folder_back_target_content_description" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recording_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/recyclerviews_margin_bottom_big"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/recording_item" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -48,6 +68,7 @@
                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,5 +91,17 @@
                 android:text="@string/filter_no_results"
                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
         </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="@dimen/keyline_3"
+            android:contentDescription="@string/folder_add_button_content_description"
+            android:onClick="@{(view) -> filesViewModel.openCreateFolderDialog()}"
+            android:visibility="@{filesViewModel.currentlyInFolder ? View.INVISIBLE : View.VISIBLE}"
+            android:src="@drawable/ic_create_new_folder"
+            app:tint="@color/color_on_secondary" />
+
     </FrameLayout>
 </layout>
