@@ -121,7 +121,6 @@ class FilesFragment : Fragment() {
                     filesViewModel.recordingToBeExported = recordingAndLabels
                     filesViewModel._createAlertDialog.value = true
                 }
-//                R.id.action_move_recording -> filesViewModel.moveRecording(recordingAndLabels.uid)
             }
             true
         }
@@ -231,7 +230,7 @@ class FilesFragment : Fragment() {
         })
 
         filesViewModel.folderDialog.observe(viewLifecycleOwner, Observer {
-            if(it){
+            if (it) {
                 FolderDialog.createDialog(
                     context = requireContext(),
                     viewModel = filesViewModel,
@@ -299,7 +298,11 @@ class FilesFragment : Fragment() {
 
     private val userActionsListener = object : RecordingAndFolderActionsListener {
         override fun onRecordingClicked(recordingAndLabels: RecordingAndLabels) {
-            filesViewModel.onRecordingClicked(recordingAndLabels.uid, recordingAndLabels.recordingName, recordingAndLabels.recordingPath)
+            filesViewModel.onRecordingClicked(
+                recordingAndLabels.uid,
+                recordingAndLabels.recordingName,
+                recordingAndLabels.recordingPath
+            )
         }
 
         override fun popUpRecording(recordingAndLabels: RecordingAndLabels, view: View) {

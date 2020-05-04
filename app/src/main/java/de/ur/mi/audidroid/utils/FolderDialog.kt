@@ -40,7 +40,7 @@ object FolderDialog{
                     else  viewModel.createFolder(editText.text.toString())
                 }
                 setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                    viewModel.cancelDialogs()
+                    viewModel.resetValues()
                 }
 
             }
@@ -58,13 +58,13 @@ object FolderDialog{
                     viewModel.deleteFolder(folderToBeEdited!!)
                 }
                 setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
-                    viewModel.cancelDialogs()
+                    viewModel.resetValues()
                 }
             }
         }
         val dialog = builder.create()
         dialog.setOnCancelListener{
-            viewModel.cancelDialogs()
+            viewModel.resetValues()
         }
         dialog.show()
     }

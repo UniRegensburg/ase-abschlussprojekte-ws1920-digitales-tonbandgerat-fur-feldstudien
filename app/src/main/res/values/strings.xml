@@ -230,7 +230,6 @@
     <string name="folder_dialog_hint">Insert a name</string>
     <string name="folder_dialog_ok">OK</string>
     <string name="folder_dialog_error_no_name">Choose a name</string>
-    <string name="folder_popup_title">Move</string>
     <string name="folder_icon">Folder icon</string>
     <string name="folder_back_target_content_description">target for going back to parent folder</string>
     <string name="folder_delete_message">Do you really want to delete the folder and all may contained files?</string>

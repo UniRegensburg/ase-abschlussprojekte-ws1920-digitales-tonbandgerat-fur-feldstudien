@@ -1,11 +1,11 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupMenu
 import androidx.lifecycle.*
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.*
@@ -468,7 +468,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         show()
     }
 
-    fun cancelDialogs(){
+    fun resetValues(){
         _folderDialog.value = false
         folderToBeEdited = null
         errorMessage = null
@@ -476,7 +476,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun renameFolder(folder: FolderEntity, newName: String) {
-        cancelDialogs()
+        resetValues()
         if (newName.isEmpty()) {
             errorMessage = context.getString(R.string.folder_dialog_error_no_name)
             _folderDialog.value = true
@@ -486,7 +486,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun createFolder(folderName: String) {
-        cancelDialogs()
+        resetValues()
         if (folderName.isEmpty()) {
             errorMessage = context.getString(R.string.folder_dialog_error_no_name)
             _folderDialog.value = true
@@ -496,21 +496,23 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun deleteFolder(folder: FolderEntity) {
-        cancelDialogs()
+        //TODO NOT READY YET
+        resetValues()
         repository.deleteFolder(folder)
-        //TODO: Delete Entries in Folder
+        val recordingsInFolder: LiveData<List<RecordingAndLabels>> = repository.getRecordingsByFolder(folder.uid)
+        if(recordingsInFolder.value != null){
+            for(rec in recordingsInFolder.value!!){
+                File(rec.recordingPath).delete()
+                repository.deleteFolderAssignment(rec)
+                repository.deleteRecording(rec.uid)
+            }
+        }
     }
 
     fun moveRecording(recordingId: Int, destinationFolder: FolderEntity) {
         val folderAssignmentEntity = FolderAssignmentEntity(0, recordingId, destinationFolder.uid)
         repository.insertFolderAssignment(folderAssignmentEntity)
-        // TODO: Always empty
-        val unsortedRecordings: LiveData<List<RecordingAndLabels>> = Transformations.map(allRecordingsWithLabels) {
-            it.filter { rec ->
-                !notInFolder(rec)
-            }
-        }
-        displayRecordingsAndFolders.value = combineData(unsortedRecordings, allFolders)
+        repository.updateFolder(FolderEntity(destinationFolder.uid, destinationFolder.folderName))
     }
 
     fun removeRecordingFromFolder(recordingAndLabels: RecordingAndLabels) {

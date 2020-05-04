@@ -353,8 +353,10 @@ class Repository(application: Application) : CoroutineScope {
     /** FolderAssignment **/
 
     fun insertFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity) {
-        CoroutineScope(coroutineContext).launch {
-            folderAssignmentDao.insertFolderAssignment(folderAssignmentEntity)
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                folderAssignmentDao.insertFolderAssignment(folderAssignmentEntity)
+            }
         }
     }
 
