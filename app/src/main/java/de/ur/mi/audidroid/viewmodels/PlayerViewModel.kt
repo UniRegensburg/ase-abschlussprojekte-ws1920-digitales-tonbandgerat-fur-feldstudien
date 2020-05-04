@@ -41,7 +41,7 @@ class PlayerViewModel(
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
-    val recording: LiveData<EntryEntity> =
+    val recording: LiveData<RecordingEntity> =
         repository.getRecordingById(recordingId)
     val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
     val allLabels: LiveData<List<LabelEntity>> = repository.getRecLabelsById(recordingId)

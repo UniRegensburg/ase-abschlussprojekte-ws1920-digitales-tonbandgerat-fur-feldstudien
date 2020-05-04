@@ -25,7 +25,7 @@ data class MarkTimestamp(
 )
 
 data class RecordingAndMarks(
-    @Embedded val entryEntity: EntryEntity,
+    @Embedded val recordingEntity: RecordingEntity,
     @Relation(
         parentColumn = "uid",
         entityColumn = "recordingId"

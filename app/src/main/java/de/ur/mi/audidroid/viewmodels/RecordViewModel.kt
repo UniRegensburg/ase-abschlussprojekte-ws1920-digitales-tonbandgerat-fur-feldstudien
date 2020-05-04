@@ -249,7 +249,7 @@ class RecordViewModel(
 
         val recordingDuration = getRecordingDuration()
         val audio =
-            EntryEntity(
+            RecordingEntity(
                 uid = 0,
                 recordingName = name,
                 recordingPath = path,
@@ -262,7 +262,7 @@ class RecordViewModel(
         errorMessage = null
     }
 
-    private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
+    private fun saveRecordInDB(audio: RecordingEntity, labels: ArrayList<Int>?) {
         val uid = dataSource.insertRecording(audio).toInt()
         if (labels != null) {
             for (i in labels.indices) {
@@ -296,7 +296,7 @@ class RecordViewModel(
     private fun saveMarksInDB(recordingId: Int) {
         markList.forEach {
             val mark = MarkTimestamp(0, recordingId, it[0].toInt(), null, it[1].toInt())
-            dataSource.insertMark(mark)
+            dataSource.insertMarkTimestamp(mark)
         }
         markList.clear()
     }
