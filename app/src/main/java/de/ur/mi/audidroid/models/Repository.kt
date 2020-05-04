@@ -62,7 +62,7 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun getRecordingById(uid: Int): LiveData<RecordingEntity> {
-        return  recordingDao.getRecordingById(uid)
+        return recordingDao.getRecordingById(uid)
     }
 
     fun getCopiedRecordingById(recordingId: Int): Long {
@@ -175,9 +175,10 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getAllRecordingsWithLabelsOrderDuration()
     }
 
-    fun getRecordingsByFolder(uid: Int): List<RecordingAndLabels> {
+    fun getRecordingsByFolder(folderId: Int): LiveData<List<RecordingAndLabels>> {
 //        TODO: This can probably be done with a single SQL statement
-        var list: List<RecordingAndLabels>? = null
+        return folderAssignmentDao.getAllRecordingsOfFolder(folderId)
+        /*var list: List<RecordingAndLabels>? = null
         runBlocking {
             CoroutineScope(coroutineContext).launch {
                 val recordings = folderAssignmentDao.getRecordingsOfFolder(uid)
@@ -186,7 +187,7 @@ class Repository(application: Application) : CoroutineScope {
                 }
             }
         }
-        return list!!
+        return list!!*/
     }
 
 
@@ -220,7 +221,7 @@ class Repository(application: Application) : CoroutineScope {
         return markerDao.getAllMarkers()
     }
 
-    fun getRecordingsAndMarkerType():LiveData<List<RecordingAndMarkTuple>>{
+    fun getRecordingsAndMarkerType(): LiveData<List<RecordingAndMarkTuple>> {
         return markerDao.getRecordingsAndMarkerType()
     }
 
@@ -325,25 +326,25 @@ class Repository(application: Application) : CoroutineScope {
 
     /** Folders **/
 
-    fun insertFolder(folderEntity: FolderEntity){
+    fun insertFolder(folderEntity: FolderEntity) {
         CoroutineScope(coroutineContext).launch {
             folderDao.insertFolder(folderEntity)
         }
     }
 
-    fun deleteFolder(folderEntity: FolderEntity){
+    fun deleteFolder(folderEntity: FolderEntity) {
         CoroutineScope(coroutineContext).launch {
             folderDao.deleteFolder(folderEntity)
         }
     }
 
-    fun updateFolder(folderEntity: FolderEntity){
+    fun updateFolder(folderEntity: FolderEntity) {
         CoroutineScope(coroutineContext).launch {
             folderDao.updateFolder(folderEntity)
         }
     }
 
-    fun getAllFolders(): LiveData<List<FolderEntity>>{
+    fun getAllFolders(): LiveData<List<FolderEntity>> {
         var temp: LiveData<List<FolderEntity>>? = null
         runBlocking {
             CoroutineScope(coroutineContext).launch {
@@ -356,25 +357,28 @@ class Repository(application: Application) : CoroutineScope {
 
     /** FolderAssignment **/
 
-    fun insertFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity){
+    fun insertFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity) {
         CoroutineScope(coroutineContext).launch {
             folderAssignmentDao.insertFolderAssignment(folderAssignmentEntity)
         }
     }
 
-    fun deleteFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity){
+    fun deleteFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity) {
         CoroutineScope(coroutineContext).launch {
             folderAssignmentDao.deleteFolderAssignment(folderAssignmentEntity.primaryKey)
         }
     }
 
-    fun updateFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity){
+    fun updateFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity) {
         CoroutineScope(coroutineContext).launch {
-            folderAssignmentDao.updateFolderAssignment(folderAssignmentEntity.primaryKey, folderAssignmentEntity.folderId)
+            folderAssignmentDao.updateFolderAssignment(
+                folderAssignmentEntity.primaryKey,
+                folderAssignmentEntity.folderId
+            )
         }
     }
 
-    fun getFolderOfRecording(recordingId: Int): FolderAssignmentEntity?{
+    fun getFolderOfRecording(recordingId: Int): FolderAssignmentEntity? {
         var temp: FolderAssignmentEntity? = null
         runBlocking {
             CoroutineScope(coroutineContext).launch {

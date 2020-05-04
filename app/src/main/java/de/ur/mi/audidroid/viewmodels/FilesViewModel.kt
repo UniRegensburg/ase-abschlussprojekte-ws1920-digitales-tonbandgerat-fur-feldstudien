@@ -526,9 +526,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     fun onFolderClicked(folder: FolderEntity) {
         //TODO: View recordings and subfolder => needs correct data retrieval
         removeSortedRecordingSources()
-        val recordingsInFolder: List<RecordingAndLabels> = repository.getRecordingsByFolder(folder.uid)
-        displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
-            displayRecordingsAndFolders.value = recordingsInFolder
+        val recordingsInFolder: LiveData<List<RecordingAndLabels>> = repository.getRecordingsByFolder(folder.uid)
+        displayRecordingsAndFolders.addSource(recordingsInFolder) {
+            Log.d("recordingAndLabels",""+it)
+            //displayRecordingsAndFolders.value = recordingsInFolder
         }
     }
 
