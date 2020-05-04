@@ -38,7 +38,7 @@
                 android:id="@+id/recording_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/recyclerviews_margin_bottom_small"
+                android:layout_marginBottom="@dimen/recyclerviews_margin_bottom_big"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/recording_item" />
 

@@ -366,15 +366,6 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun updateFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity) {
-        CoroutineScope(coroutineContext).launch {
-            folderAssignmentDao.updateFolderAssignment(
-                folderAssignmentEntity.primaryKey,
-                folderAssignmentEntity.folderId
-            )
-        }
-    }
-
     fun getFolderOfRecording(recordingId: Int): FolderAssignmentEntity? {
         var temp: FolderAssignmentEntity? = null
         runBlocking {

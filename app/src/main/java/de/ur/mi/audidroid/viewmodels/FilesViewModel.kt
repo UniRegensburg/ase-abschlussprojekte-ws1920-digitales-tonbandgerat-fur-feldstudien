@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupMenu
 import androidx.lifecycle.*
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.*
@@ -83,6 +82,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val currentlyInFolder: LiveData<Boolean>
         get() = _currentlyInFolder
 
+    var deleteRecordings = MediatorLiveData<List<RecordingAndLabels>>()
 
     fun doneShowingSnackbar() {
         _showSnackbarEvent.value = null
@@ -225,7 +225,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 if (file.exists()) {
                     if (!item.recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
                         if (currentlyInFolder.value == true) recordings.add(item)
-                        else if (currentlyInFolder.value == false && notInFolder(item)) recordings.add(item)
+                        else if (currentlyInFolder.value == false && notInFolder(item)) recordings.add(
+                            item
+                        )
                     } else if (item.recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
                         File(item.recordingPath).delete()
                         repository.deleteRecording(item.uid)
@@ -468,7 +470,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         show()
     }
 
-    fun resetValues(){
+    fun resetValues() {
         _folderDialog.value = false
         folderToBeEdited = null
         errorMessage = null
@@ -496,17 +498,15 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun deleteFolder(folder: FolderEntity) {
-        //TODO NOT READY YET
         resetValues()
-        repository.deleteFolder(folder)
-        val recordingsInFolder: LiveData<List<RecordingAndLabels>> = repository.getRecordingsByFolder(folder.uid)
-        if(recordingsInFolder.value != null){
-            for(rec in recordingsInFolder.value!!){
-                File(rec.recordingPath).delete()
-                repository.deleteFolderAssignment(rec)
-                repository.deleteRecording(rec.uid)
+        deleteRecordings.addSource(repository.getRecordingsByFolder(folder.uid)) { list ->
+            list?.forEach {
+                File(it.recordingPath).delete()
+                repository.deleteFolderAssignment(it)
+                repository.deleteRecording(it.uid)
             }
         }
+        repository.deleteFolder(folder)
     }
 
     fun moveRecording(recordingId: Int, destinationFolder: FolderEntity) {
@@ -523,7 +523,8 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     fun onFolderClicked(folder: FolderEntity) {
         _currentlyInFolder.value = true
         removeSortedRecordingSources()
-        val recordingsInFolder: LiveData<List<RecordingAndLabels>> = repository.getRecordingsByFolder(folder.uid)
+        val recordingsInFolder: LiveData<List<RecordingAndLabels>> =
+            repository.getRecordingsByFolder(folder.uid)
         displayRecordingsAndFolders.addSource(recordingsInFolder) {
             displayRecordingsAndFolders.value = it
         }
