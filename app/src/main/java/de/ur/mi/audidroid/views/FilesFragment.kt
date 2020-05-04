@@ -294,6 +294,9 @@ class FilesFragment : Fragment() {
                 }
             }
         })
+
+        filesViewModel.deleteRecordings.observe(viewLifecycleOwner, Observer {
+        })
     }
 
     private val userActionsListener = object : RecordingAndFolderActionsListener {
