@@ -37,7 +37,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val allRecordingsWithMarker: LiveData<List<RecordingAndMarkTuple>> =
         repository.getRecordingsAndMarkerType()
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
-    val allRecordingsOfFolder: LiveData<List<RecordingAndLabels>>? = null
     val displayRecordingsAndFolders = MediatorLiveData<List<Any>>()
     var folderToBeEdited: FolderEntity? = null
 
@@ -434,10 +433,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-    fun setFolderContents() {
-        removeSortedRecordingSources()
-    }
-
     private fun combineData(
         recordingsData: LiveData<List<RecordingAndLabels>>,
         folders: LiveData<List<FolderEntity>>
@@ -526,8 +521,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onFolderClicked(folder: FolderEntity) {
-        //TODO: View recordings and subfolder
-        setFolderContents()
+        //TODO: View recordings and subfolder => needs correct data retrieval
+        removeSortedRecordingSources()
+        val recordingsInFolder: List<RecordingAndLabels> = repository.getRecordingsByFolder(folder.uid)
+        displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
+            displayRecordingsAndFolders.value = recordingsInFolder
+        }
     }
 
     // Navigation to the PlayerFragment

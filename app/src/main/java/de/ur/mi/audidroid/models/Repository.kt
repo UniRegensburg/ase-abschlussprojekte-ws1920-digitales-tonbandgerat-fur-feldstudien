@@ -175,8 +175,18 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getAllRecordingsWithLabelsOrderDuration()
     }
 
-    fun getRecordingsByFolder(uid: Int): LiveData<List<RecordingAndLabels>>? {
-        return null
+    fun getRecordingsByFolder(uid: Int): List<RecordingAndLabels> {
+//        TODO: This can probably be done with a single SQL statement
+        var list: List<RecordingAndLabels>? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                val recordings = folderAssignmentDao.getRecordingsOfFolder(uid)
+                list = recordings.map { rec ->
+                    labelDao.getRecWithLabelsById(rec.uid)
+                }
+            }
+        }
+        return list!!
     }
 
 
