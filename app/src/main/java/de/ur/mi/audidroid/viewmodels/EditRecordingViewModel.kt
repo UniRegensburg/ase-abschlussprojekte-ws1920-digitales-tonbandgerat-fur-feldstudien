@@ -22,6 +22,7 @@ import com.arthenica.mobileffmpeg.FFmpeg
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.utils.AudioEditor
+import de.ur.mi.audidroid.utils.ColorHelper
 import de.ur.mi.audidroid.utils.FFMpegCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
 import io.apptik.widget.MultiSlider
@@ -722,17 +723,19 @@ class EditRecordingViewModel(
         HandlePlayerBar.returnPlaying(mediaPlayer, context)
     }
 
-    fun fastForward(){
+    fun fastForward() {
         HandlePlayerBar.fastForward(mediaPlayer, context, buttonFastForward, buttonFastRewind)
     }
 
-    fun fastRewind(){
-        HandlePlayerBar.fastRewind(mediaPlayer, context, buttonFastRewind, buttonFastRewind)
+    fun fastRewind() {
+        HandlePlayerBar.fastRewind(mediaPlayer, context, buttonFastRewind, buttonFastForward)
     }
 
-    private fun resetPlayerBar(){
-        buttonFastRewind.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
-        buttonFastForward.backgroundTintList = ContextCompat.getColorStateList(context, R.color.color_on_surface)
+    private fun resetPlayerBar() {
+        buttonFastRewind.backgroundTintList =
+            ContextCompat.getColorStateList(context, ColorHelper.getThemedIconColor())
+        buttonFastForward.backgroundTintList =
+            ContextCompat.getColorStateList(context, ColorHelper.getThemedIconColor())
     }
 
     fun cancelDelete() {
