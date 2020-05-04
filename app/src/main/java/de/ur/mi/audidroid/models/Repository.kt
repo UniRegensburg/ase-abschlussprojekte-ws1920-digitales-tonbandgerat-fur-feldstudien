@@ -176,18 +176,7 @@ class Repository(application: Application) : CoroutineScope {
     }
 
     fun getRecordingsByFolder(folderId: Int): LiveData<List<RecordingAndLabels>> {
-//        TODO: This can probably be done with a single SQL statement
         return folderAssignmentDao.getAllRecordingsOfFolder(folderId)
-        /*var list: List<RecordingAndLabels>? = null
-        runBlocking {
-            CoroutineScope(coroutineContext).launch {
-                val recordings = folderAssignmentDao.getRecordingsOfFolder(uid)
-                list = recordings.map { rec ->
-                    labelDao.getRecWithLabelsById(rec.uid)
-                }
-            }
-        }
-        return list!!*/
     }
 
 
@@ -363,9 +352,9 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun deleteFolderAssignment(folderAssignmentEntity: FolderAssignmentEntity) {
+    fun deleteFolderAssignment(recordingAndLabels: RecordingAndLabels) {
         CoroutineScope(coroutineContext).launch {
-            folderAssignmentDao.deleteFolderAssignment(folderAssignmentEntity.primaryKey)
+            folderAssignmentDao.deleteFolderAssignment(recordingAndLabels.uid)
         }
     }
 

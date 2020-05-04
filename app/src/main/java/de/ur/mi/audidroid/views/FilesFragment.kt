@@ -1,6 +1,9 @@
 package de.ur.mi.audidroid.views
 
 import android.app.Application
+import android.content.ClipData
+import android.content.ClipDescription
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
@@ -96,6 +99,8 @@ class FilesFragment : Fragment() {
                 )
             }
         })
+
+        filesViewModel._currentlyInFolder.value = false
 
         return binding.root
     }
@@ -228,7 +233,7 @@ class FilesFragment : Fragment() {
         })
 
         filesViewModel.createFolderDialog.observe(viewLifecycleOwner, Observer {
-            if(it){
+            if(it) {
                 CreateFolderDialog.createDialog(
                     context = requireContext(),
                     viewModel = filesViewModel,
@@ -240,13 +245,55 @@ class FilesFragment : Fragment() {
         })
 
         filesViewModel.createRenameDialog.observe(viewLifecycleOwner, Observer {
-            if (it){
+            if (it) {
                 RenameDialog.createDialog(
                     context = requireContext(),
                     viewModel = filesViewModel,
                     recording = filesViewModel.recording,
                     errorMessage = filesViewModel.errorMessage
                 )
+            }
+        })
+
+        filesViewModel.currentlyInFolder.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                folder_back_target.setOnDragListener { v, event ->
+                    when (event.action) {
+                        DragEvent.ACTION_DRAG_STARTED -> {
+                            if (event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                                v.setBackgroundColor(Color.TRANSPARENT)
+                                v.invalidate()
+                                true
+                            } else {
+                                false
+                            }
+                        }
+                        DragEvent.ACTION_DRAG_ENTERED -> {
+                            v.setBackgroundColor(requireContext().getColor(R.color.color_primary))
+                            v.invalidate()
+                            true
+                        }
+                        DragEvent.ACTION_DRAG_LOCATION ->
+                            true
+                        DragEvent.ACTION_DRAG_EXITED -> {
+                            v.setBackgroundColor(Color.TRANSPARENT)
+                            v.invalidate()
+                            true
+                        }
+                        DragEvent.ACTION_DROP -> {
+                            val recordingId: ClipData.Item = event.clipData.getItemAt(1)
+                            filesViewModel.removeRecordingFromFolder(filesViewModel.recordingToBeMoved!!)
+                            v.invalidate()
+                            true
+                        }
+                        DragEvent.ACTION_DRAG_ENDED -> {
+                            v.setBackgroundColor(Color.TRANSPARENT)
+                            v.invalidate()
+                            true
+                        }
+                        else -> false
+                    }
+                }
             }
         })
     }
@@ -267,6 +314,11 @@ class FilesFragment : Fragment() {
         override fun popUpFolder(folder: FolderEntity, view: View) {
             filesViewModel.openFolderMenu(folder, view)
         }
+    }
+
+    override fun onPause() {
+        filesViewModel._currentlyInFolder.value = false
+        super.onPause()
     }
 
     /**

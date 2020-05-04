@@ -39,6 +39,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
     val displayRecordingsAndFolders = MediatorLiveData<List<Any>>()
     var folderToBeEdited: FolderEntity? = null
+    var recordingToBeMoved: RecordingAndLabels? = null
 
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
@@ -76,6 +77,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private var _filterEmpty = MutableLiveData<Boolean>()
     val filterEmpty: LiveData<Boolean>
         get() = _filterEmpty
+
+    var _currentlyInFolder = MutableLiveData<Boolean>()
+    val currentlyInFolder: LiveData<Boolean>
+        get() = _currentlyInFolder
 
 
     fun doneShowingSnackbar() {
@@ -218,7 +223,8 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
                 if (file.exists()) {
                     if (!item.recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
-                        if (notInFolder(item)) recordings.add(item)
+                        if (currentlyInFolder.value == true) recordings.add(item)
+                        else if (currentlyInFolder.value == false && notInFolder(item)) recordings.add(item)
                     } else if (item.recordingName.contains((context.getString(R.string.filename_trimmed_recording)))) {
                         File(item.recordingPath).delete()
                         repository.deleteRecording(item.uid)
@@ -504,29 +510,39 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     fun moveRecording(recordingId: Int, destinationFolder: FolderEntity) {
         val folderAssignmentEntity = FolderAssignmentEntity(0, recordingId, destinationFolder.uid)
         repository.insertFolderAssignment(folderAssignmentEntity)
-        removeSortedRecordingSources()
-        val unsortedRecordings: LiveData<List<RecordingAndLabels>> = Transformations.map(allRecordingsWithLabels) { it ->
-            it.filter {
-                notInFolder(it)
+        // TODO: Always empty
+        val unsortedRecordings: LiveData<List<RecordingAndLabels>> = Transformations.map(allRecordingsWithLabels) {
+            it.filter { rec ->
+                !notInFolder(rec)
             }
         }
-        displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
-            displayRecordingsAndFolders.value =
-                combineData(unsortedRecordings, allFolders)
-        }
-        displayRecordingsAndFolders.addSource(allFolders) {
-            displayRecordingsAndFolders.value =
-                combineData(unsortedRecordings, allFolders)
-        }
+        displayRecordingsAndFolders.value = combineData(unsortedRecordings, allFolders)
+    }
+
+    fun removeRecordingFromFolder(recordingAndLabels: RecordingAndLabels) {
+        repository.deleteFolderAssignment(recordingAndLabels)
+        recordingToBeMoved = null
     }
 
     fun onFolderClicked(folder: FolderEntity) {
-        //TODO: View recordings and subfolder => needs correct data retrieval
+        _currentlyInFolder.value = true
         removeSortedRecordingSources()
         val recordingsInFolder: LiveData<List<RecordingAndLabels>> = repository.getRecordingsByFolder(folder.uid)
         displayRecordingsAndFolders.addSource(recordingsInFolder) {
-            Log.d("recordingAndLabels",""+it)
-            //displayRecordingsAndFolders.value = recordingsInFolder
+            displayRecordingsAndFolders.value = it
+        }
+    }
+
+    fun onLeaveFolderClicked() {
+        _currentlyInFolder.value = false
+        removeSortedRecordingSources()
+        displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
+            displayRecordingsAndFolders.value =
+                combineData(allRecordingsWithLabels, allFolders)
+        }
+        displayRecordingsAndFolders.addSource(allFolders) {
+            displayRecordingsAndFolders.value =
+                combineData(allRecordingsWithLabels, allFolders)
         }
     }
 

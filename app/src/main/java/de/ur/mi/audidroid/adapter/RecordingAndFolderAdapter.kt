@@ -126,6 +126,7 @@ class RecordingAndFolderAdapter(
 
     private fun bindLongClickListener(holder: RecordingViewHolder, element: RecordingAndLabels) {
         holder.itemView.recording_card_layout.setOnLongClickListener { v ->
+            filesViewModel.recordingToBeMoved = element
             v.tag = "recording"
             val tagItem = ClipData.Item(v.tag as? CharSequence)
             val elementIdItem = ClipData.Item(element.uid.toString() as? CharSequence)
