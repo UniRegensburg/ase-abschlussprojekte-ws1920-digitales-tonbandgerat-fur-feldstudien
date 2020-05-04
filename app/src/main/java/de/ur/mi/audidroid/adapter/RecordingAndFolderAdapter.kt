@@ -1,6 +1,11 @@
 package de.ur.mi.audidroid.adapter
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipDescription
+import android.graphics.Color
+import android.util.Log
+import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +17,8 @@ import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.views.FilesFragment
 import de.ur.mi.audidroid.databinding.RecordingItemBinding
-import de.ur.mi.audidroid.viewmodels.FilesViewModel
+import kotlinx.android.synthetic.main.folder_item.view.*
+import kotlinx.android.synthetic.main.recording_item.view.*
 
 /**
  * Adapter for the [RecyclerView] in [FilesFragment].
@@ -33,7 +39,8 @@ class RecordingAndFolderAdapter(
 
     private val userActionsListener = listener
 
-    class RecordingViewHolder(private val binding: RecordingItemBinding) : BaseViewHolder<RecordingAndLabels>(binding.root) {
+    class RecordingViewHolder(private val binding: RecordingItemBinding) :
+        BaseViewHolder<RecordingAndLabels>(binding.root) {
 
         override fun bind(
             item: RecordingAndLabels,
@@ -54,7 +61,8 @@ class RecordingAndFolderAdapter(
         }
     }
 
-    class FolderViewHolder(private val binding: FolderItemBinding) : BaseViewHolder<FolderEntity>(binding.root) {
+    class FolderViewHolder(private val binding: FolderItemBinding) :
+        BaseViewHolder<FolderEntity>(binding.root) {
 
         override fun bind(
             item: FolderEntity,
@@ -98,9 +106,76 @@ class RecordingAndFolderAdapter(
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
         val element = getItem(position)
         when (holder) {
-            is RecordingViewHolder -> holder.bind(element as RecordingAndLabels, userActionsListener)
-            is FolderViewHolder -> holder.bind(element as FolderEntity, userActionsListener)
+            is RecordingViewHolder -> {
+                holder.bind(element as RecordingAndLabels, userActionsListener)
+                bindLongClickListener(holder)
+            }
+            is FolderViewHolder -> {
+                holder.bind(element as FolderEntity, userActionsListener)
+                bindDragListener(holder)
+            }
             else -> throw IllegalArgumentException()
+        }
+    }
+
+    private fun bindLongClickListener(holder: RecordingViewHolder) {
+        holder.itemView.recording_card_layout.setOnLongClickListener { v ->
+            v.tag = "recording"
+            val item = ClipData.Item(v.tag as? CharSequence)
+            val dragData = ClipData(
+                v.tag as? CharSequence,
+                arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN),
+                item
+            )
+            val myShadow = View.DragShadowBuilder(v)
+            v.startDragAndDrop(
+                dragData,
+                myShadow,
+                null,
+                0
+            )
+            true
+        }
+    }
+
+    private fun bindDragListener(holder: FolderViewHolder) {
+        holder.itemView.folder_card_layout.setOnDragListener { v, event ->
+            when (event.action) {
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    if (event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                        v.setBackgroundColor(Color.TRANSPARENT)
+                        v.invalidate()
+                        true
+                    } else {
+                        false
+                    }
+                }
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    v.setBackgroundColor(Color.GREEN)
+                    v.invalidate()
+                    true
+                }
+                DragEvent.ACTION_DRAG_LOCATION ->
+                    true
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    v.setBackgroundColor(Color.TRANSPARENT)
+                    v.invalidate()
+                    true
+                }
+                DragEvent.ACTION_DROP -> {
+                    val item: ClipData.Item = event.clipData.getItemAt(0)
+                    val dragData = item.text
+                    Log.e("dragData", "$dragData")
+                    v.invalidate()
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    v.setBackgroundColor(Color.TRANSPARENT)
+                    v.invalidate()
+                    true
+                }
+                else -> false
+            }
         }
     }
 
