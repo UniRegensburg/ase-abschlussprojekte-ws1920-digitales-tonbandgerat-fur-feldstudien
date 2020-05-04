@@ -1,6 +1,9 @@
 package de.ur.mi.audidroid.views
 
 import android.app.Application
+import android.content.ClipData
+import android.content.ClipDescription
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
@@ -15,12 +18,15 @@ import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.adapter.RecordingItemAdapter
+import de.ur.mi.audidroid.adapter.RecordingAndFolderActionsListener
+import de.ur.mi.audidroid.adapter.RecordingAndFolderAdapter
 import de.ur.mi.audidroid.databinding.FilesFragmentBinding
+import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
+import de.ur.mi.audidroid.utils.FolderDialog
 import de.ur.mi.audidroid.utils.FilterDialog
 import de.ur.mi.audidroid.utils.RenameDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
@@ -32,7 +38,7 @@ import kotlinx.android.synthetic.main.files_fragment.*
  */
 class FilesFragment : Fragment() {
 
-    private lateinit var adapter: RecordingItemAdapter
+    private lateinit var adapter: RecordingAndFolderAdapter
     private lateinit var binding: FilesFragmentBinding
     private lateinit var filesViewModel: FilesViewModel
     private lateinit var dataSource: Repository
@@ -45,7 +51,9 @@ class FilesFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
 
-        val application = this.requireActivity().application
+
+        val application = requireActivity().application
+
         dataSource = Repository(application)
 
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
@@ -57,7 +65,7 @@ class FilesFragment : Fragment() {
 
         filesViewModel.allRecordingsWithMarker.observe(viewLifecycleOwner, Observer {})
         //Observer on the state variable for the sorting of list-items.
-        filesViewModel.sortModus.observe(viewLifecycleOwner, Observer {
+        filesViewModel.sortMode.observe(viewLifecycleOwner, Observer {
             filesViewModel.setSorting(it)
         })
         //Observer on the state variable for showing Snackbar message when a list-item is deleted.
@@ -96,11 +104,13 @@ class FilesFragment : Fragment() {
             }
         })
 
+        filesViewModel._currentlyInFolder.value = false
+
         return binding.root
     }
 
     // When the ImageButton is clicked, a PopupMenu opens.
-    fun openPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
+    fun openRecordingPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener { item ->
@@ -127,26 +137,28 @@ class FilesFragment : Fragment() {
         val searchView = searchItem.actionView as SearchView
         val sortItem = menu.findItem(R.id.action_sort)
 
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener{
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
                 sortItem.isVisible = false
                 return true
             }
+
             override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
                 sortItem.isVisible = true
                 return true
             }
         })
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText!!.isNotEmpty()) {
                     filesViewModel.setSearchResult(newText)
                 } else {
-                    filesViewModel._sortModus.value = null
+                    filesViewModel._sortMode.value = null
                 }
                 return true
             }
@@ -160,21 +172,18 @@ class FilesFragment : Fragment() {
                 true
             }
             R.id.action_sort_name -> {
-                filesViewModel._sortModus.value =
+                filesViewModel._sortMode.value =
                     requireContext().resources.getInteger(R.integer.sort_by_name)
                 true
             }
             R.id.action_sort_date -> {
-                filesViewModel._sortModus.value =
+                filesViewModel._sortMode.value =
                     requireContext().resources.getInteger(R.integer.sort_by_date)
                 true
             }
             R.id.action_sort_duration -> {
-                filesViewModel._sortModus.value =
+                filesViewModel._sortMode.value =
                     requireContext().resources.getInteger(R.integer.sort_by_duration)
-                true
-            }
-            R.id.action_search ->{
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -201,14 +210,13 @@ class FilesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = RecordingItemAdapter(this, filesViewModel)
+        adapter = RecordingAndFolderAdapter(requireContext(), filesViewModel, userActionsListener)
         binding.recordingList.adapter = adapter
 
-        filesViewModel.displayRecordings.observe(viewLifecycleOwner, Observer {
+        filesViewModel.displayRecordingsAndFolders.observe(viewLifecycleOwner, Observer {
             it?.let {
-                var array = arrayListOf<RecordingAndLabels>()
-                array = filesViewModel.checkExistence(it, array)
-                adapter.submitList(array)
+                val filterEntries = filesViewModel.getCorrectList(it)
+                adapter.submitList(filterEntries)
             }
         })
     }
@@ -238,8 +246,21 @@ class FilesFragment : Fragment() {
             }
         })
 
+        filesViewModel.folderDialog.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                FolderDialog.createDialog(
+                    context = requireContext(),
+                    viewModel = filesViewModel,
+                    errorMessage = filesViewModel.errorMessage,
+                    layoutId = R.layout.folder_dialog_create,
+                    folderToBeEdited = filesViewModel.folderToBeEdited,
+                    deleteFolder = filesViewModel.deleteFolder
+                )
+            }
+        })
+
         filesViewModel.createRenameDialog.observe(viewLifecycleOwner, Observer {
-            if (it){
+            if (it) {
                 RenameDialog.createDialog(
                     context = requireContext(),
                     viewModel = filesViewModel,
@@ -248,6 +269,78 @@ class FilesFragment : Fragment() {
                 )
             }
         })
+
+        filesViewModel.currentlyInFolder.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                folder_back_target.setOnDragListener { v, event ->
+                    when (event.action) {
+                        DragEvent.ACTION_DRAG_STARTED -> {
+                            if (event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                                v.setBackgroundColor(Color.TRANSPARENT)
+                                v.invalidate()
+                                true
+                            } else {
+                                false
+                            }
+                        }
+                        DragEvent.ACTION_DRAG_ENTERED -> {
+                            v.setBackgroundColor(requireContext().getColor(R.color.color_primary))
+                            v.invalidate()
+                            true
+                        }
+                        DragEvent.ACTION_DRAG_LOCATION ->
+                            true
+                        DragEvent.ACTION_DRAG_EXITED -> {
+                            v.setBackgroundColor(Color.TRANSPARENT)
+                            v.invalidate()
+                            true
+                        }
+                        DragEvent.ACTION_DROP -> {
+                            val recordingId: ClipData.Item = event.clipData.getItemAt(1)
+                            filesViewModel.removeRecordingFromFolder(filesViewModel.recordingToBeMoved!!)
+                            v.invalidate()
+                            true
+                        }
+                        DragEvent.ACTION_DRAG_ENDED -> {
+                            v.setBackgroundColor(Color.TRANSPARENT)
+                            v.invalidate()
+                            true
+                        }
+                        else -> false
+                    }
+                }
+            }
+        })
+
+        filesViewModel.deleteRecordings.observe(viewLifecycleOwner, Observer {
+        })
+    }
+
+    private val userActionsListener = object : RecordingAndFolderActionsListener {
+        override fun onRecordingClicked(recordingAndLabels: RecordingAndLabels) {
+            filesViewModel.onRecordingClicked(
+                recordingAndLabels.uid,
+                recordingAndLabels.recordingName,
+                recordingAndLabels.recordingPath
+            )
+        }
+
+        override fun popUpRecording(recordingAndLabels: RecordingAndLabels, view: View) {
+            openRecordingPopupMenu(recordingAndLabels, view)
+        }
+
+        override fun onFolderClicked(folder: FolderEntity) {
+            filesViewModel.onFolderClicked(folder)
+        }
+
+        override fun popUpFolder(folder: FolderEntity, view: View) {
+            filesViewModel.openFolderMenu(folder, view)
+        }
+    }
+
+    override fun onPause() {
+        filesViewModel._currentlyInFolder.value = false
+        super.onPause()
     }
 
     /**

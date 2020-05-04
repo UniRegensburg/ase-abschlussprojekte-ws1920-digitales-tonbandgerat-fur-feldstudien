@@ -12,18 +12,21 @@
 
         <variable
             name="listener"
-            type="de.ur.mi.audidroid.adapter.RecordingUserActionsListener" />
+            type="de.ur.mi.audidroid.adapter.RecordingAndFolderActionsListener" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/recording_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/files_card_view_margin"
-        android:layout_marginTop="@dimen/files_card_view_margin"
+        android:layout_marginTop="@dimen/files_card_view_margin_top_bottom"
         android:layout_marginEnd="@dimen/files_card_view_margin"
+        android:layout_marginBottom="@dimen/files_card_view_margin_top_bottom"
         app:cardElevation="@dimen/keyline_1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/recording_card_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="@{() -> listener.onRecordingClicked(recording)}"
@@ -106,7 +109,7 @@
                     android:layout_weight="0.1"
                     android:background="@null"
                     android:contentDescription="@string/popup_menu_button"
-                    android:onClick="@{(view) -> listener.onButtonClicked(recording, view)}"
+                    android:onClick="@{(view) -> listener.popUpRecording(recording, view)}"
                     android:padding="@dimen/keyline_2"
                     android:src="@drawable/ic_popup_menu"
                     android:tint="@color/color_on_surface"
