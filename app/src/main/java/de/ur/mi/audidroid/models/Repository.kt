@@ -175,6 +175,10 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getAllRecordingsWithLabelsOrderDuration()
     }
 
+    fun getRecordingsByFolder(uid: Int): LiveData<List<RecordingAndLabels>>? {
+        return null
+    }
+
 
     /** Markers */
 

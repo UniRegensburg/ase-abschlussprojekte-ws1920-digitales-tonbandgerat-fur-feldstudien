@@ -1,17 +1,14 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupMenu
 import androidx.lifecycle.*
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.RecordingEntity
-import de.ur.mi.audidroid.models.RecordingAndLabels
-import de.ur.mi.audidroid.models.RecordingAndMarkTuple
-import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.models.FolderEntity
+import de.ur.mi.audidroid.models.*
 import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
 import java.util.*
@@ -39,9 +36,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         repository.getAllRecWithLabelsOrderDuration()
     val allRecordingsWithMarker: LiveData<List<RecordingAndMarkTuple>> =
         repository.getRecordingsAndMarkerType()
-    val allFolders : LiveData<List<FolderEntity>> = repository.getAllFolders()
+    val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
+    val allRecordingsOfFolder: LiveData<List<RecordingAndLabels>>? = null
     val displayRecordingsAndFolders = MediatorLiveData<List<Any>>()
-    var folderToBeEdited : FolderEntity? = null
+    var folderToBeEdited: FolderEntity? = null
 
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
@@ -118,12 +116,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-    fun rename(recordingAndLabels: RecordingAndLabels){
+    fun rename(recordingAndLabels: RecordingAndLabels) {
         recording = recordingAndLabels
         _createRenameDialog.value = true
     }
 
-    fun saveRename(rec: RecordingAndLabels, newName: String){
+    fun saveRename(rec: RecordingAndLabels, newName: String) {
         _createRenameDialog.value = false
         if (!validNameInput(newName)) {
             errorMessage = res.getString(R.string.dialog_invalid_name)
@@ -136,9 +134,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             return
         }
         val name = checkVariables(newName)
-        if(name != rec.recordingName){
-            val newPath = rec.recordingPath.subSequence(0, rec.recordingPath.length - (rec.recordingName.length + context.getString(R.string.suffix_audio_file).length)).toString() + name + context.getString(R.string.suffix_audio_file)
-            if(File(newPath).exists()){
+        if (name != rec.recordingName) {
+            val newPath = rec.recordingPath.subSequence(
+                0,
+                rec.recordingPath.length - (rec.recordingName.length + context.getString(R.string.suffix_audio_file).length)
+            ).toString() + name + context.getString(R.string.suffix_audio_file)
+            if (File(newPath).exists()) {
                 errorMessage = res.getString(R.string.rename_dialog_error_already_exist)
                 _createRenameDialog.value = true
                 return
@@ -155,7 +156,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         return Pattern.compile("^[a-zA-Z0-9_{}-]+$").matcher(name).matches()
     }
 
-    private fun checkVariables(nameParam: String): String{
+    private fun checkVariables(nameParam: String): String {
         var name = nameParam
         if (name.contains("{date}")) {
             name = name.replace(
@@ -182,13 +183,13 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         return name
     }
 
-    fun cancelRename(){
+    fun cancelRename() {
         errorMessage = null
         recording = null
         _createRenameDialog.value = false
     }
 
-    fun cancelFilterDialog(){
+    fun cancelFilterDialog() {
         recording = null
         _createFilterDialog.value = false
     }
@@ -213,7 +214,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         val recordings = ArrayList<RecordingAndLabels>()
         val folders = ArrayList<FolderEntity>()
         for (item in it) {
-            if(item is RecordingAndLabels ) {
+            if (item is RecordingAndLabels) {
                 val file = File(item.recordingPath)
 
                 if (file.exists()) {
@@ -231,7 +232,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                     repository.deleteRecLabels(item.uid)
                 }
             }
-            if(item is FolderEntity) folders.add(item)
+            if (item is FolderEntity) folders.add(item)
         }
         val all = ArrayList<Any>()
         all.addAll(recordings)
@@ -243,12 +244,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         return repository.getFolderOfRecording(rec.uid) == null
     }
 
-    fun getFolders(): ArrayList<FolderEntity>{
+    fun getFolders(): ArrayList<FolderEntity> {
         val allFoldersArray = arrayListOf<FolderEntity>()
         val allFoldersList = repository.getAllFolders()
-        if(allFoldersList.value != null){
-            for(rec in allFoldersList.value!!)
-            allFoldersArray.add(rec)
+        if (allFoldersList.value != null) {
+            for (rec in allFoldersList.value!!)
+                allFoldersArray.add(rec)
         }
         return allFoldersArray
     }
@@ -391,38 +392,50 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         removeSortedRecordingSources()
         when (mode) {
             res.getInteger(R.integer.sort_by_name) -> {
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderName){
-                    displayRecordingsAndFolders.value = combineData(allRecordingsWithLabelsOrderName, allFolders)
+                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderName) {
+                    displayRecordingsAndFolders.value =
+                        combineData(allRecordingsWithLabelsOrderName, allFolders)
                 }
-                displayRecordingsAndFolders.addSource(allFolders){
-                    displayRecordingsAndFolders.value = combineData(allRecordingsWithLabelsOrderName, allFolders)
+                displayRecordingsAndFolders.addSource(allFolders) {
+                    displayRecordingsAndFolders.value =
+                        combineData(allRecordingsWithLabelsOrderName, allFolders)
                 }
             }
             res.getInteger(R.integer.sort_by_date) -> {
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDate){
-                    displayRecordingsAndFolders.value = combineData(allRecordingsWithLabelsOrderDate, allFolders)
+                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDate) {
+                    displayRecordingsAndFolders.value =
+                        combineData(allRecordingsWithLabelsOrderDate, allFolders)
                 }
-                displayRecordingsAndFolders.addSource(allFolders){
-                    displayRecordingsAndFolders.value = combineData(allRecordingsWithLabelsOrderDate, allFolders)
+                displayRecordingsAndFolders.addSource(allFolders) {
+                    displayRecordingsAndFolders.value =
+                        combineData(allRecordingsWithLabelsOrderDate, allFolders)
                 }
             }
             res.getInteger(R.integer.sort_by_duration) -> {
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDuration){
-                    displayRecordingsAndFolders.value = combineData(allRecordingsWithLabelsOrderDuration, allFolders)
+                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDuration) {
+                    displayRecordingsAndFolders.value =
+                        combineData(allRecordingsWithLabelsOrderDuration, allFolders)
                 }
-                displayRecordingsAndFolders.addSource(allFolders){
-                    displayRecordingsAndFolders.value = combineData(allRecordingsWithLabelsOrderDuration, allFolders)
+                displayRecordingsAndFolders.addSource(allFolders) {
+                    displayRecordingsAndFolders.value =
+                        combineData(allRecordingsWithLabelsOrderDuration, allFolders)
                 }
             }
             else -> {
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabels){
-                    displayRecordingsAndFolders.value = combineData(allRecordingsWithLabels, allFolders)
+                displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
+                    displayRecordingsAndFolders.value =
+                        combineData(allRecordingsWithLabels, allFolders)
                 }
-                displayRecordingsAndFolders.addSource(allFolders){
-                    displayRecordingsAndFolders.value = combineData(allRecordingsWithLabels, allFolders)
+                displayRecordingsAndFolders.addSource(allFolders) {
+                    displayRecordingsAndFolders.value =
+                        combineData(allRecordingsWithLabels, allFolders)
                 }
             }
         }
+    }
+
+    fun setFolderContents() {
+        removeSortedRecordingSources()
     }
 
     private fun combineData(
@@ -431,43 +444,43 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     ): List<Any> {
         val all = ArrayList<Any>()
         val recordings = recordingsData.value
-        if(recordings!=null){
-            for(rec in recordings){
+        if (recordings != null) {
+            for (rec in recordings) {
                 all.add(rec)
             }
         }
-        if(folders.value!=null)all.addAll(folders.value!!)
+        if (folders.value != null) all.addAll(folders.value!!)
         return all
     }
 
-    fun openCreateFolderDialog(){
+    fun openCreateFolderDialog() {
         _createFolderDialog.value = true
     }
 
     fun openFolderMenu(folder: FolderEntity, view: View) = PopupMenu(view.context, view).run {
-            menuInflater.inflate(R.menu.popup_menu_folder, menu)
-            setOnMenuItemClickListener { item ->
-                when (item.toString()) {
-                    context.getString(R.string.folder_rename_folder) -> {
-                        folderToBeEdited = folder
-                        _createFolderDialog.value = true
-                    }
-                    context.getString(R.string.folder_add_subfolder) -> {
-                        //TODO: Übergeben dass es ein subfolder
-                        _createFolderDialog.value = true
-                    }
-                    context.getString(R.string.folder_delete_folder) -> deleteFolder(folder)
+        menuInflater.inflate(R.menu.popup_menu_folder, menu)
+        setOnMenuItemClickListener { item ->
+            when (item.toString()) {
+                context.getString(R.string.folder_rename_folder) -> {
+                    folderToBeEdited = folder
+                    _createFolderDialog.value = true
                 }
-               true
+                context.getString(R.string.folder_add_subfolder) -> {
+                    //TODO: Übergeben dass es ein subfolder
+                    _createFolderDialog.value = true
+                }
+                context.getString(R.string.folder_delete_folder) -> deleteFolder(folder)
             }
+            true
+        }
         show()
     }
 
-    fun renameFolder(folder: FolderEntity, newName: String){
+    fun renameFolder(folder: FolderEntity, newName: String) {
         _createFolderDialog.value = false
         folderToBeEdited = null
         errorMessage = null
-        if(newName.isEmpty()){
+        if (newName.isEmpty()) {
             errorMessage = context.getString(R.string.folder_dialog_error_no_name)
             _createFolderDialog.value = true
             return
@@ -475,10 +488,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         repository.updateFolder(FolderEntity(folder.uid, newName))
     }
 
-    fun createFolder(folderName : String){
+    fun createFolder(folderName: String) {
         _createFolderDialog.value = false
         errorMessage = null
-        if(folderName.isEmpty()){
+        if (folderName.isEmpty()) {
             errorMessage = context.getString(R.string.folder_dialog_error_no_name)
             _createFolderDialog.value = true
             return
@@ -487,18 +500,34 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         showSnackBar(context.getString(R.string.folder_created))
     }
 
-    private fun deleteFolder(folder: FolderEntity){
+    private fun deleteFolder(folder: FolderEntity) {
         repository.deleteFolder(folder)
         showSnackBar(context.getString(R.string.folder_deleted))
         //TODO: Delete Entries in Folder or delete relation so they appear in "no folders"?
     }
 
-    fun moveRecording(rec: RecordingAndLabels){
-
+    fun moveRecording(recordingId: Int, destinationFolder: FolderEntity) {
+        val folderAssignmentEntity = FolderAssignmentEntity(0, recordingId, destinationFolder.uid)
+        repository.insertFolderAssignment(folderAssignmentEntity)
+        removeSortedRecordingSources()
+        val unsortedRecordings: LiveData<List<RecordingAndLabels>> = Transformations.map(allRecordingsWithLabels) { it ->
+            it.filter {
+                notInFolder(it)
+            }
+        }
+        displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
+            displayRecordingsAndFolders.value =
+                combineData(unsortedRecordings, allFolders)
+        }
+        displayRecordingsAndFolders.addSource(allFolders) {
+            displayRecordingsAndFolders.value =
+                combineData(unsortedRecordings, allFolders)
+        }
     }
 
-    fun onFolderClicked(folder: FolderEntity){
+    fun onFolderClicked(folder: FolderEntity) {
         //TODO: View recordings and subfolder
+        setFolderContents()
     }
 
     // Navigation to the PlayerFragment

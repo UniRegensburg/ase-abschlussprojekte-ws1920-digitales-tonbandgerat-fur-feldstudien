@@ -118,7 +118,7 @@ class FilesFragment : Fragment() {
                     filesViewModel.recordingToBeExported = recordingAndLabels
                     filesViewModel._createAlertDialog.value = true
                 }
-                R.id.action_move_recording -> filesViewModel.moveRecording(recordingAndLabels)
+//                R.id.action_move_recording -> filesViewModel.moveRecording(recordingAndLabels.uid)
             }
             true
         }
@@ -191,7 +191,7 @@ class FilesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = RecordingAndFolderAdapter(userActionsListener)
+        adapter = RecordingAndFolderAdapter(filesViewModel, userActionsListener)
         binding.recordingList.adapter = adapter
 
         filesViewModel.displayRecordingsAndFolders.observe(viewLifecycleOwner, Observer {
