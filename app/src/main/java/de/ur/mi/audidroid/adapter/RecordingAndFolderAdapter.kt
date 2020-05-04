@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.ClipData
 import android.content.ClipDescription
+import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import android.view.DragEvent
@@ -31,6 +32,7 @@ import kotlinx.android.synthetic.main.recording_item.view.*
  */
 
 class RecordingAndFolderAdapter(
+    private val context: Context,
     private val filesViewModel: FilesViewModel,
     listener: RecordingAndFolderActionsListener
 ) :
@@ -149,6 +151,7 @@ class RecordingAndFolderAdapter(
             when (event.action) {
                 DragEvent.ACTION_DRAG_STARTED -> {
                     if (event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                        v.setBackgroundColor(Color.TRANSPARENT)
                         v.invalidate()
                         true
                     } else {
@@ -156,13 +159,14 @@ class RecordingAndFolderAdapter(
                     }
                 }
                 DragEvent.ACTION_DRAG_ENTERED -> {
-                    v.elevation = 16f
+                    v.setBackgroundColor(context.getColor(R.color.color_primary))
                     v.invalidate()
                     true
                 }
                 DragEvent.ACTION_DRAG_LOCATION ->
                     true
                 DragEvent.ACTION_DRAG_EXITED -> {
+                    v.setBackgroundColor(Color.TRANSPARENT)
                     v.invalidate()
                     true
                 }
@@ -173,6 +177,7 @@ class RecordingAndFolderAdapter(
                     true
                 }
                 DragEvent.ACTION_DRAG_ENDED -> {
+                    v.setBackgroundColor(Color.TRANSPARENT)
                     v.invalidate()
                     true
                 }

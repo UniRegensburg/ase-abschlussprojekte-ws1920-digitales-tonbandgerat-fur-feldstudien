@@ -191,7 +191,7 @@ class FilesFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = RecordingAndFolderAdapter(filesViewModel, userActionsListener)
+        adapter = RecordingAndFolderAdapter(requireContext(), filesViewModel, userActionsListener)
         binding.recordingList.adapter = adapter
 
         filesViewModel.displayRecordingsAndFolders.observe(viewLifecycleOwner, Observer {
