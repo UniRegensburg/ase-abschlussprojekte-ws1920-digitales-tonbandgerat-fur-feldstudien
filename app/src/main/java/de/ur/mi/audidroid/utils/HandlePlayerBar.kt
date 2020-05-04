@@ -40,12 +40,13 @@ object HandlePlayerBar {
         buttonForward: ImageButton,
         buttonRewind: ImageButton
     ) {
-        if (mediaPlayer.isPlaying && mediaPlayer.playbackParams.speed < 2.5f) {
+        if(!mediaPlayer.isPlaying) return
+        if (mediaPlayer.playbackParams.speed < 2.5f) {
             val newParams = mediaPlayer.playbackParams
             newParams.speed = mediaPlayer.playbackParams.speed + 0.25f
             mediaPlayer.playbackParams = newParams
         }
-        if (mediaPlayer.playbackParams.speed >= 2.5f) disableButton(buttonForward, context)
+        else disableButton(buttonForward, context)
         enableButton(buttonRewind, context)
     }
 
@@ -55,12 +56,13 @@ object HandlePlayerBar {
         buttonRewind: ImageButton,
         buttonForward: ImageButton
     ) {
-        if (mediaPlayer.isPlaying && mediaPlayer.playbackParams.speed > 0.25f) {
+        if(!mediaPlayer.isPlaying) return
+        if (mediaPlayer.playbackParams.speed > 0.25f) {
             val newParams = mediaPlayer.playbackParams
             newParams.speed = mediaPlayer.playbackParams.speed - 0.25f
             mediaPlayer.playbackParams = newParams
         }
-        if (mediaPlayer.playbackParams.speed <= 0.25f) disableButton(buttonRewind, context)
+        else disableButton(buttonRewind, context)
         enableButton(buttonForward, context)
     }
 
