@@ -250,7 +250,7 @@ class FilesFragment : Fragment() {
         })
     }
 
-    val userActionsListener = object : RecordingAndFolderActionsListener {
+    private val userActionsListener = object : RecordingAndFolderActionsListener {
         override fun onRecordingClicked(recordingAndLabels: RecordingAndLabels) {
             filesViewModel.onRecordingClicked(recordingAndLabels.uid, recordingAndLabels.recordingName, recordingAndLabels.recordingPath)
         }

@@ -1,6 +1,7 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupMenu
@@ -241,16 +242,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private fun notInFolder(rec: RecordingAndLabels): Boolean {
         return repository.getFolderOfRecording(rec.uid) == null
-    }
-
-    fun getFolders(): ArrayList<FolderEntity> {
-        val allFoldersArray = arrayListOf<FolderEntity>()
-        val allFoldersList = repository.getAllFolders()
-        if (allFoldersList.value != null) {
-            for (rec in allFoldersList.value!!)
-                allFoldersArray.add(rec)
-        }
-        return allFoldersArray
     }
 
     // Set sorted source for recording display
@@ -529,7 +520,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         val recordingsInFolder: LiveData<List<RecordingAndLabels>> = repository.getRecordingsByFolder(folder.uid)
         displayRecordingsAndFolders.addSource(recordingsInFolder) {
             Log.d("recordingAndLabels",""+it)
-            //displayRecordingsAndFolders.value = recordingsInFolder
+            //displayRecordingsAndFolders.value = recordingsInFolder.value
         }
     }
 

@@ -22,8 +22,8 @@ interface FolderAssignmentDao {
     @Query("SELECT DISTINCT L.* FROM folderAssignmentTable R LEFT JOIN recordingsTable L ON R.recordingId = L.uid WHERE R.folderId = :key")
     suspend fun getRecordingsOfFolder(key: Int): List<RecordingEntity>
 
-    @Query("DELETE FROM folderAssignmentTable WHERE recordingId = :key")
-    suspend fun deleteFolderAssignment(key: Int)
+    @Query("DELETE FROM folderAssignmentTable WHERE recordingId = :recordingId")
+    suspend fun deleteFolderAssignment(recordingId: Int)
 
     @Query("UPDATE folderAssignmentTable SET folderId = :folderId WHERE primaryKey = :key")
     suspend fun updateFolderAssignment(key: Int, folderId: Int)
