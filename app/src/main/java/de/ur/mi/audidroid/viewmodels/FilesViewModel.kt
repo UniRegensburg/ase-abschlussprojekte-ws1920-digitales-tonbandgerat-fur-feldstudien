@@ -112,6 +112,8 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 )
             )
             recording = null
+            removeSortedRecordingSources(currentFolder)
+            getRecordingsAndFolders()
         } else {
             showSnackBar(R.string.error_message_file_cannot_be_deleted.toString())
         }
