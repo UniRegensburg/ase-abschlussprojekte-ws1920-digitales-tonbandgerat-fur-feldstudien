@@ -159,8 +159,12 @@ class Repository(application: Application) : CoroutineScope {
         return labelDao.getRecLabelsById(uid)
     }
 
-    fun getAllRecordingsWithLabels(): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabels()
+    fun getAllRecordingsWithLabelsInFolder(currentFolder: Int): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsInFolder(currentFolder)
+    }
+
+    fun getAllRecordingsWithLabelsOutsideFolder(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOutsideFolder()
     }
 
     fun getRecordingsByFolder(folderId: Int): LiveData<List<RecordingAndLabels>> {
@@ -244,17 +248,37 @@ class Repository(application: Application) : CoroutineScope {
         }
     }
 
-    fun getAllRecWithLabelsOrderName(isAsc: Boolean): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderName(isAsc)
+    fun getAllRecWithLabelsOrderNameInFolder(
+        isAsc: Boolean,
+        currentFolder: Int
+    ): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderNameInFolder(isAsc, currentFolder)
     }
 
-    fun getAllRecWithLabelsOrderDate(isAsc: Boolean): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderDate(isAsc)
+    fun getAllRecWithLabelsOrderNameOutsideFolder(isAsc: Boolean): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderNameOutsideFolder(isAsc)
     }
 
-    fun getAllRecWithLabelsOrderDuration(isAsc: Boolean): LiveData<List<RecordingAndLabels>> {
-        return labelDao.getAllRecordingsWithLabelsOrderDuration(isAsc)
+    fun getAllRecWithLabelsOrderDateInFolder(
+        isAsc: Boolean,
+        currentFolder: Int
+    ): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDateInFolder(isAsc, currentFolder)
+    }
 
+    fun getAllRecWithLabelsOrderDateOutsideFolder(isAsc: Boolean): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDateOutsideFolder(isAsc)
+    }
+
+    fun getAllRecWithLabelsOrderDurationInFolder(
+        isAsc: Boolean,
+        currentFolder: Int
+    ): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDurationInFolder(isAsc, currentFolder)
+    }
+
+    fun getAllRecWithLabelsOrderDurationOutsideFolder(isAsc: Boolean): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabelsOrderDurationOutsideFolder(isAsc)
     }
 
     fun deleteMarkTimestamp(mid: Int) {

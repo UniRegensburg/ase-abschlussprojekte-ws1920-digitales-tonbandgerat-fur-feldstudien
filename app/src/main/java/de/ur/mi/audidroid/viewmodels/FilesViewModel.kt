@@ -24,15 +24,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    private val allRecordings: LiveData<List<RecordingEntity>> = repository.getAllRecordings()
-    private val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecordingsWithLabels()
-    private var allRecordingsWithLabelsOrderName: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderName(true)
-    private var allRecordingsWithLabelsOrderDate: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderDate(true)
-    private var allRecordingsWithLabelsOrderDuration: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecWithLabelsOrderDuration(true)
     val allRecordingsWithMarker: LiveData<List<RecordingAndMarkTuple>> =
         repository.getRecordingsAndMarkerType()
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
@@ -81,6 +72,8 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     var _currentlyInFolder = MutableLiveData<Boolean>()
     val currentlyInFolder: LiveData<Boolean>
         get() = _currentlyInFolder
+
+    var currentFolder: Int = 0
 
     var deleteRecordings = MediatorLiveData<List<RecordingAndLabels>>()
 
@@ -253,12 +246,80 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     // Set sorted source for recording display
-    private fun removeSortedRecordingSources() {
-        displayRecordingsAndFolders.removeSource(allRecordingsWithLabels)
-        displayRecordingsAndFolders.removeSource(allRecordingsWithLabelsOrderName)
-        displayRecordingsAndFolders.removeSource(allRecordingsWithLabelsOrderDate)
-        displayRecordingsAndFolders.removeSource(allRecordingsWithLabelsOrderDuration)
-        displayRecordingsAndFolders.removeSource(allFolders)
+    private fun removeSortedRecordingSources(folder: Int) {
+        if (currentlyInFolder.value!!) {
+            displayRecordingsAndFolders.removeSource(repository.getAllRecordingsWithLabelsOutsideFolder())
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderNameInFolder(
+                    true,
+                    folder
+                )
+            )
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderDurationInFolder(
+                    true,
+                    folder
+                )
+            )
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderDateInFolder(
+                    true,
+                    folder
+                )
+            )
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderNameInFolder(
+                    false,
+                    folder
+                )
+            )
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderDurationInFolder(
+                    false,
+                    folder
+                )
+            )
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderDateInFolder(
+                    false,
+                    folder
+                )
+            )
+            displayRecordingsAndFolders.removeSource(allFolders)
+        } else {
+            displayRecordingsAndFolders.removeSource(repository.getAllRecordingsWithLabelsOutsideFolder())
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderNameOutsideFolder(
+                    true
+                )
+            )
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderDurationOutsideFolder(
+                    true
+                )
+            )
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderDateOutsideFolder(
+                    true
+                )
+            )
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderNameOutsideFolder(
+                    false
+                )
+            )
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderDurationOutsideFolder(
+                    false
+                )
+            )
+            displayRecordingsAndFolders.removeSource(
+                repository.getAllRecWithLabelsOrderDateOutsideFolder(
+                    false
+                )
+            )
+            displayRecordingsAndFolders.removeSource(allFolders)
+        }
     }
 
     private fun matchLabelsAndRecordings(
@@ -334,7 +395,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         matchedLabels: List<RecordingAndLabels>?, matchedMarkers: List<Int>?,
         nameInput: String?
     ): List<RecordingAndLabels> {
-        var filteredResult = allRecordingsWithLabels.value!!
+        var filteredResult: List<RecordingAndLabels>
+        if (_currentlyInFolder.value!!) {
+            filteredResult = repository.getAllRecordingsWithLabelsInFolder(currentFolder).value!!
+        } else {
+            filteredResult = repository.getAllRecordingsWithLabelsOutsideFolder().value!!
+        }
         var matchedList = mutableListOf<RecordingAndLabels>()
         matchedLabels?.let { filteredResult = matchedLabels }
         matchedMarkers?.let {
@@ -357,115 +423,239 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         return filteredResult
     }
 
-    fun setFilterResult(labels: List<String>, marks: List<String>, nameInput: String?) {
-        removeSortedRecordingSources()
-        displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
-            if (labels.isNotEmpty() || marks.isNotEmpty() || !nameInput.isNullOrEmpty()) {
-                val matchedLabels =
-                    matchLabelsAndRecordings(allRecordingsWithLabels.value!!, labels)
-                val matchedMarks = matchMarksAndRecordings(marks)
-                val displayList = combineFilterParams(matchedLabels, matchedMarks, nameInput)
-                displayRecordingsAndFolders.value = displayList
-            } else {
-                displayRecordingsAndFolders.value = allRecordingsWithLabels.value!!
-            }
-            _filterEmpty.value = displayRecordingsAndFolders.value!!.isEmpty()
-        }
-    }
+    /* fun setFilterResult(labels: List<String>, marks: List<String>, nameInput: String?) {
+         removeSortedRecordingSources()
+         displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
+             if (labels.isNotEmpty() || marks.isNotEmpty() || !nameInput.isNullOrEmpty()) {
+                 val matchedLabels =
+                     matchLabelsAndRecordings(allRecordingsWithLabels.value!!, labels)
+                 val matchedMarks = matchMarksAndRecordings(marks)
+                 val displayList = combineFilterParams(matchedLabels, matchedMarks, nameInput)
+                 displayRecordingsAndFolders.value = displayList
+             } else {
+                 displayRecordingsAndFolders.value = allRecordingsWithLabels.value!!
+             }
+             _filterEmpty.value = displayRecordingsAndFolders.value!!.isEmpty()
+         }
+     }
 
-    fun setSearchResult(search: String) {
-        removeSortedRecordingSources()
-        displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
-            val displayList = mutableListOf<RecordingAndLabels>()
-            allRecordingsWithLabels.value?.forEach { recording ->
-                if (recording.recordingName.contains(search, true)) {
-                    displayList.add(recording)
-                }
-            }
-            displayRecordingsAndFolders.value = displayList
-        }
-    }
+     fun setSearchResult(search: String) {
+         removeSortedRecordingSources()
+         displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
+             val displayList = mutableListOf<RecordingAndLabels>()
+             allRecordingsWithLabels.value?.forEach { recording ->
+                 if (recording.recordingName.contains(search, true)) {
+                     displayList.add(recording)
+                 }
+             }
+             displayRecordingsAndFolders.value = displayList
+         }
+     }*/
 
     fun setSorting(mode: Int?) {
-        removeSortedRecordingSources()
-
+        removeSortedRecordingSources(currentFolder)
         when (mode) {
-            R.integer.sort_by_name_asc -> {
-                allRecordingsWithLabelsOrderName = repository.getAllRecWithLabelsOrderName(true)
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderName) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabelsOrderName, allFolders)
+            R.integer.sort_by_name_asc ->
+                if (_currentlyInFolder.value!!) {
+                    val allRecordingsWithLabelsOrderNameInFolder =
+                        repository.getAllRecWithLabelsOrderNameInFolder(true, currentFolder)
+                    displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderNameInFolder) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderNameInFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderNameInFolder, allFolders)
+                    }
+                } else {
+                    val allRecordingsWithLabelsOrderNameOutsideFolder =
+                        repository.getAllRecWithLabelsOrderNameOutsideFolder(true)
+                    displayRecordingsAndFolders.addSource(
+                        allRecordingsWithLabelsOrderNameOutsideFolder
+                    ) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderNameOutsideFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderNameOutsideFolder, allFolders)
+                    }
                 }
-                displayRecordingsAndFolders.addSource(allFolders) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabelsOrderName, allFolders)
-                }
-            }
             R.integer.sort_by_date_asc -> {
-                allRecordingsWithLabelsOrderDate = repository.getAllRecWithLabelsOrderDate(true)
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDate) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabelsOrderDate, allFolders)
-                }
-                displayRecordingsAndFolders.addSource(allFolders) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabelsOrderDate, allFolders)
+                if (_currentlyInFolder.value!!) {
+                    val allRecordingsWithLabelsOrderDateInFolder =
+                        repository.getAllRecWithLabelsOrderDateInFolder(true, currentFolder)
+                    displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDateInFolder) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDateInFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDateInFolder, allFolders)
+                    }
+                } else {
+                    val allRecordingsWithLabelsOrderDateOutsideFolder =
+                        repository.getAllRecWithLabelsOrderDateOutsideFolder(true)
+                    displayRecordingsAndFolders.addSource(
+                        allRecordingsWithLabelsOrderDateOutsideFolder
+                    ) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDateOutsideFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDateOutsideFolder, allFolders)
+                    }
                 }
             }
             R.integer.sort_by_duration_asc -> {
-                allRecordingsWithLabelsOrderDuration =
-                    repository.getAllRecWithLabelsOrderDuration(true)
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDuration) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabelsOrderDuration, allFolders)
-                }
-                displayRecordingsAndFolders.addSource(allFolders) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabelsOrderDuration, allFolders)
+                if (_currentlyInFolder.value!!) {
+                    val allRecordingsWithLabelsOrderDurationInFolder =
+                        repository.getAllRecWithLabelsOrderDurationInFolder(true, currentFolder)
+                    displayRecordingsAndFolders.addSource(
+                        allRecordingsWithLabelsOrderDurationInFolder
+                    ) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDurationInFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDurationInFolder, allFolders)
+                    }
+                } else {
+                    val allRecordingsWithLabelsOrderDurationOutsideFolder =
+                        repository.getAllRecWithLabelsOrderDurationOutsideFolder(true)
+                    displayRecordingsAndFolders.addSource(
+                        allRecordingsWithLabelsOrderDurationOutsideFolder
+                    ) {
+                        displayRecordingsAndFolders.value =
+                            combineData(
+                                allRecordingsWithLabelsOrderDurationOutsideFolder,
+                                allFolders
+                            )
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(
+                                allRecordingsWithLabelsOrderDurationOutsideFolder,
+                                allFolders
+                            )
+                    }
                 }
             }
             R.integer.sort_by_name_desc -> {
-                allRecordingsWithLabelsOrderName = repository.getAllRecWithLabelsOrderName(false)
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderName) {
-                    displayRecordingsAndFolders.value = allRecordingsWithLabelsOrderName.value
-                }
-                displayRecordingsAndFolders.addSource(allFolders) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabelsOrderName, allFolders)
+                if (_currentlyInFolder.value!!) {
+                    val allRecordingsWithLabelsOrderNameInFolder =
+                        repository.getAllRecWithLabelsOrderNameInFolder(false, currentFolder)
+                    displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderNameInFolder) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderNameInFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderNameInFolder, allFolders)
+                    }
+                } else {
+                    val allRecordingsWithLabelsOrderNameOutsideFolder =
+                        repository.getAllRecWithLabelsOrderNameOutsideFolder(false)
+                    displayRecordingsAndFolders.addSource(
+                        allRecordingsWithLabelsOrderNameOutsideFolder
+                    ) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderNameOutsideFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderNameOutsideFolder, allFolders)
+                    }
                 }
             }
             R.integer.sort_by_date_desc -> {
-                allRecordingsWithLabelsOrderDate = repository.getAllRecWithLabelsOrderDate(false)
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDate) {
-                    displayRecordingsAndFolders.value = allRecordingsWithLabelsOrderDate.value
-                }
-                displayRecordingsAndFolders.addSource(allFolders) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabelsOrderDate, allFolders)
+                if (_currentlyInFolder.value!!) {
+                    val allRecordingsWithLabelsOrderDateInFolder =
+                        repository.getAllRecWithLabelsOrderDateInFolder(false, currentFolder)
+                    displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDateInFolder) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDateInFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDateInFolder, allFolders)
+                    }
+                } else {
+                    val allRecordingsWithLabelsOrderDateOutsideFolder =
+                        repository.getAllRecWithLabelsOrderDateOutsideFolder(false)
+                    displayRecordingsAndFolders.addSource(
+                        allRecordingsWithLabelsOrderDateOutsideFolder
+                    ) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDateOutsideFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDateOutsideFolder, allFolders)
+                    }
                 }
             }
             R.integer.sort_by_duration_desc -> {
-                allRecordingsWithLabelsOrderDuration =
-                    repository.getAllRecWithLabelsOrderDuration(false)
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDuration) {
-                    displayRecordingsAndFolders.value = allRecordingsWithLabelsOrderDuration.value
+                if (_currentlyInFolder.value!!) {
+                    val allRecordingsWithLabelsOrderDurationInFolder =
+                        repository.getAllRecWithLabelsOrderDurationInFolder(false, currentFolder)
+                    displayRecordingsAndFolders.addSource(
+                        allRecordingsWithLabelsOrderDurationInFolder
+                    ) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDurationInFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOrderDurationInFolder, allFolders)
+                    }
+                } else {
+                    val allRecordingsWithLabelsOrderDurationOutsideFolder =
+                        repository.getAllRecWithLabelsOrderDurationOutsideFolder(false)
+                    displayRecordingsAndFolders.addSource(
+                        allRecordingsWithLabelsOrderDurationOutsideFolder
+                    ) {
+                        displayRecordingsAndFolders.value =
+                            combineData(
+                                allRecordingsWithLabelsOrderDurationOutsideFolder,
+                                allFolders
+                            )
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(
+                                allRecordingsWithLabelsOrderDurationOutsideFolder,
+                                allFolders
+                            )
+                    }
                 }
-                displayRecordingsAndFolders.addSource(allFolders) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabelsOrderDuration, allFolders)
-                }
-
-
             }
 
             else -> {
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabels, allFolders)
-                }
-                displayRecordingsAndFolders.addSource(allFolders) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabels, allFolders)
+                if (_currentlyInFolder.value!!) {
+                    val allRecordingsWithLabelsInFolder =
+                        repository.getAllRecordingsWithLabelsInFolder(currentFolder)
+                    displayRecordingsAndFolders.addSource(allRecordingsWithLabelsInFolder) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsInFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsInFolder, allFolders)
+                    }
+                } else {
+                    val allRecordingsWithLabelsOutsideFolder =
+                        repository.getAllRecordingsWithLabelsOutsideFolder()
+                    displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOutsideFolder) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOutsideFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(allRecordingsWithLabelsOutsideFolder, allFolders)
+                    }
                 }
             }
         }
@@ -482,7 +672,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 all.add(rec)
             }
         }
-        if (folders.value != null) all.addAll(folders.value!!)
+        if (folders.value != null && !_currentlyInFolder.value!!) all.addAll(folders.value!!)
         return all
     }
 
@@ -560,8 +750,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onFolderClicked(folder: FolderEntity) {
+        removeSortedRecordingSources(currentFolder)
         _currentlyInFolder.value = true
-        removeSortedRecordingSources()
+        currentFolder = folder.uid
         val recordingsInFolder: LiveData<List<RecordingAndLabels>> =
             repository.getRecordingsByFolder(folder.uid)
         displayRecordingsAndFolders.addSource(recordingsInFolder) {
@@ -570,15 +761,31 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     fun onLeaveFolderClicked() {
+        removeSortedRecordingSources(currentFolder)
         _currentlyInFolder.value = false
-        removeSortedRecordingSources()
-        displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
-            displayRecordingsAndFolders.value =
-                combineData(allRecordingsWithLabels, allFolders)
-        }
-        displayRecordingsAndFolders.addSource(allFolders) {
-            displayRecordingsAndFolders.value =
-                combineData(allRecordingsWithLabels, allFolders)
+        currentFolder = 0
+        if (_currentlyInFolder.value!!) {
+            val allRecordingsWithLabelsInFolder =
+                repository.getAllRecordingsWithLabelsInFolder(currentFolder)
+            displayRecordingsAndFolders.addSource(allRecordingsWithLabelsInFolder) {
+                displayRecordingsAndFolders.value =
+                    combineData(allRecordingsWithLabelsInFolder, allFolders)
+            }
+            displayRecordingsAndFolders.addSource(allFolders) {
+                displayRecordingsAndFolders.value =
+                    combineData(allRecordingsWithLabelsInFolder, allFolders)
+            }
+        } else {
+            val allRecordingsWithLabelsOutsideFolder =
+                repository.getAllRecordingsWithLabelsOutsideFolder()
+            displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOutsideFolder) {
+                displayRecordingsAndFolders.value =
+                    combineData(allRecordingsWithLabelsOutsideFolder, allFolders)
+            }
+            displayRecordingsAndFolders.addSource(allFolders) {
+                displayRecordingsAndFolders.value =
+                    combineData(allRecordingsWithLabelsOutsideFolder, allFolders)
+            }
         }
     }
 

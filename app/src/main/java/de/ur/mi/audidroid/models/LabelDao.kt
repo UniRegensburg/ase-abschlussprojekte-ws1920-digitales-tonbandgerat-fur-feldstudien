@@ -17,17 +17,38 @@ interface LabelDao {
     @Query("SELECT * FROM labelsTable")
     fun getAllLabels(): LiveData<List<LabelEntity>>
 
-    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY R.uid DESC")
-    fun getAllRecordingsWithLabels(): LiveData<List<RecordingAndLabels>>
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId LEFT JOIN folderAssignmentTable F ON R.uid = F.recordingId WHERE F.folderId = :currentFolder GROUP BY R.uid ORDER BY R.uid DESC")
+    fun getAllRecordingsWithLabelsInFolder(currentFolder: Int): LiveData<List<RecordingAndLabels>>
 
-    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.recordingName END ASC, CASE WHEN :isAsc = 0 THEN R.recordingName END DESC")
-    fun getAllRecordingsWithLabelsOrderName(isAsc: Boolean): LiveData<List<RecordingAndLabels>>
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId LEFT JOIN folderAssignmentTable F ON R.uid = F.recordingId WHERE F.folderId IS NULL GROUP BY R.uid ORDER BY R.uid DESC")
+    fun getAllRecordingsWithLabelsOutsideFolder(): LiveData<List<RecordingAndLabels>>
 
-    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.duration END ASC, CASE WHEN :isAsc = 0 THEN R.duration END DESC")
-    fun getAllRecordingsWithLabelsOrderDuration(isAsc: Boolean): LiveData<List<RecordingAndLabels>>
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId LEFT JOIN folderAssignmentTable F ON R.uid = F.recordingId WHERE F.folderId = :currentFolder GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.recordingName END ASC, CASE WHEN :isAsc = 0 THEN R.recordingName END DESC")
+    fun getAllRecordingsWithLabelsOrderNameInFolder(
+        isAsc: Boolean,
+        currentFolder: Int
+    ): LiveData<List<RecordingAndLabels>>
 
-    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.date END ASC, CASE WHEN :isAsc = 0 THEN R.date END DESC")
-    fun getAllRecordingsWithLabelsOrderDate(isAsc: Boolean): LiveData<List<RecordingAndLabels>>
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId LEFT JOIN folderAssignmentTable F ON R.uid = F.recordingId WHERE F.folderId IS NULL GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.recordingName END ASC, CASE WHEN :isAsc = 0 THEN R.recordingName END DESC")
+    fun getAllRecordingsWithLabelsOrderNameOutsideFolder(isAsc: Boolean): LiveData<List<RecordingAndLabels>>
+
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId LEFT JOIN folderAssignmentTable F ON R.uid = F.recordingId WHERE F.folderId = :currentFolder GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.duration END ASC, CASE WHEN :isAsc = 0 THEN R.duration END DESC")
+    fun getAllRecordingsWithLabelsOrderDurationInFolder(
+        isAsc: Boolean,
+        currentFolder: Int
+    ): LiveData<List<RecordingAndLabels>>
+
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId LEFT JOIN folderAssignmentTable F ON R.uid = F.recordingId WHERE F.folderId IS NULL GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.duration END ASC, CASE WHEN :isAsc = 0 THEN R.duration END DESC")
+    fun getAllRecordingsWithLabelsOrderDurationOutsideFolder(isAsc: Boolean): LiveData<List<RecordingAndLabels>>
+
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId LEFT JOIN folderAssignmentTable F ON R.uid = F.recordingId WHERE F.folderId = :currentFolder GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.date END ASC, CASE WHEN :isAsc = 0 THEN R.date END DESC")
+    fun getAllRecordingsWithLabelsOrderDateInFolder(
+        isAsc: Boolean,
+        currentFolder: Int
+    ): LiveData<List<RecordingAndLabels>>
+
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId LEFT JOIN folderAssignmentTable F ON R.uid = F.recordingId WHERE F.folderId IS NULL GROUP BY R.uid ORDER BY CASE WHEN :isAsc = 1 THEN R.date END ASC, CASE WHEN :isAsc = 0 THEN R.date END DESC")
+    fun getAllRecordingsWithLabelsOrderDateOutsideFolder(isAsc: Boolean): LiveData<List<RecordingAndLabels>>
 
     @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId WHERE A.recordingId = :key")
     fun getRecWithLabelsById(key: Int): RecordingAndLabels
@@ -47,6 +68,4 @@ interface LabelDao {
     @Delete
     suspend fun delete(labelEntity: LabelEntity)
 
-    @Query("DELETE FROM labelsTable")
-    suspend fun clearTable()
 }

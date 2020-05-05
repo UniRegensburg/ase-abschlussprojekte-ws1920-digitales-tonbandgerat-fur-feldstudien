@@ -130,7 +130,7 @@ class FilesFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_files, menu)
 
-        val searchItem: MenuItem = menu.findItem(R.id.action_search)
+        /*val searchItem: MenuItem = menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -145,7 +145,7 @@ class FilesFragment : Fragment() {
                 }
                 return true
             }
-        })
+        })*/
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
