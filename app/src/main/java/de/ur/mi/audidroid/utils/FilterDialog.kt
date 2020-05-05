@@ -43,13 +43,13 @@ object FilterDialog {
         with(builder){
             setPositiveButton(context.getString(R.string.menu_filter)){_, _ ->
                 nameInput = dialog.findViewById<EditText>(R.id.dialog_filter_recording_edittext_name)!!.text.toString()
-                //viewModel.setFilterResult(selectedLabels, selectedMarks, nameInput)
+                viewModel.setFilterResult(selectedLabels, selectedMarks, nameInput)
                 cancelDialog()
             }
             setNegativeButton(R.string.dialog_cancel_button_text){_,_->
                 cancelDialog()
                 clearDialog()
-                //viewModel.setFilterResult(selectedLabels, selectedMarks, null)
+                viewModel.setFilterResult(selectedLabels, selectedMarks, null)
             }
         }
 
