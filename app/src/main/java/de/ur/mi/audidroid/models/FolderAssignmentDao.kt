@@ -5,7 +5,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import androidx.room.Transaction
 
 /**
  * DAO for the [FolderAssignmentEntity]
@@ -26,4 +25,7 @@ interface FolderAssignmentDao {
 
     @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId LEFT JOIN folderAssignmentTable F ON R.uid = F.recordingId WHERE F.folderId = :folderId GROUP BY R.uid")
     fun getAllRecordingsOfFolder(folderId: Int): LiveData<List<RecordingAndLabels>>
+
+    @Query("SELECT R.uid, R.recordingName, R.recordingPath, R.date, R.duration, GROUP_CONCAT(L.labelName,', ') AS labels FROM recordingsTable R LEFT JOIN labelAssignmentTable A ON R.uid = A.recordingId LEFT JOIN labelsTable L ON L.uid = A.labelId LEFT JOIN folderAssignmentTable F ON R.uid = F.recordingId WHERE F.folderId IS NULL GROUP BY R.uid")
+    fun getAllRecordingsOutsideFolder(): LiveData<List<RecordingAndLabels>>
 }
