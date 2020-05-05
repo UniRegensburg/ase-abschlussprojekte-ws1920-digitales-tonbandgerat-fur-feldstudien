@@ -2,7 +2,7 @@ package de.ur.mi.audidroid.utils
 
 import java.io.File
 
-interface FFMpegCallback {
+interface FFmpegCallback {
 
     fun onSuccess(convertedFile: File, type: String, startTimeInMilli: Int, endTimeInMilli: Int)
 

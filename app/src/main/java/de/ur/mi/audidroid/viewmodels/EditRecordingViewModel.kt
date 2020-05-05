@@ -30,7 +30,7 @@ import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.models.FolderAssignmentEntity
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.ColorHelper
-import de.ur.mi.audidroid.utils.FFMpegCallback
+import de.ur.mi.audidroid.utils.FFmpegCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
@@ -364,7 +364,7 @@ class EditRecordingViewModel(
         }
     }
 
-    val callback = object : FFMpegCallback {
+    val callback = object : FFmpegCallback {
         override fun onSuccess(
             convertedFile: File,
             type: String,
