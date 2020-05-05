@@ -792,7 +792,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     fun deleteFolder(folder: FolderEntity) {
         resetValues()
         deleteRecordings.addSource(repository.getRecordingsByFolder(folder.uid)) { list: List<RecordingAndLabels> ->
-            list?.forEach {
+            list.forEach {
                 File(it.recordingPath).delete()
                 repository.deleteFolderAssignment(it)
                 repository.deleteRecMarks(it.uid)
