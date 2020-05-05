@@ -59,6 +59,4 @@
     <dimen name="size_logo">192dp</dimen>
     <dimen name="dot_radius">6dp</dimen>
     <dimen name="container_margin">44dp</dimen>
-
-      <!-- Folder -->
 </resources>

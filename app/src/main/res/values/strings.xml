@@ -105,7 +105,7 @@
     <string name="sample_comment">Sample comment</string>
     <string name="sample_mark">Mark</string>
     <string name="mark_deleted">Mark deleted</string>
-    <string name="cancel_editing">Do you really want to delete the edited recording?</string>
+    <string name="cancel_editing">Do you really want to delete all changes?</string>
     <string name="wave_pic">WavePic</string>
     <string name="filename_trimmed_recording">(trimmed)_ </string>
 

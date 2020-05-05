@@ -59,7 +59,7 @@ class OnboardingFragment : OnboardingSupportFragment() {
 
     private fun roundEdges(gifId: Int): GifDrawable {
         val gif = GifDrawable(resources, gifId)
-        gif.cornerRadius = 80f
+        gif.cornerRadius = 30f
         return gif
     }
 
