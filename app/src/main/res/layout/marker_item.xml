@@ -20,7 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/card_view_margin"
         android:layout_marginTop="@dimen/card_view_margin"
-        android:layout_marginEnd="@dimen/card_view_margin">
+        android:layout_marginEnd="@dimen/card_view_margin"
+        app:cardElevation="@dimen/keyline_1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -53,9 +54,9 @@
                 android:background="@null"
                 android:contentDescription="@string/popup_menu_option_delete"
                 android:onClick="@{() -> listener.onMarkerDeleteClicked(marker)}"
+                android:padding="@dimen/keyline_2"
                 android:src="@drawable/ic_delete"
                 android:tint="@color/color_on_surface"
-                android:padding="@dimen/keyline_2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"

@@ -64,4 +64,39 @@
         <item name="android:background">?colorOnBackground</item>
     </style>
 
+    <!-- Onboarding-->
+    <style name="AudidroidTheme.OnBoarding" parent="Theme.Leanback.Onboarding">
+        <item name="fontFamily">@font/rubik</item>
+        <item name="onboardingDescriptionStyle">@style/OptimizedOnboardingDescriptionStyle</item>
+        <item name="onboardingLogoStyle">@style/OptimizedLogoStyle</item>
+        <item name="onboardingPageIndicatorStyle">@style/OptimizedPageIndicator</item>
+        <item name="onboardingNavigatorContainerStyle">@style/OptimizedNavContainer</item>
+        <item name="onboardingHeaderStyle">@style/OptimizedHeader</item>
+    </style>
+
+    <style name="OptimizedOnboardingDescriptionStyle" parent="Widget.Leanback.OnboardingDescriptionStyle">
+        <item name="android:paddingRight">@dimen/keyline_2</item>
+        <item name="android:paddingLeft">@dimen/keyline_2</item>
+    </style>
+
+    <style name="OptimizedLogoStyle" parent="Widget.Leanback.OnboardingLogoStyle">
+        <item name="android:layout_width">@dimen/size_logo</item>
+        <item name="android:layout_height">@dimen/size_logo</item>
+    </style>
+
+    <style name="OptimizedPageIndicator" parent="Widget.Leanback.OnboardingPageIndicatorStyle">
+        <item name="android:layout_gravity">bottom|center_horizontal</item>
+        <item name="dotToDotGap">@dimen/keyline_5</item>
+        <item name="lbDotRadius">@dimen/dot_radius</item>
+        <item name="dotBgColor">@color/color_surface</item>
+    </style>
+
+    <style name="OptimizedNavContainer" parent="Widget.Leanback.OnboardingNavigatorContainerStyle">
+        <item name="android:layout_marginBottom">@dimen/container_margin</item>
+    </style>
+
+    <style name="OptimizedHeader" parent="Widget.Leanback.OnboardingHeaderStyle">
+        <item name="android:layout_marginTop">@dimen/container_margin</item>
+    </style>
+
 </resources>

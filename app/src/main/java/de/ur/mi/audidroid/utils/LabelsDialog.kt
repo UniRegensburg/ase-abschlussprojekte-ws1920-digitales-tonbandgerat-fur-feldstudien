@@ -89,11 +89,11 @@ object LabelsDialog {
         dialog.setCancelable(true)
         dialog.setOnCancelListener {
             viewModel!!.cancelSaving()
-            dialog.dialog_add_label_edit_text.hideKeyboard()
+            dialog.dialog_add_label_edit_text?.hideKeyboard()
         }
         dialog.setOnDismissListener {
             viewModel!!.cancelSaving()
-            dialog.dialog_add_label_edit_text.hideKeyboard()
+            dialog.dialog_add_label_edit_text?.hideKeyboard()
         }
     }
 }

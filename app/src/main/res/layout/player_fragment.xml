@@ -13,8 +13,8 @@
             type="de.ur.mi.audidroid.viewmodels.PlayerViewModel" />
 
         <variable
-            name="handlePlayerBar"
-            type="de.ur.mi.audidroid.utils.HandlePlayerBar" />
+            name="playerBarListener"
+            type="de.ur.mi.audidroid.utils.PlayerBarListener" />
     </data>
 
     <FrameLayout
@@ -68,6 +68,7 @@
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/labelChipGroup"
+                    style="@style/Widget.MaterialComponents.ChipGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/dialog_margin_small"
@@ -162,8 +163,8 @@
 
         <include
             layout="@layout/bottom_player_bar"
-            bind:handlePlayerBar="@{handlePlayerBar}"
-            bind:isPlaying="@{playerViewModel.isPlaying()}" />
+            bind:isPlaying="@{playerViewModel.isPlaying()}"
+            bind:playerBarListener="@{playerBarListener}" />
 
     </FrameLayout>
 </layout>

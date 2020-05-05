@@ -9,22 +9,26 @@ class AudioEditor {
 
     private var audio: File? = null
     private var startTime = "00:00:00"
+    private var startTimeInMilli = 0
+    private var endTimeInMilli = 0
     private var endTime = "00:00:00"
     private var duration = ""
     private var outputPath = ""
     private var outputFileName = ""
-    private var callback: FFMPEGCallback? = null
+    private var callback: FFmpegCallback? = null
 
     fun setFile(originalFile: File) {
         this.audio = originalFile
     }
 
-    fun setStartTime(startTime: String) {
+    fun setStartTime(startTime: String, startTimeInMilli: Int) {
         this.startTime = startTime
+        this.startTimeInMilli = startTimeInMilli
     }
 
-    fun setEndTime(endTime: String) {
+    fun setEndTime(endTime: String, endTimeInMilli: Int) {
         this.endTime = endTime
+        this.endTimeInMilli = endTimeInMilli
     }
 
     fun setDuration(duration: String) {
@@ -39,7 +43,7 @@ class AudioEditor {
         this.outputFileName = output
     }
 
-    fun setCallback(callback: FFMPEGCallback) {
+    fun setCallback(callback: FFmpegCallback) {
         this.callback = callback
     }
 
@@ -86,7 +90,7 @@ class AudioEditor {
         try {
             val response: Int = com.arthenica.mobileffmpeg.FFmpeg.execute(cmd)
             if (response == Config.RETURN_CODE_SUCCESS) {
-                callback!!.onSuccess(outputLocation)
+                callback!!.onSuccess(outputLocation, type, startTimeInMilli, endTimeInMilli)
             } else if (response == Config.RETURN_CODE_CANCEL) {
                 Log.d("AudioEditor", "Cut recording canceled")
             } else {

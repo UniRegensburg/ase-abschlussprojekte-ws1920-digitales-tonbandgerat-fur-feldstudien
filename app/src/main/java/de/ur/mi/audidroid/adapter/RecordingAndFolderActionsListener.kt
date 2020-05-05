@@ -1,6 +1,7 @@
 package de.ur.mi.audidroid.adapter
 
 import android.view.View
+import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.views.FilesFragment
 
@@ -10,9 +11,13 @@ import de.ur.mi.audidroid.views.FilesFragment
  * @author: Theresa Strohmeier, Jonas Puchinger
  */
 
-interface RecordingUserActionsListener {
+interface RecordingAndFolderActionsListener {
 
     fun onRecordingClicked(recordingAndLabels: RecordingAndLabels)
 
-    fun onButtonClicked(recordingAndLabels: RecordingAndLabels, view: View)
+    fun popUpRecording(recordingAndLabels: RecordingAndLabels, view: View)
+
+    fun onFolderClicked(folder: FolderEntity)
+
+    fun popUpFolder(folder: FolderEntity, view: View)
 }

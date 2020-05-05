@@ -27,8 +27,12 @@
 
     <dimen name="card_view_margin">@dimen/keyline_2</dimen>
     <dimen name="label_card_view_margin">@dimen/keyline_2</dimen>
+    <dimen name="label_card_view_margin_top_bottom">@dimen/keyline_1</dimen>
     <dimen name="files_card_view_margin">@dimen/keyline_2</dimen>
-    <dimen name="marks_card_view_margin">@dimen/keyline_1</dimen>
+    <dimen name="files_card_view_margin_top_bottom">@dimen/keyline_1</dimen>
+    <dimen name="marks_card_view_margin">@dimen/keyline_2</dimen>
+    <dimen name="marks_card_view_margin_top_bottom">@dimen/keyline_1</dimen>
+    <dimen name="recyclerviews_margin_bottom_big">50dp</dimen>
 
     <dimen name="constraint_layout_padding">12dp</dimen>
     <dimen name="seek_bar_layout_absolute_x">0dp</dimen>
@@ -39,8 +43,8 @@
     <!--BottomBar-->
     <dimen name="bar_size_fab">72dp</dimen>
     <dimen name="bar_size_image">32dp</dimen>
-    <dimen name="bar_margin_start_end">62dp</dimen>
     <dimen name="bar_cradle_margin">6dp</dimen>
+    <dimen name="bar_margin_image">90dp</dimen>
     <dimen name="bar_margin_bottom">13dp</dimen>
 
     <!-- Dialog -->
@@ -51,4 +55,8 @@
     <dimen name="dialog_margin_big">@dimen/keyline_7</dimen>
     <dimen name="dialog_margin_normal">@dimen/keyline_5</dimen>
 
+    <!--Onboarding-->
+    <dimen name="size_logo">192dp</dimen>
+    <dimen name="dot_radius">6dp</dimen>
+    <dimen name="container_margin">44dp</dimen>
 </resources>

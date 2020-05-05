@@ -1,7 +1,11 @@
 package de.ur.mi.audidroid.utils
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.res.ColorStateList
+import android.net.Uri
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
@@ -26,18 +30,26 @@ object EditRecordingDialog {
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
     private lateinit var pathTextView: TextView
     private lateinit var context: Context
+    private lateinit var builder: MaterialAlertDialogBuilder
     private var selectedLabels = ArrayList<String>()
+    private var previousLabels = ArrayList<String>()
     private var selectedPath: String? = null
     private lateinit var fragment: EditRecordingFragment
     private lateinit var dataSource: Repository
     private lateinit var labelEntities: List<LabelEntity>
     private lateinit var viewModel: EditRecordingViewModel
     private var layoutId: Int? = null
+    private var recordingId: Int? = null
+    private var previousRecordingName: String = ""
+    private var previousPath: String = ""
     private lateinit var errorTextView: TextView
 
     fun createDialog(
         paramContext: Context,
         layoutId: Int,
+        recordingId: Int,
+        recordingName: String,
+        recordingPath: String,
         viewModel: EditRecordingViewModel,
         errorMessage: String? = null,
         editRecordingFragment: EditRecordingFragment,
@@ -46,11 +58,14 @@ object EditRecordingDialog {
         context = paramContext
         this.dataSource = dataSource
         this.layoutId = layoutId
+        this.recordingId = recordingId
+        this.previousRecordingName = recordingName
+        this.previousPath = recordingPath
         this.viewModel = viewModel
+        builder = MaterialAlertDialogBuilder(context)
         fragment = editRecordingFragment
-        val builder = MaterialAlertDialogBuilder(context)
         builder.setView(layoutId)
-        prepareDataSource()
+        prepareDataSourceAndDialog(errorMessage)
         setDialogButtons(builder)
 
         dialog = builder.create()
@@ -58,21 +73,42 @@ object EditRecordingDialog {
             cancelSaving()
         }
         dialog.show()
-        initializeDialog(errorMessage)
     }
 
-    private fun prepareDataSource() {
+    private fun prepareDataSourceAndDialog(errorMessage: String?) {
+        dataSource.getRecLabelsById(recordingId!!).observe(fragment, Observer {
+            for (i in it.indices) {
+                previousLabels.add(it[i].labelName)
+            }
+            getAllLabels()
+            initializeDialog(errorMessage)
+        })
+    }
+
+    private fun getAllLabels() {
         dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
     }
 
     private fun initializeDialog(errorMessage: String?) {
         pathTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_textview_path)!!
-        selectedPath = getStoragePreference()
+        if (previousPath.contains(context.packageName)) {
+            pathTextView.text = context.getString(R.string.default_storage_location)
+        } else {
+            updateTextView(
+                Pathfinder.getShortenedPath(
+                    previousPath.replace(
+                        "/$previousRecordingName.aac",
+                        ""
+                    )
+                )
+            )
+        }
+        selectedPath = previousPath.replace("/$previousRecordingName.aac", "")
         dialog.findViewById<ImageButton>(R.id.dialog_save_recording_path_button)!!
             .setOnClickListener {
                 pathButtonClicked()
             }
-        getNamePreference()
+        getRecordingName()
         if (errorMessage != null) {
             errorTextView =
                 dialog.findViewById<TextView>(R.id.dialog_save_recording_error_textview)!!
@@ -83,8 +119,14 @@ object EditRecordingDialog {
 
     private fun setDialogButtons(builder: MaterialAlertDialogBuilder) {
         with(builder) {
-            setPositiveButton(context.getString(R.string.dialog_save_button_text)) { _, _ ->
-                saveButtonClicked()
+            setPositiveButton(context.getString(R.string.dialog_update_button_text)) { _, _ ->
+                val editText =
+                    dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
+                if (editText.text.toString() == previousRecordingName) {
+                    updateButtonClicked()
+                } else {
+                    saveButtonClicked()
+                }
             }
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
                 cancelSaving()
@@ -94,6 +136,7 @@ object EditRecordingDialog {
 
     private fun cancelSaving() {
         selectedLabels.clear()
+        previousLabels.clear()
         viewModel.cancelSaving()
     }
 
@@ -103,32 +146,50 @@ object EditRecordingDialog {
                 .text.toString()
         nameInput = if (nameInput == "") null
         else checkVariables(nameInput!!)
-        viewModel.getNewFileFromUserInput(
+        viewModel.saveNewRecording(
             nameInput,
             selectedPath,
             getLabelIdFromName()
         )
         selectedLabels.clear()
+        previousLabels.clear()
     }
 
-    private fun getStoragePreference(): String? {
-        val preferences = context.getSharedPreferences(
-            context.getString(R.string.storage_preference_key),
-            Context.MODE_PRIVATE
+    private fun updateButtonClicked() {
+        val nameInput: String =
+            dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!.text.toString()
+        viewModel.updatePreviousRecording(
+            nameInput,
+            previousPath,
+            selectedPath,
+            getLabelIdFromName()
         )
-        val storedPathString = preferences.getString(
-            context.getString(R.string.storage_preference_key),
-            context.getString(R.string.default_storage_location)
-        )!!
-        updateTextView(storedPathString)
-        return when (storedPathString == context.getString(R.string.default_storage_location)) {
-            true -> null
-            false -> storedPathString
-        }
+        selectedLabels.clear()
+        previousLabels.clear()
     }
 
     private fun pathButtonClicked() {
-        Pathfinder.openPathDialog(null, context)
+        Pathfinder.openPathDialog(null, context, "EditRecordingFragment")
+    }
+
+    fun resultPathfinder(treePath: Uri) {
+        if (treePath.toString().contains(context.packageName)) {
+            selectedPath = null
+            updateTextView(context.getString(R.string.default_storage_location))
+            return
+        }
+        val realPath = Pathfinder.getRealPath(context, treePath)
+        if (realPath == null) {
+            Snackbar.make(
+                fragment.requireView(),
+                context.resources.getString(R.string.external_sd_card_error),
+                Snackbar.LENGTH_LONG
+            ).show()
+            return
+        }
+
+        selectedPath = realPath
+        updateTextView(Pathfinder.getShortenedPath(realPath))
     }
 
     private fun updateTextView(path: String) {
@@ -150,13 +211,30 @@ object EditRecordingDialog {
         val chip = Chip(context)
         with(chip) {
             text = name
-            chipBackgroundColor =
-                ColorStateList.valueOf(
+            if (previousLabels.contains(name)) {
+                chipBackgroundColor = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         EditRecordingDialog.context,
-                        R.color.grayed_out
+                        R.color.color_primary
                     )
                 )
+                setTextColor(
+                    ColorStateList.valueOf(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.color_on_primary
+                        )
+                    )
+                )
+                selectedLabels.add(name)
+            } else {
+                chipBackgroundColor = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        EditRecordingDialog.context,
+                        R.color.chip_background
+                    )
+                )
+            }
             setOnClickListener { labelClicked(chip) }
         }
         return chip
@@ -176,6 +254,14 @@ object EditRecordingDialog {
         if (selectedLabels.size < context.resources.getInteger(R.integer.max_label_size)) {
             clickedLabel.chipBackgroundColor =
                 ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
+            clickedLabel.setTextColor(
+                ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.color_on_primary
+                    )
+                )
+            )
             selectedLabels.add((clickedLabel).text.toString())
         } else Snackbar.make(
             fragment.requireView(),
@@ -186,7 +272,15 @@ object EditRecordingDialog {
 
     private fun removeClickedLabel(clickedLabel: Chip) {
         clickedLabel.chipBackgroundColor =
-            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.chip_background))
+        clickedLabel.setTextColor(
+            ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    context,
+                    R.color.color_on_background
+                )
+            )
+        )
         selectedLabels.remove((clickedLabel).text.toString())
     }
 
@@ -204,19 +298,27 @@ object EditRecordingDialog {
         } else null
     }
 
-    private fun getNamePreference() {
+    private fun getRecordingName() {
         val editText = dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
-        val preferences = context.getSharedPreferences(
-            context.getString(R.string.filename_preference_key),
-            Context.MODE_PRIVATE
-        )
-        var storedName = preferences.getString(
-            context.getString(R.string.filename_preference_key),
-            context.getString(R.string.filename_preference_default_value)
-        )!!
-        storedName = checkVariables(storedName)
-        editText.setText(storedName)
-        editText.setSelection(storedName.length)
+        editText.setText(previousRecordingName)
+        editText.setSelection(previousRecordingName.length)
+        editText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.toString() == previousRecordingName) {
+                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).text =
+                        context.getString(R.string.dialog_update_button_text)
+                } else {
+                    dialog.getButton(DialogInterface.BUTTON_POSITIVE).text =
+                        context.getString(R.string.dialog_save_button_text)
+                }
+            }
+        })
     }
 
     private fun checkVariables(nameParam: String): String {

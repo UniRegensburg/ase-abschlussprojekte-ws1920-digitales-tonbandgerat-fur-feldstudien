@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="de.ur.mi.audidroid">
+    package="de.ur.mi.audidroid"
+    tools:ignore="ImpliedTouchscreenHardware,MissingLeanbackLauncher,MissingLeanbackSupport">
 
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"
+        tools:ignore="PermissionImpliesUnsupportedHardware" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -15,7 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AudidroidTheme.DayNight"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning,LockedOrientationActivity">
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="de.ur.mi.audidroid.fileprovider"
@@ -25,22 +28,31 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <activity
             android:name=".views.SplashActivity"
-            android:theme="@style/AudidroidTheme.Splash">
+            android:theme="@style/AudidroidTheme.Splash"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".views.MainActivity"
-            android:screenOrientation="userPortrait" />
+            android:screenOrientation="userPortrait">
+        </activity>
+
+        <activity
+            android:name=".views.OnboardingActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AudidroidTheme.OnBoarding"
+            android:hardwareAccelerated="true">
+        </activity>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
     </application>
-
 </manifest>
