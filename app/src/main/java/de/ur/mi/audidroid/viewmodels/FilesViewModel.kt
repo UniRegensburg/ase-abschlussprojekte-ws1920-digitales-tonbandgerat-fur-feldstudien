@@ -13,6 +13,7 @@ import java.io.File
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
+import de.ur.mi.audidroid.models.RecordingAndLabels
 
 /**
  * ViewModel for FilesFragment.
@@ -397,28 +398,30 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         matchedLabels: List<RecordingAndLabels>?, matchedMarkers: List<Int>?,
         nameInput: String?
     ): List<RecordingAndLabels> {
-
-        var filteredResult = allRecordingsWithLabels.value!!
+        var filteredResult = displayRecordingsAndFolders.value!!
         var matchedList = mutableListOf<RecordingAndLabels>()
         matchedLabels?.let { filteredResult = matchedLabels }
         matchedMarkers?.let {
-            filteredResult.forEach { rec ->
-                if (matchedMarkers.contains(rec.uid)) {
-                    matchedList.add(rec)
-                }
+            for (rec in filteredResult) {
+                if (rec is RecordingAndLabels)
+                    if (matchedMarkers.contains(rec.uid)) {
+                        matchedList.add(rec)
+                    }
             }
             filteredResult = matchedList
         }
         nameInput?.let {
             matchedList = mutableListOf<RecordingAndLabels>()
-            filteredResult.forEach {
-                if (it.recordingName.contains(nameInput, true)) {
-                    matchedList.add(it)
+            for (rec in filteredResult) {
+                if (rec is RecordingAndLabels) {
+                    if (rec.recordingName.contains(nameInput, true)) {
+                        matchedList.add(rec)
+                    }
                 }
+                filteredResult = matchedList
             }
-            filteredResult = matchedList
         }
-        return filteredResult
+        @Suppress("UNCHECKED_CAST") return filteredResult as List<RecordingAndLabels>
     }
 
     fun setFilterResult(labels: List<String>, marks: List<String>, nameInput: String?) {
@@ -454,6 +457,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 _filterEmpty.value = displayRecordingsAndFolders.value!!.isEmpty()
             }
         }
+    }
+
+    fun clearFilter(){
+        removeSortedRecordingSources(currentFolder)
+        getRecordingsAndFolders()
     }
 
     fun setSearchResult(search: String) {
@@ -667,30 +675,34 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             }
 
             else -> {
-                if (_currentlyInFolder.value!!) {
-                    val allRecordingsWithLabelsInFolder =
-                        repository.getAllRecordingsWithLabelsInFolder(currentFolder)
-                    displayRecordingsAndFolders.addSource(allRecordingsWithLabelsInFolder) {
-                        displayRecordingsAndFolders.value =
-                            combineData(allRecordingsWithLabelsInFolder, allFolders)
-                    }
-                    displayRecordingsAndFolders.addSource(allFolders) {
-                        displayRecordingsAndFolders.value =
-                            combineData(allRecordingsWithLabelsInFolder, allFolders)
-                    }
-                } else {
-                    val allRecordingsWithLabelsOutsideFolder =
-                        repository.getAllRecordingsWithLabelsOutsideFolder()
-                    displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOutsideFolder) {
-                        displayRecordingsAndFolders.value =
-                            combineData(allRecordingsWithLabelsOutsideFolder, allFolders)
-                    }
-                    displayRecordingsAndFolders.addSource(allFolders) {
-                        displayRecordingsAndFolders.value =
-                            combineData(allRecordingsWithLabelsOutsideFolder, allFolders)
-                    }
-                }
+                getRecordingsAndFolders()
+            }
+        }
+    }
 
+
+    private fun getRecordingsAndFolders(){
+        if (_currentlyInFolder.value!!) {
+            val allRecordingsWithLabelsInFolder =
+                repository.getAllRecordingsWithLabelsInFolder(currentFolder)
+            displayRecordingsAndFolders.addSource(allRecordingsWithLabelsInFolder) {
+                displayRecordingsAndFolders.value =
+                    combineData(allRecordingsWithLabelsInFolder, allFolders)
+            }
+            displayRecordingsAndFolders.addSource(allFolders) {
+                displayRecordingsAndFolders.value =
+                    combineData(allRecordingsWithLabelsInFolder, allFolders)
+            }
+        } else {
+            val allRecordingsWithLabelsOutsideFolder =
+                repository.getAllRecordingsWithLabelsOutsideFolder()
+            displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOutsideFolder) {
+                displayRecordingsAndFolders.value =
+                    combineData(allRecordingsWithLabelsOutsideFolder, allFolders)
+            }
+            displayRecordingsAndFolders.addSource(allFolders) {
+                displayRecordingsAndFolders.value =
+                    combineData(allRecordingsWithLabelsOutsideFolder, allFolders)
             }
         }
     }
@@ -766,8 +778,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             list?.forEach {
                 File(it.recordingPath).delete()
                 repository.deleteFolderAssignment(it)
+                repository.deleteRecMarks(it.uid)
+                repository.deleteRecLabels(it.uid)
                 repository.deleteRecording(it.uid)
-                //TODO: delete marks and labels
             }
         }
         repository.deleteFolder(folder)
