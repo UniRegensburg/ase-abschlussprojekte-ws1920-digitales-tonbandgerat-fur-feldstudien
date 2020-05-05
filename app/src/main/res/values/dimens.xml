@@ -25,6 +25,7 @@
     <dimen name="fab_margin_big">@dimen/keyline_12</dimen>
     <dimen name="fab_margin">@dimen/keyline_4</dimen>
 
+    <!--CardView-->
     <dimen name="card_view_margin">@dimen/keyline_2</dimen>
     <dimen name="label_card_view_margin">@dimen/keyline_2</dimen>
     <dimen name="label_card_view_margin_top_bottom">@dimen/keyline_1</dimen>
@@ -34,6 +35,7 @@
     <dimen name="marks_card_view_margin_top_bottom">@dimen/keyline_1</dimen>
     <dimen name="recyclerviews_margin_bottom_big">50dp</dimen>
 
+    <!--SeekBar-->
     <dimen name="constraint_layout_padding">12dp</dimen>
     <dimen name="seek_bar_layout_absolute_x">0dp</dimen>
     <dimen name="layout_width_seek_bar_element">0dp</dimen>

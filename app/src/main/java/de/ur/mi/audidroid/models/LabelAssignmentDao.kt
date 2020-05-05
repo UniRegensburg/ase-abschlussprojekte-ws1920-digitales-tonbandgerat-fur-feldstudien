@@ -6,8 +6,7 @@ import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 
 /**
- * DAO for the LabelAssignmentEntity
- *
+ * DAO for the [LabelAssignmentEntity]
  * @author: Sabine Roth
  * Adapted from: https://developer.android.com/training/data-storage/room/accessing-data
  */

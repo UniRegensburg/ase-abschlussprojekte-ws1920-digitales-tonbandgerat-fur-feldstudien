@@ -7,6 +7,11 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
+/**
+ * The [RenameDialog] for renaming recordings.
+ * @author: Sabine Roth
+ */
+
 object RenameDialog {
 
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
@@ -33,7 +38,6 @@ object RenameDialog {
             setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
                 viewModel.cancelRename()
             }
-
         }
         dialog = builder.create()
         dialog.setOnCancelListener {
@@ -43,11 +47,10 @@ object RenameDialog {
         preFillEditText(recording)
     }
 
-    private fun preFillEditText(recording: RecordingAndLabels?){
-        editText = dialog.findViewById<EditText>(R.id.dialog_rename)!!
+    private fun preFillEditText(recording: RecordingAndLabels?) {
+        editText = dialog.findViewById(R.id.dialog_rename)!!
         editText.setText(recording?.recordingName)
         editText.showKeyboard()
         editText.setSelection(editText.text.length)
-
     }
 }

@@ -11,7 +11,7 @@ import androidx.room.Update
 
 /**
  * The [MarkerDao] is the data access object to access the tables storing [MarkerEntity], [MarkTimestamp] and [MarkAndTimestamp] in the apps' room database.
- * Functions returning [LiveData] are incompatible wit Kotlin coroutines, therefore these functions are not suspended.
+ * Functions returning [LiveData] are incompatible with Kotlin coroutines, therefore these functions are not suspended.
  * @author: Jonas Puchinger
  * Adapted from: https://developer.android.com/training/data-storage/room/accessing-data
  */
