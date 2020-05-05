@@ -7,13 +7,10 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
-import android.util.Log
-import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -23,13 +20,16 @@ import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.FFmpeg
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.EntryEntity
-import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
+import de.ur.mi.audidroid.models.RecordingEntity
 import de.ur.mi.audidroid.models.LabelAssignmentEntity
 import de.ur.mi.audidroid.models.MarkAndTimestamp
-import de.ur.mi.audidroid.models.MarkTimestamp
 import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
+import de.ur.mi.audidroid.models.MarkTimestamp
+import de.ur.mi.audidroid.models.MarkerEntity
+import de.ur.mi.audidroid.models.FolderAssignmentEntity
 import de.ur.mi.audidroid.utils.AudioEditor
+import de.ur.mi.audidroid.utils.ColorHelper
 import de.ur.mi.audidroid.utils.FFMPEGCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
 import io.apptik.widget.MultiSlider
@@ -40,35 +40,46 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 
 class EditRecordingViewModel(
-    recordingId: Int,
+    val recordingId: Int,
     dataSource: Repository,
-    application: Application,
-    val handlePlayerBar: HandlePlayerBar
+    application: Application
 ) :
     AndroidViewModel(application) {
 
     private val repository = dataSource
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
+    private lateinit var buttonFastForward: ImageButton
+    private lateinit var buttonFastRewind: ImageButton
     private lateinit var seekBar: SeekBar
     private lateinit var rangeBar: MultiSlider
+    private var createdFiles = ArrayList<File>()
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    val recording: LiveData<EntryEntity> = repository.getRecordingById(recordingId)
-    val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(recordingId)
+    private val copiedRecording: Int =
+        repository.getCopiedRecordingById(
+            recordingId
+        )
+            .toInt()
+    val recording: LiveData<RecordingEntity> = repository.getRecordingById(copiedRecording)
+    val allMarks: LiveData<List<MarkAndTimestamp>> = repository.getAllMarks(copiedRecording)
+    val allMarkers: LiveData<List<MarkerEntity>> = repository.getAllMarkers()
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     var isPlaying = MutableLiveData<Boolean>()
     var audioInProgress = MutableLiveData<Boolean>()
     var enableCutInner = MutableLiveData<Boolean>()
     var enableCutOuter = MutableLiveData<Boolean>()
+    var buttonsVisible = MutableLiveData<Boolean>()
+    var recordingEdited = MutableLiveData<Boolean>()
     var tempFile = ""
     var saveErrorMessage: String? = null
     var commentErrorMessage: String? = null
     var markTimestampToBeEdited: ExpandableMarkAndTimestamp? = null
     var markToBeDeleted: MarkAndTimestamp? = null
-    private var imagechecked = false
+
 
     private lateinit var runnable: Runnable
     private var handler: Handler = Handler()
@@ -84,6 +95,18 @@ class EditRecordingViewModel(
     private val _createConfirmDialog = MutableLiveData<Boolean>()
     val createConfirmDialog: MutableLiveData<Boolean>
         get() = _createConfirmDialog
+
+    private val _createCancelEditingDialog = MutableLiveData<Boolean>()
+    val createCancelEditingDialog: LiveData<Boolean>
+        get() = _createCancelEditingDialog
+
+    private val _navigateToPreviousFragment = MutableLiveData<Boolean>()
+    val navigateToPreviousFragment: MutableLiveData<Boolean>
+        get() = _navigateToPreviousFragment
+
+    private val _navigateToFilesFragment = MutableLiveData<Boolean>()
+    val navigateToFilesFragment: MutableLiveData<Boolean>
+        get() = _navigateToFilesFragment
 
     private val _totalDuration = MutableLiveData<Long>()
     private val totalDuration: LiveData<Long>
@@ -110,6 +133,10 @@ class EditRecordingViewModel(
         DateUtils.formatElapsedTime(posThumb1)
     }
 
+    private val _curPosThumb1InMilli = MutableLiveData<Int>()
+    private val curPosThumb1InMilli: LiveData<Int>
+        get() = _curPosThumb1InMilli
+
     private val _curPosThumb2 = MutableLiveData<Long>()
     private val curPosThumb2: LiveData<Long>
         get() = _curPosThumb2
@@ -118,9 +145,22 @@ class EditRecordingViewModel(
         DateUtils.formatElapsedTime(posThumb2)
     }
 
+    private val _curPosThumb2InMilli = MutableLiveData<Int>()
+    private val curPosThumb2InMilli: LiveData<Int>
+        get() = _curPosThumb2InMilli
+
     // If there are no recordings in the database, a TextView is displayed.
     val empty: LiveData<Boolean> = Transformations.map(allMarks) {
         it.isEmpty()
+    }
+
+    init {
+        buttonsVisible.value = false
+        recordingEdited.value = false
+    }
+
+    fun copyMarks() {
+        repository.copyMarks(recordingId, copiedRecording)
     }
 
     fun initializeMediaPlayer() {
@@ -185,8 +225,16 @@ class EditRecordingViewModel(
 
     fun initializeLayout(frameLayout: FrameLayout) {
         this.frameLayout = frameLayout
+        buttonFastForward = frameLayout.findViewById(R.id.bar_fast_forward)
+        buttonFastRewind = frameLayout.findViewById(R.id.bar_fast_rewind)
         initializeVisualizer()
     }
+
+
+    /**
+     * Visualizing the sound track of the recording through creating an image of the audio waves using FFMPEG
+     * @author: Sabine Roth
+     */
 
     private fun initializeVisualizer(size: String = "640x120") {
         val internalAudioCopy = File(context.filesDir, "internalCopy")
@@ -200,7 +248,7 @@ class EditRecordingViewModel(
             ) and 0x00ffffff
         )
         val command =
-            "-i ${internalAudioCopy.path} -filter_complex \"compand=attacks=0:points=15/30:gain=5,showwavespic=s=$size:colors=$colorHex\" -frames:v 1 ${wavePic.path}"
+            "-i ${internalAudioCopy.path} -filter_complex \"compand=attacks=0:points=25/35:gain=4,showwavespic=s=$size:colors=$colorHex\" -frames:v 1 ${wavePic.path}"
 
         try {
             when (FFmpeg.execute(command)) {
@@ -211,36 +259,13 @@ class EditRecordingViewModel(
                         image.setImageURI(Uri.fromFile(wavePic))
                         wavePic.delete()
                         internalAudioCopy.delete()
-                        checkImageHeight(image)
                     }
                 }
             }
         } catch (e: Exception) {
-            Log.e("WavePic", "preparation failed")
             internalAudioCopy.delete()
+            if (wavePic.exists()) wavePic.delete()
         }
-    }
-
-    private fun checkImageHeight(image: ImageView) {
-        if (!imagechecked) {
-            imagechecked = true
-            val imageXY = IntArray(2)
-            image.getLocationOnScreen(imageXY)
-            val seekBarXY = IntArray(2)
-            frameLayout.findViewById<SeekBar>(R.id.seekBar).getLocationOnScreen(seekBarXY)
-            if (imageXY[1] > seekBarXY[1]) {
-                increaseImageHeight()
-                initializeVisualizer("640x240")
-            }
-        }
-    }
-
-    private fun increaseImageHeight() {
-        val cs = ConstraintSet()
-        val constraintLayout = frameLayout.findViewById<ConstraintLayout>(R.id.constraintLayout)
-        cs.clone(constraintLayout)
-        cs.setVerticalBias(R.id.waveViewLayout, 0.075f)
-        cs.applyTo(constraintLayout)
     }
 
     fun onStartPlayer() {
@@ -262,6 +287,7 @@ class EditRecordingViewModel(
         isPlaying.value = mediaPlayer.isPlaying
         initializeMediaPlayer()
         initializeSeekBar(seekBar)
+        resetPlayerBar()
     }
 
     override fun onCleared() {
@@ -294,11 +320,14 @@ class EditRecordingViewModel(
 
                 if (thumbIndex == 0) {
                     _curPosThumb1.value = value / oneSecond
+                    _curPosThumb1InMilli.value = value
                 } else {
                     _curPosThumb2.value = value / oneSecond
+                    _curPosThumb2InMilli.value = value
                 }
 
                 enableButtons()
+
             }
         })
     }
@@ -307,12 +336,14 @@ class EditRecordingViewModel(
         val thumb1 = rangeBar.getThumb(0)
         thumb1.value = 0
         _curPosThumb1.value = thumb1.value / oneSecond
+        _curPosThumb1InMilli.value = thumb1.value
     }
 
     private fun configureThumb2(rangeBar: MultiSlider) {
         val thumb2 = rangeBar.getThumb(1)
         thumb2.value = mediaPlayer.duration
         _curPosThumb2.value = thumb2.value / oneSecond
+        _curPosThumb2InMilli.value = thumb2.value
     }
 
     private fun enableButtons() {
@@ -334,13 +365,22 @@ class EditRecordingViewModel(
     }
 
     val callback = object : FFMPEGCallback {
-        override fun onSuccess(convertedFile: File) {
+        override fun onSuccess(
+            convertedFile: File,
+            type: String,
+            startTimeInMilli: Int,
+            endTimeInMilli: Int
+        ) {
             audioInProgress.value = false
             tempFile = convertedFile.path
+            updateRecording(convertedFile)
+            createdFiles.add(convertedFile)
+            updateMarks(type, startTimeInMilli, endTimeInMilli)
             initializeMediaPlayer()
             initializeSeekBar(seekBar)
             initializeRangeBar(rangeBar)
             initializeLayout(frameLayout)
+            recordingEdited.value = true
             showSnackBar(R.string.recording_cut)
         }
 
@@ -350,41 +390,75 @@ class EditRecordingViewModel(
         }
     }
 
+    private fun updateRecording(convertedFile: File) {
+        val recordingDuration = getRecordingDuration(convertedFile)
+        val audio =
+            RecordingEntity(
+                uid = copiedRecording,
+                recordingName = convertedFile.name,
+                recordingPath = convertedFile.path,
+                date = getDate(),
+                duration = recordingDuration!!
+            )
+        repository.updateRecording(audio)
+    }
+
+    private fun updateMarks(type: String, startTimeInMilli: Int, endTimeInMilli: Int) {
+        if (type == "cutInner") {
+            repository.deleteOuterMarks(copiedRecording, startTimeInMilli, endTimeInMilli)
+            repository.updateInnerMarks(copiedRecording, startTimeInMilli)
+        }
+        if (type == "cutOuter") {
+            repository.deleteInnerMarks(copiedRecording, startTimeInMilli, endTimeInMilli)
+            repository.updateOuterMarks(copiedRecording, endTimeInMilli - startTimeInMilli)
+        }
+    }
+
     private fun getOutputPath(): String {
         return context.filesDir.absolutePath
     }
 
     fun cutInner() {
+        onStopPlayer()
         audioInProgress.value = true
         val editor = AudioEditor()
         with(editor) {
             setFile(File(tempFile))
-            setStartTime(curPosThumb1String.value!!)
-            setEndTime(curPosThumb2String.value!!)
+            setStartTime(curPosThumb1String.value!!, curPosThumb1InMilli.value!!)
+            setEndTime(curPosThumb2String.value!!, curPosThumb2InMilli.value!!)
             setOutputPath(getOutputPath())
-            setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
+            setOutputFileName(
+                res.getString(R.string.filename_trimmed_recording) + System.currentTimeMillis() + res.getString(
+                    R.string.suffix_audio_file
+                )
+            )
             setCallback(callback)
             cut("cutInner")
         }
     }
 
     fun cutOuter() {
+        onStopPlayer()
         audioInProgress.value = true
         val duration = mediaPlayer.duration / oneSecond
         val editor = AudioEditor()
         with(editor) {
             setFile(File(tempFile))
-            setStartTime(curPosThumb1.value.toString())
-            setEndTime(curPosThumb2.value.toString())
+            setStartTime(curPosThumb1.value.toString(), curPosThumb1InMilli.value!!)
+            setEndTime(curPosThumb2.value.toString(), curPosThumb2InMilli.value!!)
             setDuration(duration.toString())
             setOutputPath(getOutputPath())
-            setOutputFileName("trimmed_" + System.currentTimeMillis() + ".aac")
+            setOutputFileName(
+                res.getString(R.string.filename_trimmed_recording) + System.currentTimeMillis() + res.getString(
+                    R.string.suffix_audio_file
+                )
+            )
             setCallback(callback)
             cut("cutOuter")
         }
     }
 
-    fun getNewFileFromUserInput(
+    fun saveNewRecording(
         nameInput: String?,
         pathInput: String?,
         labels: ArrayList<Int>?
@@ -418,34 +492,113 @@ class EditRecordingViewModel(
             _createSaveDialog.value = true
             return
         }
-
         File(tempFile).copyTo(newFile)
 
-        val recordingDuration = getRecordingDuration(File(tempFile))
-        val audio =
-            EntryEntity(
-                uid = 0,
-                recordingName = name,
-                recordingPath = path,
-                date = getDate(),
-                duration = recordingDuration!!
-            )
-        saveRecordInDB(audio, labels)
-        File(tempFile).delete()
+        repository.updateNameAndPath(copiedRecording, name, path, getDate())
+        if (labels != null) {
+            for (label in labels) {
+                repository.insertRecLabels(
+                    LabelAssignmentEntity(
+                        0,
+                        copiedRecording,
+                        label
+                    )
+                )
+            }
+        }
+        _navigateToFilesFragment.value = true
+        showSnackBar(R.string.record_saved)
         saveErrorMessage = null
     }
 
-    private fun saveRecordInDB(audio: EntryEntity, labels: ArrayList<Int>?) {
-        val uid = repository.insertRecording(audio).toInt()
-        if (labels != null) {
-            for (i in labels.indices) {
-                repository.insertRecLabels(LabelAssignmentEntity(0, uid, labels[i]))
+    fun updatePreviousRecording(
+        name: String,
+        previousPath: String,
+        pathInput: String?,
+        labels: ArrayList<Int>?
+    ) {
+
+        _createSaveDialog.value = false
+        val path = java.lang.String.format(
+            "%s/$name%s",
+            (pathInput ?: context.filesDir.absolutePath),
+            res.getString(R.string.suffix_audio_file)
+        )
+
+        if (path == previousPath) {
+            if (tempFile.contains(res.getString(R.string.filename_trimmed_recording))) {
+                File(tempFile).copyTo(File(path), true)
+                updateDatabase(copiedRecording, name, path, labels)
+            } else {
+                if (labels != null) {
+                    repository.deleteRecLabels(recordingId)
+                    for (i in labels.indices) {
+                        repository.insertRecLabels(LabelAssignmentEntity(0, recordingId, labels[i]))
+                    }
+                } else {
+                    repository.deleteRecLabels(recordingId)
+                }
+                repository.deleteRecMarks(recordingId)
+                repository.updateMarks(recordingId, copiedRecording)
+                repository.deleteRecording(copiedRecording)
+            }
+        } else {
+            if (tempFile.contains(res.getString(R.string.filename_trimmed_recording))) {
+                File(tempFile).copyTo(File(path))
+                File(previousPath).delete()
+                updateDatabase(copiedRecording, name, path, labels)
+            } else {
+                File(previousPath).copyTo(File(path))
+                File(previousPath).delete()
+                updateDatabase(copiedRecording, name, path, labels)
             }
         }
+
+        _navigateToFilesFragment.value = true
         showSnackBar(R.string.record_saved)
+        saveErrorMessage = null
+        deleteCreatedFiles()
+    }
+
+    private fun updateDatabase(
+        copiedRecording: Int,
+        name: String,
+        path: String,
+        labels: ArrayList<Int>?
+    ) {
+        repository.updatePreviousRecording(copiedRecording, name, path)
+        if (labels != null) {
+            for (i in labels.indices) {
+                repository.insertRecLabels(
+                    LabelAssignmentEntity(
+                        0,
+                        copiedRecording,
+                        labels[i]
+                    )
+                )
+            }
+        }
+
+        val folderId = repository.getFolderOfRecording(recordingId)?.folderId
+        if(folderId != null){
+            val folderAssignment =
+                FolderAssignmentEntity(0,copiedRecording,folderId)
+            repository.insertFolderAssignment(folderAssignment)
+        }
+
+        repository.deleteRecLabels(recordingId)
+        repository.deleteRecMarks(recordingId)
+        repository.deleteRecording(recordingId)
+
+    }
+
+    fun onFilesFragmentNavigated() {
+        _createSaveDialog.value = false
+        _navigateToFilesFragment.value = false
     }
 
     fun saveRecording() {
+        onStopPlayer()
         _createSaveDialog.value = true
     }
 
@@ -479,23 +632,35 @@ class EditRecordingViewModel(
         _createSaveDialog.value = true
     }
 
-    fun addMark(view: View) {
-//        val btnId = view.resources.getResourceName(view.id)
-//        val mark = MarkerTimeRelation(0, recordingId, btnId, currentDurationString.value!!)
-//        repository.insertMark(mark)
+    fun addMark() {
+        buttonsVisible.value = buttonsVisible.value != true
+    }
+
+    fun onMarkerButtonClicked(markerEntity: MarkerEntity) {
+        recordingEdited.value = true
+        val mark =
+            MarkTimestamp(
+                0,
+                copiedRecording,
+                markerEntity.uid,
+                null,
+                mediaPlayer.currentPosition
+            )
+        repository.insertMarkTimestamp(mark)
         showSnackBar(R.string.mark_made)
     }
 
     private fun updateMarkAndTimestampInDB(newComment: String?, markTimestamp: MarkTimestamp) {
         val updatedMarkTimestamp = MarkTimestamp(
             markTimestamp.mid,
-            markTimestamp.recordingId,
+            copiedRecording,
             markTimestamp.markerId,
             newComment,
-            markTimestamp.markTime
+            markTimestamp.markTimeInMilli
         )
         repository.updateMarkTimestamp(updatedMarkTimestamp)
         markTimestampToBeEdited = null
+        recordingEdited.value = true
         showSnackBar(R.string.comment_updated)
     }
 
@@ -505,9 +670,40 @@ class EditRecordingViewModel(
     }
 
     fun deleteMark(mid: Int) {
-        repository.deleteMark(mid)
+        repository.deleteMarkTimestamp(mid)
+        recordingEdited.value = true
         _createConfirmDialog.value = false
         showSnackBar(R.string.mark_deleted)
+    }
+
+    fun onMarkTimeClicked(markTime: Int) {
+        mediaPlayer.seekTo(markTime)
+    }
+
+    fun onBackPressed() {
+        if (recordingEdited.value!!) {
+            _createCancelEditingDialog.value = true
+        } else {
+            deleteEditedRecording()
+        }
+    }
+
+    fun deleteEditedRecording() {
+        repository.deleteRecording(copiedRecording)
+        repository.deleteRecMarks(copiedRecording)
+        deleteCreatedFiles()
+        _navigateToPreviousFragment.value = true
+        _createCancelEditingDialog.value = false
+    }
+
+    private fun deleteCreatedFiles() {
+        for (file in createdFiles) {
+            file.delete()
+        }
+    }
+
+    fun cancelDialog() {
+        _createCancelEditingDialog.value = false
     }
 
     private fun getRecordingDuration(file: File): String? {
@@ -527,11 +723,26 @@ class EditRecordingViewModel(
     }
 
     fun skipPlaying() {
-        handlePlayerBar.doSkippingPlaying(mediaPlayer, context)
+        HandlePlayerBar.skipPlaying(mediaPlayer, context)
     }
 
     fun returnPlaying() {
-        handlePlayerBar.doReturnPlaying(mediaPlayer, context)
+        HandlePlayerBar.returnPlaying(mediaPlayer, context)
+    }
+
+    fun fastForward() {
+        HandlePlayerBar.fastForward(mediaPlayer, context, buttonFastForward, buttonFastRewind)
+    }
+
+    fun fastRewind() {
+        HandlePlayerBar.fastRewind(mediaPlayer, context, buttonFastRewind, buttonFastForward)
+    }
+
+    private fun resetPlayerBar() {
+        buttonFastRewind.backgroundTintList =
+            ContextCompat.getColorStateList(context, ColorHelper.getThemedIconColor())
+        buttonFastForward.backgroundTintList =
+            ContextCompat.getColorStateList(context, ColorHelper.getThemedIconColor())
     }
 
     fun cancelDelete() {

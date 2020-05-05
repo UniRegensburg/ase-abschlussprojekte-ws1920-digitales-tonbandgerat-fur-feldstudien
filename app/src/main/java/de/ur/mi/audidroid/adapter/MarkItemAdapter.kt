@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import de.ur.mi.audidroid.databinding.MarkItemBinding
 import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 import de.ur.mi.audidroid.models.MarkAndTimestamp
+import de.ur.mi.audidroid.viewmodels.PlayerViewModel
 import de.ur.mi.audidroid.views.PlayerFragment
 
 /**
@@ -19,7 +20,7 @@ import de.ur.mi.audidroid.views.PlayerFragment
  * @author: Theresa Strohmeier, Jonas Puchinger
  */
 
-class MarkItemAdapter :
+class MarkItemAdapter(private val playerViewModel: PlayerViewModel) :
     ListAdapter<MarkAndTimestamp, MarkItemAdapter.ViewHolder>(MarkAndTimeStampDiffCallback()) {
 
     private val userActionsListener = object : MarkUserActionsListener {
@@ -28,6 +29,10 @@ class MarkItemAdapter :
             if (mark.markAndTimestamp.markTimestamp.markComment != null) {
                 mark.isExpanded = !mark.isExpanded
             }
+        }
+
+        override fun onMarkTimeClicked(mark: MarkAndTimestamp) {
+            playerViewModel.onMarkTimeClicked(mark.markTimestamp.markTimeInMilli)
         }
     }
 

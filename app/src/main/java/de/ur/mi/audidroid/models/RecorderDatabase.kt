@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
  */
 
 @Database(
-    entities = [EntryEntity::class, MarkTimestamp::class, MarkerEntity::class, LabelEntity::class, LabelAssignmentEntity::class],
+    entities = [RecordingEntity::class, MarkTimestamp::class, MarkerEntity::class, LabelEntity::class, LabelAssignmentEntity::class, FolderEntity::class, FolderAssignmentEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -29,10 +29,12 @@ import kotlinx.coroutines.launch
 
 abstract class RecorderDatabase : RoomDatabase() {
 
-    abstract fun entryDao(): EntryDao
+    abstract fun recordingDao(): RecordingDao
     abstract fun labelDao(): LabelDao
     abstract fun labelAssignmentDao(): LabelAssignmentDao
     abstract fun markerDao(): MarkerDao
+    abstract fun folderDao(): FolderDao
+    abstract fun folderAssignmentDao(): FolderAssignmentDao
 
     companion object {
         private var INSTANCE: RecorderDatabase? = null

@@ -23,7 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/label_item" />
+            tools:listitem="@layout/label_item"
+            android:layout_marginBottom="@dimen/recyclerviews_margin_bottom_big"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -44,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/keyline_3"
             android:contentDescription="@string/add_label_button_text"
             android:onClick="@{() -> editLabelsViewModel.requestLabelDialog()}"
             android:src="@drawable/ic_add"

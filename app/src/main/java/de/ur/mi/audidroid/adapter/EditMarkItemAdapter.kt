@@ -38,6 +38,10 @@ class EditMarkerItemAdapter(private val editRecordingViewModel: EditRecordingVie
         override fun onMarkDeleteClicked(mark: MarkAndTimestamp) {
             editRecordingViewModel.onMarkDeleteClicked(mark)
         }
+
+        override fun onMarkTimeClicked(mark: MarkAndTimestamp) {
+            editRecordingViewModel.onMarkTimeClicked(mark.markTimestamp.markTimeInMilli)
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
