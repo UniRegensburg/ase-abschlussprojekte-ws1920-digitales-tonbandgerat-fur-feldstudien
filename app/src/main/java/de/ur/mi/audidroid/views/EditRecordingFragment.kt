@@ -2,7 +2,12 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.MenuInflater
+import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -16,12 +21,15 @@ import de.ur.mi.audidroid.adapter.EditMarkerItemAdapter
 import de.ur.mi.audidroid.adapter.MarkerButtonEditRecAdapter
 import de.ur.mi.audidroid.databinding.EditRecordingFragmentBinding
 import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.utils.HandlePlayerBar
 import de.ur.mi.audidroid.utils.PlayerBarListener
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
-import kotlinx.android.synthetic.main.edit_recording_fragment.*
+import kotlinx.android.synthetic.main.edit_recording_fragment.marker_button_list1
 import kotlinx.android.synthetic.main.player_fragment.player_layout
 
+/**
+ * The EditRecordingFragment displays the view to edit a recording.
+ * @author: Theresa Strohmeier
+ */
 class EditRecordingFragment : Fragment() {
 
     private lateinit var editMarksAdapter: EditMarkerItemAdapter

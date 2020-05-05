@@ -4,6 +4,6 @@
     android:id="@+id/onboarding_gif"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="@dimen/keyline_4"
     android:scaleType="fitCenter"
-    app:loopCount="0"
-    android:layout_margin="@dimen/keyline_4" />
+    app:loopCount="0" />

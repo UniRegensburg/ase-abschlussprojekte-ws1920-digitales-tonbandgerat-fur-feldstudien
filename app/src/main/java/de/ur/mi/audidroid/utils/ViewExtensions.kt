@@ -4,6 +4,12 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 
+/**
+ * Extension functions for class [View].
+ * @author: Jonas Puchinger
+ * Adapted from: https://github.com/adrielcafe/AndroidAudioConverter
+ */
+
 fun View.showKeyboard() {
     this.post {
         kotlin.run {

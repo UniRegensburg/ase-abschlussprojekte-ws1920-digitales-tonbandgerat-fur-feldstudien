@@ -1,6 +1,8 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.content.Context
+import android.content.res.Resources
 import android.media.AudioAttributes
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
@@ -31,7 +33,7 @@ import de.ur.mi.audidroid.models.MarkerEntity
 import de.ur.mi.audidroid.models.FolderAssignmentEntity
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.ColorHelper
-import de.ur.mi.audidroid.utils.FFMpegCallback
+import de.ur.mi.audidroid.utils.FFmpegCallback
 import de.ur.mi.audidroid.utils.HandlePlayerBar
 import io.apptik.widget.MultiSlider
 import io.apptik.widget.MultiSlider.SimpleChangeListener
@@ -39,10 +41,16 @@ import io.apptik.widget.MultiSlider.Thumb
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
+import java.util.Date
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
+/**
+ * ViewModel for EditRecordingFragment.
+ * @author: Theresa Strohmeier
+ */
 class EditRecordingViewModel(
     val recordingId: Int,
     dataSource: Repository,
@@ -50,7 +58,7 @@ class EditRecordingViewModel(
 ) :
     AndroidViewModel(application) {
 
-    private val repository = dataSource
+    private val repository: Repository = dataSource
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
     private lateinit var buttonFastForward: ImageButton
@@ -58,8 +66,8 @@ class EditRecordingViewModel(
     private lateinit var seekBar: SeekBar
     private lateinit var rangeBar: MultiSlider
     private var createdFiles = ArrayList<File>()
-    private val context = getApplication<Application>().applicationContext
-    private val res = context.resources
+    private val context: Context = getApplication<Application>().applicationContext
+    private val res: Resources = context.resources
     private val copiedRecording: Int =
         repository.getCopiedRecordingById(
             recordingId
@@ -113,26 +121,28 @@ class EditRecordingViewModel(
     private val totalDuration: LiveData<Long>
         get() = _totalDuration
 
-    var totalDurationString = Transformations.map(totalDuration) { duration ->
-        DateUtils.formatElapsedTime(duration)
-    }
+    var totalDurationString: LiveData<String> =
+        Transformations.map(totalDuration) { duration: Long ->
+            DateUtils.formatElapsedTime(duration)
+        }
 
     private val _currentDuration = MutableLiveData<Long>()
     private val currentDuration: LiveData<Long>
         get() = _currentDuration
 
-    // The String version of the current duration
-    val currentDurationString = Transformations.map(currentDuration) { duration ->
-        DateUtils.formatElapsedTime(duration)
-    }
+    val currentDurationString: LiveData<String> =
+        Transformations.map(currentDuration) { duration: Long ->
+            DateUtils.formatElapsedTime(duration)
+        }
 
     private val _curPosThumb1 = MutableLiveData<Long>()
     private val curPosThumb1: LiveData<Long>
         get() = _curPosThumb1
 
-    val curPosThumb1String = Transformations.map(curPosThumb1) { posThumb1 ->
-        DateUtils.formatElapsedTime(posThumb1)
-    }
+    val curPosThumb1String: LiveData<String> =
+        Transformations.map(curPosThumb1) { posThumb1: Long ->
+            DateUtils.formatElapsedTime(posThumb1)
+        }
 
     private val _curPosThumb1InMilli = MutableLiveData<Int>()
     private val curPosThumb1InMilli: LiveData<Int>
@@ -142,15 +152,15 @@ class EditRecordingViewModel(
     private val curPosThumb2: LiveData<Long>
         get() = _curPosThumb2
 
-    val curPosThumb2String = Transformations.map(curPosThumb2) { posThumb2 ->
-        DateUtils.formatElapsedTime(posThumb2)
-    }
+    val curPosThumb2String: LiveData<String> =
+        Transformations.map(curPosThumb2) { posThumb2: Long ->
+            DateUtils.formatElapsedTime(posThumb2)
+        }
 
     private val _curPosThumb2InMilli = MutableLiveData<Int>()
     private val curPosThumb2InMilli: LiveData<Int>
         get() = _curPosThumb2InMilli
 
-    // If there are no recordings in the database, a TextView is displayed.
     val empty: LiveData<Boolean> = Transformations.map(allMarks) {
         it.isEmpty()
     }
@@ -236,13 +246,12 @@ class EditRecordingViewModel(
      * Visualizing the sound track of the recording through creating an image of the audio waves using FFMPEG
      * @author: Sabine Roth
      */
-
     private fun initializeVisualizer(size: String = "640x120") {
         val internalAudioCopy = File(context.filesDir, "internalCopy")
         File(tempFile).copyTo(internalAudioCopy)
 
         val wavePic = File(context.filesDir, "waveform.png")
-        val colorHex = "#" + Integer.toHexString(
+        val colorHex: String = "#" + Integer.toHexString(
             ContextCompat.getColor(
                 context,
                 R.color.color_primary
@@ -264,7 +273,6 @@ class EditRecordingViewModel(
                 }
             }
         } catch (e: Exception) {
-            Log.e("WavePic", "preparation failed")
             internalAudioCopy.delete()
             if (wavePic.exists()) wavePic.delete()
         }
@@ -335,14 +343,14 @@ class EditRecordingViewModel(
     }
 
     private fun configureThumb1(rangeBar: MultiSlider) {
-        val thumb1 = rangeBar.getThumb(0)
+        val thumb1: MultiSlider.Thumb = rangeBar.getThumb(0)
         thumb1.value = 0
         _curPosThumb1.value = thumb1.value / oneSecond
         _curPosThumb1InMilli.value = thumb1.value
     }
 
     private fun configureThumb2(rangeBar: MultiSlider) {
-        val thumb2 = rangeBar.getThumb(1)
+        val thumb2: MultiSlider.Thumb = rangeBar.getThumb(1)
         thumb2.value = mediaPlayer.duration
         _curPosThumb2.value = thumb2.value / oneSecond
         _curPosThumb2InMilli.value = thumb2.value
@@ -366,7 +374,7 @@ class EditRecordingViewModel(
         }
     }
 
-    val callback = object : FFMpegCallback {
+    val callback: FFmpegCallback = object : FFmpegCallback {
         override fun onSuccess(
             convertedFile: File,
             type: String,
@@ -393,7 +401,7 @@ class EditRecordingViewModel(
     }
 
     private fun updateRecording(convertedFile: File) {
-        val recordingDuration = getRecordingDuration(convertedFile)
+        val recordingDuration: String? = getRecordingDuration(convertedFile)
         val audio =
             RecordingEntity(
                 uid = copiedRecording,
@@ -442,7 +450,7 @@ class EditRecordingViewModel(
     fun cutOuter() {
         onStopPlayer()
         audioInProgress.value = true
-        val duration = mediaPlayer.duration / oneSecond
+        val duration: Long = mediaPlayer.duration / oneSecond
         val editor = AudioEditor()
         with(editor) {
             setFile(File(tempFile))
@@ -466,7 +474,7 @@ class EditRecordingViewModel(
         labels: ArrayList<Int>?
     ) {
         _createSaveDialog.value = false
-        val name = nameInput ?: java.lang.String.format(
+        val name: String = nameInput ?: java.lang.String.format(
             "%s_%s",
             res.getString(R.string.standard_name_recording),
             android.text.format.DateFormat.format(
@@ -483,7 +491,7 @@ class EditRecordingViewModel(
             return
         }
 
-        val path = java.lang.String.format(
+        val path: String = java.lang.String.format(
             "%s/$name%s",
             (pathInput ?: context.filesDir.absolutePath),
             res.getString(R.string.suffix_audio_file)
@@ -521,7 +529,7 @@ class EditRecordingViewModel(
     ) {
 
         _createSaveDialog.value = false
-        val path = java.lang.String.format(
+        val path: String = java.lang.String.format(
             "%s/$name%s",
             (pathInput ?: context.filesDir.absolutePath),
             res.getString(R.string.suffix_audio_file)
@@ -534,7 +542,7 @@ class EditRecordingViewModel(
             } else {
                 if (labels != null) {
                     repository.deleteRecLabels(recordingId)
-                    for (i in labels.indices) {
+                    for (i: Int in labels.indices) {
                         repository.insertRecLabels(LabelAssignmentEntity(0, recordingId, labels[i]))
                     }
                 } else {
@@ -570,7 +578,7 @@ class EditRecordingViewModel(
     ) {
         repository.updatePreviousRecording(copiedRecording, name, path)
         if (labels != null) {
-            for (i in labels.indices) {
+            for (i: Int in labels.indices) {
                 repository.insertRecLabels(
                     LabelAssignmentEntity(
                         0,
@@ -581,10 +589,10 @@ class EditRecordingViewModel(
             }
         }
 
-        val folderId = repository.getFolderOfRecording(recordingId)?.folderId
-        if(folderId != null){
+        val folderId: Int? = repository.getFolderOfRecording(recordingId)?.folderId
+        if (folderId != null) {
             val folderAssignment =
-                FolderAssignmentEntity(0,copiedRecording,folderId)
+                FolderAssignmentEntity(0, copiedRecording, folderId)
             repository.insertFolderAssignment(folderAssignment)
         }
 
@@ -699,7 +707,7 @@ class EditRecordingViewModel(
     }
 
     private fun deleteCreatedFiles() {
-        for (file in createdFiles) {
+        for (file: File in createdFiles) {
             file.delete()
         }
     }

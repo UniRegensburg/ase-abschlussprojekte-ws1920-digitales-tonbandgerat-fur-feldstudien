@@ -9,7 +9,7 @@ import androidx.room.*
  */
 
 @Dao
-interface FolderDao{
+interface FolderDao {
 
     @Query("SELECT * FROM foldersTable")
     fun getAllFolders(): LiveData<List<FolderEntity>>

@@ -10,21 +10,17 @@ import android.provider.DocumentsContract
 import androidx.preference.Preference
 import de.ur.mi.audidroid.R
 
-
 /**
- * Pathfinder creates the dialog for the user to navigate through the folders on the device
- * and realizes the actual path from a tree-uri (This part was adapted from: https://gist.github.com/asifmujteba/d89ba9074bc941de1eaa#file-asfurihelper)
+ * [Pathfinder] creates the dialog for the user to navigate through the folders on the device and
+ * realizes the actual path from a tree-uri (This part was adapted from: https://gist.github.com/asifmujteba/d89ba9074bc941de1eaa#file-asfurihelper)
  * @author: Sabine Roth
  */
 
-
 object Pathfinder {
 
-    private lateinit var context: Context
     var preference: Preference? = null
 
     fun openPathDialog(preference: Preference? = null, context: Context, fragment: String) {
-        this.context = context
         this.preference = preference
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
@@ -74,7 +70,7 @@ object Pathfinder {
                         Environment.getExternalStorageDirectory().toString() + "/"
                     }
                 }
-                //External SD-card
+                // External SD-card
                 else {
                     return null
                 }
@@ -95,7 +91,8 @@ object Pathfinder {
     }
 
     private fun getDataColumn(
-        context: Context, uri: Uri?
+        context: Context,
+        uri: Uri?
     ): String? {
         var cursor: Cursor? = null
         val column = "_data"

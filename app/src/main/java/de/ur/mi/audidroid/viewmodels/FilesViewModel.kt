@@ -1,19 +1,30 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.content.Context
+import android.content.res.Resources
+import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupMenu
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.RecordingAndMarkTuple
+import de.ur.mi.audidroid.models.FolderEntity
+import de.ur.mi.audidroid.models.FolderAssignmentEntity
 import de.ur.mi.audidroid.utils.ShareHelper
 import java.io.File
-import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 import de.ur.mi.audidroid.models.RecordingAndLabels
+import java.util.Calendar
+import java.util.Locale
 
 /**
  * ViewModel for FilesFragment.
@@ -22,9 +33,9 @@ import de.ur.mi.audidroid.models.RecordingAndLabels
 class FilesViewModel(dataSource: Repository, application: Application) :
     AndroidViewModel(application) {
 
-    private val repository = dataSource
-    private val context = getApplication<Application>().applicationContext
-    private val res = context.resources
+    private val repository: Repository = dataSource
+    private val context: Context = getApplication<Application>().applicationContext
+    private val res: Resources = context.resources
     val allRecordingsWithMarker: LiveData<List<RecordingAndMarkTuple>> =
         repository.getRecordingsAndMarkerType()
     val allFolders: LiveData<List<FolderEntity>> = repository.getAllFolders()
@@ -32,8 +43,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     var folderToBeEdited: FolderEntity? = null
     var recordingToBeMoved: RecordingAndLabels? = null
     var deleteFolder = false
-    private val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
-        repository.getAllRecordingsWithLabels()
 
     private lateinit var frameLayout: FrameLayout
     var errorMessage: String? = null
@@ -84,7 +93,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _showSnackbarEvent.value = null
     }
 
-    // If there are no recordings in the database, a TextView is displayed.
+    /**
+     * If there are no recordings in the database, a TextView is displayed.
+     */
     val empty: LiveData<Boolean> = Transformations.map(displayRecordingsAndFolders) {
         it.isEmpty()
     }
@@ -136,9 +147,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             _createRenameDialog.value = true
             return
         }
-        val name = checkVariables(newName)
+        val name: String = checkVariables(newName)
         if (name != rec.recordingName) {
-            val newPath = rec.recordingPath.subSequence(
+            val newPath: String = rec.recordingPath.subSequence(
                 0,
                 rec.recordingPath.length - (rec.recordingName.length + context.getString(R.string.suffix_audio_file).length)
             ).toString() + name + context.getString(R.string.suffix_audio_file)
@@ -160,7 +171,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun checkVariables(nameParam: String): String {
-        var name = nameParam
+        var name: String = nameParam
         if (name.contains("{date}")) {
             name = name.replace(
                 "{date}", java.lang.String.format(
@@ -216,7 +227,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     ): List<Any> {
         val recordings = ArrayList<RecordingAndLabels>()
         val folders = ArrayList<FolderEntity>()
-        for (item in it) {
+        for (item: Any in it) {
             if (item is RecordingAndLabels) {
                 val file = File(item.recordingPath)
 
@@ -250,7 +261,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         return repository.getFolderOfRecording(rec.uid) == null
     }
 
-    // Set sorted source for recording display
     private fun removeSortedRecordingSources(folder: Int) {
         if (_currentlyInFolder.value!!) {
             displayRecordingsAndFolders.removeSource(repository.getAllRecordingsWithLabelsOutsideFolder())
@@ -332,11 +342,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         params: List<String>
     ): List<RecordingAndLabels>? {
         if (params.isNotEmpty()) {
-            val filteredRecordings = arrayListOf<RecordingAndLabels>()
-            recordingList.forEach { recording ->
+            val filteredRecordings: ArrayList<RecordingAndLabels> = arrayListOf()
+            recordingList.forEach { recording: RecordingAndLabels ->
                 filteredRecordings.add(recording)
                 if (recording.labels != null) {
-                    params.forEach { param ->
+                    params.forEach { param: String ->
                         if (!recording.labels.contains(param)) {
                             filteredRecordings.remove(recording)
                         }
@@ -353,10 +363,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     private fun adaptRecordingMarkLiveData(reference: List<RecordingAndMarkTuple>): List<Pair<Int, MutableList<String>>>? {
         if (reference.isNotEmpty()) {
-            val refList = mutableListOf<Pair<Int, MutableList<String>>>()
+            val refList: MutableList<Pair<Int, MutableList<String>>> = mutableListOf()
             var alreadyInList: Boolean
-            reference.forEach { ref ->
-                val pair = Pair(ref.recordingId, mutableListOf(ref.markerName))
+            reference.forEach { ref: RecordingAndMarkTuple ->
+                val pair: Pair<Int, MutableList<String>> =
+                    Pair(ref.recordingId, mutableListOf(ref.markerName))
                 if (refList.isEmpty()) {
                     refList.add(pair)
                 } else {
@@ -379,12 +390,13 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     }
 
     private fun matchMarksAndRecordings(params: List<String>): List<Int>? {
-        val filteredRef = arrayListOf<Int>()
-        val list = adaptRecordingMarkLiveData(allRecordingsWithMarker.value!!)
+        val filteredRef: ArrayList<Int> = arrayListOf()
+        val list: List<Pair<Int, MutableList<String>>>? =
+            adaptRecordingMarkLiveData(allRecordingsWithMarker.value!!)
         return if (params.isNotEmpty()) {
-            list?.forEach { recMarkTuple ->
+            list?.forEach { recMarkTuple: Pair<Int, MutableList<String>> ->
                 filteredRef.add(recMarkTuple.first)
-                params.forEach { param ->
+                params.forEach { param: String ->
                     if (!recMarkTuple.second.contains(param)) {
                         filteredRef.remove(recMarkTuple.first)
                     }
@@ -400,11 +412,11 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         matchedLabels: List<RecordingAndLabels>?, matchedMarkers: List<Int>?,
         nameInput: String?
     ): List<RecordingAndLabels> {
-        var filteredResult = displayRecordingsAndFolders.value!!
-        var matchedList = mutableListOf<RecordingAndLabels>()
+        var filteredResult: List<Any> = displayRecordingsAndFolders.value!!
+        var matchedList: MutableList<RecordingAndLabels> = mutableListOf()
         matchedLabels?.let { filteredResult = matchedLabels }
         matchedMarkers?.let {
-            for (rec in filteredResult) {
+            for (rec: Any in filteredResult) {
                 if (rec is RecordingAndLabels)
                     if (matchedMarkers.contains(rec.uid)) {
                         matchedList.add(rec)
@@ -413,8 +425,8 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             filteredResult = matchedList
         }
         nameInput?.let {
-            matchedList = mutableListOf<RecordingAndLabels>()
-            for (rec in filteredResult) {
+            matchedList = mutableListOf()
+            for (rec: Any in filteredResult) {
                 if (rec is RecordingAndLabels) {
                     if (rec.recordingName.contains(nameInput, true)) {
                         matchedList.add(rec)
@@ -449,7 +461,10 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOutsideFolder) {
                 if (labels.isNotEmpty() || marks.isNotEmpty() || !nameInput.isNullOrEmpty()) {
                     val matchedLabels =
-                        matchLabelsAndRecordings(allRecordingsWithLabelsOutsideFolder.value!!, labels)
+                        matchLabelsAndRecordings(
+                            allRecordingsWithLabelsOutsideFolder.value!!,
+                            labels
+                        )
                     val matchedMarks = matchMarksAndRecordings(marks)
                     val displayList = combineFilterParams(matchedLabels, matchedMarks, nameInput)
                     displayRecordingsAndFolders.value = displayList
@@ -461,7 +476,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-    fun clearFilter(){
+    fun clearFilter() {
         removeSortedRecordingSources(currentFolder)
         _filterEmpty.value = false
         getRecordingsAndFolders()
@@ -501,7 +516,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         when (mode) {
             R.integer.sort_by_name_asc ->
                 if (_currentlyInFolder.value!!) {
-                    val allRecordingsWithLabelsOrderNameInFolder =
+                    val allRecordingsWithLabelsOrderNameInFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderNameInFolder(true, currentFolder)
                     displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderNameInFolder) {
                         displayRecordingsAndFolders.value =
@@ -512,7 +527,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                             combineData(allRecordingsWithLabelsOrderNameInFolder, allFolders)
                     }
                 } else {
-                    val allRecordingsWithLabelsOrderNameOutsideFolder =
+                    val allRecordingsWithLabelsOrderNameOutsideFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderNameOutsideFolder(true)
                     displayRecordingsAndFolders.addSource(
                         allRecordingsWithLabelsOrderNameOutsideFolder
@@ -527,7 +542,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 }
             R.integer.sort_by_date_asc -> {
                 if (_currentlyInFolder.value!!) {
-                    val allRecordingsWithLabelsOrderDateInFolder =
+                    val allRecordingsWithLabelsOrderDateInFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderDateInFolder(true, currentFolder)
                     displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDateInFolder) {
                         displayRecordingsAndFolders.value =
@@ -538,7 +553,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                             combineData(allRecordingsWithLabelsOrderDateInFolder, allFolders)
                     }
                 } else {
-                    val allRecordingsWithLabelsOrderDateOutsideFolder =
+                    val allRecordingsWithLabelsOrderDateOutsideFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderDateOutsideFolder(true)
                     displayRecordingsAndFolders.addSource(
                         allRecordingsWithLabelsOrderDateOutsideFolder
@@ -554,7 +569,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             }
             R.integer.sort_by_duration_asc -> {
                 if (_currentlyInFolder.value!!) {
-                    val allRecordingsWithLabelsOrderDurationInFolder =
+                    val allRecordingsWithLabelsOrderDurationInFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderDurationInFolder(true, currentFolder)
                     displayRecordingsAndFolders.addSource(
                         allRecordingsWithLabelsOrderDurationInFolder
@@ -567,7 +582,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                             combineData(allRecordingsWithLabelsOrderDurationInFolder, allFolders)
                     }
                 } else {
-                    val allRecordingsWithLabelsOrderDurationOutsideFolder =
+                    val allRecordingsWithLabelsOrderDurationOutsideFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderDurationOutsideFolder(true)
                     displayRecordingsAndFolders.addSource(
                         allRecordingsWithLabelsOrderDurationOutsideFolder
@@ -589,7 +604,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             }
             R.integer.sort_by_name_desc -> {
                 if (_currentlyInFolder.value!!) {
-                    val allRecordingsWithLabelsOrderNameInFolder =
+                    val allRecordingsWithLabelsOrderNameInFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderNameInFolder(false, currentFolder)
                     displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderNameInFolder) {
                         displayRecordingsAndFolders.value =
@@ -600,7 +615,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                             combineData(allRecordingsWithLabelsOrderNameInFolder, allFolders)
                     }
                 } else {
-                    val allRecordingsWithLabelsOrderNameOutsideFolder =
+                    val allRecordingsWithLabelsOrderNameOutsideFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderNameOutsideFolder(false)
                     displayRecordingsAndFolders.addSource(
                         allRecordingsWithLabelsOrderNameOutsideFolder
@@ -616,7 +631,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             }
             R.integer.sort_by_date_desc -> {
                 if (_currentlyInFolder.value!!) {
-                    val allRecordingsWithLabelsOrderDateInFolder =
+                    val allRecordingsWithLabelsOrderDateInFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderDateInFolder(false, currentFolder)
                     displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOrderDateInFolder) {
                         displayRecordingsAndFolders.value =
@@ -627,7 +642,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                             combineData(allRecordingsWithLabelsOrderDateInFolder, allFolders)
                     }
                 } else {
-                    val allRecordingsWithLabelsOrderDateOutsideFolder =
+                    val allRecordingsWithLabelsOrderDateOutsideFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderDateOutsideFolder(false)
                     displayRecordingsAndFolders.addSource(
                         allRecordingsWithLabelsOrderDateOutsideFolder
@@ -643,7 +658,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
             }
             R.integer.sort_by_duration_desc -> {
                 if (_currentlyInFolder.value!!) {
-                    val allRecordingsWithLabelsOrderDurationInFolder =
+                    val allRecordingsWithLabelsOrderDurationInFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderDurationInFolder(false, currentFolder)
                     displayRecordingsAndFolders.addSource(
                         allRecordingsWithLabelsOrderDurationInFolder
@@ -656,7 +671,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                             combineData(allRecordingsWithLabelsOrderDurationInFolder, allFolders)
                     }
                 } else {
-                    val allRecordingsWithLabelsOrderDurationOutsideFolder =
+                    val allRecordingsWithLabelsOrderDurationOutsideFolder: LiveData<List<RecordingAndLabels>> =
                         repository.getAllRecWithLabelsOrderDurationOutsideFolder(false)
                     displayRecordingsAndFolders.addSource(
                         allRecordingsWithLabelsOrderDurationOutsideFolder
@@ -683,10 +698,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-
-    private fun getRecordingsAndFolders(){
+    private fun getRecordingsAndFolders() {
         if (_currentlyInFolder.value!!) {
-            val allRecordingsWithLabelsInFolder =
+            val allRecordingsWithLabelsInFolder: LiveData<List<RecordingAndLabels>> =
                 repository.getAllRecordingsWithLabelsInFolder(currentFolder)
             displayRecordingsAndFolders.addSource(allRecordingsWithLabelsInFolder) {
                 displayRecordingsAndFolders.value =
@@ -697,7 +711,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                     combineData(allRecordingsWithLabelsInFolder, allFolders)
             }
         } else {
-            val allRecordingsWithLabelsOutsideFolder =
+            val allRecordingsWithLabelsOutsideFolder: LiveData<List<RecordingAndLabels>> =
                 repository.getAllRecordingsWithLabelsOutsideFolder()
             displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOutsideFolder) {
                 displayRecordingsAndFolders.value =
@@ -715,9 +729,9 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         folders: LiveData<List<FolderEntity>>
     ): List<Any> {
         val all = ArrayList<Any>()
-        val recordings = recordingsData.value
+        val recordings: List<RecordingAndLabels>? = recordingsData.value
         if (recordings != null) {
-            for (rec in recordings) {
+            for (rec: RecordingAndLabels in recordings) {
                 all.add(rec)
             }
         }
@@ -731,7 +745,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun openFolderMenu(folder: FolderEntity, view: View) = PopupMenu(view.context, view).run {
         menuInflater.inflate(R.menu.popup_menu_folder, menu)
-        setOnMenuItemClickListener { item ->
+        setOnMenuItemClickListener { item: MenuItem ->
             when (item.toString()) {
                 context.getString(R.string.folder_rename_folder) -> {
                     folderToBeEdited = folder
@@ -777,7 +791,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun deleteFolder(folder: FolderEntity) {
         resetValues()
-        deleteRecordings.addSource(repository.getRecordingsByFolder(folder.uid)) { list ->
+        deleteRecordings.addSource(repository.getRecordingsByFolder(folder.uid)) { list: List<RecordingAndLabels> ->
             list?.forEach {
                 File(it.recordingPath).delete()
                 repository.deleteFolderAssignment(it)
@@ -816,7 +830,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         _currentlyInFolder.value = false
         currentFolder = 0
         if (_currentlyInFolder.value!!) {
-            val allRecordingsWithLabelsInFolder =
+            val allRecordingsWithLabelsInFolder: LiveData<List<RecordingAndLabels>> =
                 repository.getAllRecordingsWithLabelsInFolder(currentFolder)
             displayRecordingsAndFolders.addSource(allRecordingsWithLabelsInFolder) {
                 displayRecordingsAndFolders.value =
@@ -827,7 +841,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                     combineData(allRecordingsWithLabelsInFolder, allFolders)
             }
         } else {
-            val allRecordingsWithLabelsOutsideFolder =
+            val allRecordingsWithLabelsOutsideFolder: LiveData<List<RecordingAndLabels>> =
                 repository.getAllRecordingsWithLabelsOutsideFolder()
             displayRecordingsAndFolders.addSource(allRecordingsWithLabelsOutsideFolder) {
                 displayRecordingsAndFolders.value =
@@ -840,13 +854,12 @@ class FilesViewModel(dataSource: Repository, application: Application) :
         }
     }
 
-    // Navigation to the PlayerFragment
     private val _navigateToPlayerFragment = MutableLiveData<MutableList<String>>()
-    val navigateToPlayerFragment
+    val navigateToPlayerFragment: MutableLiveData<MutableList<String>>
         get() = _navigateToPlayerFragment
 
     fun onRecordingClicked(recordingId: Int, recordingName: String, recordingPath: String) {
-        val recording = mutableListOf<String>()
+        val recording: MutableList<String> = mutableListOf()
         recording.add(0, recordingId.toString())
         recording.add(1, recordingName)
         recording.add(2, recordingPath)

@@ -5,6 +5,10 @@ import com.arthenica.mobileffmpeg.Config
 import java.io.File
 import java.io.IOException
 
+/**
+ * AudioEditor cuts audio files.
+ * @author: Theresa Strohmeier
+ */
 class AudioEditor {
 
     private var audio: File? = null
@@ -15,7 +19,7 @@ class AudioEditor {
     private var duration = ""
     private var outputPath = ""
     private var outputFileName = ""
-    private var callback: FFMpegCallback? = null
+    private var callback: FFmpegCallback? = null
 
     fun setFile(originalFile: File) {
         this.audio = originalFile
@@ -43,7 +47,7 @@ class AudioEditor {
         this.outputFileName = output
     }
 
-    fun setCallback(callback: FFMpegCallback) {
+    fun setCallback(callback: FFmpegCallback) {
         this.callback = callback
     }
 
@@ -58,9 +62,9 @@ class AudioEditor {
             return
         }
 
-        val outputLocation = getConvertedFile(outputPath, outputFileName)
+        val outputLocation: File = getConvertedFile(outputPath, outputFileName)
 
-        var cmd = arrayOf("")
+        var cmd: Array<String> = arrayOf("")
         if (type == "cutInner") {
             cmd = arrayOf(
                 "-i",
@@ -75,7 +79,7 @@ class AudioEditor {
             )
         } else if (type == "cutOuter") {
             val filter =
-                "[0:a]atrim=start=0:end=${startTime},asetpts=PTS-STARTPTS[a]; [0:a]atrim=start=${endTime}:end=${duration},asetpts=PTS-STARTPTS[b]; [a][b]concat=n=2:v=0:a=1[out]"
+                "[0:a]atrim=start=0:end=$startTime,asetpts=PTS-STARTPTS[a]; [0:a]atrim=start=$endTime:end=$duration,asetpts=PTS-STARTPTS[b]; [a][b]concat=n=2:v=0:a=1[out]"
             cmd = arrayOf(
                 "-i",
                 audio!!.path,
@@ -99,7 +103,6 @@ class AudioEditor {
         } catch (e: Exception) {
             callback!!.onFailure(e)
         }
-
     }
 
     private fun getConvertedFile(folder: String, fileName: String): File {
@@ -110,5 +113,4 @@ class AudioEditor {
 
         return File(f.path + File.separator + fileName)
     }
-
 }

@@ -1,11 +1,12 @@
 package de.ur.mi.audidroid.models
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
  * The [FolderAssignmentEntity] represents the folders referring to the recording.
  * The folders are saved with their unique ids in case of changing the name of the folder.
- *
  * @author Sabine Roth
  */
 

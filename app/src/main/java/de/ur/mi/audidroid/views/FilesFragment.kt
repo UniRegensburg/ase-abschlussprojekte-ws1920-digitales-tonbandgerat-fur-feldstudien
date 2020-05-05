@@ -1,11 +1,16 @@
 package de.ur.mi.audidroid.views
 
 import android.app.Application
-import android.content.ClipData
 import android.content.ClipDescription
 import android.graphics.Color
 import android.os.Bundle
-import android.view.*
+import android.view.MenuItem
+import android.view.MenuInflater
+import android.view.DragEvent
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -22,16 +27,17 @@ import de.ur.mi.audidroid.databinding.FilesFragmentBinding
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.ConvertDialog
+import de.ur.mi.audidroid.utils.FilesDialog
 import de.ur.mi.audidroid.utils.FolderDialog
 import de.ur.mi.audidroid.utils.FilterDialog
 import de.ur.mi.audidroid.utils.RenameDialog
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
-import kotlinx.android.synthetic.main.files_fragment.*
+import kotlinx.android.synthetic.main.files_fragment.folder_back_target
+import kotlinx.android.synthetic.main.files_fragment.files_layout
 
 /**
- * The fragment displays all recordings.
+ * The FilesFragment displays all recordings and folders.
  * @author: Theresa Strohmeier
  */
 class FilesFragment : Fragment() {
@@ -49,8 +55,7 @@ class FilesFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
 
-
-        val application = requireActivity().application
+        val application: Application = requireActivity().application
 
         dataSource = Repository(application)
 
@@ -61,12 +66,15 @@ class FilesFragment : Fragment() {
         binding.lifecycleOwner = this
         setHasOptionsMenu(true)
 
+        /**
+         *  Observer on the state variable for showing SnackBar message when a list-item is deleted.
+         */
         filesViewModel.allRecordingsWithMarker.observe(viewLifecycleOwner, Observer {})
-        //Observer on the state variable for the sorting of list-items.
+
         filesViewModel.sortMode.observe(viewLifecycleOwner, Observer {
             filesViewModel.setSorting(it)
         })
-        //Observer on the state variable for showing Snackbar message when a list-item is deleted.
+
         filesViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) {
                 Snackbar.make(requireView(), R.string.recording_deleted, Snackbar.LENGTH_SHORT)
@@ -75,11 +83,10 @@ class FilesFragment : Fragment() {
             }
         })
 
-        // Observer on the state variable for navigating when a list-item is clicked.
         filesViewModel.navigateToPlayerFragment.observe(
             viewLifecycleOwner,
-            Observer { recordingId ->
-                recordingId?.let {
+            Observer { recordingId: MutableList<String> ->
+                recordingId.let {
                     this.findNavController().navigate(
                         FilesFragmentDirections
                             .actionFilesToPlayer(
@@ -107,11 +114,10 @@ class FilesFragment : Fragment() {
         return binding.root
     }
 
-    // When the ImageButton is clicked, a PopupMenu opens.
     fun openRecordingPopupMenu(recordingAndLabels: RecordingAndLabels, view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener { item ->
+        popupMenu.setOnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
                 R.id.action_rename_recording ->
                     filesViewModel.rename(recordingAndLabels)
@@ -134,8 +140,8 @@ class FilesFragment : Fragment() {
 
         val searchItem: MenuItem = menu.findItem(R.id.action_search)
 
-        val searchView = searchItem.actionView as SearchView
-        val sortItem = menu.findItem(R.id.action_sort)
+        val searchView: SearchView = searchItem.actionView as SearchView
+        val sortItem: MenuItem = menu.findItem(R.id.action_sort)
 
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
@@ -224,7 +230,7 @@ class FilesFragment : Fragment() {
 
         filesViewModel.displayRecordingsAndFolders.observe(viewLifecycleOwner, Observer {
             it?.let {
-                val filterEntries = filesViewModel.getCorrectList(it)
+                val filterEntries: List<Any> = filesViewModel.getCorrectList(it)
                 adapter.submitList(filterEntries)
             }
         })
@@ -281,7 +287,7 @@ class FilesFragment : Fragment() {
 
         filesViewModel.currentlyInFolder.observe(viewLifecycleOwner, Observer {
             if (it) {
-                folder_back_target.setOnDragListener { v, event ->
+                folder_back_target.setOnDragListener { v: View, event: DragEvent ->
                     when (event.action) {
                         DragEvent.ACTION_DRAG_STARTED -> {
                             if (event.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
@@ -305,7 +311,6 @@ class FilesFragment : Fragment() {
                             true
                         }
                         DragEvent.ACTION_DROP -> {
-                            val recordingId: ClipData.Item = event.clipData.getItemAt(1)
                             filesViewModel.removeRecordingFromFolder(filesViewModel.recordingToBeMoved!!)
                             v.invalidate()
                             true
@@ -325,27 +330,28 @@ class FilesFragment : Fragment() {
         })
     }
 
-    private val userActionsListener = object : RecordingAndFolderActionsListener {
-        override fun onRecordingClicked(recordingAndLabels: RecordingAndLabels) {
-            filesViewModel.onRecordingClicked(
-                recordingAndLabels.uid,
-                recordingAndLabels.recordingName,
-                recordingAndLabels.recordingPath
-            )
-        }
+    private val userActionsListener: RecordingAndFolderActionsListener =
+        object : RecordingAndFolderActionsListener {
+            override fun onRecordingClicked(recordingAndLabels: RecordingAndLabels) {
+                filesViewModel.onRecordingClicked(
+                    recordingAndLabels.uid,
+                    recordingAndLabels.recordingName,
+                    recordingAndLabels.recordingPath
+                )
+            }
 
-        override fun popUpRecording(recordingAndLabels: RecordingAndLabels, view: View) {
-            openRecordingPopupMenu(recordingAndLabels, view)
-        }
+            override fun popUpRecording(recordingAndLabels: RecordingAndLabels, view: View) {
+                openRecordingPopupMenu(recordingAndLabels, view)
+            }
 
-        override fun onFolderClicked(folder: FolderEntity) {
-            filesViewModel.onFolderClicked(folder)
-        }
+            override fun onFolderClicked(folder: FolderEntity) {
+                filesViewModel.onFolderClicked(folder)
+            }
 
-        override fun popUpFolder(folder: FolderEntity, view: View) {
-            filesViewModel.openFolderMenu(folder, view)
+            override fun popUpFolder(folder: FolderEntity, view: View) {
+                filesViewModel.openFolderMenu(folder, view)
+            }
         }
-    }
 
     override fun onPause() {
         filesViewModel._currentlyInFolder.value = false

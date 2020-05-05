@@ -8,6 +8,14 @@ import com.arthenica.mobileffmpeg.FFmpeg
 import java.io.File
 import java.io.IOException
 
+/**
+ * The AudioConverter creates converted audio files.
+ * Available formats: AAC, MP3, M4A, WMA, WAV, FLAC.
+ * Result of the conversion is communicated with a callback.
+ * @author: Jonas Puchinger
+ * Adapted from: https://github.com/adrielcafe/AndroidAudioConverter
+ */
+
 class AudioConverter {
 
     private var audioFile: File? = null
@@ -34,7 +42,7 @@ class AudioConverter {
             Log.e("AudioConverter", "Cannot read file. Missing permission")
         }
         val convertedFile = getConvertedFile(audioFile!!, audioFormat!!)
-        val cmd: String = "-y -i ${audioFile!!.path} ${convertedFile.path}"
+        val cmd = "-y -i ${audioFile!!.path} ${convertedFile.path}"
         try {
             when (FFmpeg.execute(cmd)) {
                 Config.RETURN_CODE_SUCCESS -> {
@@ -57,5 +65,4 @@ class AudioConverter {
         val filePath: String = orgFile.absolutePath.replace(f[f.size - 1], convertFormat.format)
         return File(filePath)
     }
-
 }

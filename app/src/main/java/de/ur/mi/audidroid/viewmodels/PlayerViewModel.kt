@@ -1,6 +1,8 @@
 package de.ur.mi.audidroid.viewmodels
 
 import android.app.Application
+import android.content.Context
+import android.content.res.Resources
 import android.media.AudioAttributes
 import android.media.AudioAttributes.CONTENT_TYPE_SPEECH
 import android.media.MediaPlayer
@@ -17,12 +19,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.RecordingEntity
+import de.ur.mi.audidroid.models.MarkAndTimestamp
+import de.ur.mi.audidroid.models.LabelEntity
 import de.ur.mi.audidroid.utils.ColorHelper
 import de.ur.mi.audidroid.utils.HandlePlayerBar
 import java.io.File
 import java.io.IOException
-
 
 /**
  * ViewModel for PlayerFragment.
@@ -34,13 +38,13 @@ class PlayerViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val repository = dataSource
+    private val repository: Repository = dataSource
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var frameLayout: FrameLayout
     private lateinit var buttonFastForward: ImageButton
     private lateinit var buttonFastRewind: ImageButton
-    private val context = getApplication<Application>().applicationContext
-    private val res = context.resources
+    private val context: Context = getApplication<Application>().applicationContext
+    private val res: Resources = context.resources
     private val oneSecond: Long = res.getInteger(R.integer.one_second).toLong()
     val recording: LiveData<RecordingEntity> =
         repository.getRecordingById(recordingId)
@@ -57,20 +61,23 @@ class PlayerViewModel(
     private val totalDuration: LiveData<Long>
         get() = _totalDuration
 
-    var totalDurationString = Transformations.map(totalDuration) { duration ->
-        DateUtils.formatElapsedTime(duration)
-    }
+    var totalDurationString: LiveData<String> =
+        Transformations.map(totalDuration) { duration: Long ->
+            DateUtils.formatElapsedTime(duration)
+        }
 
     private val _currentDuration = MutableLiveData<Long>()
     private val currentDuration: LiveData<Long>
         get() = _currentDuration
 
-    // The String version of the current duration
-    val currentDurationString = Transformations.map(currentDuration) { duration ->
-        DateUtils.formatElapsedTime(duration)
-    }
+    val currentDurationString: LiveData<String> =
+        Transformations.map(currentDuration) { duration: Long ->
+            DateUtils.formatElapsedTime(duration)
+        }
 
-    // If there are no marks in the database, a TextView is displayed.
+    /**
+     * If there are no marks in the database, a TextView is displayed.
+     */
     val noMarks: LiveData<Boolean> = Transformations.map(allMarks) {
         it.isEmpty()
     }

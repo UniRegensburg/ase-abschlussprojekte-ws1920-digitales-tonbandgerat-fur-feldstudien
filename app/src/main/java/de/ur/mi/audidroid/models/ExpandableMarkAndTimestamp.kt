@@ -4,6 +4,12 @@ import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import de.ur.mi.audidroid.BR
 
+/**
+ * Extension class to make [MarkAndTimestamp] keep track of expanded UI state.
+ * Uses [Bindable] decorator to enable data binding.
+ * @author: Jonas Puchinger
+ */
+
 class ExpandableMarkAndTimestamp(val markAndTimestamp: MarkAndTimestamp) : BaseObservable() {
 
     @get:Bindable
@@ -12,5 +18,4 @@ class ExpandableMarkAndTimestamp(val markAndTimestamp: MarkAndTimestamp) : BaseO
             field = value
             notifyPropertyChanged(BR.expanded)
         }
-
 }
