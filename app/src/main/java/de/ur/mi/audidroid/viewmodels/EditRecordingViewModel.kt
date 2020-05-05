@@ -7,7 +7,6 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
-import android.util.Log
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -583,7 +582,6 @@ class EditRecordingViewModel(
 
         val folderId = repository.getFolderOfRecording(recordingId)?.folderId
         if(folderId != null){
-            Log.d("Hallo",""+folderId)
             val folderAssignment =
                 FolderAssignmentEntity(0,copiedRecording,folderId)
             repository.insertFolderAssignment(folderAssignment)
