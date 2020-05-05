@@ -461,6 +461,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun clearFilter(){
         removeSortedRecordingSources(currentFolder)
+        _filterEmpty.value = false
         getRecordingsAndFolders()
     }
 
