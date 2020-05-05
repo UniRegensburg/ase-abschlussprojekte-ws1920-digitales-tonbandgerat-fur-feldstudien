@@ -24,7 +24,6 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     private val repository = dataSource
     private val context = getApplication<Application>().applicationContext
     private val res = context.resources
-    private val allRecordings: LiveData<List<RecordingEntity>> = repository.getAllRecordings()
     private val allRecordingsWithLabels: LiveData<List<RecordingAndLabels>> =
         repository.getAllRecordingsWithLabels()
     private val allRecordingsWithLabelsOrderName: LiveData<List<RecordingAndLabels>> =
@@ -81,6 +80,8 @@ class FilesViewModel(dataSource: Repository, application: Application) :
     var _currentlyInFolder = MutableLiveData<Boolean>()
     val currentlyInFolder: LiveData<Boolean>
         get() = _currentlyInFolder
+
+    var currentFolder: Int = 0
 
     var deleteRecordings = MediatorLiveData<List<RecordingAndLabels>>()
 
@@ -375,14 +376,30 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun setSearchResult(search: String) {
         removeSortedRecordingSources()
-        displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
-            val displayList = mutableListOf<RecordingAndLabels>()
-            allRecordingsWithLabels.value?.forEach { recording ->
-                if (recording.recordingName.contains(search, true)) {
-                    displayList.add(recording)
+        if (_currentlyInFolder.value!!) {
+            val recordingsInFolder: LiveData<List<RecordingAndLabels>> =
+                repository.getRecordingsByFolder(currentFolder)
+            displayRecordingsAndFolders.addSource(recordingsInFolder) {
+                val displayList = mutableListOf<RecordingAndLabels>()
+                recordingsInFolder.value?.forEach { recording ->
+                    if (recording.recordingName.contains(search, true)) {
+                        displayList.add(recording)
+                    }
                 }
+                displayRecordingsAndFolders.value = displayList
             }
-            displayRecordingsAndFolders.value = displayList
+        } else {
+            val recordingsInFolder: LiveData<List<RecordingAndLabels>> =
+                repository.getRecordingsOutsideFolder()
+            displayRecordingsAndFolders.addSource(recordingsInFolder) {
+                val displayList = mutableListOf<RecordingAndLabels>()
+                recordingsInFolder.value?.forEach { recording ->
+                    if (recording.recordingName.contains(search, true)) {
+                        displayList.add(recording)
+                    }
+                }
+                displayRecordingsAndFolders.value = displayList
+            }
         }
     }
 
@@ -420,14 +437,31 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 }
             }
             else -> {
-                displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabels, allFolders)
+                if (_currentlyInFolder.value!!) {
+                    val recordingsInFolder: LiveData<List<RecordingAndLabels>> =
+                        repository.getRecordingsByFolder(currentFolder)
+                    displayRecordingsAndFolders.addSource(recordingsInFolder) {
+                        displayRecordingsAndFolders.value =
+                            combineData(recordingsInFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(recordingsInFolder, allFolders)
+                    }
+                } else {
+                    val recordingsOutsideFolder: LiveData<List<RecordingAndLabels>> =
+                        repository.getRecordingsOutsideFolder()
+                    displayRecordingsAndFolders.addSource(recordingsOutsideFolder) {
+                        displayRecordingsAndFolders.value =
+                            combineData(recordingsOutsideFolder, allFolders)
+                    }
+                    displayRecordingsAndFolders.addSource(allFolders) {
+                        displayRecordingsAndFolders.value =
+                            combineData(recordingsOutsideFolder, allFolders)
+                    }
+
                 }
-                displayRecordingsAndFolders.addSource(allFolders) {
-                    displayRecordingsAndFolders.value =
-                        combineData(allRecordingsWithLabels, allFolders)
-                }
+
             }
         }
     }
@@ -443,7 +477,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 all.add(rec)
             }
         }
-        if (folders.value != null) all.addAll(folders.value!!)
+        if (folders.value != null && !_currentlyInFolder.value!!) all.addAll(folders.value!!)
         return all
     }
 
@@ -504,6 +538,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
                 File(it.recordingPath).delete()
                 repository.deleteFolderAssignment(it)
                 repository.deleteRecording(it.uid)
+                //TODO: delete marks and labels
             }
         }
         repository.deleteFolder(folder)
@@ -522,6 +557,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun onFolderClicked(folder: FolderEntity) {
         _currentlyInFolder.value = true
+        currentFolder = folder.uid
         removeSortedRecordingSources()
         val recordingsInFolder: LiveData<List<RecordingAndLabels>> =
             repository.getRecordingsByFolder(folder.uid)
@@ -532,6 +568,7 @@ class FilesViewModel(dataSource: Repository, application: Application) :
 
     fun onLeaveFolderClicked() {
         _currentlyInFolder.value = false
+        currentFolder = 0
         removeSortedRecordingSources()
         displayRecordingsAndFolders.addSource(allRecordingsWithLabels) {
             displayRecordingsAndFolders.value =
