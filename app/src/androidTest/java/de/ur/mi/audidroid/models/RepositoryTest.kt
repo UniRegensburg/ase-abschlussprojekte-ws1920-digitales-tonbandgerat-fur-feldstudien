@@ -8,7 +8,8 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.jraska.livedata.test
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -268,7 +269,7 @@ class RepositoryTest {
 
     @Test
     @Throws(Exception::class)
-    fun testCopyMarks(){
+    fun testCopyMarks() {
         val recWithoutMarks = RecordingEntity(5, "recWithoutMarks", "test", "test", "test")
         repository.insertRecording(recWithoutMarks)
         repository.copyMarks(testRecording.uid, recWithoutMarks.uid)
