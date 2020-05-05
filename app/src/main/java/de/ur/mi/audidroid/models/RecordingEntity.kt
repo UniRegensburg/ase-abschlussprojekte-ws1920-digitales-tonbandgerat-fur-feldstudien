@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * The RecordingEntity represents the table within the database and sets the field values
+ * The recordingsTable represents the table of [RecordingEntity]s.
  * @author: Sabine Roth
  */
 

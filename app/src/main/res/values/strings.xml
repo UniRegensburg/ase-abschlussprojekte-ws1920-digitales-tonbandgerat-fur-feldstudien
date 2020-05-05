@@ -16,20 +16,7 @@
     <string name="splash_img_desc">Splash Logo</string>
 
     <!--Onboarding-->
-    <string-array name="onboarding_titles">
-        <item>Recording</item>
-        <item>Saving Files</item>
-        <item>Organization</item>
-        <item>Editing</item>
-        <item>Settings</item>
-    </string-array>
-    <string-array name="onboarding_descriptions">
-        <item>Start, pause and resume recordings. Highlight specific positions in recordings with customizable markers.</item>
-        <item>Choose an individual name and storage location. Attach up to three customizable labels for organizing.</item>
-        <item>Sort, filter and share your recordings or organize them by creating folders and subfolders.</item>
-        <item>Cut out unneeded parts. Add, delete and attach comments to marks.</item>
-        <item>Customize labels, markers and default values. Enable rotation so the microphone is facing the interviewee.</item>
-    </string-array>
+    <string name="text_skip_button">Skip</string>
 
     <!-- Categories Preferences-->
     <string name="preference_labels_marks_key">labels_and_marks_category</string>
@@ -181,6 +168,7 @@
     <!-- Rename recordings dialog -->
     <string name="rename_dialog_title">Rename recording</string>
     <string name="rename_dialog_error_already_exist">Duplication error. Choose an other name.</string>
+    <string name="rename_dialog_hint">New name</string>
 
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>

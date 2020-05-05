@@ -13,7 +13,12 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.material.snackbar.Snackbar
 import com.yashovardhan99.timeit.Stopwatch
 import de.ur.mi.audidroid.R
-import de.ur.mi.audidroid.models.*
+import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.RecordingEntity
+import de.ur.mi.audidroid.models.MarkerEntity
+import de.ur.mi.audidroid.models.LabelAssignmentEntity
+import de.ur.mi.audidroid.models.MarkTimestamp
+import de.ur.mi.audidroid.views.RecordFragment
 import de.ur.mi.audidroid.utils.QuitRecordingDialog
 import java.io.File
 import java.io.IOException
@@ -23,7 +28,7 @@ import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 /**
- * The ViewModel handles the changes to the view's data and the event logic for the user interaction referring to the RecordFragment
+ * The ViewModel handles the changes to the view's data and the event logic for the user interaction referring to the [RecordFragment]
  * @author: Sabine Roth
  */
 
@@ -46,7 +51,7 @@ class RecordViewModel(
     var isRecording = MutableLiveData<Boolean>()
     var buttonsVisible = MutableLiveData<Boolean>()
     val res: Resources = context.resources
-    lateinit var stopwatchTextView: TextView
+    private lateinit var stopwatchTextView: TextView
     private val _createDialog = MutableLiveData<Boolean>()
     var errorMessage: String? = null
     val createDialog: MutableLiveData<Boolean>
@@ -145,7 +150,7 @@ class RecordViewModel(
         markEntry.add(markerEntity.uid.toString())
         markEntry.add(elapsedTimeInMilli.toString())
         markList.add(markEntry)
-        showSnackBarShort(R.string.mark_made)
+        Snackbar.make(frameLayout, R.string.mark_made, res.getInteger(R.integer.snackbar_quite_short)).show()
     }
 
     fun cancelRecord() {
@@ -301,25 +306,14 @@ class RecordViewModel(
         markList.clear()
     }
 
-    /**
-     * Returns the current date
-     * Adapted from: https://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html
-     */
-
     private fun getDate(): String {
         return SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
     }
 
-    /** Sends a snackbar for user information with the given [text] */
     private fun showSnackBar(text: Int) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
 
-    private fun showSnackBarShort(text: Int) {
-        Snackbar.make(frameLayout, text, res.getInteger(R.integer.snackbar_quite_short)).show()
-    }
-
-    /** Resets stopwatch to 00:00 */
     private fun resetStopwatch() {
         stopwatch.stop()
         stopwatchTextView.text = res.getString(R.string.start_time)

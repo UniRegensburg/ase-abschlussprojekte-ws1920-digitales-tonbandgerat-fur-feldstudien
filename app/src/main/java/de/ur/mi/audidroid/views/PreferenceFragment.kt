@@ -15,11 +15,16 @@ import de.ur.mi.audidroid.utils.Pathfinder
 import de.ur.mi.audidroid.utils.ThemeHelper
 import java.util.regex.Pattern
 
+
+/**
+ * The user can select preferences in the settings
+ * @author: Jonas Puchinger, Sabine Roth
+ */
+
 class PreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-
         initRotatePreference()
         initLabelsPreference()
         initMarkersPreference()
@@ -31,7 +36,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     private fun initRotatePreference() {
         val rotatePreference =
             findPreference<SwitchPreference>(getString(R.string.rotate_preference_key))!!
-        val preferences = context!!.getSharedPreferences(
+        val preferences = requireContext().getSharedPreferences(
             getString(R.string.rotate_preference_key),
             Context.MODE_PRIVATE
         )
@@ -41,7 +46,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                     putBoolean(getString(R.string.rotate_preference_key), newValue as Boolean)
                     commit()
                 }
-                OrientationListener.adjustRotationListener(context!!)
+                OrientationListener.adjustRotationListener(requireContext())
                 true
             }
     }
@@ -51,7 +56,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             findPreference<Preference>(getString(R.string.labels_preference_key))!!
         labelsPreference.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
-                view!!.findNavController().navigate(R.id.action_global_editLabelsFragment)
+                requireView().findNavController().navigate(R.id.action_global_editLabelsFragment)
                 true
             }
     }
@@ -61,7 +66,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             findPreference<Preference>(getString(R.string.markers_preference_key))!!
         markersPreference.onPreferenceClickListener =
             Preference.OnPreferenceClickListener {
-                view!!.findNavController().navigate(R.id.action_global_editMarkersFragment)
+                requireView().findNavController().navigate(R.id.action_global_editMarkersFragment)
                 true
             }
     }
@@ -74,7 +79,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
             Preference.OnPreferenceChangeListener { _, newValue ->
                 val input = newValue.toString()
                 var closeDialog = true
-                if (input.length > context!!.resources.getInteger(R.integer.max_name_length)) {
+                if (input.length > requireContext().resources.getInteger(R.integer.max_name_length)) {
                     fileNamePreference.dialogMessage =
                         resources.getString(R.string.dialog_name_length)
                     closeDialog = false
@@ -86,7 +91,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                     fileNamePreference.dialogMessage =
                         resources.getString(R.string.filename_preference_dialog_message)
                     closeDialog = true
-                    val preferences = context!!.getSharedPreferences(
+                    val preferences = requireContext().getSharedPreferences(
                         getString(R.string.filename_preference_key),
                         Context.MODE_PRIVATE
                     )
@@ -97,7 +102,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
                 }
                 if (!closeDialog) {
                     Snackbar.make(
-                        view!!,
+                        requireView(),
                         resources.getString(R.string.filename_not_saved),
                         Snackbar.LENGTH_LONG
                     ).show()
@@ -124,7 +129,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
         val storagePreference =
             findPreference<Preference>(getString(R.string.storage_preference_key))!!
         storagePreference.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            Pathfinder.openPathDialog(storagePreference, context!!, "PreferenceFragment")
+            Pathfinder.openPathDialog(storagePreference, requireContext(), "PreferenceFragment")
             true
         }
         storagePreference.summary = getSummary()
@@ -159,7 +164,7 @@ class PreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun getSummary(): String {
-        val preferences = context!!.getSharedPreferences(
+        val preferences = requireContext().getSharedPreferences(
             getString(R.string.storage_preference_key),
             Context.MODE_PRIVATE
         )

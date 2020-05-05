@@ -8,7 +8,7 @@ import androidx.room.Query
 
 /**
  * DAO for the [FolderAssignmentEntity]
- * @author: Sabine Roth
+ * @author: Sabine Roth, Theresa Strohmeier, Jonas Puchinger
  */
 
 @Dao

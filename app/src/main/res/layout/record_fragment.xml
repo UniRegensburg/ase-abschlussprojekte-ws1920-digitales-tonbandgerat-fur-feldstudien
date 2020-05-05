@@ -124,8 +124,6 @@
                     tools:listitem="@layout/marker_button" />
 
             </LinearLayout>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </FrameLayout>
 </layout>

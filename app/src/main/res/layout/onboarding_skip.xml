@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="?android:attr/borderlessButtonStyle"
     android:id="@+id/onboarding_skip"
+    style="?android:attr/borderlessButtonStyle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="skip"
     android:layout_gravity="bottom|center_horizontal"
     android:layout_margin="5dp"
     android:backgroundTint="@color/color_primary"
-    android:textColor="@color/color_surface"
     android:padding="0dp"
-    android:textStyle="normal"/>
-
+    android:text="@string/text_skip_button"
+    android:textColor="@color/color_surface"
+    android:textStyle="normal" />

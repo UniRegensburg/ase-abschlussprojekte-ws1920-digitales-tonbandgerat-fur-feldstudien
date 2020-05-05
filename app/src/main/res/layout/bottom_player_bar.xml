@@ -38,10 +38,10 @@
             android:layout_marginStart="@dimen/keyline_5"
             android:layout_marginBottom="@dimen/bar_margin_bottom"
             android:background="@drawable/ic_replay_5"
-            android:padding="@dimen/keyline_4"
             android:backgroundTint="@color/color_on_surface"
             android:contentDescription="@string/player_bar_return_playing"
-            android:onClick="@{() -> playerBarListener.returnPlaying()}"/>
+            android:onClick="@{() -> playerBarListener.returnPlaying()}"
+            android:padding="@dimen/keyline_4" />
 
         <ImageButton
             android:id="@+id/bar_skip_playing"
@@ -50,11 +50,11 @@
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/keyline_5"
             android:layout_marginBottom="@dimen/bar_margin_bottom"
-            android:padding="@dimen/keyline_4"
             android:background="@drawable/ic_forward_5"
             android:backgroundTint="@color/color_on_surface"
             android:contentDescription="@string/player_bar_skip_playing"
-            android:onClick="@{() -> playerBarListener.skipPlaying()}"/>
+            android:onClick="@{() -> playerBarListener.skipPlaying()}"
+            android:padding="@dimen/keyline_4" />
 
         <ImageButton
             android:id="@+id/bar_fast_rewind"
@@ -63,11 +63,11 @@
             android:layout_gravity="bottom"
             android:layout_marginStart="@dimen/bar_margin_image"
             android:layout_marginBottom="@dimen/bar_margin_bottom"
-            android:padding="@dimen/keyline_4"
             android:background="@drawable/ic_fast_rewind"
             android:backgroundTint="@color/color_on_surface"
             android:contentDescription="@string/player_bar_return_playing"
-            android:onClick="@{() -> playerBarListener.fastRewind()}"/>
+            android:onClick="@{() -> playerBarListener.fastRewind()}"
+            android:padding="@dimen/keyline_4" />
 
         <ImageButton
             android:id="@+id/bar_fast_forward"
@@ -76,11 +76,11 @@
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="@dimen/bar_margin_image"
             android:layout_marginBottom="@dimen/bar_margin_bottom"
-            android:padding="@dimen/keyline_4"
             android:background="@drawable/ic_fast_forward"
             android:backgroundTint="@color/color_on_surface"
             android:contentDescription="@string/player_bar_skip_playing"
-            android:onClick="@{() -> playerBarListener.fastForward()}"/>
+            android:onClick="@{() -> playerBarListener.fastForward()}"
+            android:padding="@dimen/keyline_4" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"

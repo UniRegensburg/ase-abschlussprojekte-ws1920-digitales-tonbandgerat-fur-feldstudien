@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import de.ur.mi.audidroid.R
 
 /**
- * The PermissionHelper checks if required permissions were given and creates an dialog using the Dialog object if they weren't.
+ * The [PermissionHelper] checks if required permissions were given and creates an dialog using [PermissionDialog] if they weren't.
  * @author: Sabine Roth
  */
 
@@ -23,7 +23,6 @@ object PermissionHelper {
     private val firstRequest = Resources.getSystem().getString(android.R.string.ok)
 
     fun permissionsGranted(context: Context): String? {
-
         if (ContextCompat.checkSelfPermission(
                 context,
                 recordPermission
@@ -35,9 +34,7 @@ object PermissionHelper {
                 readPermission
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            /** Permission/s not granted */
             when {
-                /** Permission have been denied */
                 ActivityCompat.shouldShowRequestPermissionRationale(
                     context as Activity,
                     recordPermission
@@ -56,7 +53,6 @@ object PermissionHelper {
                 ) -> {
                     permissionsResult = readPermission
                 }
-                /** Not asked yet */
                 else -> {
                     permissionsResult = firstRequest
                 }

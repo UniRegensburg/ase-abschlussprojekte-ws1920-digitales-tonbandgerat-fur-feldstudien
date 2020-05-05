@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!--Top level DayNight theme to be used in AndroidManifest.xml-->
-    <style name="AudidroidTheme.DayNight" parent="Base.AudidroidTheme"/>
+    <style name="AudidroidTheme.DayNight" parent="Base.AudidroidTheme" />
 
     <!--Base custom theme which will be shared between both light and dark theme variants-->
     <style name="Base.AudidroidTheme" parent="Base.MaterialThemeBuilder">
@@ -38,13 +38,20 @@
         <item name="textAppearanceOverline">@style/TextAppearance.AudidroidTheme.Overline</item>
 
         <!--Material shape attributes-->
-        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.AudidroidTheme.SmallComponent</item>
-        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.AudidroidTheme.MediumComponent</item>
-        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.AudidroidTheme.LargeComponent</item>
+        <item name="shapeAppearanceSmallComponent">
+            @style/ShapeAppearance.AudidroidTheme.SmallComponent
+        </item>
+        <item name="shapeAppearanceMediumComponent">
+            @style/ShapeAppearance.AudidroidTheme.MediumComponent
+        </item>
+        <item name="shapeAppearanceLargeComponent">
+            @style/ShapeAppearance.AudidroidTheme.LargeComponent
+        </item>
 
         <!--Component styles-->
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.AudidroidTheme.Dialog.Alert</item>
-        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.AudidroidTheme.BottomSheetDialog</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.AudidroidTheme.BottomSheetDialog
+        </item>
         <item name="navigationViewStyle">@style/Widget.AudidroidTheme.NavigationView</item>
         <item name="toolbarStyle">@style/Widget.MaterialComponents.Toolbar.PrimarySurface</item>
     </style>
@@ -58,7 +65,9 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor">?android:colorBackground</item>
         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
-        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">?colorControlHighlight</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">
+            ?colorControlHighlight
+        </item>
 
         <!--Remap legacy AppCompat attributes to MaterialComponent attributes-->
         <item name="colorPrimaryDark">?colorPrimaryVariant</item>

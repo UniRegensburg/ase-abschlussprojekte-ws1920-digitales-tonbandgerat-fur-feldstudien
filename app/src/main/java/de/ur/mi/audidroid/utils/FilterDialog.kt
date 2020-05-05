@@ -24,7 +24,7 @@ object FilterDialog {
     private lateinit var context: Context
     private var selectedLabels = ArrayList<String>()
     private var selectedMarks = ArrayList<String>()
-    private var nameInput : String? = null
+    private var nameInput: String? = null
     private lateinit var fragment: FilesFragment
     private lateinit var labelEntities: List<LabelEntity>
     private lateinit var markEntities: List<MarkerEntity>
@@ -40,25 +40,28 @@ object FilterDialog {
         this.viewModel = viewModel
         this.context = context
         val builder = MaterialAlertDialogBuilder(context).setView(layoutId)
-        with(builder){
-            setPositiveButton(context.getString(R.string.menu_filter)){_, _ ->
-                nameInput = dialog.findViewById<EditText>(R.id.dialog_filter_recording_edittext_name)!!.text.toString()
+        with(builder) {
+            setPositiveButton(context.getString(R.string.menu_filter)) { _, _ ->
+                nameInput =
+                    dialog.findViewById<EditText>(R.id.dialog_filter_recording_edittext_name)!!.text.toString()
                 viewModel.setFilterResult(selectedLabels, selectedMarks, nameInput)
                 cancelDialog()
             }
-            setNegativeButton(R.string.filter_clear){_,_->
+            setNegativeButton(R.string.filter_clear) { _, _ ->
                 cancelDialog()
                 clearDialog()
                 viewModel.clearFilter()
             }
         }
-
         dataSource.getAllLabels().observe(fragment, Observer { getLabels(it) })
         dataSource.getAllMarkers().observe(fragment, Observer { getMarks(it) })
         dialog = builder.create()
         dialog.setOnCancelListener { cancelDialog() }
         dialog.show()
-        nameInput?.let { dialog.findViewById<EditText>(R.id.dialog_filter_recording_edittext_name)!!.setText(nameInput) }
+        nameInput?.let {
+            dialog.findViewById<EditText>(R.id.dialog_filter_recording_edittext_name)!!
+                .setText(nameInput)
+        }
     }
 
     private fun getMarks(list: List<MarkerEntity>) {
@@ -88,33 +91,35 @@ object FilterDialog {
         val chip = Chip(context)
         with(chip) {
             text = name
-            if (type == R.integer.chip_type_label){
+            if (type == R.integer.chip_type_label) {
                 chipBackgroundColor = setChipBackground(selectedLabels.contains(name))
                 setTextColor(setChipTextColor(selectedLabels.contains(name)))
                 setOnClickListener {
-                    labelClicked(chip) }
-            }else{
+                    labelClicked(chip)
+                }
+            } else {
                 chipBackgroundColor = setChipBackground(selectedMarks.contains(name))
                 setTextColor(setChipTextColor(selectedMarks.contains(name)))
                 setOnClickListener {
-                    markClicked(chip) }
+                    markClicked(chip)
+                }
             }
         }
         return chip
     }
 
-    private fun setChipBackground(preSelected: Boolean):ColorStateList{
-        return if (preSelected){
+    private fun setChipBackground(preSelected: Boolean): ColorStateList {
+        return if (preSelected) {
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
-        }else{
+        } else {
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
         }
     }
 
-    private fun setChipTextColor(preSelected: Boolean): ColorStateList{
-        return if (preSelected){
+    private fun setChipTextColor(preSelected: Boolean): ColorStateList {
+        return if (preSelected) {
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_on_primary))
-        }else{
+        } else {
             ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_on_background))
         }
     }
@@ -201,13 +206,13 @@ object FilterDialog {
         selectedMarks.remove((clickedMark).text.toString())
     }
 
-    fun clearDialog(){
+    fun clearDialog() {
         selectedLabels.clear()
         selectedMarks.clear()
         nameInput = null
     }
 
-    private fun cancelDialog(){
+    private fun cancelDialog() {
         viewModel.cancelFilterDialog()
     }
 }

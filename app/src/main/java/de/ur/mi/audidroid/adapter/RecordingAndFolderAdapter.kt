@@ -24,7 +24,6 @@ import de.ur.mi.audidroid.viewmodels.FilesViewModel
 import kotlinx.android.synthetic.main.folder_item.view.*
 import kotlinx.android.synthetic.main.recording_item.view.*
 
-
 /**
  * Adapter for the [RecyclerView] in [FilesFragment].
  * The adapter connects the data to the RecyclerView.
