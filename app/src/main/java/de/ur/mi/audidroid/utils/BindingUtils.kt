@@ -1,10 +1,12 @@
 package de.ur.mi.audidroid.utils
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -34,6 +36,8 @@ private fun createChip(context: Context, name: String): Chip {
     with(chip) {
         text = name
         isClickable = false
+        chipBackgroundColor =
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.chip_background))
     }
     return chip
 }

@@ -4,6 +4,7 @@
     <integer name="counter_divider_minutes_hours">60</integer>
     <integer name="counter_multiplier">1000</integer>
     <integer name="one_second">1000</integer>
+    <integer name="activity_request_code_onboarding">70</integer>
     <integer name="request_code_preference_storage_record_fragment">80</integer>
     <integer name="request_code_preference_storage_edit_recording_fragment">90</integer>
     <integer name="request_code_preference_storage_preference_fragment">100</integer>
@@ -13,8 +14,14 @@
     <integer name="snackbar_quite_short">700</integer>
     <integer name="max_label_size">3</integer>
     <integer name="sort_by_name">0</integer>
+    <integer name="sort_by_name_asc">0</integer>
+    <integer name="sort_by_name_desc">0</integer>
     <integer name="sort_by_date">1</integer>
+    <integer name="sort_by_date_asc">1</integer>
+    <integer name="sort_by_date_desc">1</integer>
     <integer name="sort_by_duration">2</integer>
+    <integer name="sort_by_duration_asc">2</integer>
+    <integer name="sort_by_duration_desc">2</integer>
     <integer name="chip_type_label">0</integer>
     <integer name="chip_type_mark">1</integer>
 </resources>

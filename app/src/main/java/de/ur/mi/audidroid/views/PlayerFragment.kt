@@ -1,11 +1,13 @@
 package de.ur.mi.audidroid.views
 
 import android.app.Application
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -86,6 +88,8 @@ class PlayerFragment : Fragment() {
         with(chip) {
             text = name
             isClickable = false
+            chipBackgroundColor =
+                ColorStateList.valueOf(ContextCompat.getColor(context, R.color.chip_background))
         }
         return chip
     }
