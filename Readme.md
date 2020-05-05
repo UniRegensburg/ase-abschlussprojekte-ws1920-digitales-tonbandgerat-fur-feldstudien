@@ -32,9 +32,9 @@ Theresa Strohmeier, theresa.strohmeier@stud.uni-regensburg.de, @TheresaStrohmeie
 
 | Recording | Saving |  Organisation |
 |:-:|:-:|:-:|
-| ![1](requirements/Screenshots/rec.jpg) | ![2](requirements/Screenshots/save.jpg) | ![3](requirements/Screenshots/files.png) |
+| <img src="requirements/Screenshots/rec.jpg" width=200 /> | <img src="requirements/Screenshots/save.jpg" width=200 /> | <img src="requirements/Screenshots/files.png" width=200 /> |
 | Playback | Editing |  Settings |
-| ![4](requirements/Screenshots/play.jpg) | ![5](requirements/Screenshots/edit.jpg) | ![6](requirements/Screenshots/settings.jpg) |
+| <img src="requirements/Screenshots/play.jpg" width=200 /> | <img src="requirements/Screenshots/edit.jpg" width=200 /> | <img src="requirements/Screenshots/settings.jpg" width=200 /> |
 
 The following features are implemented:
 
