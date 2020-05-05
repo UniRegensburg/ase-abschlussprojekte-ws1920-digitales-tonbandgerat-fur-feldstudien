@@ -19,7 +19,7 @@ Technical information for Audidroid can be found [here](./docs/Setup.md), and a 
 Initial mockups and requirements for the app can be found [here](./requirements/mockups), tests of comparable existing apps can be found [here](./requirements/App-Tests), and interviews with potential users can be found [here](./requirements/Interviews).
 
 
-## Team
+## 🚀 Team
 
 Sabine Roth, sabine.roth@stud.uni-regensburg.de, @SabiRoth
 
@@ -28,7 +28,13 @@ Jonas Puchinger, jonas.puchinger@stud.uni-regensburg.de, @JonasPuchinger
 Theresa Strohmeier, theresa.strohmeier@stud.uni-regensburg.de, @TheresaStrohmeier
 
 
-## Description
+## 🌟 Description
+
+| Recording | Saving |  Organisation |
+|:-:|:-:|:-:|
+| ![1](requirements/Screenshots/rec.jpg) | ![2](requirements/Screenshots/save.jpg) | ![3](requirements/Screenshots/files.png) |
+| Playback | Editing |  Settings |
+| ![4](requirements/Screenshots/play.jpg) | ![5](requirements/Screenshots/edit.jpg) | ![6](requirements/Screenshots/settings.jpg) |
 
 The following features are implemented:
 
