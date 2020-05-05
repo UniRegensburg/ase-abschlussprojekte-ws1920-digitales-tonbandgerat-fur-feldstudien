@@ -131,7 +131,9 @@ class FilesFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_files, menu)
-        val searchItem = menu.findItem(R.id.action_search)
+
+        val searchItem: MenuItem = menu.findItem(R.id.action_search)
+
         val searchView = searchItem.actionView as SearchView
         val sortItem = menu.findItem(R.id.action_sort)
 
@@ -169,19 +171,28 @@ class FilesFragment : Fragment() {
                 filesViewModel._createFilterDialog.value = true
                 true
             }
-            R.id.action_sort_name -> {
-                filesViewModel._sortMode.value =
-                    requireContext().resources.getInteger(R.integer.sort_by_name)
+            R.id.action_sort_name_asc -> {
+                filesViewModel._sortMode.value = R.integer.sort_by_name_asc
                 true
             }
-            R.id.action_sort_date -> {
-                filesViewModel._sortMode.value =
-                    requireContext().resources.getInteger(R.integer.sort_by_date)
+            R.id.action_sort_name_desc -> {
+                filesViewModel._sortMode.value = R.integer.sort_by_name_desc
                 true
             }
-            R.id.action_sort_duration -> {
-                filesViewModel._sortMode.value =
-                    requireContext().resources.getInteger(R.integer.sort_by_duration)
+            R.id.action_sort_date_asc -> {
+                filesViewModel._sortMode.value = R.integer.sort_by_date_asc
+                true
+            }
+            R.id.action_sort_date_desc -> {
+                filesViewModel._sortMode.value = R.integer.sort_by_date_desc
+                true
+            }
+            R.id.action_sort_duration_asc -> {
+                filesViewModel._sortMode.value = R.integer.sort_by_duration_asc
+                true
+            }
+            R.id.action_sort_duration_desc -> {
+                filesViewModel._sortMode.value = R.integer.sort_by_duration_desc
                 true
             }
             else -> super.onOptionsItemSelected(item)

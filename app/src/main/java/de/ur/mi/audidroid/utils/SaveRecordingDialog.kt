@@ -173,7 +173,7 @@ object SaveRecordingDialog {
                 ColorStateList.valueOf(
                     ContextCompat.getColor(
                         SaveRecordingDialog.context,
-                        R.color.grayed_out
+                        R.color.chip_background
                     )
                 )
             setTextColor(
@@ -221,7 +221,7 @@ object SaveRecordingDialog {
 
     private fun removeClickedLabel(clickedLabel: Chip) {
         clickedLabel.chipBackgroundColor =
-            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.chip_background))
         clickedLabel.setTextColor(
             ColorStateList.valueOf(
                 ContextCompat.getColor(

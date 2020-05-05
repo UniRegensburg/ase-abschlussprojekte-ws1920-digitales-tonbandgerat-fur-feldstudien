@@ -46,10 +46,10 @@ object FilterDialog {
                 viewModel.setFilterResult(selectedLabels, selectedMarks, nameInput)
                 cancelDialog()
             }
-            setNegativeButton(R.string.dialog_cancel_button_text){_,_->
+            setNegativeButton(R.string.filter_clear){_,_->
                 cancelDialog()
                 clearDialog()
-                viewModel.setFilterResult(selectedLabels, selectedMarks, null)
+                viewModel.clearFilter()
             }
         }
 
@@ -104,18 +104,18 @@ object FilterDialog {
     }
 
     private fun setChipBackground(preSelected: Boolean):ColorStateList{
-        if (preSelected){
-            return ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
+        return if (preSelected){
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_primary))
         }else{
-            return ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grayed_out))
         }
     }
 
     private fun setChipTextColor(preSelected: Boolean): ColorStateList{
-        if (preSelected){
-            return   ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_on_primary))
+        return if (preSelected){
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_on_primary))
         }else{
-            return  ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_on_background))
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.color_on_background))
         }
     }
 
@@ -206,6 +206,7 @@ object FilterDialog {
         selectedMarks.clear()
         nameInput = null
     }
+
     private fun cancelDialog(){
         viewModel.cancelFilterDialog()
     }
