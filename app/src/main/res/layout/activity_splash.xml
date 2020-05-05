@@ -6,4 +6,4 @@
 
     tools:context=".views.SplashActivity">
 
-</androidx.coordinatorlayout.widget.ConstraintLayout >
+</androidx.coordinatorlayout.widget.ConstraintLayout>

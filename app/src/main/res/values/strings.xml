@@ -15,6 +15,22 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="splash_img_desc">Splash Logo</string>
 
+    <!--Onboarding-->
+    <string-array name="onboarding_titles">
+        <item>Recording</item>
+        <item>Saving Files</item>
+        <item>Organization</item>
+        <item>Editing</item>
+        <item>Settings</item>
+    </string-array>
+    <string-array name="onboarding_descriptions">
+        <item>Start, pause and resume recordings. Highlight specific positions in recordings with customizable markers.</item>
+        <item>Choose an individual name and storage location. Attach up to three customizable labels for organizing.</item>
+        <item>Sort, filter and share your recordings or organize them by creating folders and subfolders.</item>
+        <item>Cut out unneeded parts. Add, delete and attach comments to marks.</item>
+        <item>Customize labels, markers and default values. Enable rotation so the microphone is facing the interviewee.</item>
+    </string-array>
+
     <!-- Categories Preferences-->
     <string name="preference_labels_marks_key">labels_and_marks_category</string>
     <string name="preference_labels_marks_title">Labels and Marks</string>
@@ -44,6 +60,7 @@
     <string name="rotate_preference_key">rotate_preference</string>to use
     <string name="rotate_preference_title">Upside-down view is enabled to improve recording quality</string>
     <string name="rotate_preference_summary">\'Auto-rotate\' has to be activated in the settings of the device</string>
+    <string name="onboarding_preference_key">onboarding_preference</string>
 
     <!-- Navigation -->
     <string name="record_label">Record</string>
@@ -88,7 +105,7 @@
     <string name="sample_comment">Sample comment</string>
     <string name="sample_mark">Mark</string>
     <string name="mark_deleted">Mark deleted</string>
-    <string name="cancel_editing">Do you really want to delete the edited recording?</string>
+    <string name="cancel_editing">Do you really want to delete all changes?</string>
     <string name="wave_pic">WavePic</string>
     <string name="filename_trimmed_recording">(trimmed)_ </string>
 
