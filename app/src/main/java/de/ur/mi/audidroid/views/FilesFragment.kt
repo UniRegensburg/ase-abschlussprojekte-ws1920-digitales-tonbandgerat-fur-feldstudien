@@ -7,12 +7,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
-import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
@@ -49,7 +49,9 @@ class FilesFragment : Fragment() {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.files_fragment, container, false)
 
+
         val application = requireActivity().application
+
         dataSource = Repository(application)
 
         val viewModelFactory = FilesViewModelFactory(dataSource, application)
@@ -130,8 +132,23 @@ class FilesFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_files, menu)
 
-        /*val searchItem: MenuItem = menu.findItem(R.id.action_search)
+        val searchItem: MenuItem = menu.findItem(R.id.action_search)
+
         val searchView = searchItem.actionView as SearchView
+        val sortItem = menu.findItem(R.id.action_sort)
+
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                sortItem.isVisible = false
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                sortItem.isVisible = true
+                return true
+            }
+        })
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -145,11 +162,15 @@ class FilesFragment : Fragment() {
                 }
                 return true
             }
-        })*/
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.action_filter -> {
+                filesViewModel._createFilterDialog.value = true
+                true
+            }
             R.id.action_sort_name_asc -> {
                 filesViewModel._sortMode.value = R.integer.sort_by_name_asc
                 true

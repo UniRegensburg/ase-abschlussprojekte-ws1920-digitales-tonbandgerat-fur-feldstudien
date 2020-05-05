@@ -193,6 +193,7 @@
     <string name="menu_sort_desc">Descending</string>
     <string name="menu_sort_asc">Ascending</string>
     <string name="menu_search">Search</string>
+    <string name="menu_search_hint">Search...</string>
     <string name="menu_filter">Filter</string>
     <string name="dialog_filter_name_hint">Filter by name</string>
     <string name="filter_no_results">No results found. Try broadening your filters.</string>

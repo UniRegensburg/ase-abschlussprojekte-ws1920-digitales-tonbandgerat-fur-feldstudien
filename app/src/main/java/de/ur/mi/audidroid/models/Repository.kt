@@ -177,6 +177,20 @@ class Repository(application: Application) : CoroutineScope {
         return list!!
     }
 
+    fun getRecordingsOutsideFolder(): LiveData<List<RecordingAndLabels>> {
+        var list: LiveData<List<RecordingAndLabels>>? = null
+        runBlocking {
+            CoroutineScope(coroutineContext).launch {
+                list = folderAssignmentDao.getAllRecordingsOutsideFolder()
+            }
+        }
+        return list!!
+    }
+
+    fun getAllRecordingsWithLabels(): LiveData<List<RecordingAndLabels>> {
+        return labelDao.getAllRecordingsWithLabels()
+    }
+
     /** Markers */
 
     fun insertMarker(markerEntity: MarkerEntity) {

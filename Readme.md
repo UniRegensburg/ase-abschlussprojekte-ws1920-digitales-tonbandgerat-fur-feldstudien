@@ -44,7 +44,7 @@ The following features are implemented:
 
 - Searchable, filterable and sortable view of all recorded files. File organisation via custom folder structures.
 
-<div style="text-align:center"><img src="requirements/Screenshots/list.jpg" width=200 /></div>
+<div style="text-align:center"><img src="requirements/Screenshots/files.png" width=200 /></div>
 
 - Playback of recorded files. Skipping forward and backward, or also to marked positions. Changing the playback speed.
 
