@@ -7,13 +7,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
-import androidx.core.view.MenuItemCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-
 import androidx.appcompat.widget.SearchView
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
