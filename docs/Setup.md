@@ -5,7 +5,7 @@ The default action gets triggered by a push into the master branch.
 This action calls the defined unit tests, static code analysis, and, given the successful passing of these tests, generates an APK, which represents the current implementation of the app, for download.
 Given the need, the action can also create a release of the software.
 
-The app can be used in its entirety with a physical Android device (Android 7.0 Nougat +) with a working microphone.
+The app can be used in its entirety with a physical Android device (Android 7.0 Nougat +) with a working microphone (internal or external).
 The app uses the following permissions:
 
 - android.permission.RECORD_AUDIO

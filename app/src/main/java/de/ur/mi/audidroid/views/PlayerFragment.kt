@@ -4,7 +4,6 @@ package de.ur.mi.audidroid.views
 import android.app.Application
 import android.os.Bundle
 import android.view.*
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +19,7 @@ import de.ur.mi.audidroid.adapter.MarkItemAdapter
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.HandlePlayerBar
+import de.ur.mi.audidroid.utils.PlayerBarListener
 import de.ur.mi.audidroid.viewmodels.PlayerViewModel
 import kotlinx.android.synthetic.main.player_fragment.*
 
@@ -41,18 +41,18 @@ class PlayerFragment : Fragment() {
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
-        val application = this.activity!!.application
+        val application = this.requireActivity().application
         val dataSource = Repository(application)
 
-        args = PlayerFragmentArgs.fromBundle(arguments!!)
-        val handlePlayerBar = initHandler()
+        args = PlayerFragmentArgs.fromBundle(requireArguments())
+
         val viewModelFactory =
-            PlayerViewModelFactory(args.recordingId, dataSource, application, handlePlayerBar)
+            PlayerViewModelFactory(args.recordingId, dataSource, application)
 
         playerViewModel = ViewModelProvider(this, viewModelFactory).get(PlayerViewModel::class.java)
 
         binding.playerViewModel = playerViewModel
-        binding.handlePlayerBar = handlePlayerBar
+        binding.playerBarListener = initPlayerBarListener()
         binding.lifecycleOwner = this
         setHasOptionsMenu(true)
 
@@ -90,8 +90,8 @@ class PlayerFragment : Fragment() {
         return chip
     }
 
-    private fun initHandler(): HandlePlayerBar {
-        return object : HandlePlayerBar {
+    private fun initPlayerBarListener(): PlayerBarListener {
+        return object : PlayerBarListener {
             override fun pause() {
                 playerViewModel.onPausePlayer()
             }
@@ -106,6 +106,14 @@ class PlayerFragment : Fragment() {
 
             override fun returnPlaying() {
                 playerViewModel.returnPlaying()
+            }
+
+            override fun fastForward() {
+                playerViewModel.fastForward()
+            }
+
+            override fun fastRewind() {
+                playerViewModel.fastRewind()
             }
         }
     }
@@ -137,8 +145,18 @@ class PlayerFragment : Fragment() {
 
     private fun navigateToEditFragment() {
         this.findNavController().navigate(
-            PlayerFragmentDirections.actionPlayerToEdit(args.recordingId)
+            PlayerFragmentDirections.actionPlayerToEdit(
+                args.recordingId,
+                args.recordingName,
+                args.recordingPath
+            )
         )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        playerViewModel.fragmentOnPause()
+
     }
 
     /**
@@ -147,13 +165,12 @@ class PlayerFragment : Fragment() {
     class PlayerViewModelFactory(
         private val recordingId: Int,
         private val dataSource: Repository,
-        private val application: Application,
-        private val handlePlayerBar: HandlePlayerBar
+        private val application: Application
     ) : ViewModelProvider.Factory {
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(PlayerViewModel::class.java)) {
-                return PlayerViewModel(recordingId, dataSource, application, handlePlayerBar) as T
+                return PlayerViewModel(recordingId, dataSource, application) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

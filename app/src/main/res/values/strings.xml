@@ -83,8 +83,9 @@
     <!-- FilesFragment -->
     <string name="recording_file_name">Recording</string>
     <string name="popup_menu_button">Popup Menu</string>
-    <string name="popup_menu_option_delete">Delete</string>
+    <string name="popup_menu_option_rename">Rename</string>
     <string name="popup_menu_option_edit">Edit</string>
+    <string name="popup_menu_option_delete">Delete</string>
     <string name="recording_deleted">Recording \'%1$s\' deleted</string>
     <string name="no_recordings">No recordings saved</string>
     <string name="error_message_file_cannot_be_deleted">File cannot be deleted.</string>
@@ -96,14 +97,17 @@
     <string name="cut_inner_button">Cut inner</string>
     <string name="cut_outer_button">Cut outer</string>
     <string name="marks_text_view">Marks</string>
-    <string name="add_marks_button">Add mark</string>
+    <string name="show_markers_button">Hide markers</string>
+    <string name="hide_markers_button">Show markers</string>
     <string name="no_marks">No marks saved</string>
     <string name="recording_cut">Recording changed</string>
     <string name="error_message_cut">Cut recording failed</string>
     <string name="sample_comment">Sample comment</string>
     <string name="sample_mark">Mark</string>
     <string name="mark_deleted">Mark deleted</string>
+    <string name="cancel_editing">Do you really want to delete the edited recording?</string>
     <string name="wave_pic">WavePic</string>
+    <string name="filename_trimmed_recording">(trimmed)_ </string>
 
     <!-- RecorderFragment -->
     <string name="confirm_button">Confirm Button</string>
@@ -167,11 +171,16 @@
     <string name="dialog_save_recording_path_hint">Choose a path</string>
     <string name="dialog_save_recording_label">Labels</string>
     <string name="dialog_save_button_text">Save</string>
+    <string name="dialog_update_button_text">Update</string>
     <string name="dialog_cancel_button_text">Cancel</string>
     <string name="dialog_invalid_name">Just use letters, numbers and _-{}.</string>
     <string name="dialog_already_exist">Duplication error. Change the name or the path.</string>
     <string name="dialog_name_length">Enter a maximum of thirty characters.</string>
     <string name="dialog_just_three_labels">Select a maximum of three labels.</string>
+
+    <!-- Rename recordings dialog -->
+    <string name="rename_dialog_title">Rename recording</string>
+    <string name="rename_dialog_error_already_exist">Duplication error. Choose an other name.</string>
 
     <!-- Error messages recorder -->
     <string name="error_message_recorder_initialization">Recorder initialization failed. Try to restart the app.</string>
@@ -192,6 +201,16 @@
     <string name="default_storage_location">internal</string>
     <string name="error_storage_location">Choose an other location</string>
     <string name="external_sd_card_error">Saving on an external sd card is not possible</string>
+
+    <!--Organisation-->
+    <string name="action_sort_by">Sort</string>
+    <string name="popup_menu_sort_name">Name</string>
+    <string name="popup_menu_sort_date">Date</string>
+    <string name="popup_menu_sort_duration">Duration</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_filter">Filter</string>
+    <string name="dialog_filter_name_hint">Filter by name</string>
+    <string name="filter_no_results">No results found. Try broadening your filters.</string>
 
     <!--Sharing-->
     <string name="popup_menu_option_share">Share</string>
@@ -217,5 +236,19 @@
     <string name="default_marker_question">Question</string>
     <string name="default_marker_answer">Answer</string>
 
+    <!-- Folder management -->
+    <string name="folder_rename_folder">Rename folder</string>
+    <string name="folder_delete_folder">Delete folder</string>
+    <string name="folder_rename_title">Rename folder \'%1$s\'</string>
+    <string name="folder_delete_title">Delete folder \'%1$s\'</string>
+    <string name="folder_move">Move to folder</string>
+    <string name="folder_add_button_content_description">Add folder</string>
+    <string name="folder_dialog_title">Create folder</string>
+    <string name="folder_dialog_hint">Insert a name</string>
+    <string name="folder_dialog_ok">OK</string>
+    <string name="folder_dialog_error_no_name">Choose a name</string>
+    <string name="folder_icon">Folder icon</string>
+    <string name="folder_back_target_content_description">target for going back to parent folder</string>
+    <string name="folder_delete_message">Do you really want to delete the folder and all may contained files?</string>
 
 </resources>
