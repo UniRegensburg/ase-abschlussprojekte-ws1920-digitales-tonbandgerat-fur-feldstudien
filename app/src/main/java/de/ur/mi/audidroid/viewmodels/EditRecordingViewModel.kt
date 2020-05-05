@@ -7,6 +7,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Handler
 import android.text.format.DateUtils
+import android.util.Log
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
