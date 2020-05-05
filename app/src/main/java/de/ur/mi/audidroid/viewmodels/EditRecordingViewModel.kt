@@ -21,6 +21,14 @@ import com.arthenica.mobileffmpeg.Config
 import com.arthenica.mobileffmpeg.FFmpeg
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
+import de.ur.mi.audidroid.models.RecordingEntity
+import de.ur.mi.audidroid.models.LabelAssignmentEntity
+import de.ur.mi.audidroid.models.MarkAndTimestamp
+import de.ur.mi.audidroid.models.Repository
+import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
+import de.ur.mi.audidroid.models.MarkTimestamp
+import de.ur.mi.audidroid.models.MarkerEntity
+import de.ur.mi.audidroid.models.FolderAssignmentEntity
 import de.ur.mi.audidroid.utils.AudioEditor
 import de.ur.mi.audidroid.utils.ColorHelper
 import de.ur.mi.audidroid.utils.FFMpegCallback
@@ -31,13 +39,6 @@ import io.apptik.widget.MultiSlider.Thumb
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
-import de.ur.mi.audidroid.models.RecordingEntity
-import de.ur.mi.audidroid.models.LabelAssignmentEntity
-import de.ur.mi.audidroid.models.MarkAndTimestamp
-import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
-import de.ur.mi.audidroid.models.MarkTimestamp
-import de.ur.mi.audidroid.models.MarkerEntity
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
@@ -579,6 +580,15 @@ class EditRecordingViewModel(
                 )
             }
         }
+
+        val folderId = repository.getFolderOfRecording(recordingId)?.folderId
+        if(folderId != null){
+            Log.d("Hallo",""+folderId)
+            val folderAssignment =
+                FolderAssignmentEntity(0,copiedRecording,folderId)
+            repository.insertFolderAssignment(folderAssignment)
+        }
+
         repository.deleteRecLabels(recordingId)
         repository.deleteRecMarks(recordingId)
         repository.deleteRecording(recordingId)
