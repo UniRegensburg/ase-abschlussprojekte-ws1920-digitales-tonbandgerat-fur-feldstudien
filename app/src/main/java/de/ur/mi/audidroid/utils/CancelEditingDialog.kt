@@ -1,10 +1,15 @@
 package de.ur.mi.audidroid.utils
 
 import android.content.Context
+import android.content.DialogInterface
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 
+/**
+ * Dialog for cancel editing.
+ * @author Theresa Strohmeier
+ */
 object CancelEditingDialog {
 
     fun createDialog(context: Context, viewModel: EditRecordingViewModel) {
@@ -13,10 +18,10 @@ object CancelEditingDialog {
             setMessage(context.getString(R.string.cancel_editing))
             setPositiveButton(
                 R.string.delete
-            ) { _, _ ->
+            ) { _: DialogInterface, _: Int ->
                 viewModel.deleteEditedRecording()
             }
-            setNegativeButton(R.string.dialog_cancel_button_text) { _, _ ->
+            setNegativeButton(R.string.dialog_cancel_button_text) { _: DialogInterface, _: Int ->
                 viewModel.cancelDialog()
             }
         }

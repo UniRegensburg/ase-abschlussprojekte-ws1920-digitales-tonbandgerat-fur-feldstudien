@@ -3,7 +3,9 @@ package de.ur.mi.audidroid.views
 import android.app.Application
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.view.*
+import android.view.MenuItem
+import android.view.MenuInflater
+import android.view.Menu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,13 +21,12 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.MarkItemAdapter
 import de.ur.mi.audidroid.databinding.PlayerFragmentBinding
 import de.ur.mi.audidroid.models.Repository
-import de.ur.mi.audidroid.utils.HandlePlayerBar
 import de.ur.mi.audidroid.utils.PlayerBarListener
 import de.ur.mi.audidroid.viewmodels.PlayerViewModel
-import kotlinx.android.synthetic.main.player_fragment.*
+import kotlinx.android.synthetic.main.player_fragment.player_layout
 
 /**
- * The fragment allows the user to play a voice recording.
+ * The PlayerFragment allows the user to play a voice recording.
  * @author: Theresa Strohmeier
  */
 class PlayerFragment : Fragment() {
@@ -43,7 +44,7 @@ class PlayerFragment : Fragment() {
 
         binding =
             DataBindingUtil.inflate(inflater, R.layout.player_fragment, container, false)
-        val application = this.requireActivity().application
+        val application: Application = this.requireActivity().application
         val dataSource = Repository(application)
 
         args = PlayerFragmentArgs.fromBundle(requireArguments())
@@ -75,7 +76,7 @@ class PlayerFragment : Fragment() {
 
         playerViewModel.allLabels.observe(viewLifecycleOwner, Observer {
             it?.let {
-                for (i in it.indices) {
+                for (i: Int in it.indices) {
                     binding.labelChipGroup.addView(createChip(it[i].labelName))
                 }
             }
@@ -164,7 +165,7 @@ class PlayerFragment : Fragment() {
     }
 
     /**
-     * Provides the Repository, recordingId and context to the PlayerViewModel.
+     * Provides the Repository, recordingId and Application to the PlayerViewModel.
      */
     class PlayerViewModelFactory(
         private val recordingId: Int,

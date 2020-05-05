@@ -5,6 +5,10 @@ import com.arthenica.mobileffmpeg.Config
 import java.io.File
 import java.io.IOException
 
+/**
+ * AudioEditor cuts audio files.
+ * @author: Theresa Strohmeier
+ */
 class AudioEditor {
 
     private var audio: File? = null
@@ -58,9 +62,9 @@ class AudioEditor {
             return
         }
 
-        val outputLocation = getConvertedFile(outputPath, outputFileName)
+        val outputLocation: File = getConvertedFile(outputPath, outputFileName)
 
-        var cmd = arrayOf("")
+        var cmd: Array<String> = arrayOf("")
         if (type == "cutInner") {
             cmd = arrayOf(
                 "-i",
