@@ -154,5 +154,4 @@ class EditMarkersViewModel(dataSource: Repository, application: Application) :
     private fun showSnackBar(text: String) {
         Snackbar.make(frameLayout, text, Snackbar.LENGTH_LONG).show()
     }
-
 }

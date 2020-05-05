@@ -13,6 +13,10 @@ import com.google.android.material.chip.ChipGroup
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.RecordingAndLabels
 
+/**
+ * BindingAdapter for layout.
+ * @author: Theresa Strohmeier
+ */
 @BindingAdapter("labels")
 fun setLabels(view: ChipGroup, recording: RecordingAndLabels) {
     view.removeAllViews()
@@ -45,7 +49,7 @@ private fun createChip(context: Context, name: String): Chip {
 @BindingAdapter("markTime")
 fun TextView.setMarkTime(markTimeInMilli: Int) {
     markTimeInMilli.let {
-        val markTimeInSec = markTimeInMilli / 1000
+        val markTimeInSec:Int = markTimeInMilli / 1000
         text = DateUtils.formatElapsedTime(markTimeInSec.toLong())
     }
 }

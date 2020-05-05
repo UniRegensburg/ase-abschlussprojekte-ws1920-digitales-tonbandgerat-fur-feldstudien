@@ -1,6 +1,5 @@
 package de.ur.mi.audidroid.utils
 
-
 import android.content.Context
 import android.content.DialogInterface
 import android.content.res.ColorStateList
@@ -23,9 +22,14 @@ import de.ur.mi.audidroid.models.LabelEntity
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.viewmodels.EditRecordingViewModel
 import de.ur.mi.audidroid.views.EditRecordingFragment
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 import kotlin.collections.ArrayList
 
+/**
+ * Dialog for saving edited recording.
+ * @author Theresa Strohmeier
+ */
 object EditRecordingDialog {
 
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
@@ -78,7 +82,7 @@ object EditRecordingDialog {
 
     private fun prepareDataSourceAndDialog(errorMessage: String?) {
         dataSource.getRecLabelsById(recordingId!!).observe(fragment, Observer {
-            for (i in it.indices) {
+            for (i: Int in it.indices) {
                 previousLabels.add(it[i].labelName)
             }
             getAllLabels()
@@ -91,7 +95,7 @@ object EditRecordingDialog {
     }
 
     private fun initializeDialog(errorMessage: String?) {
-        pathTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_textview_path)!!
+        pathTextView = dialog.findViewById(R.id.dialog_save_recording_textview_path)!!
         if (previousPath.contains(context.packageName)) {
             pathTextView.text = context.getString(R.string.default_storage_location)
         } else {
@@ -112,7 +116,7 @@ object EditRecordingDialog {
         getRecordingName()
         if (errorMessage != null) {
             errorTextView =
-                dialog.findViewById<TextView>(R.id.dialog_save_recording_error_textview)!!
+                dialog.findViewById(R.id.dialog_save_recording_error_textview)!!
             errorTextView.text = errorMessage
             errorTextView.visibility = View.VISIBLE
         }
@@ -120,7 +124,7 @@ object EditRecordingDialog {
 
     private fun setDialogButtons(builder: MaterialAlertDialogBuilder) {
         with(builder) {
-            setPositiveButton(context.getString(R.string.dialog_update_button_text)) { _, _ ->
+            setPositiveButton(context.getString(R.string.dialog_update_button_text)) { _: DialogInterface, _: Int ->
                 val editText =
                     dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
                 if (editText.text.toString() == previousRecordingName) {
@@ -129,7 +133,7 @@ object EditRecordingDialog {
                     saveButtonClicked()
                 }
             }
-            setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
+            setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _: DialogInterface, _: Int ->
                 cancelSaving()
             }
         }
@@ -179,7 +183,7 @@ object EditRecordingDialog {
             updateTextView(context.getString(R.string.default_storage_location))
             return
         }
-        val realPath = Pathfinder.getRealPath(context, treePath)
+        val realPath: String? = Pathfinder.getRealPath(context, treePath)
         if (realPath == null) {
             Snackbar.make(
                 fragment.requireView(),
@@ -200,8 +204,8 @@ object EditRecordingDialog {
     private fun getLabels(list: List<LabelEntity>) {
         labelEntities = list
         if (list.isNotEmpty()) {
-            val chipGroup = dialog.findViewById<ChipGroup>(R.id.labelChipGroup)
-            for (label in list) {
+            val chipGroup: ChipGroup? = dialog.findViewById(R.id.labelChipGroup)
+            for (label: LabelEntity in list) {
                 chipGroup!!.addView(createChip(label.labelName))
             }
         } else dialog.findViewById<LinearLayout>(R.id.dialog_save_recording_label_layout)!!.visibility =
@@ -242,7 +246,7 @@ object EditRecordingDialog {
     }
 
     private fun labelClicked(clickedLabel: Chip) {
-        for (string in selectedLabels) {
+        for (string: String in selectedLabels) {
             if (string == (clickedLabel).text.toString()) {
                 removeClickedLabel(clickedLabel)
                 return
@@ -288,8 +292,8 @@ object EditRecordingDialog {
     private fun getLabelIdFromName(): ArrayList<Int>? {
         return if (selectedLabels.size != 0) {
             val labelIds = ArrayList<Int>()
-            for (item in selectedLabels) {
-                for (i in labelEntities) {
+            for (item: String in selectedLabels) {
+                for (i: LabelEntity in labelEntities) {
                     if (item == i.labelName) {
                         labelIds.add(i.uid)
                     }
@@ -300,7 +304,8 @@ object EditRecordingDialog {
     }
 
     private fun getRecordingName() {
-        val editText = dialog.findViewById<EditText>(R.id.dialog_save_recording_edittext_name)!!
+        val editText: EditText =
+            dialog.findViewById(R.id.dialog_save_recording_edittext_name)!!
         editText.setText(previousRecordingName)
         editText.setSelection(previousRecordingName.length)
         editText.addTextChangedListener(object : TextWatcher {
@@ -323,7 +328,7 @@ object EditRecordingDialog {
     }
 
     private fun checkVariables(nameParam: String): String {
-        var name = nameParam
+        var name: String = nameParam
         if (name.contains("{date}")) {
             name = name.replace(
                 "{date}", java.lang.String.format(

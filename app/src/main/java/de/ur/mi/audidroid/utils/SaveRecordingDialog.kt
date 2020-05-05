@@ -22,9 +22,9 @@ import de.ur.mi.audidroid.views.RecordFragment
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 /**
- * The Dialog object creates a dialog depending on the parameters.
+ * In the [SaveRecordingDialog] the user can choose a name, a path and the labels he want to add
+ * to the recording.
  * @author: Sabine Roth
  */
 
@@ -64,7 +64,7 @@ object SaveRecordingDialog {
     }
 
     private fun initializeDialog(errorMessage: String?) {
-        pathTextView = dialog.findViewById<TextView>(R.id.dialog_save_recording_textview_path)!!
+        pathTextView = dialog.findViewById(R.id.dialog_save_recording_textview_path)!!
         selectedPath = getStoragePreference()
         dialog.findViewById<ImageButton>(R.id.dialog_save_recording_path_button)!!
             .setOnClickListener {
@@ -73,7 +73,7 @@ object SaveRecordingDialog {
         getNamePreference()
         if (errorMessage != null) {
             errorTextView =
-                dialog.findViewById<TextView>(R.id.dialog_save_recording_error_textview)!!
+                dialog.findViewById(R.id.dialog_save_recording_error_textview)!!
             errorTextView.text = errorMessage
             errorTextView.visibility = View.VISIBLE
         }

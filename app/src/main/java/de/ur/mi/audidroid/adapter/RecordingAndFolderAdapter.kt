@@ -26,9 +26,10 @@ import kotlinx.android.synthetic.main.recording_item.view.*
 
 /**
  * Adapter for the [RecyclerView] in [FilesFragment].
- * The adapter connects the data to the RecyclerView. It adapts the data so that it
- * can be displayed in a ViewHolder. Recordings and folders were handled separately.
- * @author: Theresa Strohmeier, Sabine Roth
+ * The adapter connects the data to the RecyclerView.
+ * It adapts the data so that it can be displayed in a ViewHolder.
+ * Recordings and folders were handled separately.
+ * @author: Theresa Strohmeier, Sabine Roth, Jonas Puchinger
  */
 
 class RecordingAndFolderAdapter(

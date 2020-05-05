@@ -1,11 +1,15 @@
 package de.ur.mi.audidroid.models
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.Relation
 
-/** The MarkerEntity represents the table with the marks a user made.
- *  MarkTimestamp represents a mark made with a given marker, attached to a given recording.
- *  RecordingAndMarker maps the one-to-many relationship between a recording and its marks.
- *  MarkNadTimestamp represents the relation between a MarkTimestamp and its corresponding MarkerEntity.
+/** The [MarkerEntity] represents the table with the marks a user made.
+ *  [MarkTimestamp] represents a mark made with a given marker, attached to a given recording.
+ *  [RecordingAndMarks] maps the one-to-many relationship between a recording and its marks.
+ *  [MarkAndTimestamp] represents the relation between a MarkTimestamp and its corresponding [MarkerEntity].
  *  @author: Jonas Puchinger, Lisa Sanladerer
  */
 

@@ -10,10 +10,17 @@ import de.ur.mi.audidroid.databinding.MarkItemBinding
 import de.ur.mi.audidroid.models.ExpandableMarkAndTimestamp
 import de.ur.mi.audidroid.models.MarkAndTimestamp
 import de.ur.mi.audidroid.viewmodels.PlayerViewModel
+import de.ur.mi.audidroid.views.PlayerFragment
 
-class MarkItemAdapter(
-    private val playerViewModel: PlayerViewModel
-) :
+/**
+ * Adapter for the [RecyclerView] in [PlayerFragment].
+ * The adapter connects the data to the RecyclerView.
+ * Single Marks get adapted to be displayed in a ViewHolder.
+ * Implements a listener for click events on single Mark items.
+ * @author: Theresa Strohmeier, Jonas Puchinger
+ */
+
+class MarkItemAdapter(private val playerViewModel: PlayerViewModel) :
     ListAdapter<MarkAndTimestamp, MarkItemAdapter.ViewHolder>(MarkAndTimeStampDiffCallback()) {
 
     private val userActionsListener = object : MarkUserActionsListener {
@@ -27,7 +34,6 @@ class MarkItemAdapter(
         override fun onMarkTimeClicked(mark: MarkAndTimestamp) {
             playerViewModel.onMarkTimeClicked(mark.markTimestamp.markTimeInMilli)
         }
-
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -41,19 +47,18 @@ class MarkItemAdapter(
     class ViewHolder private constructor(private val binding: MarkItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(
-            item: MarkAndTimestamp,
-            listener: MarkUserActionsListener
-        ) {
+        fun bind(item: MarkAndTimestamp, listener: MarkUserActionsListener) {
             binding.mark = ExpandableMarkAndTimestamp(item)
             binding.listener = listener
             binding.executePendingBindings()
         }
 
         companion object {
+
             fun from(parent: ViewGroup): RecyclerView.ViewHolder {
-                val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = MarkItemBinding.inflate(layoutInflater, parent, false)
+                val layoutInflater: LayoutInflater = LayoutInflater.from(parent.context)
+                val binding: MarkItemBinding =
+                    MarkItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }
@@ -62,17 +67,11 @@ class MarkItemAdapter(
 
 class MarkAndTimeStampDiffCallback : DiffUtil.ItemCallback<MarkAndTimestamp>() {
 
-    override fun areItemsTheSame(
-        oldItem: MarkAndTimestamp,
-        newItem: MarkAndTimestamp
-    ): Boolean {
+    override fun areItemsTheSame(oldItem: MarkAndTimestamp, newItem: MarkAndTimestamp): Boolean {
         return oldItem.markTimestamp.mid == newItem.markTimestamp.mid
     }
 
-    override fun areContentsTheSame(
-        oldItem: MarkAndTimestamp,
-        newItem: MarkAndTimestamp
-    ): Boolean {
+    override fun areContentsTheSame(oldItem: MarkAndTimestamp, newItem: MarkAndTimestamp): Boolean {
         return oldItem == newItem
     }
 }

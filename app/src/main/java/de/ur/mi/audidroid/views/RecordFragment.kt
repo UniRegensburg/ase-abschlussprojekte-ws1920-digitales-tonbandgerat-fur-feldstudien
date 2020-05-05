@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.record_fragment.*
 
 /**
  * The fragment allows the user to do a voice recording. The changes of the view are handled within.
- * The view changes automatically with data binding depending on the current state
+ * The view changes automatically with data binding depending on the current state.
  * @author: Sabine Roth
  */
 
@@ -31,10 +31,6 @@ class RecordFragment : Fragment() {
     private lateinit var adapter: MarkerButtonAdapter
     private lateinit var binding: RecordFragmentBinding
     private lateinit var dataSource: Repository
-
-    companion object {
-        fun newInstance() = RecordFragment()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -114,6 +110,5 @@ class RecordFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         viewModel.fragmentOnPause()
-
     }
 }

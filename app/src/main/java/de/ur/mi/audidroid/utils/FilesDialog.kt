@@ -1,11 +1,16 @@
 package de.ur.mi.audidroid.utils
 
 import android.content.Context
+import android.content.DialogInterface
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.RecordingAndLabels
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
+/**
+ * Dialog to confirm deleting of recording.
+ * @author Theresa Strohmeier
+ */
 object FilesDialog {
 
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
@@ -29,10 +34,10 @@ object FilesDialog {
                         recording!!.recordingName
                     )
                 )
-                setPositiveButton(context.getString(R.string.delete)) { _, _ ->
+                setPositiveButton(context.getString(R.string.delete)) { _: DialogInterface, _: Int ->
                     viewModel?.deleteRecording(recording)
                 }
-                setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
+                setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _: DialogInterface, _: Int ->
                     viewModel?.cancelSaving()
                 }
             }

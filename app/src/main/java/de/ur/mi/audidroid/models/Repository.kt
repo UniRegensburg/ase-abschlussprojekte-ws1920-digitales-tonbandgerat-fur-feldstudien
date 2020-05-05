@@ -2,8 +2,13 @@ package de.ur.mi.audidroid.models
 
 import android.app.Application
 import androidx.lifecycle.LiveData
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CompletableJob
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 
 /**
  * The Repository isolates the data layer from the rest of the app.
@@ -20,7 +25,7 @@ class Repository(application: Application) : CoroutineScope {
     private var folderAssignmentDao: FolderAssignmentDao
     private var allRecordings: LiveData<List<RecordingEntity>>
 
-    private val job = Job()
+    private val job: CompletableJob = Job()
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 
@@ -137,7 +142,7 @@ class Repository(application: Application) : CoroutineScope {
     }
 
 
-    /** Recordinglabels */
+    /** Recording labels */
 
     fun insertRecLabels(labelAssignment: LabelAssignmentEntity) {
         runBlocking {

@@ -12,9 +12,13 @@ import androidx.preference.PreferenceManager
 import de.ur.mi.audidroid.R
 import pl.droidsonroids.gif.GifDrawable
 
+/**
+ * The [OnboardingFragment] creates an onboarding for the first start of the app using [OnboardingSupportFragment]
+ * @author: Sabine Roth
+ */
+
 
 class OnboardingFragment : OnboardingSupportFragment() {
-
 
     private lateinit var titles: Array<String>
     private lateinit var descriptions: Array<String>
@@ -30,8 +34,8 @@ class OnboardingFragment : OnboardingSupportFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        titleViewTextColor = ContextCompat.getColor(context!!, R.color.color_surface)
-        descriptionViewTextColor = ContextCompat.getColor(context!!, R.color.color_surface)
+        titleViewTextColor = ContextCompat.getColor(requireContext(), R.color.color_surface)
+        descriptionViewTextColor = ContextCompat.getColor(requireContext(), R.color.color_surface)
     }
 
     override fun onPageChanged(newPage: Int, previousPage: Int) {
@@ -88,7 +92,12 @@ class OnboardingFragment : OnboardingSupportFragment() {
 
     override fun onCreateBackgroundView(inflater: LayoutInflater?, container: ViewGroup?): View? {
         val background = View(activity)
-        background.setBackgroundColor(ContextCompat.getColor(context!!, R.color.color_primary))
+        background.setBackgroundColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.color_primary
+            )
+        )
         return background
     }
 
@@ -98,6 +107,6 @@ class OnboardingFragment : OnboardingSupportFragment() {
             putBoolean(getString(R.string.onboarding_preference_key), true)
             apply()
         }
-        activity!!.finish()
+        requireActivity().finish()
     }
 }

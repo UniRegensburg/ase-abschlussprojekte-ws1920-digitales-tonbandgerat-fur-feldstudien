@@ -198,8 +198,8 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/color_primary"
                 android:onClick="@{() -> editRecordingViewModel.addMark()}"
-                app:buttonText="@{editRecordingViewModel.buttonsVisible}"
                 android:textAppearance="@style/TextAppearance.AudidroidTheme.Button"
+                app:buttonText="@{editRecordingViewModel.buttonsVisible}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.950"
@@ -263,9 +263,8 @@
 
         <include
             layout="@layout/bottom_player_bar"
-            bind:playerBarListener="@{playerBarListener}"
-            bind:isPlaying="@{editRecordingViewModel.isPlaying()}" />
+            bind:isPlaying="@{editRecordingViewModel.isPlaying()}"
+            bind:playerBarListener="@{playerBarListener}" />
 
     </FrameLayout>
-
 </layout>

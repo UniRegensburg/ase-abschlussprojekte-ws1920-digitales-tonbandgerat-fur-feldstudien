@@ -1,11 +1,11 @@
 package de.ur.mi.audidroid.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.view.OrientationEventListener
 import de.ur.mi.audidroid.R
-
 
 /**
  * Listener for rotation changes of the device
@@ -16,12 +16,14 @@ object OrientationListener {
 
     private var orientationEventListener: OrientationEventListener? = null
 
+    @SuppressLint("SourceLockedOrientationActivity")
     fun adjustRotationListener(context: Context) {
         val activity = context as Activity
         if (getRotationPreference(context)) {
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
             if (orientationEventListener == null) {
                 orientationEventListener = object : OrientationEventListener(context) {
+
                     override fun onOrientationChanged(orientation: Int) {
                         if (orientation in 70..290) activity.requestedOrientation =
                             ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT

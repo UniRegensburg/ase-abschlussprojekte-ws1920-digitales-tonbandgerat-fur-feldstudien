@@ -7,6 +7,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
+/**
+ * Dialog to choose a audio file format for conversion before sharing to other apps.
+ * Available formats: AAC, MP3, M4A, WMA, WAV, FLAC.
+ * @author: Jonas Puchinger
+ */
+
 object ConvertDialog {
 
     private lateinit var dialog: androidx.appcompat.app.AlertDialog
@@ -36,5 +42,4 @@ object ConvertDialog {
             viewModel.cancelExporting()
         }
     }
-
 }

@@ -9,20 +9,32 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.FolderEntity
 import de.ur.mi.audidroid.viewmodels.FilesViewModel
 
-object FolderDialog{
+/**
+ * Dialog for creating, renaming and deleting a folder
+ * @author: Sabine Roth
+ */
+
+object FolderDialog {
 
     private lateinit var editText: EditText
 
-    fun createDialog(context: Context, layoutId: Int, viewModel: FilesViewModel, errorMessage: String? = null, folderToBeEdited: FolderEntity?, deleteFolder: Boolean){
+    fun createDialog(
+        context: Context,
+        layoutId: Int,
+        viewModel: FilesViewModel,
+        errorMessage: String? = null,
+        folderToBeEdited: FolderEntity?,
+        deleteFolder: Boolean
+    ) {
         val builder = MaterialAlertDialogBuilder(context)
         if (errorMessage != null) {
             builder.setMessage(errorMessage)
         }
-        if(!deleteFolder){
+        if (!deleteFolder) {
             val inflater: LayoutInflater = LayoutInflater.from(context)
             val dialogView: View = inflater.inflate(layoutId, null)
             builder.setView(dialogView)
-            editText = dialogView.findViewById<EditText>(R.id.dialog_create_folder_name)!!
+            editText = dialogView.findViewById(R.id.dialog_create_folder_name)!!
             with(builder) {
                 setTitle(
                     if (folderToBeEdited != null) String.format(
@@ -30,22 +42,24 @@ object FolderDialog{
                         folderToBeEdited.folderName
                     ) else context.getString(R.string.folder_dialog_title)
                 )
-                if(folderToBeEdited!=null){
+                if (folderToBeEdited != null) {
                     editText.setText(folderToBeEdited.folderName)
                     editText.setSelection(editText.text.length)
                 }
                 editText.showKeyboard()
                 setPositiveButton(context.getString(R.string.folder_dialog_ok)) { _, _ ->
-                    if(folderToBeEdited != null) viewModel.renameFolder(folderToBeEdited, editText.text.toString())
-                    else  viewModel.createFolder(editText.text.toString())
+                    if (folderToBeEdited != null) viewModel.renameFolder(
+                        folderToBeEdited,
+                        editText.text.toString()
+                    )
+                    else viewModel.createFolder(editText.text.toString())
                 }
                 setNegativeButton(context.getString(R.string.dialog_cancel_button_text)) { _, _ ->
                     viewModel.resetValues()
                 }
 
             }
-        }
-        else{
+        } else {
             with(builder) {
                 setTitle(
                     if (folderToBeEdited != null) String.format(
@@ -63,7 +77,7 @@ object FolderDialog{
             }
         }
         val dialog = builder.create()
-        dialog.setOnCancelListener{
+        dialog.setOnCancelListener {
             viewModel.resetValues()
         }
         dialog.show()

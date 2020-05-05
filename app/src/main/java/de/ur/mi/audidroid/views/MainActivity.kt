@@ -58,8 +58,9 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
 
-    /** Applies the app theme selected by the user.
-     *
+
+    /**
+     * Applies the app theme selected by the user.
      * @author: Jonas Puchinger
      * Adapted from: https://www.raywenderlich.com/6488033-android-10-dark-theme-getting-started#toc-anchor-006
      */
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     /**
-     * Is triggered after the permission dialogs where granted or denied.
+     * [onRequestPermissionsResult] triggers after the permission dialogs were granted or denied.
      * @author: Sabine Roth
      */
     override fun onRequestPermissionsResult(
@@ -99,7 +100,7 @@ class MainActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsRes
     }
 
     /**
-     * Is triggered after the onboarding and if the user selected a path via DocumentTree
+     * [onActivityResult] triggers after the onboarding and if the user selected a path via DocumentTree
      * @author: Sabine Roth
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

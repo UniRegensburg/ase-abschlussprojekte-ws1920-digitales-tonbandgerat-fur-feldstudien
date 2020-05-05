@@ -4,9 +4,8 @@ import android.content.Context
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.ur.mi.audidroid.R
 
-
 /**
- * Creates a Dialog for missing or denied permissions
+ * [PermissionDialog] creates dialogs for missing or denied permissions
  * @author: Sabine Roth
  */
 

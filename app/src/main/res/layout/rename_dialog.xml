@@ -12,6 +12,7 @@
         android:layout_margin="@dimen/dialog_margin_normal"
         android:importantForAutofill="no"
         android:inputType="text"
+        android:hint="@string/rename_dialog_hint"
         android:textAppearance="@style/TextAppearance.AudidroidTheme.Subtitle1" />
 
 </LinearLayout>

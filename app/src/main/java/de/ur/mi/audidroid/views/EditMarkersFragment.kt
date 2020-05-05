@@ -2,23 +2,23 @@ package de.ur.mi.audidroid.views
 
 import android.app.Application
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.adapter.MarkerItemAdapter
+import de.ur.mi.audidroid.databinding.EditMarkersFragmentBinding
 import de.ur.mi.audidroid.models.Repository
 import de.ur.mi.audidroid.utils.MarkersDialog
-import de.ur.mi.audidroid.databinding.EditMarkersFragmentBinding
 import de.ur.mi.audidroid.viewmodels.EditMarkersViewModel
-import kotlinx.android.synthetic.main.edit_markers_fragment.*
 import java.lang.IllegalArgumentException
+import kotlinx.android.synthetic.main.edit_markers_fragment.*
 
 class EditMarkersFragment : Fragment() {
 
@@ -31,7 +31,8 @@ class EditMarkersFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val application = this.activity!!.application
@@ -108,5 +109,4 @@ class EditMarkersFragment : Fragment() {
             }
         }
     }
-
 }

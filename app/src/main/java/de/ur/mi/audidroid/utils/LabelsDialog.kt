@@ -1,7 +1,6 @@
 package de.ur.mi.audidroid.utils
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
@@ -10,6 +9,11 @@ import de.ur.mi.audidroid.R
 import de.ur.mi.audidroid.models.LabelEntity
 import de.ur.mi.audidroid.viewmodels.EditLabelsViewModel
 import kotlinx.android.synthetic.main.labels_dialog.*
+
+/**
+ * Dialog to enter a new [LabelEntity].
+ * @author: Jonas Puchinger
+ */
 
 object LabelsDialog {
 

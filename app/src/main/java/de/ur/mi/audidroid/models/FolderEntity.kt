@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * The [FolderEntity] represents the folders for the recordings.
+ * The [FolderEntity] represents a folder in the foldersTable.
  * @author Sabine Roth
  */
 
